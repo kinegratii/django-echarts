@@ -23,7 +23,7 @@
             <a class="navbar-brand" href="javascript:">Django Echarts</a>
 
             <ul class="nav navbar-nav">
-                <li><a href="javascript:" class="active">基本使用</a></li>
+                <li class="active"><a href="javascript:">基本使用</a></li>
             </ul>
 
         </div>
@@ -84,12 +84,14 @@
             mChart.clear();
         }
         mChart = echarts.init(document.getElementById('id_echarts_container'));
+        mChart.showLoading();
         $.ajax({
             url: url,
             type: "GET",
             data: null,
             dataType: "json"
         }).done(function (data) {
+            mChart.hideLoading();
             mChart.setOption(data);
         });
     }

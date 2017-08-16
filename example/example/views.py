@@ -1,5 +1,7 @@
 # coding=utf8
 
+from __future__ import unicode_literals
+
 from django.views.generic.base import TemplateView
 from pyecharts import Bar, Kline, Map, Pie
 from django_echarts import EchartsView
