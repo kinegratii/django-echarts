@@ -6,14 +6,26 @@ A intergration for [Echarts](http://echarts.baidu.com/index.html) and [Django](h
 
 > This project is on the developement state, do not use in the production environment.
 
+## Overview
 
-## Requirements
+django-echarts provides a set of shortcut tool for django intergration.These are:
 
-- Python2.7+ / Python3.5+
-- Django 1.8+
-- echarts 3.1+
+- Simple data builder for echarts
+- Renders using frontend ajax or templates
+- Some utils functions and classes
 
-## Basic Uage
+django-echarts cover the following django components.You should understand them before using django-echarts.
+
+- View mixin
+- template tags
+- context processors
+- Management command
+
+django-echarts works on Python2.7 / Python3.5+ and Django1.8+,and Python3 is **Strongly** recommended.
+
+## Basic Usage
+
+### Use ajax render
 
 views.py
 

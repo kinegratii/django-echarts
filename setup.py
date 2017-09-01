@@ -18,6 +18,8 @@ setup(
     version='0.0.1',
     packages=['django_echarts'],
     url='https://github.com/kinegratii/django-echarts',
+    install_requires=['pyecharts', 'django', 'pluck'],
+    include_package_data=True,
     license='MIT',
     author='Kinegratii',
     author_email='kinegratii@gmail.com',
