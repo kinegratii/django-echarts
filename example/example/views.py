@@ -15,7 +15,7 @@ class SimpleBarView(EchartsView):
     def get_echarts_option(self, **kwargs):
         bar = Bar("我的第一个图表", "这里是副标题")
         bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
-        return bar._option
+        return bar.options
 
 
 class SimpleKLineView(EchartsView):
@@ -54,7 +54,7 @@ class SimpleKLineView(EchartsView):
 
         kline = Kline("K 线图示例")
         kline.add("日K", ["2017/7/{}".format(i + 1) for i in range(31)], v1)
-        return kline._option
+        return kline.options
 
 
 class SimpleMapView(EchartsView):
@@ -63,7 +63,7 @@ class SimpleMapView(EchartsView):
         attr = ["福建", "山东", "北京", "上海"]
         map = Map("全国地图示例", width=1200, height=600)
         map.add("", attr, value, maptype='china')
-        return map._option
+        return map.options
 
 
 class SimplePieView(EchartsView):
@@ -89,4 +89,4 @@ class SimplePieView(EchartsView):
                 label_pos='center', is_label_show=True, label_text_color=None)
         pie.add("", ["犯罪", ""], [28, 72], center=[90, 70], radius=[18, 24],
                 label_pos='center', is_label_show=True, label_text_color=None, is_legend_show=True, legend_top="center")
-        return pie._option
+        return pie.options
