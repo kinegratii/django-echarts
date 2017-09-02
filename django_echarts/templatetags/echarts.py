@@ -1,4 +1,7 @@
 # coding=utf8
+"""Template tags for django-echarts.
+
+"""
 
 from __future__ import unicode_literals
 
@@ -11,10 +14,10 @@ register = template.Library()
 
 
 @register.inclusion_tag('tags/echarts.html')
-def simple_echarts(echarts):
+def echarts_options(echarts):
     assert isinstance(echarts, Base), 'A pyecharts.base.Base object is required.'
     return {
-        'echarts_obj': echarts.render_embed()
+        'echarts_options': echarts.render_embed()
     }
 
 
