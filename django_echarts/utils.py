@@ -22,9 +22,9 @@ class AttrDict(dict):
 
 
 def get_django_echarts_settings():
-    custom_settings = getattr(settings, 'DJANGO_ECHARTS', {})
-    project_settings = custom_settings.update(DEFAULT_SETTINGS)
-    return AttrDict(project_settings)
+    project_settings = getattr(settings, 'DJANGO_ECHARTS', {})
+    project_settings.update(DEFAULT_SETTINGS)
+    return AttrDict(**project_settings)
 
 
 DJANGO_ECHARTS_SETTING = SimpleLazyObject(get_django_echarts_settings)

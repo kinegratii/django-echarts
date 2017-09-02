@@ -13,7 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
+
+from demo import urls as demo_urls
 
 from .views import IndexView, SimpleBarView, SimpleKLineView, SimpleMapView, SimplePieView
 
@@ -22,5 +24,6 @@ urlpatterns = [
     url(r'options/simpleBar/', SimpleBarView.as_view()),
     url(r'options/simpleKLine/', SimpleKLineView.as_view()),
     url(r'options/simpleMap/', SimpleMapView.as_view()),
-    url(r'options/simplePie/', SimplePieView.as_view())
+    url(r'options/simplePie/', SimplePieView.as_view()),
+    url(r'^demo/', include(demo_urls))
 ]

@@ -14,7 +14,7 @@ django-echarts provides a set of shortcut tool for django intergration.These are
 - Renders using frontend ajax or templates
 - Some utils functions and classes
 
-django-echarts cover the following django components.You should understand them before using django-echarts.
+django-echarts covers the following django components.You should understand them before using django-echarts.
 
 - View mixin
 - template tags
