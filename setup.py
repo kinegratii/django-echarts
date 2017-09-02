@@ -16,7 +16,7 @@ lib_classifiers = [
 setup(
     name='django-echarts',
     version='0.0.1',
-    packages=['django_echarts'],
+    packages=['django_echarts', 'django_echarts.templatetags'],
     url='https://github.com/kinegratii/django-echarts',
     install_requires=['pyecharts', 'django', 'pluck'],
     include_package_data=True,
