@@ -18,5 +18,4 @@ class TemperatureEChartsView(TemplateView):
         line = Line('High Temperature')
         line.add('High', ds, hs)
         context['line'] = line
-        print(line.get_js_dependencies())
         return context

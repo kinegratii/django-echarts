@@ -25,19 +25,24 @@ All settings should define in a variable named `DJANGO_ECHARTS`.The default valu
 ```python
 {
     'echarts_version':'3.7.0',
-    'js_host':'localhost'
+    'js_host':'bootcdn'
 }
 ```
 
-You can access these settings using  the module variable  `django_echarts.utils.DJANGO_ECHARTS_SETTING`.It is a dict-like object. You can also access using `DJANGO_ECHARTS_SETTING.foo` .
+You can access these settings using  the module variable  `django_echarts.utils.DJANGO_ECHARTS_SETTING`.It is a dict-like object. You can also access using   `DJANGO_ECHARTS_SETTING['foo']` or `DJANGO_ECHARTS_SETTING.foo` .
 
 ### js_host
 
 The repository which project provides javascript static files.The following values are available:
 
-- `'localhost'` :  Use `settings.STATIC_URL`.
-- `pyecharts.constants.DEFAULT_HOST` : Use pyecharts javascript library.
-- Any valid CDN url. e.g. `https://cdn.bootcss.com/echarts/3.7.0`
+- A CDN name: valid choices are `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts`.
+- A format string representing the host url:
+  - static_url: the settings.STATIC_URL
+  - echarts_version: the version of echarts.
+
+### echarts_version
+
+The version of echarts which you are using.It is used for custom js host. e.g `3.7.0`.
 
 ## API - Template Tags
 
