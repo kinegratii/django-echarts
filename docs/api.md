@@ -1,8 +1,8 @@
 # API
 
-> The API is under the developement, and any API has been NOT STABLE yet.
+The API is under the developement, and any API has been NOT STABLE yet.
 
-## Settings
+## App Settings
 
 The default value are listed as the following code fragment.
 
@@ -13,8 +13,6 @@ The default value are listed as the following code fragment.
 }
 ```
 
-You can access these settings using  the module variable  `django_echarts.utils.DJANGO_ECHARTS_SETTING`.It is a dict-like object. You can also access using   `DJANGO_ECHARTS_SETTING['foo']` or `DJANGO_ECHARTS_SETTING.foo` .
-
 ### js_host
 
 The repository which project provides javascript static files.The following values are available:
@@ -24,9 +22,42 @@ The repository which project provides javascript static files.The following valu
   - STATIC_URL: the value of `settings.STATIC_URL`
   - echarts_version: the version of echarts.
 
+For example,if use  local static file`/static/echarts/echarts.min.js`,follow thesse steps:
+
+Step 1:Config the settings module
+
+```python
+STATIC_URL = '/static/'
+DJANGO_ECHARTS = {
+    'js_host':'{STATIC_URL}echarts'
+}
+```
+
+Step 2:Use template tag grammar `{% echarts_scripts line %}` will produce these code in the template html.
+
+```html
+<script src="/static/echarts/echarts.min.js"></script>
+```
+
+If you want to switch to CDN  when deploying to production environment,just set *js_host* to a CDN name(e.g bootcdn).
+
+```html
+<script src="https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js"></script>
+```
+
 ### echarts_version
 
 The version string of echarts which you are using. e.g `3.7.0`.It is used for the most CDN hosts.
+
+## Global Settings Object
+
+You can access these settings using  the module variable  `django_echarts.utils.DJANGO_ECHARTS_SETTING`.It is a dict-like object. You can also access using   `DJANGO_ECHARTS_SETTING['foo']` or `DJANGO_ECHARTS_SETTING.foo` .
+
+### SettingsStore
+
+`django_echarts.utils.SettingsStore`
+
+A public settings class for access in the project.
 
 ## Template Tags
 
@@ -58,7 +89,7 @@ Render javascript script nodes for echarts,custom name.It is a enhance version o
 
 ### HostStore
 
-`django_echarts.plugins.host.HostStore`
+`django_echarts.plugins.host.HostStore(name_or_host, context=None)`
 
 A javascript host manager.
 
