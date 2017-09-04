@@ -35,7 +35,7 @@ def echarts_js(echarts):
 
 
 @register.simple_tag(takes_context=True)
-def echarts_scripts(*args):
+def echarts_scripts(context, *args):
     links = []
     for option_or_name in args:
         if isinstance(option_or_name, Base):
@@ -47,4 +47,4 @@ def echarts_scripts(*args):
                 links.append(option_or_name)
     links = map(DJANGO_ECHARTS_SETTING.host_store.generate_js_link, links)
 
-    return template.Template('<br/>'.join(['<script src="{link}"></script>'.format(link=l) for l in links]))
+    return template.Template('<br/>'.join(['<script src="{link}"></script>'.format(link=l) for l in links])).render(context)

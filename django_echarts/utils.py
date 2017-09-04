@@ -42,7 +42,7 @@ class SettingsStore(AttrDict):
 
     @property
     def host_store(self):
-        return self.host_store
+        return self._host_store
 
 
 def get_django_echarts_settings():
