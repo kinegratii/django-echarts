@@ -1,4 +1,6 @@
 # coding=utf8
+"""A javascript host manager.
+"""
 
 from __future__ import unicode_literals
 
@@ -34,7 +36,7 @@ if __name__ == '__main__':
         'echarts_version': '3.7.0'
     }
     s1 = HostStore('bootcdn', m_context)
-    print(s1.generate_js_link('echarts.min'))
+    print(s1.generate_js_link('echarts.min'))  # https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js
 
     s2 = HostStore('{STATIC_URL}echarts', m_context)
-    print(s2.generate_js_link('echarts.min'))
+    print(s2.generate_js_link('echarts.min'))  # /static/echarts/echarts.min.js

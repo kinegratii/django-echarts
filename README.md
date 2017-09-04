@@ -12,6 +12,7 @@ django-echarts provides a set of shortcut tool for django intergration.These are
 
 - Simple data builder for echarts
 - Renders using frontend ajax or templates
+- Javascript host manager
 - Some utils functions and classes
 
 django-echarts covers the following django components.You should understand them before using django-echarts.
