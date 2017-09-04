@@ -25,6 +25,6 @@ def echarts_options(echarts):
 def echarts_js(echarts):
     assert isinstance(echarts, Base), 'A pyecharts.base.Base object is required.'
     return {
-        'js_host': DJANGO_ECHARTS_SETTING['js_host'],
+        'js_host': DJANGO_ECHARTS_SETTING.js_host_url,
         'script_list': echarts.get_js_dependencies()
     }

@@ -37,12 +37,12 @@ The repository which project provides javascript static files.The following valu
 
 - A CDN name: valid choices are `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts`.
 - A format string representing the host url:
-  - static_url: the settings.STATIC_URL
+  - STATIC_URL: the value of `settings.STATIC_URL`
   - echarts_version: the version of echarts.
 
 ### echarts_version
 
-The version of echarts which you are using.It is used for custom js host. e.g `3.7.0`.
+The version string of echarts which you are using. e.g `3.7.0`.It is used for the most CDN hosts.
 
 ## API - Template Tags
 
