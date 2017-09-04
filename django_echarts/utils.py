@@ -40,6 +40,10 @@ class SettingsStore(AttrDict):
     def add_extra_item(self, name, value):
         self[name] = value
 
+    @property
+    def host_store(self):
+        return self.host_store
+
 
 def get_django_echarts_settings():
     project_settings = getattr(settings, 'DJANGO_ECHARTS', {})
