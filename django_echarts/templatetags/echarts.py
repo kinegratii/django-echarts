@@ -9,7 +9,7 @@ import warnings
 
 from django import template
 from django.utils import six
-from pyecharts.base import Base
+from pyecharts.base import Base, json_dumps
 
 from ..utils import DJANGO_ECHARTS_SETTING
 
@@ -49,3 +49,18 @@ def echarts_js_dependencies(context, *args):
 
     return template.Template('<br/>'.join(['<script src="{link}"></script>'.format(link=l) for l in links])).render(
         context)
+
+
+def convert_to_options_content(echarts):
+    return json_dumps(echarts.option, indent=4)
+
+
+@register.inclusion_tag('tags/echarts_js_content.html')
+def echarts_js_content(*echarts_list):
+    for e in echarts_list:
+        if not isinstance(e, Base):
+            raise TypeError('A pyecharts.base.Base object is required.')
+        e.option_content = convert_to_options_content(e)
+    return {
+        'echarts_list': echarts_list
+    }

@@ -1,0 +1,7 @@
+<script type="text/javascript">
+    {% for e in echarts_list %}
+        var myChart_{{e._chart_id}} = echarts.init(document.getElementById('{{e._chart_id}}'));
+        var option_{{e._chart_id}} = {{ e.option_content }};
+        myChart_{{e._chart_id}}.setOption(option_{{e._chart_id}});
+    {% endfor %}
+</script>

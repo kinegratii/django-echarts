@@ -22,12 +22,22 @@ The repository which project provides javascript static files.The following valu
   - STATIC_URL: the value of `settings.STATIC_URL`
   - echarts_version: the version of echarts.
 
+This table list the CDNs what *js_host* supports.
+
+| name      | host url format                          |
+| --------- | ---------------------------------------- |
+| cdnjs     | https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version} |
+| npmcdn    | [https://unpkg.com/echarts@{echarts_version}/dist](https://unpkg.com/echarts@{echarts_version}/dist) |
+| bootcdn   | [https://cdn.bootcss.com/echarts/{echarts_version}](https://cdn.bootcss.com/echarts/{echarts_version}) |
+| pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
+
 For example,if use  local static file`/static/echarts/echarts.min.js`,follow thesse steps:
 
 Step 1:Config the settings module
 
 ```python
 STATIC_URL = '/static/'
+
 DJANGO_ECHARTS = {
     'js_host':'{STATIC_URL}echarts'
 }
@@ -63,6 +73,12 @@ A public settings class for access in the project.
 
 ## Template Tags
 
+These tags are define at *echarts* module, you should load it in you template code before using.
+
+```
+{% laod echarts %}
+```
+
 ### echarts_options
 
 `django_echarts.templatetags.echarts.echarts_options(echarts)`
@@ -83,7 +99,11 @@ Render javascript  script nodes for a echarts's js dependencies .
 
 Render javascript script nodes for echarts,custom name.It is a enhance version of `echarts_js`.
 
+### echarts_js_content
 
+`django_echarts.templates.echarts.echarts_js_content(*echarts_list)`
+
+Render javascript node for initial code, multiple echarts will use the same `script` html node.
 
 ## Plugins
 
