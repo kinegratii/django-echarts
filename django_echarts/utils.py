@@ -5,12 +5,13 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.utils.functional import SimpleLazyObject
 
-from .plugins.host import HostStore
+from .plugins.staticfiles import HostStore
 
 # Default settings for django-echarts app
 DEFAULT_SETTINGS = {
     'echarts_version': '3.7.0',
-    'js_host': 'bootcdn'
+    'lib_js_host': 'bootcdn',
+    'map_js_host': 'echarts'
 }
 
 
@@ -31,11 +32,13 @@ class SettingsStore(AttrDict):
         self.build()
 
     def build(self):
-        self._host_store = HostStore(name_or_host=self['js_host'], context={
-            'STATIC_URL': settings.STATIC_URL,
-            'echarts_version': self['echarts_version']
-        })
-        self.add_extra_item('js_host_url', self._host_store.host_url)
+        self._host_store = HostStore(
+            echarts_lib_name_or_host=self['lib_js_host'],
+            echarts_map_name_or_host=self['map_js_host'],
+            context={
+                'STATIC_URL': settings.STATIC_URL,
+                'echarts_version': self['echarts_version']
+            })
 
     def add_extra_item(self, name, value):
         self[name] = value

@@ -9,20 +9,21 @@ The default value are listed as the following code fragment.
 ```python
 {
     'echarts_version':'3.7.0',
-    'js_host':'bootcdn'
+    'lib_js_host':'bootcdn',
+    'map_js_host':'echarts'
 }
 ```
 
-### js_host
+### lib_js_host
 
-The repository which project provides javascript static files.The following values are available:
+The repository which project provides **Echarts libary javascript file**.The following values are available:
 
 - A CDN name: valid choices are `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts`.
 - A format string representing the host url,which supports the following CASE-SENSITIVE fields.
   - STATIC_URL: the value of `settings.STATIC_URL`
   - echarts_version: the version of echarts.
 
-This table list the CDNs what *js_host* supports.
+This table list the CDNs what *lib_js_host* supports.
 
 | name      | host url format                          |
 | --------- | ---------------------------------------- |
@@ -55,6 +56,17 @@ If you want to switch to CDN  when deploying to production environment,just set 
 <script src="https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js"></script>
 ```
 
+### map_js_host
+
+The repository which project provides **Echarts map javascript file**.The table lists the CDNs what the settings item supports.
+
+| name      | host url format                          |
+| --------- | ---------------------------------------- |
+| echarts   | http://echarts.baidu.com/asset/map/js    |
+| pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
+
+>  Note:The *echarts* host supports only http schema,so it will goes wrong when you deploy with HTTPS using this host.  
+
 ### echarts_version
 
 The version string of echarts which you are using. e.g `3.7.0`.It is used for the most CDN hosts.
@@ -85,7 +97,7 @@ These tags are define at *echarts* module, you should load it in you template co
 
 Render javascript template for a Echarts objects.
 
-## echarts_js
+### echarts_js
 
 > This tag is deprecated.
 
@@ -107,13 +119,19 @@ Render javascript node for initial code, multiple echarts will use the same `scr
 
 ## Plugins
 
-*django-echarts* provides some plugins to enhance features.s 
+*django-echarts* provides some plugins to enhance features.
+
+### Host
+
+`django_echarts.plugins.staticfiles.HostStore(name_or_host, context=None, host_lookup=None)`
+
+A class representing a local or remote repository.
 
 ### HostStore
 
-`django_echarts.plugins.host.HostStore(name_or_host, context=None)`
+`django_echarts.plugins.staticfiles.HostStore(echarts_lib_name_or_host, echarts_map_name_or_host, context=None)`
 
-A javascript host manager.
+A manager for echarts library and map javascript files.
 
 ## Data Builder Tools
 
@@ -130,3 +148,7 @@ A static method to Convert the sequence with the dictionary and tuple type into 
 `pluck.pluck(iterable, *keys, **kwargs)`
 
 Pick fields from a iterable.
+
+## Tool Commands
+
+(TODO)
