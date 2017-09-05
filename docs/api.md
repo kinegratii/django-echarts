@@ -33,7 +33,7 @@ DJANGO_ECHARTS = {
 }
 ```
 
-Step 2:Use template tag grammar `{% echarts_scripts line %}` will produce these code in the template html.
+Step 2:Use template tag grammar `{% echarts_js_dependencies line %}` will produce these code in the template html.
 
 ```html
 <script src="/static/echarts/echarts.min.js"></script>
@@ -51,11 +51,13 @@ The version string of echarts which you are using. e.g `3.7.0`.It is used for th
 
 ## Global Settings Object
 
-You can access these settings using  the module variable  `django_echarts.utils.DJANGO_ECHARTS_SETTING`.It is a dict-like object. You can also access using   `DJANGO_ECHARTS_SETTING['foo']` or `DJANGO_ECHARTS_SETTING.foo` .
+In your code, you should use the module variable `django_echarts.utils.DJANGO_ECHARTS_SETTING` to access the project's settings and their related attributes.It is a instance of `django_echarts.utils.SettingsStore`.
+
+You can also access using `DJANGO_ECHARTS_SETTING['foo']` or `DJANGO_ECHARTS_SETTING.foo`.
 
 ### SettingsStore
 
-`django_echarts.utils.SettingsStore`
+`django_echarts.utils.SettingsStore(**kwargs)`
 
 A public settings class for access in the project.
 
@@ -75,9 +77,9 @@ Render javascript template for a Echarts objects.
 
 Render javascript  script nodes for a echarts's js dependencies .
 
-### echarts_scripts
+### echarts_js_dependencies
 
-`django_echarts.templatetags.echarts.echarts_scripts(*args)`
+`django_echarts.templatetags.echarts.echarts_js_dependencies(*args)`
 
 Render javascript script nodes for echarts,custom name.It is a enhance version of `echarts_js`.
 
