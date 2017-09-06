@@ -56,8 +56,8 @@ class SettingsStore(AttrDict):
 
 
 def get_django_echarts_settings():
-    project_settings = getattr(settings, 'DJANGO_ECHARTS', {})
-    project_settings.update(DEFAULT_SETTINGS)
+    project_settings = {k: v for k, v in DEFAULT_SETTINGS.items()}
+    project_settings.update(getattr(settings, 'DJANGO_ECHARTS', {}))
     pro_settings = SettingsStore(**project_settings)
     return pro_settings
 
