@@ -10,9 +10,14 @@ The default value are listed as the following code fragment.
 {
     'echarts_version':'3.7.0',
     'lib_js_host':'bootcdn',
-    'map_js_host':'echarts'
+    'map_js_host':'echarts'，
+    'local_host':None
 }
 ```
+
+### echarts_version
+
+The version string of echarts which you are using. e.g `3.7.0`.It is used for the most CDN hosts.
 
 ### lib_js_host
 
@@ -67,11 +72,11 @@ The repository which project provides **Echarts map javascript file**.The table 
 
 >  Note:The *echarts* host supports only http schema,so it will goes wrong when you deploy with HTTPS using this host.  
 
-### echarts_version
+### local_host
 
-The version string of echarts which you are using. e.g `3.7.0`.It is used for the most CDN hosts.
+The repository which provides javascript files.Note that the string value MUST start with the value of `settings.STATIC_URL`.
 
-## Global Settings Object
+## Project Settings Access
 
 In your code, you should use the module variable `django_echarts.utils.DJANGO_ECHARTS_SETTING` to access the project's settings and their related attributes.It is a instance of `django_echarts.utils.SettingsStore`.
 
@@ -151,4 +156,14 @@ Pick fields from a iterable.
 
 ## Tool Commands
 
-(TODO)
+These command can be used from *manage.py* script.
+
+```
+python manage.py COMMAND Foo1 Foo2
+```
+
+### download_echarts_js
+
+`download_echarts_js js_name [--js_host]`
+
+Download remote file to the local file system.
