@@ -2,7 +2,9 @@
 
 ## Dev
 
+- `lib_js_host`和`map_js_host`支持 `local_host`变量引用
 - 移除 `echarts_js` 模板标签
+- 修正未设置 `settings.STATIC_URL`时host构建错误的bug
 
 ## v0.1.0 (20170906)
 

@@ -31,10 +31,24 @@ class SettingsStore(AttrDict):
         super(SettingsStore, self).__init__(*args, **kwargs)
         self._host_store = None
         self._host_context = {
-            'STATIC_URL': settings.STATIC_URL,
             'echarts_version': self['echarts_version']
         }
+        if settings.STATIC_URL is not None:
+            self._host_context.update({'STATIC_URL': settings.STATIC_URL})
         self.build()
+
+    def pre_check_and_build(self):
+        # Check local_host with settings.STATIC_URL
+        if self['local_host'] is not None:
+            if settings.STATIC_URL is None:
+                raise ValueError("You must define the value of STATIC_URL in your project settings module.")
+            if not self['local_host'].startswith('{STATIC_URL}'):
+                raise ValueError('The local_host must start with "{STATIC_URL}"')
+
+        if self['lib_js_host'] == 'local_host':
+            self['lib_js_host'] = self['local_host']
+        if self['map_js_host'] == 'local_host':
+            self['map_js_host'] = self['local_host']
 
     def build(self):
         self._host_store = HostStore(

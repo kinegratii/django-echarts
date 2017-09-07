@@ -25,7 +25,16 @@ ECHARTS_MAP_HOSTS = {
 }
 
 
-class Host(object):
+def is_lib_or_map_js(js_name):
+    return js_name in ECHARTS_LIB_NAMES
+
+
+class HostMixin(object):
+    def generate_js_link(self, js_name):
+        raise NotImplemented()
+
+
+class Host(HostMixin):
     HOST_LOOKUP = {}
 
     def __init__(self, name_or_host, context=None, host_lookup=None, **kwargs):
@@ -36,7 +45,11 @@ class Host(object):
             self._host = host.format(**context).rstrip('/')
         except KeyError as e:
             self._host = None
-            raise KeyError('The "{0}" value is not applied for the host.'.format(*e.args))
+            if 'STATIC_URL' in e.args:
+                msg = 'You must define the value of STATIC_URL in your project settings module.'
+            else:
+                msg = 'The "{0}" value is not applied for the host.'.format(*e.args)
+            raise KeyError(msg)
 
     @property
     def host_url(self):
@@ -46,7 +59,7 @@ class Host(object):
         return '{0}/{1}.js'.format(self._host, js_name)
 
 
-class HostStore(object):
+class HostStore(HostMixin):
     def __init__(self, echarts_lib_name_or_host, echarts_map_name_or_host,
                  context=None, **kwargs):
         context = context or {}
@@ -55,7 +68,7 @@ class HostStore(object):
         self._map_js_host = Host(echarts_map_name_or_host, context=context, host_lookup=ECHARTS_MAP_HOSTS, **kwargs)
 
     def generate_js_link(self, js_name):
-        if js_name in ECHARTS_LIB_NAMES:
+        if is_lib_or_map_js(js_name):
             return self._lib_js_host.generate_js_link(js_name)
         else:
             return self._map_js_host.generate_js_link(js_name)

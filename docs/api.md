@@ -25,7 +25,7 @@ The repository which project provides **Echarts libary javascript file**.The fol
 
 - A CDN name: valid choices are `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts`.
 - A format string representing the host url,which supports the following CASE-SENSITIVE fields.
-  - STATIC_URL: the value of `settings.STATIC_URL`
+  - STATIC_URL: the value of `settings.STATIC_URL`. If you do not provide the value of `settings.STATIC_URL` ,it will not pass to context.
   - echarts_version: the version of echarts.
 
 This table list the CDNs what *lib_js_host* supports.
