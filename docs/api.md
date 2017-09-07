@@ -102,14 +102,6 @@ These tags are define at *echarts* module, you should load it in you template co
 
 Render javascript template for a Echarts objects.
 
-### echarts_js
-
-> This tag is deprecated.
-
-`django_echarts.templatetags.echarts.echarts_js(echarts)`
-
-Render javascript  script nodes for a echarts's js dependencies .
-
 ### echarts_js_dependencies
 
 `django_echarts.templatetags.echarts.echarts_js_dependencies(*args)`

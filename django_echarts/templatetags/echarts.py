@@ -5,8 +5,6 @@
 
 from __future__ import unicode_literals
 
-import warnings
-
 from django import template
 from django.utils import six
 from pyecharts.base import Base, json_dumps
@@ -21,16 +19,6 @@ def echarts_options(echarts):
     assert isinstance(echarts, Base), 'A pyecharts.base.Base object is required.'
     return {
         'echarts_options': echarts.render_embed()
-    }
-
-
-@register.inclusion_tag('tags/echarts_js.html')
-def echarts_js(echarts):
-    warnings.warn('Tag echarts_js is Deprecated. Use echarts_scripts instead.')
-    assert isinstance(echarts, Base), 'A pyecharts.base.Base object is required.'
-    return {
-        'js_host': DJANGO_ECHARTS_SETTING.js_host_url,
-        'script_list': echarts.get_js_dependencies()
     }
 
 
