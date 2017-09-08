@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 
 import os
 
-from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.core.management.base import BaseCommand
 from django.utils import six
 
 from django_echarts.utils import DJANGO_ECHARTS_SETTING
@@ -32,6 +32,8 @@ class Command(BaseCommand):
             local_path = local_host_store.generate_js_link(js_name)
             local_path = local_path.replace('/', os.sep)
             local_path = settings.BASE_DIR + local_path
+            self.stdout.write('Download file from {0}'.format(remote_url))
+            self.stdout.write('Save file to {0}'.format(local_path))
             with six.moves.urllib.request.urlopen(remote_url) as response, open(local_path, 'w+b') as out_file:
                 data = response.read()
                 out_file.write(data)

@@ -35,6 +35,7 @@ class SettingsStore(AttrDict):
         }
         if settings.STATIC_URL is not None:
             self._host_context.update({'STATIC_URL': settings.STATIC_URL})
+        self.pre_check_and_build()
         self.build()
 
     def pre_check_and_build(self):
@@ -42,8 +43,8 @@ class SettingsStore(AttrDict):
         if self['local_host'] is not None:
             if settings.STATIC_URL is None:
                 raise ValueError("You must define the value of STATIC_URL in your project settings module.")
-            if not self['local_host'].startswith('{STATIC_URL}'):
-                raise ValueError('The local_host must start with "{STATIC_URL}"')
+            if not self['local_host'].startswith(settings.STATIC_URL):
+                raise ValueError('The local_host must start with the value of settings.STATIC_URL"')
 
         if self['lib_js_host'] == 'local_host':
             self['lib_js_host'] = self['local_host']

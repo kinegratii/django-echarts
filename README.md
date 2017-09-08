@@ -20,62 +20,50 @@ django-echarts covers the following django components.You should understand them
 - View mixin
 - template tags
 - context processors
-- Management command
+- Management commands
 
 django-echarts works on Python2.7 / Python3.5+ and Django1.8+,and Python3 is **Strongly** recommended.
 
-## Basic Usage
+## Installation
 
-### Use ajax render
+You can install *django-echarts* from pip.
 
-views.py
+```
+pip install django-echarts
+```
+
+or build from source code.
+
+```
+git clone https://github.com/kinegratii/django-echarts.git
+cd django-echarts
+python setup.py install
+```
+
+## Setup
+
+1 Add django_charts app to your `INSTALL_APPS`.
 
 ```python
-from django.views.generic.base import TemplateView
-from pyecharts import Bar
-from django_echarts import EchartsView
-
-class IndexView(TemplateView):
-    template_name = 'index.html'
-
-class SimpleBarView(EchartsView):
-    def get_echarts_option(self, **kwargs):
-        bar = Bar("我的第一个图表", "这里是副标题")
-        bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
-        return bar._option
+INSTALL_APPS = (
+    # Your apps
+    'django_echarts'
+    # Your apps
+)
 ```
 
-urls.py
+2 Custom your settings with `DJANGO_ECHARTS` variable in the settings module.e.g
 
 ```python
-from django.conf.urls import url
-
-from .views import IndexView, SimpleBarView
-
-urlpatterns = [
-    url(r'^$', IndexView.as_view()),
-    url(r'options/simpleBar/', SimpleBarView.as_view())
-]
+DJANGO_ECHARTS = {
+    'js_host':'cdnjs'
+}
 ```
 
-html
+Or you my not define the variable and use all default values.
 
-```html
-<div id="id_echarts_container" style="height: 500px;"></div>
+Read *API-Setings* charter to see more details. 
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        var mChart = echarts.init(document.getElementById('id_echarts_container'));
-        $.ajax({
-            url: '/options/simpleBar/',
-            type: "GET",
-            dataType: "json"
-        }).done(function (data) {
-            mChart.setOption(data);
-        });
-    });
-</script>
-```
 
 ## API
 
