@@ -23,6 +23,17 @@ def echarts_options(echarts):
 
 
 @register.simple_tag(takes_context=True)
+def echarts_container(context, echarts):
+    return template.Template(
+        '<div id="{chart_id}" style="width:{width}px;height:{height}px;"></div>'.format(
+            chart_id=echarts._chart_id,
+            width=echarts._width,
+            height=echarts._height
+        )
+    ).render(context)
+
+
+@register.simple_tag(takes_context=True)
 def echarts_js_dependencies(context, *args):
     links = []
     for option_or_name in args:
@@ -35,8 +46,9 @@ def echarts_js_dependencies(context, *args):
                 links.append(option_or_name)
     links = map(DJANGO_ECHARTS_SETTING.host_store.generate_js_link, links)
 
-    return template.Template('<br/>'.join(['<script src="{link}"></script>'.format(link=l) for l in links])).render(
-        context)
+    return template.Template(
+        '<br/>'.join(['<script src="{link}"></script>'.format(link=l) for l in links])
+    ).render(context)
 
 
 def convert_to_options_content(echarts):

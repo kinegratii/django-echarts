@@ -28,7 +28,7 @@ The repository which project provides **Echarts libary javascript file**.The fol
   - STATIC_URL: the value of `settings.STATIC_URL`. If you do not provide the value of `settings.STATIC_URL` ,it will not pass to context.
   - echarts_version: the version of echarts.
 
-This table list the CDNs what *lib_js_host* supports.
+This table list the CDN names what *lib_js_host* supports.
 
 | name      | host url format                          |
 | --------- | ---------------------------------------- |
@@ -55,7 +55,7 @@ Step 2:Use template tag grammar `{% echarts_js_dependencies line %}` will produc
 <script src="/static/echarts/echarts.min.js"></script>
 ```
 
-If you want to switch to CDN  when deploying to production environment,just set *js_host* to a CDN name(e.g bootcdn).
+If you want to switch to CDN  when deploying to production environment,just set *lib_js_host* to a CDN name(e.g bootcdn).
 
 ```html
 <script src="https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js"></script>
@@ -63,14 +63,14 @@ If you want to switch to CDN  when deploying to production environment,just set 
 
 ### map_js_host
 
-The repository which project provides **Echarts map javascript file**.The table lists the CDNs what the settings item supports.
+The repository which project provides **Echarts map javascript file**.The table lists the CDN names what the settings item supports.
 
 | name      | host url format                          |
 | --------- | ---------------------------------------- |
 | echarts   | http://echarts.baidu.com/asset/map/js    |
 | pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
 
->  Note:The *echarts* host supports only http schema,so it will goes wrong when you deploy with HTTPS using this host.  
+>  Note:The *echarts* host supports only http schema,so it will goes wrong when you deploy with HTTPS using this host in some brower(e.g Google Chrome).  
 
 ### local_host
 
@@ -158,4 +158,7 @@ python manage.py COMMAND Foo1 Foo2
 
 `download_echarts_js js_name [--js_host]`
 
-Download remote file to the local file system.
+Download remote file to the local file system.The remote repository name will be found by this order:
+
+- the `js_host` optional param.
+- the `settings.DJANGO_ECHARTS['lib_js_host']` or  `settings.DJANGO_ECHARTS['map_js_host']` 
