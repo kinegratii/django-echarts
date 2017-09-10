@@ -2,6 +2,10 @@
 
 ## Dev
 
+- 新增 `SimpleEchartsView` 后端渲染视图类
+- 新增 `echarts_container` ECharts容器模板标签
+- 重写 `HostStore` 内部逻辑，支持自定义扩展host
+- 下载命令支持js_host自定义参数
 - `lib_js_host`和`map_js_host`支持 `local_host`变量引用
 - 移除 `echarts_js` 模板标签
 - 修正未设置 `settings.STATIC_URL`时host构建错误的bug

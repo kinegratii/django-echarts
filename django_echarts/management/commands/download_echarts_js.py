@@ -25,10 +25,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         js_name = options['js_name']
-        remote_host_store = DJANGO_ECHARTS_SETTING.host_store  # TODO Add support for js_host optional argument.
+        remote_host_store = DJANGO_ECHARTS_SETTING.host_store
         local_host_store = DJANGO_ECHARTS_SETTING.create_local_host()
         if local_host_store:
-            remote_url = remote_host_store.generate_js_link(js_name)
+            remote_url = remote_host_store.generate_js_link(js_name, js_host=options['js_host'])
             local_path = local_host_store.generate_js_link(js_name)
             local_path = local_path.replace('/', os.sep)
             local_path = settings.BASE_DIR + local_path

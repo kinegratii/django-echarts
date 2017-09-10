@@ -42,8 +42,8 @@ class SettingsStore(AttrDict):
         # Check local_host with settings.STATIC_URL
         if self['local_host'] is not None:
             if settings.STATIC_URL is None:
-                raise ValueError("You must define the value of STATIC_URL in your project settings module.")
-            if not self['local_host'].startswith(settings.STATIC_URL):
+                raise ValueError("The local_host item requires a no-empty settings.STATIC_URL.")
+            if not self['local_host'].startswith('{STATIC_URL}'):
                 raise ValueError('The local_host must start with the value of settings.STATIC_URL"')
 
         if self['lib_js_host'] == 'local_host':

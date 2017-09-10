@@ -55,32 +55,94 @@ class Host(HostMixin):
     def host_url(self):
         return self._host
 
-    def generate_js_link(self, js_name):
+    def generate_js_link(self, js_name, **kwargs):
         return '{0}/{1}.js'.format(self._host, js_name)
 
 
 class HostStore(HostMixin):
-    def __init__(self, echarts_lib_name_or_host, echarts_map_name_or_host,
-                 context=None, **kwargs):
-        context = context or {}
+    def __init__(self, context=None, echarts_lib_name_or_host=None, echarts_map_name_or_host=None, **kwargs):
+        self._context = context or {}
+        self._default_lib_name = echarts_lib_name_or_host
+        self._default_map_name = echarts_map_name_or_host
 
-        self._lib_js_host = Host(echarts_lib_name_or_host, context=context, host_lookup=ECHARTS_LIB_HOSTS, **kwargs)
-        self._map_js_host = Host(echarts_map_name_or_host, context=context, host_lookup=ECHARTS_MAP_HOSTS, **kwargs)
+        # Initialize
+        self._url_dict = {('lib', k): v for k, v in ECHARTS_LIB_HOSTS.items()}
+        self._url_dict.update({('map', k): v for k, v in ECHARTS_MAP_HOSTS.items()})
+        self._host_dict = {
+        }
+        # add default
+        self.install_default_hosts(self._default_lib_name, self._default_map_name)
 
-    def generate_js_link(self, js_name):
+    def add_new_host(self, catalog, host_url, host_name=None):
+        host_name = host_name or host_url
+        self._url_dict.update({(catalog, host_name): host_url})
+
+    def install_default_hosts(self, lib_name_or_host, map_name_or_host):
+        host_url = self._url_dict.get(('lib', lib_name_or_host), lib_name_or_host)
+        host = Host(host_url, context=self._context)
+        self._host_dict.update({('lib', lib_name_or_host): host})
+        self._default_lib_name = lib_name_or_host
+
+        host_url = self._url_dict.get(('map', map_name_or_host), map_name_or_host)
+        host = Host(host_url, context=self._context)
+        self._host_dict.update({('map', map_name_or_host): host})
+        self._default_map_name = map_name_or_host
+
+    def generate_js_link(self, js_name, js_host=None, only_lookup=False, **kwargs):
         if is_lib_or_map_js(js_name):
-            return self._lib_js_host.generate_js_link(js_name)
+            lookup = 'lib', js_host or self._default_lib_name
         else:
-            return self._map_js_host.generate_js_link(js_name)
+            lookup = 'map', js_host or self._default_map_name
+        host = self._host_dict.get(lookup)
+        if host:
+            pass
+        else:
+            if lookup in self._url_dict:
+                host = Host(self._url_dict.get(lookup), context=self._context)
+                self._host_dict[lookup] = host
+            else:
+                if only_lookup:
+                    raise ValueError('No host found in onlyLookup mode.')
+                else:
+                    host = Host(js_host, self._context)
+        return host.generate_js_link(js_name)
 
 
 if __name__ == '__main__':
-    m_context = {
-        'STATIC_URL': '/static/',
-        'echarts_version': '3.7.0'
-    }
-    s1 = HostStore('bootcdn', m_context)
-    print(s1.generate_js_link('echarts.min'))  # https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js
+    import unittest
 
-    s2 = HostStore('{STATIC_URL}echarts', m_context)
-    print(s2.generate_js_link('echarts.min'))  # /static/echarts/echarts.min.js
+
+    class ATest(unittest.TestCase):
+        def test_all(self):
+            # Basic tests
+            m_context = {
+                'STATIC_URL': '/static/',
+                'echarts_version': '3.7.0'
+            }
+            hs = HostStore(m_context, 'bootcdn', 'echarts')
+            self.assertEqual(
+                'https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js',
+                hs.generate_js_link('echarts.min')
+            )
+            self.assertEqual(
+                'http://echarts.baidu.com/asset/map/js/china.js',
+                hs.generate_js_link('china')
+            )
+            # Use custom js_host
+            self.assertEqual(
+                'https://cdnjs.cloudflare.com/ajax/libs/echarts/3.7.0/echarts.min.js',
+                hs.generate_js_link('echarts.min', js_host='cdnjs')
+            )
+            self.assertEqual(
+                'https://chfw.github.io/jupyter-echarts/echarts/china.js',
+                hs.generate_js_link('china', js_host='pyecharts')
+            )
+            # Add
+            hs.add_new_host('map', 'https://amap.com/js', 'amap')
+            self.assertEqual(
+                'https://amap.com/js/fujian.js',
+                hs.generate_js_link('fujian', 'amap')
+            )
+
+
+    unittest.main()
