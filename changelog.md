@@ -2,6 +2,8 @@
 
 ## Dev
 
+## v0.1.1 (20170911)
+
 - 新增 `SimpleEchartsView` 后端渲染视图类
 - 新增 `echarts_container` ECharts容器模板标签
 - 重写 `HostStore` 内部逻辑，支持自定义扩展host
