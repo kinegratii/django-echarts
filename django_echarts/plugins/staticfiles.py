@@ -29,6 +29,35 @@ def is_lib_or_map_js(js_name):
     return js_name in ECHARTS_LIB_NAMES
 
 
+def process_js_list(*args, minify=False):
+    js_names = []
+
+    def add_new(_name):
+        if _name in ECHARTS_LIB_NAMES:
+            if _name.endswith('.min'):
+                j1, j2 = _name.rstrip('.min'), _name
+            else:
+                j1, j2 = _name, _name + '.min'
+            if not (j1 in js_names or j2 in js_names):
+                _name = j2 if minify else _name
+                js_names.append(_name)
+        else:
+            if _name not in js_names:
+                js_names.append(_name)
+
+    for a in args:
+        if hasattr(a, 'get_js_dependencies'):
+            sl = a.get_js_dependencies()
+            for _a in sl:
+                add_new(_a)
+        elif isinstance(a, (list, tuple)):
+            for _a in a:
+                add_new(_a)
+        else:
+            add_new(a)
+    return js_names
+
+
 class HostMixin(object):
     def generate_js_link(self, js_name):
         raise NotImplemented()
@@ -142,6 +171,42 @@ if __name__ == '__main__':
             self.assertEqual(
                 'https://amap.com/js/fujian.js',
                 hs.generate_js_link('fujian', 'amap')
+            )
+
+
+    class JsMergeTestCase(unittest.TestCase):
+        def test_merge_js(self):
+            self.assertListEqual(
+                ['echarts', 'fujian'],
+                process_js_list('echarts', 'fujian')
+            )
+            self.assertListEqual(
+                ['echarts.min', 'fujian'],
+                process_js_list('echarts', 'fujian', minify=True)
+            )
+            self.assertListEqual(
+                ['echarts', 'fujian'],
+                process_js_list('echarts', 'echarts', 'fujian')
+            )
+            self.assertListEqual(
+                ['echarts', 'fujian'],
+                process_js_list('echarts', 'echarts.min', 'fujian')
+            )
+            self.assertListEqual(
+                ['echarts.min', 'fujian'],
+                process_js_list('echarts', 'echarts', 'fujian', minify=True)
+            )
+            self.assertListEqual(
+                ['echarts.min', 'fujian'],
+                process_js_list('echarts', 'echarts.min', 'fujian', minify=True)
+            )
+            self.assertListEqual(
+                ['echarts.min', 'fujian'],
+                process_js_list('echarts', ['echarts.min', 'fujian'], minify=True)
+            )
+            self.assertListEqual(
+                ['echarts', 'fujian'],
+                process_js_list('echarts', ['echarts.min', 'fujian'])
             )
 
 

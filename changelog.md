@@ -2,6 +2,9 @@
 
 ## Dev
 
+- js管理插件
+    - 增加 `process_js_list` js合并函数
+
 ## v0.1.1 (20170911)
 
 - 新增 `SimpleEchartsView` 后端渲染视图类
