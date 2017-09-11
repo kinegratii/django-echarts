@@ -1,12 +1,17 @@
 from setuptools import setup
 
 lib_classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 2",
     "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
+    "Framework :: Django",
+    "Framework :: Django :: 1.8",
+    "Framework :: Django :: 1.9",
+    "Framework :: Django :: 1.10",
+    "Framework :: Django :: 1.11",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Topic :: Software Development :: Libraries",
@@ -27,7 +32,7 @@ setup(
     version='0.1.1',
     packages=packages,
     url='https://github.com/kinegratii/django-echarts',
-    install_requires=['pyecharts', 'django', 'pluck'],
+    install_requires=['pyecharts', 'Django', 'pluck'],
     include_package_data=True,
     license='MIT',
     author='Kinegratii',
