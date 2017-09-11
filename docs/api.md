@@ -158,7 +158,9 @@ python manage.py COMMAND Foo1 Foo2
 
 `download_echarts_js js_name [--js_host]`
 
-Download remote file to the local file system.The remote repository name will be found by this order:
+Download remote file to the local file system.You must specify a directory value to settings.STATIC_URL.
+
+The remote repository name will be found by this order:
 
 - the `js_host` optional param.
 - the `settings.DJANGO_ECHARTS['lib_js_host']` or  `settings.DJANGO_ECHARTS['map_js_host']` 

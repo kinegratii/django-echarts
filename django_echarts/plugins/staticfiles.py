@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 
 ECHARTS_LIB_HOSTS = {
-    'pyecharts': 'https://chfw.github.io/jupyter-echarts/echarts',  # TODO Use pyecharts.constants.DEFAULT_HOST
+    'pyecharts': 'https://chfw.github.io/jupyter-echarts/echarts',  # Point to pyecharts.constants.DEFAULT_HOST
     'cdnjs': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}',
     'npmcdn': 'https://unpkg.com/echarts@{echarts_version}/dist',
     'bootcdn': 'https://cdn.bootcss.com/echarts/{echarts_version}'
@@ -71,13 +71,13 @@ class HostStore(HostMixin):
         self._host_dict = {
         }
         # add default
-        self.install_default_hosts(self._default_lib_name, self._default_map_name)
+        self._install_default_hosts(self._default_lib_name, self._default_map_name)
 
     def add_new_host(self, catalog, host_url, host_name=None):
         host_name = host_name or host_url
         self._url_dict.update({(catalog, host_name): host_url})
 
-    def install_default_hosts(self, lib_name_or_host, map_name_or_host):
+    def _install_default_hosts(self, lib_name_or_host, map_name_or_host):
         host_url = self._url_dict.get(('lib', lib_name_or_host), lib_name_or_host)
         host = Host(host_url, context=self._context)
         self._host_dict.update({('lib', lib_name_or_host): host})

@@ -33,8 +33,6 @@ class SettingsStore(AttrDict):
         self._host_context = {
             'echarts_version': self['echarts_version']
         }
-        if settings.STATIC_URL is not None:
-            self._host_context.update({'STATIC_URL': settings.STATIC_URL})
         self.pre_check_and_build()
         self.build()
 
@@ -43,7 +41,8 @@ class SettingsStore(AttrDict):
         if self['local_host'] is not None:
             if settings.STATIC_URL is None:
                 raise ValueError("The local_host item requires a no-empty settings.STATIC_URL.")
-            if not self['local_host'].startswith('{STATIC_URL}'):
+            if not self['local_host'].startswith('{STATIC_URL}') or not self['local_host'].startswith(
+                    settings.STATIC_URL):
                 raise ValueError('The local_host must start with the value of settings.STATIC_URL"')
 
         if self['lib_js_host'] == 'local_host':
@@ -52,6 +51,8 @@ class SettingsStore(AttrDict):
             self['map_js_host'] = self['local_host']
 
     def build(self):
+        if settings.STATIC_URL is not None:
+            self._host_context.update({'STATIC_URL': settings.STATIC_URL})
         self._host_store = HostStore(
             echarts_lib_name_or_host=self['lib_js_host'],
             echarts_map_name_or_host=self['map_js_host'],
