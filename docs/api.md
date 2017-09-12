@@ -25,8 +25,8 @@ The repository which project provides **Echarts libary javascript file**.The fol
 
 - A CDN name: valid choices are `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts`.
 - A format string representing the host url,which supports the following CASE-SENSITIVE fields.
-  - STATIC_URL: the value of `settings.STATIC_URL`. If you do not provide the value of `settings.STATIC_URL` ,it will not pass to context.
-  - echarts_version: the version of echarts.
+    - STATIC_URL: the value of `settings.STATIC_URL`. If you do not provide the value of `settings.STATIC_URL` ,it will not pass to context.
+    - echarts_version: the version of echarts.
 
 This table list the CDN names what *lib_js_host* supports.
 
@@ -102,6 +102,12 @@ These tags are define at *echarts* module, you should load it in you template co
 
 Render javascript template for a Echarts objects.
 
+### echarts_container
+
+`django_echarts.templatetags.echarts.echarts_container(echarts_instance)`
+
+Render the DOM element (e.g `<div></div>`) where the chart will show on.
+
 ### echarts_js_dependencies
 
 `django_echarts.templatetags.echarts.echarts_js_dependencies(*args)`
@@ -126,7 +132,7 @@ A class representing a local or remote repository.
 
 ### HostStore
 
-`django_echarts.plugins.staticfiles.HostStore(echarts_lib_name_or_host, echarts_map_name_or_host, context=None)`
+`django_echarts.plugins.staticfiles.HostStore(context=None, echarts_lib_name_or_host=None, echarts_map_name_or_host=None, **kwargs)`
 
 A manager for echarts library and map javascript files.
 
@@ -148,7 +154,7 @@ Pick fields from a iterable.
 
 ## Tool Commands
 
-These command can be used from *manage.py* script.
+These command can be used from *manage.py* script,and they alse support [default options](https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options).
 
 ```
 python manage.py COMMAND Foo1 Foo2

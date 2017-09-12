@@ -25,8 +25,8 @@ class SimpleBarTemplateView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super(SimpleBarTemplateView, self).get_context_data(**kwargs)
-        bar = Bar("ÎÒµÄµÚÒ»¸öÍ¼±í", "ÕâÀïÊÇ¸±±êÌâ")
-        bar.add("·ş×°", ["³ÄÉÀ", "ÑòÃ«ÉÀ", "Ñ©·ÄÉÀ", "¿ã×Ó", "¸ß¸úĞ¬", "Íà×Ó"], [5, 20, 36, 10, 75, 90])
+        bar = Bar("æˆ‘çš„ç¬¬ä¸€ä¸ªå›¾è¡¨", "è¿™é‡Œæ˜¯å‰¯æ ‡é¢˜")
+        bar.add("æœè£…", ["è¡¬è¡«", "ç¾Šæ¯›è¡«", "é›ªçººè¡«", "è£¤å­", "é«˜è·Ÿé‹", "è¢œå­"], [5, 20, 36, 10, 75, 90])
         context['bar'] = bar
         return context
 ```
@@ -65,8 +65,8 @@ class IndexView(TemplateView):
 
 class SimpleBarView(EchartsView):
     def get_echarts_option(self, **kwargs):
-        bar = Bar("ÎÒµÄµÚÒ»¸öÍ¼±í", "ÕâÀïÊÇ¸±±êÌâ")
-        bar.add("·ş×°", ["³ÄÉÀ", "ÑòÃ«ÉÀ", "Ñ©·ÄÉÀ", "¿ã×Ó", "¸ß¸úĞ¬", "Íà×Ó"], [5, 20, 36, 10, 75, 90])
+        bar = Bar("æˆ‘çš„ç¬¬ä¸€ä¸ªå›¾è¡¨", "è¿™é‡Œæ˜¯å‰¯æ ‡é¢˜")
+        bar.add("æœè£…", ["è¡¬è¡«", "ç¾Šæ¯›è¡«", "é›ªçººè¡«", "è£¤å­", "é«˜è·Ÿé‹", "è¢œå­"], [5, 20, 36, 10, 75, 90])
         return bar._option
 ```
 

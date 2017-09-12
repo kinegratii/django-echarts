@@ -2,18 +2,18 @@
 
 ![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![python27](https://img.shields.io/badge/Python-2.7+-blue.svg) ![python35](https://img.shields.io/badge/Python-3.5+-blue.svg) ![django18](https://img.shields.io/badge/Django-1.8+-blue.svg)
 
-»ùÓÚ [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) µÄ [Echarts](http://echarts.baidu.com/index.html)ºÍ [Django](https://www.djangoproject.com) µÄÕûºÏ¿â¡£
+åŸºäº [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) çš„ [Echarts](http://echarts.baidu.com/index.html)å’Œ [Django](https://www.djangoproject.com) çš„æ•´åˆåº“ã€‚
 
-> Ä¿Ç°¸ÃÏîÄ¿»¹´¦ÓÚ¿ª·¢×´Ì¬£¬²»½¨ÒéÔÚÉú²ú»·¾³ÖĞÊ¹ÓÃ¡£
+> ç›®å‰è¯¥é¡¹ç›®è¿˜å¤„äºå¼€å‘çŠ¶æ€ï¼Œä¸å»ºè®®åœ¨ç”Ÿäº§ç¯å¢ƒä¸­ä½¿ç”¨ã€‚
 
 
-## »·¾³ÒªÇó
+## ç¯å¢ƒè¦æ±‚
 
 - Python2.7+ / Python3.5+
 - Django 1.8+
 - echarts 3.1+
 
-## »ù±¾Ê¹ÓÃ
+## åŸºæœ¬ä½¿ç”¨
 
 views.py
 
@@ -27,8 +27,8 @@ class IndexView(TemplateView):
 
 class SimpleBarView(EchartsView):
     def get_echarts_option(self, **kwargs):
-        bar = Bar("ÎÒµÄµÚÒ»¸öÍ¼±í", "ÕâÀïÊÇ¸±±êÌâ")
-        bar.add("·ş×°", ["³ÄÉÀ", "ÑòÃ«ÉÀ", "Ñ©·ÄÉÀ", "¿ã×Ó", "¸ß¸úĞ¬", "Íà×Ó"], [5, 20, 36, 10, 75, 90])
+        bar = Bar("æˆ‘çš„ç¬¬ä¸€ä¸ªå›¾è¡¨", "è¿™é‡Œæ˜¯å‰¯æ ‡é¢˜")
+        bar.add("æœè£…", ["è¡¬è¡«", "ç¾Šæ¯›è¡«", "é›ªçººè¡«", "è£¤å­", "é«˜è·Ÿé‹", "è¢œå­"], [5, 20, 36, 10, 75, 90])
         return bar._option
 ```
 
@@ -66,21 +66,21 @@ html
 
 ## API
 
-(´ı¶¨)
+(å¾…å®š)
 
-## Ê¾Àı
+## ç¤ºä¾‹
 
-Ê¾ÀıÏîÄ¿Çë²Î¿¼ example ÎÄ¼ş¼Ğ¡£
+ç¤ºä¾‹é¡¹ç›®è¯·å‚è€ƒ example æ–‡ä»¶å¤¹ã€‚
 
 ```shell
 cd example
 python manage.py runserver 127.0.0.1:8000
 ```
 
-·ÃÎÊ±¾µØµØÖ·£º http://127.0.0.1:8000 £¬Ê¾ÀıÔËĞĞ½á¹û
+è®¿é—®æœ¬åœ°åœ°å€ï¼š http://127.0.0.1:8000 ï¼Œç¤ºä¾‹è¿è¡Œç»“æœ
 
 ![Demo](images/demo1.gif)
 
-## ¿ªÔ´Ğ­Òé
+## å¼€æºåè®®
 
-ÏîÄ¿»ùÓÚ MIT¿ªÔ´Ğ­Òé£¬»¶Ó­Ìá½» Issue & Pull request ¡£
+é¡¹ç›®åŸºäº MITå¼€æºåè®®ï¼Œæ¬¢è¿æäº¤ Issue & Pull request ã€‚

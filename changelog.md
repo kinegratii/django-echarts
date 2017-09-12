@@ -5,7 +5,7 @@
 - js管理插件
     - 增加 `process_js_list` js合并函数
 - 构建
-    - 增加Django分类
+    - 增加Django分类标记
     - 修正Django包依赖名称
 
 ## v0.1.1 (20170911)

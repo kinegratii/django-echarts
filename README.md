@@ -56,18 +56,13 @@ INSTALL_APPS = (
 
 ```python
 DJANGO_ECHARTS = {
-    'js_host':'cdnjs'
+    'lib_js_host':'cdnjs'
 }
 ```
 
 Or you my not define the variable and use all default values.
 
-Read *API-Setings* charter to see more details. 
-
-
-## API
-
-(No document)
+Read *API* document to see more details.
 
 ## Example
 
