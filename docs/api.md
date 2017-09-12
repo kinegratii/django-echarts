@@ -162,7 +162,13 @@ python manage.py COMMAND Foo1 Foo2
 
 ### download_echarts_js
 
-`download_echarts_js js_name [--js_host]`
+```
+usage: manage.py download_echarts_js [-h] [--version] [-v {0,1,2,3}]
+                                     [--settings SETTINGS]
+                                     [--pythonpath PYTHONPATH] [--traceback]
+                                     [--no-color] [--js_host JS_HOST]
+                                     js_name [js_name ...]
+```
 
 Download remote file to the local file system.You must specify a directory value to settings.STATIC_URL.
 

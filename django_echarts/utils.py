@@ -41,7 +41,7 @@ class SettingsStore(AttrDict):
         if self['local_host'] is not None:
             if settings.STATIC_URL is None:
                 raise ValueError("The local_host item requires a no-empty settings.STATIC_URL.")
-            if not self['local_host'].startswith('{STATIC_URL}') or not self['local_host'].startswith(
+            if not self['local_host'].startswith('{STATIC_URL}') and not self['local_host'].startswith(
                     settings.STATIC_URL):
                 raise ValueError('The local_host must start with the value of settings.STATIC_URL"')
 
