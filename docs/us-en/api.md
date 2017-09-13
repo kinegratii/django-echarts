@@ -10,7 +10,7 @@ The default value are listed as the following code fragment.
 {
     'echarts_version':'3.7.0',
     'lib_js_host':'bootcdn',
-    'map_js_host':'echarts'，
+    'map_js_host':'echarts',
     'local_host':None
 }
 ```

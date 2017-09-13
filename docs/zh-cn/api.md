@@ -1,0 +1,176 @@
+# API
+
+目前项目还在开发当中，文档所描述的API依旧处于不稳定状态，随时可能改变。
+
+## 应用设置(App Settings)
+
+下面的代码描述了项目的默认配置。
+
+```python
+{
+    'echarts_version':'3.7.0',
+    'lib_js_host':'bootcdn',
+    'map_js_host':'echarts'，
+    'local_host':None
+}
+```
+
+### echarts_version
+
+Echarts的版本字符串，如 `3.7.0`，大多数CDN的路径是需要版本号进行区分的。
+
+### lib_js_host
+
+**Echarts库文件(Echarts libary javascript file)** 的仓库名称或地址。以下均是有效的设置值：
+
+- CDN名称: 包括了 `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts`等四个。
+- 代表实际url的格式化字符串，可使用的变量有以下几个，注意大小写区别：
+    - STATIC_URL: `settings.STATIC_URL`的值，如果不提供 `settings.STATIC_URL`，将不会传递这个值。
+    - echarts_version: 上面所述的版本字符串。
+
+*lib_js_host* 能够支持的CDN及其实际url对应表如下：
+
+| 名称      | url格式                         |
+| --------- | ---------------------------------------- |
+| cdnjs     | https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version} |
+| npmcdn    | [https://unpkg.com/echarts@{echarts_version}/dist](https://unpkg.com/echarts@{echarts_version}/dist) |
+| bootcdn   | [https://cdn.bootcss.com/echarts/{echarts_version}](https://cdn.bootcss.com/echarts/{echarts_version}) |
+| pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
+
+For example,if use  local static file`/static/echarts/echarts.min.js`,follow thesse steps:
+
+Step 1:Config the settings module
+
+```python
+STATIC_URL = '/static/'
+
+DJANGO_ECHARTS = {
+    'js_host':'{STATIC_URL}echarts'
+}
+```
+
+Step 2:Use template tag grammar `{% echarts_js_dependencies line %}` will produce these code in the template html.
+
+```html
+<script src="/static/echarts/echarts.min.js"></script>
+```
+
+If you want to switch to CDN  when deploying to production environment,just set *lib_js_host* to a CDN name(e.g bootcdn).
+
+```html
+<script src="https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js"></script>
+```
+
+### map_js_host
+
+**Echarts地图数据文件(Echarts map javascript file)**的仓库名称或路径。可支持仓库名称如下表：
+
+| 名称     | url格式                                  |
+| --------- | ---------------------------------------- |
+| echarts   | http://echarts.baidu.com/asset/map/js    |
+| pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
+
+>  注意: *echarts* CDN不支持HTTPS,当使用全站HTTPS引用非HTTPS外部资源在某些浏览器（如谷歌）会出现一些问题，建议先下载本地，再使用本地部署。
+
+### local_host
+
+本地仓库存储的路径 `settings.STATIC_URL`.
+
+## 项目配置访问(Project Settings Access)
+
+在代码中，使用模块全局变量  `django_echarts.utils.DJANGO_ECHARTS_SETTING` 访问项目的一些配置及其相关属性。该变量是类 `SettingsStore` 的一个实例。
+
+### SettingsStore
+
+`django_echarts.utils.SettingsStore(**kwargs)`
+
+项目配置访问类
+
+## 模板标签(Template Tags)
+
+这些标签都定义在 *echarts* 模块，在使用之前需要先行导入。
+
+```
+{% laod echarts %}
+```
+
+### echarts_options
+
+`django_echarts.templatetags.echarts.echarts_options(echarts)`
+
+渲染图表js代码
+
+### echarts_container
+
+`django_echarts.templatetags.echarts.echarts_container(echarts_instance)`
+
+渲染图表容易(默认为 `<div></div>`)。
+
+### echarts_js_dependencies
+
+`django_echarts.templatetags.echarts.echarts_js_dependencies(*args)`
+
+渲染包含图表所需要的js文件的script一个或多个节点。
+
+### echarts_js_content
+
+`django_echarts.templates.echarts.echarts_js_content(*echarts_list)`
+
+渲染图表初始js代码，支持多图表。
+
+## Plugins
+
+*django-echarts* 提供了一些插件用于辅助功能。
+
+### Host
+
+`django_echarts.plugins.staticfiles.HostStore(name_or_host, context=None, host_lookup=None)`
+
+代表一个远程仓库的一个实体类，用于构建路径。
+
+### HostStore
+
+`django_echarts.plugins.staticfiles.HostStore(context=None, echarts_lib_name_or_host=None, echarts_map_name_or_host=None, **kwargs)`
+
+一个仓库的集合，包含了若干个Host，和Host一样也能构建路径。
+
+## 数据构建工具(Data Builder Tools)
+
+这些工具用于数据构建等方面。
+
+### Cast
+
+`pyecharts.base.Base.cast(seq)`
+
+转化含有字段或数元组的序列到多个列表。
+
+### Pluck
+
+`pluck.pluck(iterable, *keys, **kwargs)`
+
+选取一个或多个字段组成新的列表。
+
+## 命令工具(Tool Commands)
+
+这些命令可以从  *manage.py* 执行，支持其默认的参数， 详细可参考 [https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options](https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options)。
+
+```
+python manage.py COMMAND Foo1 Foo2
+```
+
+### download_echarts_js
+
+```
+usage: manage.py download_echarts_js [-h] [--version] [-v {0,1,2,3}]
+                                     [--settings SETTINGS]
+                                     [--pythonpath PYTHONPATH] [--traceback]
+                                     [--no-color] [--js_host JS_HOST]
+                                     js_name [js_name ...]
+```
+
+下载远程文件到本地
+
+远程仓库的选择依据以下顺序
+
+- `js_host` 参数
+- `settings.DJANGO_ECHARTS['lib_js_host']` 或者 `settings.DJANGO_ECHARTS['map_js_host']` 
