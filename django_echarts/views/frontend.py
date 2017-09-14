@@ -9,4 +9,4 @@ from .base import EChartsMixin
 class EChartsFrontView(EChartsMixin, View):
     def get(self, request, **kwargs):
         echarts_instance = self.get_echarts_instance(**kwargs)
-        return JsonResponse(data=echarts_instance.option, safe=False)
+        return JsonResponse(data=echarts_instance.options, safe=False)

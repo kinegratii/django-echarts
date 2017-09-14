@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django import template
 from django.utils import six
+from django.utils.html import mark_safe
 from pyecharts.base import Base, json_dumps
 
 from ..utils import DJANGO_ECHARTS_SETTING
@@ -52,7 +53,7 @@ def echarts_js_dependencies(context, *args):
 
 
 def convert_to_options_content(echarts):
-    return json_dumps(echarts.option, indent=4)
+    return mark_safe(json_dumps(echarts.options, indent=4))
 
 
 @register.inclusion_tag('tags/echarts_js_content.html')
@@ -61,6 +62,8 @@ def echarts_js_content(*echarts_list):
         if not isinstance(e, Base):
             raise TypeError('A pyecharts.base.Base object is required.')
         e.option_content = convert_to_options_content(e)
+        if not hasattr(e, 'chart_id'):
+            e.chart_id = e._chart_id
     return {
         'echarts_list': echarts_list
     }

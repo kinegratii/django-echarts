@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 
 from django.conf.urls import url
 
-from demo import views
+from demo import backend_views
 
 urlpatterns = [
-    url(r'^temperature/$', views.TemperatureEChartsView.as_view()),
+    url(r'^temperature/$', backend_views.TemperatureEChartsView.as_view()),
 ]

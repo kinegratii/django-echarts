@@ -1,107 +1,23 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Django Echarts Demo</title>
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="padding-top: 70px;">
-
-
-<nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="javascript:">Django Echarts</a>
-
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="javascript:">基本使用</a></li>
-            </ul>
-
-        </div>
-        <!-- /.nav-collapse -->
-    </div>
-    <!-- /.container -->
-</nav>
-<!-- /.navbar -->
-
-<div class="container">
-
-    <div class="row row-offcanvas row-offcanvas-right">
-        <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
-            <div class="list-group">
-                <a href="javascript:" class="list-group-item" data-echarts-name="simpleBar">柱形图(Bar)</a>
-                <a href="javascript:" class="list-group-item" data-echarts-name="simpleKLine">K线图(KLine)</a>
-                <a href="javascript:" class="list-group-item" data-echarts-name="simpleMap">地图(Map)</a>
-                <a href="javascript:" class="list-group-item" data-echarts-name="simplePie">饼图(Pie)</a>
+{% extends 'base.html' %}
+{% block main_content %}
+    <p>Django-ECharts示例</p>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">前端渲染示例</div>
+                <div class="panel-body">
+                    <p><a href="/frontend_charts_list/">前端渲染示例</a></p>
+                </div>
             </div>
         </div>
-        <!--/.sidebar-offcanvas-->
-        <div class="col-xs-12 col-sm-10">
-            <p class="pull-right visible-xs">
-                <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
-            </p>
-            <div id="id_echarts_container" style="height: 500px;"></div>
-
-        </div>
-        <!--/.col-xs-12.col-sm-9-->
-
-
-    </div>
-    <!--/row-->
-
-    <hr>
-
-    <footer>
-        <div class="row">
-            <div class="col-md-6 col-md-offset-3">
-                <p>&copy; Powered by Django-Echarts</p>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">后端渲染示例</div>
+                <div class="panel-body">
+                    <p><a href="/backend_charts_list/">后端渲染示例</a></p>
+                </div>
             </div>
         </div>
-    </footer>
+    </div>
 
-</div>
-<!--/.container-->
-
-
-<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://cdn.bootcss.com/echarts/3.6.2/echarts.min.js"></script>
-<script src="http://echarts.baidu.com/asset/map/js/china.js"></script>
-<script type="text/javascript">
-    var mChart;
-    function loadEcharts(name) {
-        var url = '/options/' + name + '/';
-        if (mChart != null) {
-            mChart.clear();
-        }
-        mChart = echarts.init(document.getElementById('id_echarts_container'));
-        mChart.showLoading();
-        $.ajax({
-            url: url,
-            type: "GET",
-            data: null,
-            dataType: "json"
-        }).done(function (data) {
-            mChart.hideLoading();
-            mChart.setOption(data);
-        });
-    }
-    $(document).ready(function () {
-        $('a[data-echarts-name]').on('click', function () {
-            var name = $(this).data('echartsName');
-            loadEcharts(name);
-        });
-        loadEcharts('simpleBar');
-    });
-</script>
-</body>
-</html>
+{% endblock %}

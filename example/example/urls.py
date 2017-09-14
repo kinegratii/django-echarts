@@ -1,29 +1,21 @@
-"""example URL Configuration
+# coding=utf8
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.10/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
+from __future__ import unicode_literals
+
 from django.conf.urls import url, include
 
 from demo import urls as demo_urls
 
-from .views import IndexView, SimpleBarView, SimpleKLineView, SimpleMapView, SimplePieView
+from demo import frontend_views, backend_views
 
 urlpatterns = [
-    url(r'^$', IndexView.as_view()),
-    url(r'options/simpleBar/', SimpleBarView.as_view()),
-    url(r'options/simpleKLine/', SimpleKLineView.as_view()),
-    url(r'options/simpleMap/', SimpleMapView.as_view()),
-    url(r'options/simplePie/', SimplePieView.as_view()),
+    url(r'^$', frontend_views.IndexView.as_view()),
+    url(r'^frontend_charts_list/$', frontend_views.FrontendEchartsTemplate.as_view()),
+    url('^backend_charts_list/$', backend_views.BackendEChartsTemplate.as_view()),
+
+    url(r'options/simpleBar/', frontend_views.SimpleBarView.as_view()),
+    url(r'options/simpleKLine/', frontend_views.SimpleKLineView.as_view()),
+    url(r'options/simpleMap/', frontend_views.SimpleMapView.as_view()),
+    url(r'options/simplePie/', frontend_views.SimplePieView.as_view()),
     url(r'^demo/', include(demo_urls))
 ]
