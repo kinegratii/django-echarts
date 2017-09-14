@@ -24,6 +24,7 @@ packages = [
     'django_echarts.management.commands',
     'django_echarts.plugins',
     'django_echarts.templatetags',
+    'django_echarts.views',
 
 ]
 

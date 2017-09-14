@@ -33,10 +33,9 @@ class SettingsStore(AttrDict):
         self._host_context = {
             'echarts_version': self['echarts_version']
         }
-        self.pre_check_and_build()
-        self.build()
+        self._setup()
 
-    def pre_check_and_build(self):
+    def _setup(self):
         # Check local_host with settings.STATIC_URL
         if self['local_host'] is not None:
             if settings.STATIC_URL is None:
@@ -50,7 +49,6 @@ class SettingsStore(AttrDict):
         if self['map_js_host'] == 'local_host':
             self['map_js_host'] = self['local_host']
 
-    def build(self):
         if settings.STATIC_URL is not None:
             self._host_context.update({'STATIC_URL': settings.STATIC_URL})
         self._host_store = HostStore(

@@ -4,21 +4,22 @@ from __future__ import unicode_literals
 
 from django.views.generic.base import TemplateView
 from pyecharts import Bar, Kline, Map, Pie
-from django_echarts import EchartsView
+
+from django_echarts.views.frontend import EChartsFrontView
 
 
 class IndexView(TemplateView):
     template_name = 'index.html'
 
 
-class SimpleBarView(EchartsView):
+class SimpleBarView(EChartsFrontView):
     def get_echarts_option(self, **kwargs):
         bar = Bar("我的第一个图表", "这里是副标题")
         bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
         return bar.options
 
 
-class SimpleKLineView(EchartsView):
+class SimpleKLineView(EChartsFrontView):
     def get_echarts_option(self, **kwargs):
         v1 = [[2320.26, 2320.26, 2287.3, 2362.94],
               [2300, 2291.3, 2288.26, 2308.38],
@@ -57,7 +58,7 @@ class SimpleKLineView(EchartsView):
         return kline.options
 
 
-class SimpleMapView(EchartsView):
+class SimpleMapView(EChartsFrontView):
     def get_echarts_option(self, **kwargs):
         value = [155, 10, 66, 78]
         attr = ["福建", "山东", "北京", "上海"]
@@ -66,7 +67,7 @@ class SimpleMapView(EchartsView):
         return map.options
 
 
-class SimplePieView(EchartsView):
+class SimplePieView(EChartsFrontView):
     def get_echarts_option(self, **kwargs):
         pie = Pie('各类电影中"好片"所占的比例', "数据来着豆瓣", title_pos='center')
         pie.add("", ["剧情", ""], [25, 75], center=[10, 30], radius=[18, 24],
