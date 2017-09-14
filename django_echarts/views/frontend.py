@@ -3,15 +3,10 @@ from __future__ import unicode_literals
 from django.http import JsonResponse
 from django.views.generic.base import View
 
-
-class EChartsBaseMixin(object):
-    option = {}
-
-    def get_echarts_option(self, **kwargs):
-        return self.option
+from .base import EChartsMixin
 
 
-class EChartsFrontView(EChartsBaseMixin, View):
+class EChartsFrontView(EChartsMixin, View):
     def get(self, request, **kwargs):
-        echarts_option = self.get_echarts_option(**kwargs)
-        return JsonResponse(data=echarts_option, safe=False)
+        echarts_instance = self.get_echarts_instance(**kwargs)
+        return JsonResponse(data=echarts_instance.option, safe=False)

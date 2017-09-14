@@ -62,7 +62,7 @@ DJANGO_ECHARTS = {
 
 或者全部采用默认值。
 
-##　文档
+## 文档
 
 - [English Document](docs/us-en/api.md)
 - [中文文档](docs/zh-cn/api.md)

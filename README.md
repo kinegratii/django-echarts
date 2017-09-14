@@ -64,7 +64,7 @@ Or you my not define the variable and use all default values.
 
 Read *API* document to see more details.
 
-##　Document
+## Document
 
 - [English Document](docs/us-en/api.md)
 - [中文文档](docs/zh-cn/api.md)

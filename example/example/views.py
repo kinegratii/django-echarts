@@ -13,14 +13,14 @@ class IndexView(TemplateView):
 
 
 class SimpleBarView(EChartsFrontView):
-    def get_echarts_option(self, **kwargs):
+    def get_echarts_instance(self, **kwargs):
         bar = Bar("我的第一个图表", "这里是副标题")
         bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
-        return bar.options
+        return bar
 
 
 class SimpleKLineView(EChartsFrontView):
-    def get_echarts_option(self, **kwargs):
+    def get_echarts_instance(self, **kwargs):
         v1 = [[2320.26, 2320.26, 2287.3, 2362.94],
               [2300, 2291.3, 2288.26, 2308.38],
               [2295.35, 2346.5, 2295.35, 2345.92],
@@ -55,20 +55,20 @@ class SimpleKLineView(EChartsFrontView):
 
         kline = Kline("K 线图示例")
         kline.add("日K", ["2017/7/{}".format(i + 1) for i in range(31)], v1)
-        return kline.options
+        return kline
 
 
 class SimpleMapView(EChartsFrontView):
-    def get_echarts_option(self, **kwargs):
+    def get_echarts_instance(self, **kwargs):
         value = [155, 10, 66, 78]
         attr = ["福建", "山东", "北京", "上海"]
         map = Map("全国地图示例", width=1200, height=600)
         map.add("", attr, value, maptype='china')
-        return map.options
+        return map
 
 
 class SimplePieView(EChartsFrontView):
-    def get_echarts_option(self, **kwargs):
+    def get_echarts_instance(self, **kwargs):
         pie = Pie('各类电影中"好片"所占的比例', "数据来着豆瓣", title_pos='center')
         pie.add("", ["剧情", ""], [25, 75], center=[10, 30], radius=[18, 24],
                 label_pos='center', is_label_show=True, label_text_color=None, )
@@ -90,4 +90,4 @@ class SimplePieView(EChartsFrontView):
                 label_pos='center', is_label_show=True, label_text_color=None)
         pie.add("", ["犯罪", ""], [28, 72], center=[90, 70], radius=[18, 24],
                 label_pos='center', is_label_show=True, label_text_color=None, is_legend_show=True, legend_top="center")
-        return pie.options
+        return pie
