@@ -2,6 +2,34 @@
 
 The API is under the developement, and any API has been NOT STABLE yet.
 
+## Views
+
+Views is the core component for rendering charts.
+
+### EChartsMixin
+
+`django_echarts.views.base.EChartsMixin`
+
+A Mixin for build a echarts instance.
+
+**get_echarts_instance**
+
+`get_echarts_instance(self, *args, **kwargs)`
+
+The interface,every subclass must implement this interface and return a echarts instance.
+
+### EChartsFrontendView
+
+`django_echarts.views.frontend.EChartsFrontendView`
+
+The view class will use frontend way (ajax) to render charts.
+
+### EChartsBackendView
+
+`django_echarts.views.backend.EChartsBackendView`
+
+The view class will use backendway (template) to render charts.
+
 ## App Settings
 
 The default value are listed as the following code fragment.

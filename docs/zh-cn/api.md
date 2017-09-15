@@ -2,6 +2,34 @@
 
 目前项目还在开发当中，文档所描述的API依旧处于不稳定状态，随时可能改变。
 
+## 视图(Views)
+
+视图是渲染逻辑的部件。
+
+### EChartsMixin
+
+`django_echarts.views.base.EChartsMixin`
+
+所有视图的接口类。
+
+**get_echarts_instance**
+
+`get_echarts_instance(self, *args, **kwargs)`
+
+接口函数，此接口需要返回一个用于图表实例，通常是 `pyecharts.base.Base` 及其子类。
+
+### EChartsFrontendView
+
+`django_echarts.views.frontend.EChartsFrontendView`
+
+基于前端(ajax)的渲染视图类。
+
+### EChartsBackendView
+
+`django_echarts.views.backend.EChartsBackendView`
+
+基于后端(template)的渲染视图类。
+
 ## 应用设置(App Settings)
 
 下面的代码描述了项目的默认配置。
@@ -30,7 +58,7 @@ Echarts的版本字符串，如 `3.7.0`，大多数CDN的路径是需要版本�
 
 *lib_js_host* 能够支持的CDN及其实际url对应表如下：
 
-| 名称      | url格式                         |
+| 名称        | url格式                                    |
 | --------- | ---------------------------------------- |
 | cdnjs     | https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version} |
 | npmcdn    | [https://unpkg.com/echarts@{echarts_version}/dist](https://unpkg.com/echarts@{echarts_version}/dist) |
@@ -65,7 +93,7 @@ If you want to switch to CDN  when deploying to production environment,just set 
 
 **Echarts地图数据文件(Echarts map javascript file)**的仓库名称或路径。可支持仓库名称如下表：
 
-| 名称     | url格式                                  |
+| 名称        | url格式                                    |
 | --------- | ---------------------------------------- |
 | echarts   | http://echarts.baidu.com/asset/map/js    |
 | pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
