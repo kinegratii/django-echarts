@@ -40,6 +40,12 @@ class Command(BaseCommand):
     def download_js_file(self, remote_url, local_path, **kwargs):
         self.stdout.write('Download file from {0}'.format(remote_url))
         self.stdout.write('Save file to {0}'.format(local_path))
-        with six.moves.urllib.request.urlopen(remote_url) as response, open(local_path, 'w+b') as out_file:
+        rsp = six.moves.urllib.request.Request(
+            remote_url,
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36'
+            }
+        )
+        with six.moves.urllib.request.urlopen(rsp) as response, open(local_path, 'w+b') as out_file:
             data = response.read()
             out_file.write(data)
