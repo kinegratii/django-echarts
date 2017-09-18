@@ -2,6 +2,11 @@
 
 ## Dev
 
+- 配置模块
+    - DJANGO_ECHARTS_SETTING更名为DJANGO_ECHARTS_SETTINGS
+- js下载工具
+    - 增加请求头部
+
 ## v0.1.2 (20170918)
 
 - 视图层

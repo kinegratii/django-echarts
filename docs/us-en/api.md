@@ -106,9 +106,11 @@ The repository which provides javascript files.Note that the string value MUST s
 
 ## Project Settings Access
 
-In your code, you should use the module variable `django_echarts.utils.DJANGO_ECHARTS_SETTING` to access the project's settings and their related attributes.It is a instance of `django_echarts.utils.SettingsStore`.
+In your code, you should use the module variable `django_echarts.utils.DJANGO_ECHARTS_SETTINGS` to access the project's settings and their related attributes.It is a instance of `django_echarts.utils.SettingsStore`.
 
-You can also access using `DJANGO_ECHARTS_SETTING['foo']` or `DJANGO_ECHARTS_SETTING.foo`.
+You can also access using `DJANGO_ECHARTS_SETTINGS['foo']` or `DJANGO_ECHARTS_SETTINGS.foo`.
+
+> In old version (prior to v0.1.3), you should use `DJANGO_ECHARTS_SETTING` instead of `DJANGO_ECHARTS_SETTINGS`.`DJANGO_ECHARTS_SETTING` will be removed in 0.2.X.
 
 ### SettingsStore
 

@@ -106,7 +106,9 @@ If you want to switch to CDN  when deploying to production environment,just set 
 
 ## 项目配置访问(Project Settings Access)
 
-在代码中，使用模块全局变量  `django_echarts.utils.DJANGO_ECHARTS_SETTING` 访问项目的一些配置及其相关属性。该变量是类 `SettingsStore` 的一个实例。
+在代码中，使用模块全局变量  `django_echarts.utils.DJANGO_ECHARTS_SETTINGS` 访问项目的一些配置及其相关属性。该变量是类 `SettingsStore` 的一个实例。
+
+> 在v0.1.3之前，应该使用 `DJANGO_ECHARTS_SETTING` 而不是 `DJANGO_ECHARTS_SETTINGS`。`DJANGO_ECHARTS_SETTING` 将在0.2.X移除。
 
 ### SettingsStore
 

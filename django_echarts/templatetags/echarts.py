@@ -10,7 +10,7 @@ from django.utils import six
 from django.utils.html import mark_safe
 from pyecharts.base import Base, json_dumps
 
-from ..utils import DJANGO_ECHARTS_SETTING
+from ..utils import DJANGO_ECHARTS_SETTINGS
 
 register = template.Library()
 
@@ -45,7 +45,7 @@ def echarts_js_dependencies(context, *args):
         elif isinstance(option_or_name, six.text_type):
             if option_or_name not in links:
                 links.append(option_or_name)
-    links = map(DJANGO_ECHARTS_SETTING.host_store.generate_js_link, links)
+    links = map(DJANGO_ECHARTS_SETTINGS.host_store.generate_js_link, links)
 
     return template.Template(
         '<br/>'.join(['<script src="{link}"></script>'.format(link=l) for l in links])

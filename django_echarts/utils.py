@@ -77,4 +77,6 @@ def get_django_echarts_settings():
 
 
 # The public API for project's settings
-DJANGO_ECHARTS_SETTING = SimpleLazyObject(get_django_echarts_settings)
+DJANGO_ECHARTS_SETTINGS = SimpleLazyObject(get_django_echarts_settings)
+# Old alias,it will be removed from 0.2.X
+DJANGO_ECHARTS_SETTING = DJANGO_ECHARTS_SETTINGS
