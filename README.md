@@ -2,37 +2,37 @@
 
 ![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![python27](https://img.shields.io/badge/Python-2.7+-blue.svg) ![python35](https://img.shields.io/badge/Python-3.5+-blue.svg) ![django18](https://img.shields.io/badge/Django-1.8+-blue.svg)
 
-A intergration for [Echarts](http://echarts.baidu.com/index.html) and [Django](https://www.djangoproject.com) based on [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) .
+基于 [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) 的 [Echarts](http://echarts.baidu.com/index.html)和 [Django](https://www.djangoproject.com) 的整合库。
 
-> This project is on the developement state, do not use in the production environment.
+> 目前该项目还处于开发状态(Alpha)，不建议在生产环境中使用。
 
-## Overview
+## 概述
 
-django-echarts provides a set of shortcut tool for django intergration.These are:
+django-echarts提供了一系列用于整合的功能。主要有：
 
-- Simple data builder for echarts
-- Renders using frontend ajax or templates
-- Javascript host manager
-- Some utils functions and classes
+- 数据构建工具
+- 基于前端或后端的数据渲染
+- js静态文件管理
+- 常用的命令工具
 
-django-echarts covers the following django components.You should understand them before using django-echarts.
+django-echarts使用到了Django常用部件，在使用之前应当对其有所了解。包括：
 
-- View mixin
-- template tags
-- context processors
-- Management commands
+- 视图类(Class-Base View)
+- 模板标签(Template Tag)
+- 上下文处理器(Context Processor)
+- 管理命令(Manage Command)
 
-django-echarts works on Python2.7 / Python3.5+ and Django1.8+,and Python3 is **Strongly** recommended.
+django-echarts支持Python2.7/3.5，需Django 1.8以上。
 
-## Installation
+## 安装
 
-You can install *django-echarts* from pip.
+可以从pypi安装
 
 ```
 pip install django-echarts
 ```
 
-or build from source code.
+或者使用源码构建
 
 ```
 git clone https://github.com/kinegratii/django-echarts.git
@@ -40,9 +40,9 @@ cd django-echarts
 python setup.py install
 ```
 
-## Setup
+## 基本使用
 
-1 Add django_charts app to your `INSTALL_APPS`.
+1 添加 django_echarts包到项目配置模块的 `INSTALL_APPS`列表。
 
 ```python
 INSTALL_APPS = (
@@ -52,7 +52,7 @@ INSTALL_APPS = (
 )
 ```
 
-2 Custom your settings with `DJANGO_ECHARTS` variable in the settings module.e.g
+2 根据实际场景增加配置变量 `DJANGO_ECHARTS`，以重写某些设置项。
 
 ```python
 DJANGO_ECHARTS = {
@@ -60,28 +60,26 @@ DJANGO_ECHARTS = {
 }
 ```
 
-Or you my not define the variable and use all default values.
+或者全部采用默认值。
 
-Read *API* document to see more details.
-
-## Document
+## 文档
 
 - [English Document](docs/us-en/api.md)
 - [中文文档](docs/zh-cn/api.md)
 
-## Example
+## 示例
 
-The example project is under *example* directory.
+示例项目请参考 example 文件夹。
 
 ```shell
 cd example
 python manage.py runserver 127.0.0.1:8000
 ```
 
-Access the web url  http://127.0.0.1:8000 , the screencut is the following picture.
+访问本地地址： http://127.0.0.1:8000 ，示例运行结果
 
 ![Demo](images/demo1.gif)
 
-## License
+## 开源协议
 
-The project is under the MIT license, Issues & Pull requests are welcome.
+项目基于 MIT开源协议，欢迎提交 Issue & Pull request 。
