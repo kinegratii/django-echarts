@@ -80,7 +80,7 @@ python manage.py runserver 127.0.0.1:8000
 
 Access the web url  http://127.0.0.1:8000 , the screencut is the following picture.
 
-![Demo](images/demo1.gif)
+![Demo](docs/images/demo1.gif)
 
 ## License
 

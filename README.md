@@ -17,14 +17,18 @@ django-echarts提供了一系列用于整合的功能。主要有：
 
 django-echarts使用到了Django常用部件，在使用之前应当对其有所了解。包括：
 
-- 视图类(Class-Base View)
+- 项目配置(Settings)
+- 视图类(Class-Based View)
 - 模板标签(Template Tag)
 - 上下文处理器(Context Processor)
 - 管理命令(Manage Command)
 
-django-echarts支持Python2.7/3.5，需Django 1.8以上。
-
 ## 安装
+
+django-echarts的安装要求为：
+
+- Python2.7+或者3.5+
+- Django 1.8+
 
 可以从pypi安装
 
@@ -40,7 +44,7 @@ cd django-echarts
 python setup.py install
 ```
 
-## 基本使用
+## 快速使用
 
 1 添加 django_echarts包到项目配置模块的 `INSTALL_APPS`列表。
 
@@ -52,7 +56,7 @@ INSTALL_APPS = (
 )
 ```
 
-2 根据实际场景增加配置变量 `DJANGO_ECHARTS`，以重写某些设置项。
+2 根据实际场景需要设置一些配置参数，这些参数必须定义在项目模块中一个名为 `DJANGO_ECHARTS` 的字典里。
 
 ```python
 DJANGO_ECHARTS = {
@@ -61,6 +65,35 @@ DJANGO_ECHARTS = {
 ```
 
 或者全部采用默认值。
+
+3 根据渲染方式（前端或者后端方式）编写视图类，模板页面和路由。
+
+前端渲染方式
+
+```python
+def create_simple_bar():
+    bar = Bar("我的第一个图表", "这里是副标题")
+    bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
+    return bar
+
+
+class SimpleBarView(EChartsFrontView):
+    def get_echarts_instance(self, **kwargs):
+        return create_simple_bar()
+      
+```
+
+后端渲染方式
+
+```python
+ class BackendEChartsTemplate(EChartsBackendView):
+    template_name = 'backend_charts.html'
+
+    def get_echarts_instance(self, *args, **kwargs):
+        return create_simple_bar()
+```
+
+
 
 ## 文档
 
@@ -78,7 +111,7 @@ python manage.py runserver 127.0.0.1:8000
 
 访问本地地址： http://127.0.0.1:8000 ，示例运行结果
 
-![Demo](images/demo1.gif)
+![Demo](docs/images/demo1.gif)
 
 ## 开源协议
 
