@@ -117,7 +117,7 @@ class HostStore(HostMixin):
         self._host_dict.update({('map', map_name_or_host): host})
         self._default_map_name = map_name_or_host
 
-    def generate_js_link(self, js_name, js_host=None, only_lookup=False, **kwargs):
+    def get_host(self, js_name, js_host=None, only_lookup=False, **kwargs):
         if is_lib_or_map_js(js_name):
             lookup = 'lib', js_host or self._default_lib_name
         else:
@@ -134,4 +134,8 @@ class HostStore(HostMixin):
                     raise ValueError('No host found in onlyLookup mode.')
                 else:
                     host = Host(js_host, self._context)
+        return host
+
+    def generate_js_link(self, js_name, js_host=None, only_lookup=False, **kwargs):
+        host = self.get_host(js_name, js_host=js_host, only_lookup=only_lookup, **kwargs)
         return host.generate_js_link(js_name)
