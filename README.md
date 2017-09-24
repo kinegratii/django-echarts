@@ -1,6 +1,6 @@
 # django-echarts
 
-![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![Development](https://img.shields.io/badge/Development-Alpha-orange.svg)![python27](https://img.shields.io/badge/Python-2.7+-blue.svg) ![python35](https://img.shields.io/badge/Python-3.5+-blue.svg) ![django18](https://img.shields.io/badge/Django-1.8+-blue.svg)
+![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![Development](https://img.shields.io/badge/Development-Alpha-orange.svg) ![python27](https://img.shields.io/badge/Python-2.7+-blue.svg) ![python35](https://img.shields.io/badge/Python-3.5+-blue.svg) ![django18](https://img.shields.io/badge/Django-1.8+-blue.svg)
 
 [English README](README_us-en.md)
 

@@ -51,7 +51,7 @@ Echarts的版本字符串，如 `3.7.0`，大多数CDN的路径是需要版本�
 
 **Echarts库文件(Echarts libary javascript file)** 的仓库名称或地址。以下均是有效的设置值：
 
-- CDN名称: 包括了 `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts`等四个。
+- CDN名称: 包括了 `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts` / `echarts`等5个。
 - 代表实际url的格式化字符串，可使用的变量有以下几个，注意大小写区别：
     - STATIC_URL: `settings.STATIC_URL`的值，如果不提供 `settings.STATIC_URL`，将不会传递这个值。
     - echarts_version: 上面所述的版本字符串。
@@ -64,34 +64,11 @@ Echarts的版本字符串，如 `3.7.0`，大多数CDN的路径是需要版本�
 | npmcdn    | [https://unpkg.com/echarts@{echarts_version}/dist](https://unpkg.com/echarts@{echarts_version}/dist) |
 | bootcdn   | [https://cdn.bootcss.com/echarts/{echarts_version}](https://cdn.bootcss.com/echarts/{echarts_version}) |
 | pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
-
-For example,if use  local static file`/static/echarts/echarts.min.js`,follow thesse steps:
-
-Step 1:Config the settings module
-
-```python
-STATIC_URL = '/static/'
-
-DJANGO_ECHARTS = {
-    'js_host':'{STATIC_URL}echarts'
-}
-```
-
-Step 2:Use template tag grammar `{% echarts_js_dependencies line %}` will produce these code in the template html.
-
-```html
-<script src="/static/echarts/echarts.min.js"></script>
-```
-
-If you want to switch to CDN  when deploying to production environment,just set *lib_js_host* to a CDN name(e.g bootcdn).
-
-```html
-<script src="https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js"></script>
-```
+| echarts | http://echarts.baidu.com/dist |
 
 ### map_js_host
 
-**Echarts地图数据文件(Echarts map javascript file)**的仓库名称或路径。可支持仓库名称如下表：
+**Echarts地图数据文件(Echarts map javascript file)** 的仓库名称或路径。可支持仓库名称如下表：
 
 | 名称        | url格式                                    |
 | --------- | ---------------------------------------- |
@@ -106,15 +83,27 @@ If you want to switch to CDN  when deploying to production environment,just set 
 
 ## 项目配置访问(Project Settings Access)
 
-在代码中，使用模块全局变量  `django_echarts.utils.DJANGO_ECHARTS_SETTINGS` 访问项目的一些配置及其相关属性。该变量是类 `SettingsStore` 的一个实例。
+### DJANGO_ECHARTS_SETTINGS
 
-> 在v0.1.3之前，应该使用 `DJANGO_ECHARTS_SETTING` 而不是 `DJANGO_ECHARTS_SETTINGS`。`DJANGO_ECHARTS_SETTING` 将在0.2.X移除。
+`django_echarts.utils.DJANGO_ECHARTS_SETTINGS`
+
+在代码中，使用模块全局变量 `DJANGO_ECHARTS_SETTINGS` 访问项目的一些配置及其相关属性。该变量是类 `SettingsStore` 的一个实例。
+
+> 从v0.1.3起，该变量 `DJANGO_ECHARTS_SETTING` 重名为 `DJANGO_ECHARTS_SETTINGS`。原有变量标识符 `DJANGO_ECHARTS_SETTING` 将在0.2.X移除。
+
+### DJANGO_ECHARTS_SETTING
+
+`DJANGO_ECHARTS_SETTING`的别名，将在v0.2.x后移除。
 
 ### SettingsStore
 
 `django_echarts.utils.SettingsStore(**kwargs)`
 
 项目配置访问类
+
+**host_store**
+
+项目中的js仓库管理类，使用settings中的设置。
 
 ## 模板标签(Template Tags)
 
@@ -182,7 +171,7 @@ If you want to switch to CDN  when deploying to production environment,just set 
 
 ## 命令工具(Tool Commands)
 
-这些命令可以从  *manage.py* 执行，支持其默认的参数， 详细可参考 [https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options](https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options)。
+这些命令可以从  *manage.py* 执行，支持其默认的参数， 详细可参考 [django-admin#default-options](https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options)。
 
 ```
 python manage.py COMMAND Foo1 Foo2

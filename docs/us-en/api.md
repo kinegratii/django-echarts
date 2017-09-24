@@ -51,7 +51,7 @@ The version string of echarts which you are using. e.g `3.7.0`.It is used for th
 
 The repository which project provides **Echarts libary javascript file**.The following values are available:
 
-- A CDN name: valid choices are `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts`.
+- A CDN name: valid choices are `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts` / `echarts`.
 - A format string representing the host url,which supports the following CASE-SENSITIVE fields.
     - STATIC_URL: the value of `settings.STATIC_URL`. If you do not provide the value of `settings.STATIC_URL` ,it will not pass to context.
     - echarts_version: the version of echarts.
@@ -64,6 +64,7 @@ This table list the CDN names what *lib_js_host* supports.
 | npmcdn    | [https://unpkg.com/echarts@{echarts_version}/dist](https://unpkg.com/echarts@{echarts_version}/dist) |
 | bootcdn   | [https://cdn.bootcss.com/echarts/{echarts_version}](https://cdn.bootcss.com/echarts/{echarts_version}) |
 | pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
+| echarts | http://echarts.baidu.com/dist |
 
 For example,if use  local static file`/static/echarts/echarts.min.js`,follow thesse steps:
 

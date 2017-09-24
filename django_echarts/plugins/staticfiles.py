@@ -8,7 +8,8 @@ ECHARTS_LIB_HOSTS = {
     'pyecharts': 'https://chfw.github.io/jupyter-echarts/echarts',  # Point to pyecharts.constants.DEFAULT_HOST
     'cdnjs': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}',
     'npmcdn': 'https://unpkg.com/echarts@{echarts_version}/dist',
-    'bootcdn': 'https://cdn.bootcss.com/echarts/{echarts_version}'
+    'bootcdn': 'https://cdn.bootcss.com/echarts/{echarts_version}',
+    'echarts': 'http://echarts.baidu.com/dist'
 }
 
 ECHARTS_LIB_NAMES = [
