@@ -1,6 +1,6 @@
 # API
 
-目前项目还在开发当中，文档所描述的API依旧处于不稳定状态，随时可能改变。
+本文档描述了django-echarts项目的API信息。
 
 ## 视图(Views)
 
@@ -16,7 +16,7 @@
 
 `get_echarts_instance(self, *args, **kwargs)`
 
-接口函数，此接口需要返回一个用于图表实例，通常是 `pyecharts.base.Base` 及其子类。
+接口函数，此接口需要返回一个用于图表实例，通常是 `pyecharts.base.Base` 的子类实例。
 
 ### EChartsFrontendView
 
@@ -45,7 +45,7 @@
 
 ### echarts_version
 
-Echarts的版本字符串，如 `3.7.0`，大多数CDN的路径是需要版本号进行区分的。
+百度Echarts的版本字符串，如 `3.7.0`，大多数CDN的路径包含了字符串。
 
 ### lib_js_host
 
@@ -64,7 +64,7 @@ Echarts的版本字符串，如 `3.7.0`，大多数CDN的路径是需要版本�
 | npmcdn    | [https://unpkg.com/echarts@{echarts_version}/dist](https://unpkg.com/echarts@{echarts_version}/dist) |
 | bootcdn   | [https://cdn.bootcss.com/echarts/{echarts_version}](https://cdn.bootcss.com/echarts/{echarts_version}) |
 | pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
-| echarts | http://echarts.baidu.com/dist |
+| echarts   | http://echarts.baidu.com/dist            |
 
 ### map_js_host
 
@@ -79,7 +79,7 @@ Echarts的版本字符串，如 `3.7.0`，大多数CDN的路径是需要版本�
 
 ### local_host
 
-本地仓库存储的路径 `settings.STATIC_URL`.
+本地仓库存储的路径，必须以 `settings.STATIC_URL` 的值开头。
 
 ## 项目配置访问(Project Settings Access)
 
@@ -87,13 +87,15 @@ Echarts的版本字符串，如 `3.7.0`，大多数CDN的路径是需要版本�
 
 `django_echarts.utils.DJANGO_ECHARTS_SETTINGS`
 
-在代码中，使用模块全局变量 `DJANGO_ECHARTS_SETTINGS` 访问项目的一些配置及其相关属性。该变量是类 `SettingsStore` 的一个实例。
+> v0.1.3新增
 
-> 从v0.1.3起，该变量 `DJANGO_ECHARTS_SETTING` 重名为 `DJANGO_ECHARTS_SETTINGS`。原有变量标识符 `DJANGO_ECHARTS_SETTING` 将在0.2.X移除。
+在代码中，应当使用模块全局变量 `DJANGO_ECHARTS_SETTINGS` 访问项目的一些配置及其相关属性。该变量是类 `SettingsStore` 的一个实例。
 
 ### DJANGO_ECHARTS_SETTING
 
-`DJANGO_ECHARTS_SETTING`的别名，将在v0.2.x后移除。
+> 已废弃
+
+`DJANGO_ECHARTS_SETTINGS`的别名，将在v0.2后移除。
 
 ### SettingsStore
 

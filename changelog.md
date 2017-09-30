@@ -2,8 +2,11 @@
 
 ## Dev
 
+## v0.1.3 (20170930)
+
 - 配置模块
-    - DJANGO_ECHARTS_SETTING更名为DJANGO_ECHARTS_SETTINGS
+    - 新增配置访问变量别名DJANGO_ECHARTS_SETTINGS
+    - 废弃DJANGO_ECHARTS_SETTING
 - js下载工具
     - 增加请求头部
 

@@ -1,6 +1,6 @@
 # API
 
-The API is under the developement, and any API has been NOT STABLE yet.
+This document describes the  API for django-echarts.
 
 ## Views
 
@@ -64,31 +64,7 @@ This table list the CDN names what *lib_js_host* supports.
 | npmcdn    | [https://unpkg.com/echarts@{echarts_version}/dist](https://unpkg.com/echarts@{echarts_version}/dist) |
 | bootcdn   | [https://cdn.bootcss.com/echarts/{echarts_version}](https://cdn.bootcss.com/echarts/{echarts_version}) |
 | pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
-| echarts | http://echarts.baidu.com/dist |
-
-For example,if use  local static file`/static/echarts/echarts.min.js`,follow thesse steps:
-
-Step 1:Config the settings module
-
-```python
-STATIC_URL = '/static/'
-
-DJANGO_ECHARTS = {
-    'js_host':'{STATIC_URL}echarts'
-}
-```
-
-Step 2:Use template tag grammar `{% echarts_js_dependencies line %}` will produce these code in the template html.
-
-```html
-<script src="/static/echarts/echarts.min.js"></script>
-```
-
-If you want to switch to CDN  when deploying to production environment,just set *lib_js_host* to a CDN name(e.g bootcdn).
-
-```html
-<script src="https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js"></script>
-```
+| echarts   | http://echarts.baidu.com/dist            |
 
 ### map_js_host
 
@@ -107,11 +83,21 @@ The repository which provides javascript files.Note that the string value MUST s
 
 ## Project Settings Access
 
+### DJANGO_ECHARTS_SETTINGS
+
+`django_echarts.utils.DJANGO_ECHARTS_SETTINGS`
+
+> New in v0.1.3
+
 In your code, you should use the module variable `django_echarts.utils.DJANGO_ECHARTS_SETTINGS` to access the project's settings and their related attributes.It is a instance of `django_echarts.utils.SettingsStore`.
 
 You can also access using `DJANGO_ECHARTS_SETTINGS['foo']` or `DJANGO_ECHARTS_SETTINGS.foo`.
 
-> In old version (prior to v0.1.3), you should use `DJANGO_ECHARTS_SETTING` instead of `DJANGO_ECHARTS_SETTINGS`.`DJANGO_ECHARTS_SETTING` will be removed in 0.2.X.
+### DJANGO_ECHARTS_SETTING
+
+> Deprecated
+
+The alias for `DJANGO_ECHARTS_SETTINGS`, and will be removed in v0.2 . 
 
 ### SettingsStore
 
