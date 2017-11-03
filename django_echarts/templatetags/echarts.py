@@ -26,10 +26,10 @@ def echarts_options(echarts):
 @register.simple_tag(takes_context=True)
 def echarts_container(context, echarts):
     return template.Template(
-        '<div id="{chart_id}" style="width:{width}px;height:{height}px;"></div>'.format(
-            chart_id=echarts._chart_id,
-            width=echarts._width,
-            height=echarts._height
+        '<div id="{chart_id}" style="width:{width};height:{height};"></div>'.format(
+            chart_id=echarts.chart_id,
+            width=echarts.width,
+            height=echarts.height
         )
     ).render(context)
 
@@ -62,8 +62,6 @@ def echarts_js_content(*echarts_list):
         if not isinstance(e, Base):
             raise TypeError('A pyecharts.base.Base object is required.')
         e.option_content = convert_to_options_content(e)
-        if not hasattr(e, 'chart_id'):
-            e.chart_id = e._chart_id
     return {
         'echarts_list': echarts_list
     }
