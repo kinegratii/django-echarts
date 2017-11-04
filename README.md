@@ -151,7 +151,7 @@ python manage.py runserver 127.0.0.1:8000
 
 访问本地地址： http://127.0.0.1:8000 ，示例运行结果
 
-![Demo](docs/images/demo1.gif)
+![Demo](docs/images/django-echarts-demo.gif)
 
 ## 开源协议
 

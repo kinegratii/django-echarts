@@ -5,6 +5,7 @@
 
 from __future__ import unicode_literals
 
+import warnings
 from django import template
 from django.utils import six
 from django.utils.html import mark_safe
@@ -17,6 +18,7 @@ register = template.Library()
 
 @register.inclusion_tag('tags/echarts.html')
 def echarts_options(echarts):
+    warnings.warn('The template tag echarts_options is deprecated.', DeprecationWarning)
     assert isinstance(echarts, Base), 'A pyecharts.base.Base object is required.'
     return {
         'echarts_options': echarts.render_embed()
@@ -25,11 +27,17 @@ def echarts_options(echarts):
 
 @register.simple_tag(takes_context=True)
 def echarts_container(context, echarts):
+    def ex_wh(x):
+        if isinstance(x, (int, float)):
+            return '{}px'.format(x)
+        else:
+            return x
+
     return template.Template(
         '<div id="{chart_id}" style="width:{width};height:{height};"></div>'.format(
             chart_id=echarts.chart_id,
-            width=echarts.width,
-            height=echarts.height
+            width=ex_wh(echarts.width),
+            height=ex_wh(echarts.height)
         )
     ).render(context)
 
@@ -56,12 +64,32 @@ def convert_to_options_content(echarts):
     return mark_safe(json_dumps(echarts.options, indent=4))
 
 
-@register.inclusion_tag('tags/echarts_js_content.html')
-def echarts_js_content(*echarts_list):
-    for e in echarts_list:
-        if not isinstance(e, Base):
-            raise TypeError('A pyecharts.base.Base object is required.')
-        e.option_content = convert_to_options_content(e)
-    return {
-        'echarts_list': echarts_list
-    }
+def build_echarts_initial_fragment(*charts):
+    contents = []
+    for chart in charts:
+        content_fmt = '''
+          var myChart_{chart_id} = echarts.init(document.getElementById('{chart_id}'));
+          var option_{chart_id} = {options};
+          myChart_{chart_id}.setOption(option_{chart_id});
+          '''
+        js_content = content_fmt.format(
+            chart_id=chart.chart_id,
+            options=json_dumps(chart.options, indent=4)
+        )
+        contents.append(js_content)
+        return '\n'.join(contents)
+
+
+@register.simple_tag(takes_context=True)
+def echarts_js_content(context, *echarts):
+    contents = build_echarts_initial_fragment(*echarts)
+    return template.Template(
+        '<script type="text/javascript">\n{}\n</script>'.format(contents)
+    ).render(context)
+
+
+@register.simple_tag(takes_context=True)
+def echarts_js_content_wrap(context, *charts):
+    return template.Template(
+        build_echarts_initial_fragment(*charts)
+    ).render(context)
