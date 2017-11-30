@@ -4,7 +4,10 @@
 
 [English README](README_us-en.md)
 
+
 基于 [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) 的 [Echarts](http://echarts.baidu.com/index.html)和 [Django](https://www.djangoproject.com) 的整合库。
+
+> ### 目前本人正在参与 [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) 新版功能开发，本项目将在 pyecharts 新版本发布后有重大更新，敬请期待。
 
 > 目前该项目还处于开发状态(Alpha)，不建议在生产环境中使用。
 
