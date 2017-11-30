@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-from django_echarts.plugins.staticfiles import HostStore, process_js_list
+from django_echarts.plugins.staticfiles import HostStore
 
 
 class ATest(unittest.TestCase):
@@ -39,38 +39,3 @@ class ATest(unittest.TestCase):
             hs.generate_js_link('fujian', 'amap')
         )
 
-
-class JsMergeTestCase(unittest.TestCase):
-    def test_merge_js(self):
-        self.assertListEqual(
-            ['echarts', 'fujian'],
-            process_js_list('echarts', 'fujian')
-        )
-        self.assertListEqual(
-            ['echarts.min', 'fujian'],
-            process_js_list('echarts', 'fujian', minify=True)
-        )
-        self.assertListEqual(
-            ['echarts', 'fujian'],
-            process_js_list('echarts', 'echarts', 'fujian')
-        )
-        self.assertListEqual(
-            ['echarts', 'fujian'],
-            process_js_list('echarts', 'echarts.min', 'fujian')
-        )
-        self.assertListEqual(
-            ['echarts.min', 'fujian'],
-            process_js_list('echarts', 'echarts', 'fujian', minify=True)
-        )
-        self.assertListEqual(
-            ['echarts.min', 'fujian'],
-            process_js_list('echarts', 'echarts.min', 'fujian', minify=True)
-        )
-        self.assertListEqual(
-            ['echarts.min', 'fujian'],
-            process_js_list('echarts', ['echarts.min', 'fujian'], minify=True)
-        )
-        self.assertListEqual(
-            ['echarts', 'fujian'],
-            process_js_list('echarts', ['echarts.min', 'fujian'])
-        )

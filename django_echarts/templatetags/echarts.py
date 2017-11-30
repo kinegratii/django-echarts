@@ -9,7 +9,8 @@ import warnings
 from django import template
 from django.utils import six
 from django.utils.html import mark_safe
-from pyecharts.base import Base, json_dumps
+from pyecharts.base import Base
+from pyecharts.utils import json_dumps
 
 from ..utils import DJANGO_ECHARTS_SETTINGS
 
