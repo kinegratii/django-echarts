@@ -137,7 +137,13 @@
 
 `django_echarts.templates.echarts.echarts_js_content(*echarts_list)`
 
-渲染图表初始js代码，支持多图表。
+渲染图表初始js代码，支持多图表。包含首尾的  `<script></script>` 标签。
+
+### echarts_js_content_wrap
+
+`django_echarts.templates.echarts.echarts_js_content_wrap(*echarts_list)`
+
+渲染图表初始js代码，支持多图表。不包含首尾的  `<script></script>` 标签。
 
 ## Plugins
 
@@ -171,7 +177,7 @@
 
 选取一个或多个字段组成新的列表。
 
-## 命令工具(Tool Commands)
+## 项目管理工具(Project Manage Commands)
 
 这些命令可以从  *manage.py* 执行，支持其默认的参数， 详细可参考 [django-admin#default-options](https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options)。
 
