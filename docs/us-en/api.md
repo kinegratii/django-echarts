@@ -137,6 +137,12 @@ Render javascript script nodes for echarts,custom name.It is a enhance version o
 
 Render javascript node for initial code, multiple echarts will use the same `script` html node.
 
+### echarts_js_content_wrap
+
+`django_echarts.templates.echarts.echarts_js_content_wrap(*echarts_list)`
+
+Render javascript node for initial code, multiple echarts will use the same `script` html node.
+
 ## Plugins
 
 *django-echarts* provides some plugins to enhance features.
@@ -169,7 +175,7 @@ A static method to Convert the sequence with the dictionary and tuple type into 
 
 Pick fields from a iterable.
 
-## Tool Commands
+## Project Manage Commands
 
 These command can be used from *manage.py* script,and they alse support [default options](https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options).
 
