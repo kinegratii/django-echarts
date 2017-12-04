@@ -115,12 +115,6 @@
 {% laod echarts %}
 ```
 
-### echarts_options
-
-`django_echarts.templatetags.echarts.echarts_options(echarts)`
-
-渲染图表js代码
-
 ### echarts_container
 
 `django_echarts.templatetags.echarts.echarts_container(echarts_instance)`

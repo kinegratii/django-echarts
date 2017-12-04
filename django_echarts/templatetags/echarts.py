@@ -45,16 +45,22 @@ def echarts_container(context, echarts):
 
 @register.simple_tag(takes_context=True)
 def echarts_js_dependencies(context, *args):
-    links = []
-    for option_or_name in args:
-        if isinstance(option_or_name, Base):
-            for js_name in option_or_name.get_js_dependencies():
-                if js_name not in links:
-                    links.append(js_name)
-        elif isinstance(option_or_name, six.text_type):
-            if option_or_name not in links:
-                links.append(option_or_name)
-    links = map(DJANGO_ECHARTS_SETTINGS.host_store.generate_js_link, links)
+    dependencies = []
+
+    def _add(_x):
+        if _x not in dependencies:
+            dependencies.append(_x)
+
+    for a in args:
+        if hasattr(a, 'js_dependencies'):
+            for d in a.js_dependencies:
+                _add(d)
+        elif isinstance(a, six.text_type):
+            _add(a)
+    if len(dependencies) > 1:
+        dependencies.remove('echarts')
+        dependencies = ['echarts'] + list(dependencies)
+    links = map(DJANGO_ECHARTS_SETTINGS.host_store.generate_js_link, dependencies)
 
     return template.Template(
         '<br/>'.join(['<script src="{link}"></script>'.format(link=l) for l in links])
