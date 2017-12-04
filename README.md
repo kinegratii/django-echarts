@@ -2,31 +2,19 @@
 
 ![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![Development](https://img.shields.io/badge/Development-Alpha-orange.svg) ![python27](https://img.shields.io/badge/Python-2.7+-blue.svg) ![python35](https://img.shields.io/badge/Python-3.5+-blue.svg) ![django18](https://img.shields.io/badge/Django-1.8+-blue.svg)
 
-[English README](README_us-en.md)
 
+django-echarts 是一个 [Echarts](http://echarts.baidu.com/index.html) 整合的  [Django](https://www.djangoproject.com) App，使用 [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) 的作为图表构建库。
 
-基于 [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) 的 [Echarts](http://echarts.baidu.com/index.html)和 [Django](https://www.djangoproject.com) 的整合库。
-
-> ### 目前本人正在参与 [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) 新版功能开发，本项目将在 pyecharts 新版本发布后有重大更新，敬请期待。
-
-> 目前该项目还处于开发状态(Alpha)，不建议在生产环境中使用。
+> 目前该项目还处于测试状态(Beta)，欢迎试用和提交 issue & PR 。
 
 ## 概述
 
-django-echarts是一个将pyecharts整合到Django开发的应用包(Django App)。主要有：
+django-echarts 主要提供了以下的内容：
 
 - 数据构建工具
 - 基于前端或后端的数据渲染
 - js静态文件管理
 - 常用的命令工具
-
-django-echarts使用到了Django常用部件，在使用之前应当对其有所了解。包括：
-
-- 项目配置(Settings)
-- 视图类(Class-Based View)
-- 模板标签(Template Tag)
-- 上下文处理器(Context Processor)
-- 管理命令(Manage Command)
 
 ## 安装
 
@@ -34,16 +22,17 @@ django-echarts的安装要求为：
 
 - Python2.7+或者3.5+
 - Django 1.8+
+- pyecharts 0.3.0+
 
 可以从pypi安装
 
-```
+```shell
 pip install django-echarts
 ```
 
 或者使用源码构建
 
-```
+```shell
 git clone https://github.com/kinegratii/django-echarts.git
 cd django-echarts
 python setup.py install

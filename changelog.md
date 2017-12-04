@@ -3,10 +3,13 @@
 ## Dev
 
 - 核心
-    - 更新pyecharts到v0.2.7
+    - 更新项目到Beta 状态
+    - 更新pyecharts到v0.3.0
 - 模板标签
     - 增加 `echarts_js_content_wrap` 模板标签
     - 改善内部逻辑
+- 文档
+    - 补充部分文档
 
 ## v0.1.3 (20170930)
 

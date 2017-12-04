@@ -1,7 +1,7 @@
 from setuptools import setup
 
 lib_classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python :: 2",
     "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
@@ -38,5 +38,5 @@ setup(
     license='MIT',
     author='Kinegratii',
     author_email='kinegratii@gmail.com',
-    description='A echarts library for django based on chenjiandongx/pyecharts .'
+    description='A django app for Echarts integration with pyecharts as chart builder. '
 )
