@@ -2,38 +2,28 @@
 
 ## Dev
 
-- 核心
-    - 更新项目到Beta 状态
-    - 更新pyecharts到v0.3.0
-- 模板标签
-    - 增加 `echarts_js_content_wrap` 模板标签
-    - 改善内部逻辑
-- 文档
-    - 补充部分文档
+- 更新项目到Beta 状态
+- 更新pyecharts 依赖到 v0.3.0
+- 增加 `echarts_js_content_wrap` 模板标签
+- 改善模板标签内部逻辑
+- 补充部分文档
 
 ## v0.1.3 (20170930)
 
-- 配置模块
-    - 新增配置访问变量别名DJANGO_ECHARTS_SETTINGS
-    - 废弃DJANGO_ECHARTS_SETTING
-- js下载工具
-    - 增加请求头部
+- 新增配置访问变量别名DJANGO_ECHARTS_SETTINGS
+- 废弃DJANGO_ECHARTS_SETTING
+- js下载工具增加请求头部
 
 ## v0.1.2 (20170918)
 
-- 视图层
-    - 重新组织包结构，区分前后端渲染方式
-    - 统一视图类接口
-- js管理插件
-    - 增加 `process_js_list` js合并函数
-- js下载工具
-    - 增加多文件下载支持
-- 文档
-    - 增加中文版文档
-- 测试构建
-    - 整理部分测试代码
-    - 增加Django分类标记
-    - 修正Django包依赖名称
+- 重新组织包结构，区分前后端渲染方式
+- 统一视图类接口
+- 增加 `process_js_list` js合并函数
+- 增加多文件下载支持
+- 增加中文版文档
+- 整理部分测试代码
+- 增加Django分类标记
+- 修正Django包依赖名称
 
 ## v0.1.1 (20170911)
 

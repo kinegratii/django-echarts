@@ -6,9 +6,9 @@
 from __future__ import unicode_literals
 
 import warnings
+
 from django import template
 from django.utils import six
-from django.utils.html import mark_safe
 from pyecharts.base import Base
 from pyecharts.utils import json_dumps
 
@@ -65,10 +65,6 @@ def echarts_js_dependencies(context, *args):
     return template.Template(
         '<br/>'.join(['<script src="{link}"></script>'.format(link=l) for l in links])
     ).render(context)
-
-
-def convert_to_options_content(echarts):
-    return mark_safe(json_dumps(echarts.options, indent=4))
 
 
 def build_echarts_initial_fragment(*charts):
