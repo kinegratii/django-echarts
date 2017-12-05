@@ -147,7 +147,7 @@
 
 渲染图表初始js代码，支持多图表。不包含首尾的  `<script></script>` 标签。
 
-## Plugins
+## 插件(Plugins)
 
 *django-echarts* 提供了一些插件用于辅助功能。
 
@@ -162,6 +162,12 @@
 `django_echarts.plugins.staticfiles.HostStore(context=None, echarts_lib_name_or_host=None, echarts_map_name_or_host=None, **kwargs)`
 
 一个仓库的集合，包含了若干个Host，和Host一样也能构建路径。
+
+### Jinja2Environment
+
+`django_echarts.plugins.jinja2.environment`
+
+jinja2模板引擎回调函数，返回 jinja2 模板引擎对象。
 
 ## 数据构建工具(Data Builder Tools)
 
