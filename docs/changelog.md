@@ -2,14 +2,13 @@
 
 ## Dev
 
-该版本是 django_echarts 的第一个Beta版本。
+该版本是 django_echarts 的第一个Beta版本，要求 pyecharts 版本为 v0.3.0+。
 
 - 更新项目到Beta 状态
-- 更新pyecharts 依赖到 v0.3.0
 - 增加 `echarts_js_content_wrap` 模板标签
 - 增加 jinja2 模板引擎接口 `django_echarts.plugins.jinja2`
 - 优化模板标签内部逻辑
-- 补充部分文档
+- 更新文档
 
 ## v0.1.3 (20170930)
 
