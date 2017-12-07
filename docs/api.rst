@@ -67,23 +67,32 @@ lib_js_host
 
 *lib_js_host* 能够支持的CDN及其实际url对应表如下：
 
-| 名称        | url格式                                    |
-| --------- | ---------------------------------------- |
-| cdnjs     | https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version} |
-| npmcdn    | [https://unpkg.com/echarts@{echarts_version}/dist](https://unpkg.com/echarts@{echarts_version}/dist) |
-| bootcdn   | [https://cdn.bootcss.com/echarts/{echarts_version}](https://cdn.bootcss.com/echarts/{echarts_version}) |
-| pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
-| echarts   | http://echarts.baidu.com/dist            |
++------------+--------------------------------------------------------------------+
+| 名称       | url格式                                                            |
++============+====================================================================+
+| cdnjs      | https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}   |
++------------+--------------------------------------------------------------------+
+| npmcdn     | https://unpkg.com/echarts@{echarts_version}/dist                   |
++------------+--------------------------------------------------------------------+
+| bootcdn    | https://cdn.bootcss.com/echarts/{echarts_version}                  |
++------------+--------------------------------------------------------------------+
+| pyecharts  | https://chfw.github.io/jupyter-echarts/echarts                     |
++------------+--------------------------------------------------------------------+
+| echarts    | http://echarts.baidu.com/dist                                      |
++------------+--------------------------------------------------------------------+
 
 map_js_host
 ++++++++++++
 
 **Echarts地图数据文件(Echarts map javascript file)** 的仓库名称或路径。可支持仓库名称如下表：
 
-| 名称        | url格式                                    |
-| --------- | ---------------------------------------- |
-| echarts   | http://echarts.baidu.com/asset/map/js    |
-| pyecharts | [https://chfw.github.io/jupyter-echarts/echarts](https://chfw.github.io/jupyter-echarts/echarts) |
++------------+--------------------------------------------------------------------+
+| 名称        |url格式                                                            |
++============+====================================================================+
+| pyecharts  | https://chfw.github.io/jupyter-echarts/echarts                     |
++------------+--------------------------------------------------------------------+
+| echarts    | http://echarts.baidu.com/asset/map/js                              |
++------------+--------------------------------------------------------------------+
 
 >  注意: *echarts* CDN不支持HTTPS,当使用全站HTTPS引用非HTTPS外部资源在某些浏览器（如谷歌）会出现一些问题，建议先下载本地，再使用本地部署。
 
@@ -100,14 +109,14 @@ DJANGO_ECHARTS_SETTINGS
 
  `django_echarts.utils.DJANGO_ECHARTS_SETTINGS` 
 
-> v0.1.3新增
+ |  v0.1.3新增
 
 在代码中，应当使用模块全局变量 `DJANGO_ECHARTS_SETTINGS` 访问项目的一些配置及其相关属性。该变量是类 `SettingsStore` 的一个实例。
 
 DJANGO_ECHARTS_SETTING
 +++++++++++++++++++++++++++
 
-> 已废弃
+ | 已废弃
 
 `DJANGO_ECHARTS_SETTINGS` 的别名，将在v0.2后移除。
 
@@ -133,7 +142,7 @@ echarts_options
 
  `django_echarts.templatetags.echarts.echarts_options(echarts)` 
 
-> 已废弃，使用 `echarts_js_content` 代替。
+ | 已废弃，使用 `echarts_js_content` 代替。
 
 渲染图表js代码。
 
@@ -210,7 +219,7 @@ Pluck
 
 选取一个或多个字段组成新的列表。
 
-项目管理工具(Project Manage Commands)
+Django管理命令(Django Manage Commands)
 ---------------------------------------
 
 这些命令可以从  *manage.py* 执行，支持其默认的参数， 详细可参考 [django-admin#default-options](https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options)。

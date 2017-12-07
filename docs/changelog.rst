@@ -1,8 +1,8 @@
 更新日志
 =========
 
-Dev
------
+v0.2.0
+--------
 
 该版本是 django_echarts 的第一个Beta版本，要求 pyecharts 版本为 v0.3.0+。
 

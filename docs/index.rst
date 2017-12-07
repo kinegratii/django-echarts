@@ -6,10 +6,13 @@
 Welcome to django_echarts's documentation!
 ==========================================
 
-django-echarts是一个将pyecharts整合到Django开发的应用包(Django App)。主要有：
+django-echarts 是一个关于 Echarts_ 整合的 Django App，使用 pyecharts_ 作为图表构件库。它提供了以下特性：
 
-- 基于前端或后端的数据渲染
-- js静态文件管理
+.. _Echarts: http://echarts.baidu.com/index.html
+.. _pyecharts: https://github.com/chenjiandongx/pyecharts
+
+- 基于前端/后端渲染方式的视图类
+- 独立js依赖文件管理，支持多仓库自由切换
 - 数据构建工具函数库
 - 基于Django命令的CLI工具
 
