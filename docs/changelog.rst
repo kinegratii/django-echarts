@@ -10,7 +10,7 @@ v0.2.0
 - 增加 `echarts_js_content_wrap` 模板标签
 - 增加 jinja2 模板引擎接口 `django_echarts.plugins.jinja2` 
 - 优化模板标签内部逻辑
-- 更新文档
+- 发布在线文档
 
 v0.1.3 (20170930)
 ------------------

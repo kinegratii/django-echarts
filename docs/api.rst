@@ -60,7 +60,7 @@ lib_js_host
 
 **Echarts库文件(Echarts libary javascript file)** 的仓库名称或地址。以下均是有效的设置值：
 
-- CDN名称: 包括了 `cdnjs` / `npmcdn` /` bootcdn` / `pyecharts` / `echarts` 等5个。
+- CDN名称: 包括了 `cdnjs` / `npmcdn` / ` bootcdn` / `pyecharts` / `echarts` 等5个。
 - 代表实际url的格式化字符串，可使用的变量有以下几个，注意大小写区别：
     - STATIC_URL: `settings.STATIC_URL` 的值，如果不提供 `settings.STATIC_URL` ，将不会传递这个值。
     - echarts_version: 上面所述的版本字符串。
