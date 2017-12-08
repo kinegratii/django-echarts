@@ -60,7 +60,7 @@ lib_js_host
 
 **Echarts库文件(Echarts libary javascript file)** 的仓库名称或地址。以下均是有效的设置值：
 
-- CDN名称: 包括了 `cdnjs` / `npmcdn` / ` bootcdn` / `pyecharts` / `echarts` 等5个。
+- CDN名称: 包括了 `cdnjs` / `npmcdn` / `bootcdn` / `pyecharts` / `echarts` 等5个。
 - 代表实际url的格式化字符串，可使用的变量有以下几个，注意大小写区别：
     - STATIC_URL: `settings.STATIC_URL` 的值，如果不提供 `settings.STATIC_URL` ，将不会传递这个值。
     - echarts_version: 上面所述的版本字符串。
@@ -222,7 +222,9 @@ Pluck
 Django管理命令(Django Manage Commands)
 ---------------------------------------
 
-这些命令可以从  *manage.py* 执行，支持其默认的参数， 详细可参考 [django-admin#default-options](https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options)。
+这些命令可以从  *manage.py* 执行，支持其默认的参数， 详细可参考 django-admin_ 相关文档。
+
+.. _django-admin: https://docs.djangoproject.com/en/1.11/ref/django-admin/#default-options
 
 ::
 
@@ -233,15 +235,15 @@ download_echarts_js
 ++++++++++++++++++++++
 
 
-下载远程文件到本地
+下载远程文件到本地。
 
 ::
-	usage: manage.py download_echarts_js [-h] [--version] [-v {0,1,2,3}]
-										 [--settings SETTINGS]
-										 [--pythonpath PYTHONPATH] [--traceback]
-										 [--no-color] [--js_host JS_HOST]
-										 js_name [js_name ...]
 
+    usage: manage.py download_echarts_js [-h] [--version] [-v {0,1,2,3}]
+                                         [--settings SETTINGS]
+                                         [--pythonpath PYTHONPATH] [--traceback]
+                                         [--no-color] [--js_host JS_HOST]
+                                         js_name [js_name ...]
 
 远程仓库的选择依据以下顺序
 

@@ -60,9 +60,7 @@ DJANGO_ECHARTS = {
 
 或者全部采用默认值。
 
-3 根据渲染方式（前端或者后端方式）编写视图类，模板页面和路由。
-
-前端渲染方式
+3 编写视图类，模板页面和路由。
 
 ```python
 def create_simple_bar():
@@ -70,16 +68,6 @@ def create_simple_bar():
     bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
     return bar
 
-
-class SimpleBarView(EChartsFrontView):
-    def get_echarts_instance(self, **kwargs):
-        return create_simple_bar()
-      
-```
-
-后端渲染方式
-
-```python
  class BackendEChartsTemplate(EChartsBackendView):
     template_name = 'backend_charts.html'
 
@@ -129,8 +117,7 @@ class SimpleBarView(EChartsFrontView):
 
 ## 文档
 
-- [English Document](docs/us-en/api.md)
-- [中文文档](docs/zh-cn/api.md)
+[在线文档](http://django-echarts.readthedocs.io/zh_CN/latest/index.html)
 
 ## 示例
 

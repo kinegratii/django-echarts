@@ -60,20 +60,61 @@ django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Bas
 
 django_echarts 提供两种方式的渲染视图，即：
 
-- 后端：数据和图表一起返回
+- 后端：通过模板标签/标签渲染页面
 - 前端：先渲染页面，数据通过 Ajax 异步请求返回
 
 两者渲染方式具有共同的接口，均继承自 `django_echarts.views.base.EChartsMixin` 。
 
+::
+
+    class EChartsMixin(object):
+        def get_echarts_instance(self, *args, **kwargs):
+            pass
+
+函数 `get_echarts_instance` 需要返回一个图表实例对象，包括：
+
+- `pyecharts.base.Base`
+- `pyecharts.custom.page.Page`
+
 后端渲染
 +++++++++
 
-后端渲染方式需继承 `EChartsBackendView` 类。
+你可以按照 :ref:`tutorial-start` 文档所述的方法实现一个简单的后端渲染图表。
+
+`EChartsBackendView` 是后端渲染方式主要使用的视图类，该类继承自 `django.views.generic.base.TemplateView`，因此返回给浏览器的是一个 TemplateResponse 对象。
 
 前端渲染
 +++++++++
 
-和后端渲染方式不同的是，渲染一个图表通常需要两个请求
+渲染需要继承 `EChartsFrontendView` 类，和后端渲染方式不同的是，该视图类返回是 chart.options 的 json 字符串串，而前端需要使用 ajax 等方式接收数据，并且需要使用 `setOption` 函数设置信息。
+
+.. code-block:: guess
+
+    <script src="https://cdn.bootcss.com/echarts/3.6.2/echarts.min.js"></script>
+    <script src="http://echarts.baidu.com/asset/map/js/china.js"></script>
+    <script type="text/javascript">
+        var mChart;
+        function loadEcharts() {
+            var url = '/options/simpleBar/;
+            if (mChart != null) {
+                mChart.clear();
+            }
+            mChart = echarts.init(document.getElementById('id_echarts_container'));
+            mChart.showLoading();
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: null,
+                dataType: "json"
+            }).done(function (data) {
+                mChart.hideLoading();
+                mChart.setOption(data);
+            });
+        }
+        $(document).ready(function () {
+            loadEcharts('simpleBar');
+        });
+    </script>
 
 javascript文件管理
 --------------------
@@ -119,16 +160,86 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
         'extension/dataTool', 'extension/dataTool.min'
     ]
 
+涉及 js 仓库设置的选项有三个：
 
+- lib_js_host: 指定 Echarts 核心库文件的仓库
+- map_js_host: 指定地图文件的仓库
+- local_host: 本地仓库的具体路径
+
+一般来说，只需设置 `lib_js_host` 和 `map_js_host` 两个值即可，它们均支持以下几种形式的值：
+
+- 地址字符串：如 `http://115.00.00.00:8080/echarts/` 。
+- 地址格式化字符串：类似于 Python 格式化，使用 `{}` 嵌入变量。
+- CDN名称：参见下一节 “公共CDN”。
+
+举个例子，下面是某一个 Django 项目的静态文件目录结构。
+
+::
+
+    - example
+        - example
+            - __init__.py
+            - settings.py
+            - urls.py
+            - wsgi.py
+        - static
+            - echarts/
+                - echarts.min.js
+            - map/
+                - beijing.js
+                - china.js
+                - fujian.js
+        - demo
+            - __init__.py
+            - urls.py
+            - views.py
+
+根据上述结构，相应的 `settings.py` 相关设置可变为以下内容：
+
+::
+
+    STATIC_URL = '/static/'
+    DJANGO_ECHARTS = {
+        'lib_js_host':'/static/echarts',
+        'map_js_host': '/static/map'
+    }
+
+需要注意的是：
+
+- 路径末尾 `/` 不必设置。
+- 无论核心库和地图文件是否在同一个目录，都要同时设置。
 
 公共CDN
 ++++++++
 
 django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体的 url 地址， django_echarts 将自动完成映射操作。
 
+
++------------+--------------------------------------------------------------------+
+| 名称       | url格式                                                            |
++============+====================================================================+
+| cdnjs      | https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}   |
++------------+--------------------------------------------------------------------+
+| npmcdn     | https://unpkg.com/echarts@{echarts_version}/dist                   |
++------------+--------------------------------------------------------------------+
+| bootcdn    | https://cdn.bootcss.com/echarts/{echarts_version}                  |
++------------+--------------------------------------------------------------------+
+| pyecharts  | https://chfw.github.io/jupyter-echarts/echarts                     |
++------------+--------------------------------------------------------------------+
+| echarts    | http://echarts.baidu.com/dist                                      |
++------------+--------------------------------------------------------------------+
+
+表：内置 CDN 列表
+
+**版本号**
+
 这些 CDN 地址通常依赖于 ECharts 版本，可以在 `DJANGO_ECHARTS['echarts_version']` 中设置具体的版本号，如 `3.7.0` 。
 
 关于如何选择合适的 ECharts 的版本号，请参考 pyecharts 文档。
+
+**网络协议**
+
+默认采用 HTTPS 协议，除了 echarts 官方文档。由于 echarts 和 pyecharts 不是正式CDN，仅供演示，不建议运用于实际环境或者下载本地部署。
 
 数据构建
 ---------
