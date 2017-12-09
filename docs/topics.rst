@@ -4,7 +4,9 @@
 背景
 -----
 
-pyecharts 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众多的图表类型，还支持在不同环境下（如纯Python、Jupyter Notebook以及web框架）运行。
+pyecharts_ 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众多的图表类型，还支持在不同环境下（如纯Python、Jupyter Notebook以及web框架）运行。
+
+.. _pyecharts: https://github.com/chenjiandongx/pyecharts
 
 由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django_echarts 将依据 Django 开发规范，试图简化 pyecharts 的整合方法，并增加了若干个 Django 项目特有的功能和特性。
 
@@ -26,7 +28,7 @@ django-echarts 遵循统一配置的原则，所有的配置均定义在项目�
 		'local_host':None
 	}
 
-该变量不建议作为配置访问的接口，关于如何访问配置信息请参考下一节的内容。
+该变量不建议作为配置访问的接口，关于如何访问配置信息请参考下面的内容。
 
 django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Base.jshost` 和 `pyecharts.custom.page.Page.jshost` 两个属性无效，应当在 `settings.DJANGO_ECHARTS` 中统一配置。
 
@@ -115,6 +117,20 @@ django_echarts 提供两种方式的渲染视图，即：
             loadEcharts('simpleBar');
         });
     </script>
+
+模板标签
+---------
+
+django_echarts 实现了与 pyecharts 相似的模板标签接口，这些标签接受一个或多个的图表实例作为参数。
+
+.. image:: /_static/django-echarts-template-tags.png
+
+这些模板标签均定义在 `django_echarts.templatetags.echarts` 包，按文档有两种方式导入以这些标签能够使用。
+
+- 在每个模板文件使用 `{% laod echarts %}` 导入。
+- 添加标签目录到项目配置项 `TEMPLATES.OPTIONS.libraries`_ ，这样就无需在每个模板都是用 `load` 标签。
+
+.. _TEMPLATES.OPTIONS.libraries: https://docs.djangoproject.com/en/1.11/topics/templates/#module-django.template.backends.django
 
 javascript文件管理
 --------------------
@@ -239,22 +255,61 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 
 **网络协议**
 
-默认采用 HTTPS 协议，除了 echarts 官方文档。由于 echarts 和 pyecharts 不是正式CDN，仅供演示，不建议运用于实际环境或者下载本地部署。
+除了 echarts 官方网址外，均采用 HTTPS 协议地址。 echarts 和 pyecharts 不是正式CDN，仅供演示，不建议运用于实际环境或者下载本地部署。
 
 数据构建
 ---------
 
-django_echarts 还提供了若干个可以数据构建和转化的函数，以适配图表的相关方法。
+`pyecharts.base.Base.add` 函数通常要求数据是两个长度相等的列表。
 
-例如 `zip` 函数，可将列表按元素键名分解成多个列表。
+如果原始数据是其他形式的字典或元组列表，pyecharts 和 django_echarts 提供了若干个可以数据构建和转化的函数，以适配图表的相关方法。
+
+例如内置的 `zip` 函数，可将列表按元素键名分解成多个列表。
 
 
 ::
 
         t_data = models.TemperatureRecord.objects.all().order_by('create_time').values_list('high', 'create_time')
+        # t_data = [(21, '2017-12-01'), (19, '2017-12-02'), (20, '2017-12-03')]
         hs, ds = zip(*t_data)
         line = Line('High Temperature')
         line.add('High', ds, hs)
+
+django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化。
+
+    >>> from pluck import pluck
+    >>> dates = [
+    ...     datetime(2012, 10, 22, 12, 00),
+    ...     datetime(2012, 10, 22, 15, 14),
+    ...     datetime(2012, 10, 22, 21, 44),
+    ... ]
+    >>> pluck(dates, 'day')
+    [22, 22, 22]
+    >>> pluck(dates, 'hour')
+    [12, 15, 21]
+
+另一种形式的原始数据转化。
+
+>>> objects = [
+...      {'id': 282, 'name': 'Alice', 'age': 30, 'sex': 'female'},
+...      {'id': 217, 'name': 'Bob', 'age': 56},
+...      {'id': 328, 'name': 'Charlie', 'age': 56, 'sex': 'male'},
+... ]
+>>> pluck(objects, 'name')
+['Alice', 'Bob', 'Charlie']
+>>> pluck(objects, 'age')
+[30, 56, 56]
+
+更多可查看其主页 https://github.com/nvie/pluck 。
+
+对于复杂的关系图，可以使用 networkx 库构建节点和连线，并传递给 `add` 函数。
+
+.. literalinclude:: /codes/graph_demo.py
+
+渲染后的关系图如下：
+
+.. image:: /_static/networkx-graph-demo.png
+
 
 更多信息可查看 API 文件。
 
@@ -325,7 +380,7 @@ download_echarts_js 命令将从远程地址下载文件到项目的静态目录
 
 使用 `python manage.py download_echarts_js echarts.min` 从 boot CDN 下载 echarts.min.js 文件到项目的静态文件存储目录之下，相关输出如下：
 
-::
+.. code-block:: none
 
     Download file from https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js
     Save file to F:\django-echarts\example\static\echarts\echarts.min.js

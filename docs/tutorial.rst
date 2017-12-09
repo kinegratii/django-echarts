@@ -19,7 +19,7 @@ django-echarts的安装要求为：
 	pip install django-echarts
 
 
-或者使用源码构建
+如若使用最新的开发版本，可使用源码构建
 
 ::
 
@@ -109,3 +109,17 @@ django-echarts的安装要求为：
 
 
 5 在部署到正式环境时，如果需要使用公共CDN托管常用JS文件，可修改项目配置，使得 `lib_js_host` 或者 `map_js_host` 指向公共CDN。
+
+示例项目
+---------
+
+示例项目请参考 example 文件夹。
+
+```shell
+cd example
+python manage.py runserver 127.0.0.1:8000
+```
+
+访问本地地址： http://127.0.0.1:8000 ，示例运行结果
+
+.. image:: /_static/django-echarts-demo.gif
