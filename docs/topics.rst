@@ -8,7 +8,7 @@ pyecharts_ 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众�
 
 .. _pyecharts: https://github.com/chenjiandongx/pyecharts
 
-由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django_echarts 将依据 Django 开发规范，试图简化 pyecharts 的整合方法，并增加了若干个 Django 项目特有的功能和特性。
+由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django_echarts 将遵循 Django 开发规范，试图简化开发工作，并增加了若干个 Django 项目特有的功能和特性。
 
 
 项目配置
@@ -40,7 +40,7 @@ django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Bas
 - 键值访问：如 `DJANGO_ECHARTS_SETTINGS['echarts_version']` 。
 - 属性访问，如 `DJANGO_ECHARTS_SETTINGS.echarts_version` 。
 
-`DJANGO_ECHARTS_SETTINGS` 还提供了若干个方法，用于 js 依赖文件管理的整合以及整合其他功能。
+`DJANGO_ECHARTS_SETTINGS` 还提供了若干个方法，用于 js 依赖文件管理和其他功能。
 
 以下是正确的使用方法：
 
@@ -255,7 +255,7 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 
 **网络协议**
 
-除了 echarts 官方网址外，均采用 HTTPS 协议地址。 echarts 和 pyecharts 不是正式CDN，仅供演示，不建议运用于实际环境或者下载本地部署。
+除了 echarts 官方网址外，均采用 HTTPS 协议地址。 echarts 和 pyecharts 不是正式CDN，仅供演示，不建议运用于实际环境，可下载本地部署。
 
 数据构建
 ---------
@@ -302,7 +302,9 @@ django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化。
 
 更多可查看其主页 https://github.com/nvie/pluck 。
 
-对于复杂的关系图，可以使用 networkx 库构建节点和连线，并传递给 `add` 函数。
+对于复杂的关系图，可以使用 networkx_ 库构建节点和连线，并传递给 `add` 函数。
+
+.. _networkx: https://github.com/networkx/networkx
 
 .. literalinclude:: /codes/graph_demo.py
 

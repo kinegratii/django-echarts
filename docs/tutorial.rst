@@ -21,7 +21,7 @@ django-echarts的安装要求为：
 
 如若使用最新的开发版本，可使用源码构建
 
-::
+.. code-block:: none
 
 	git clone https://github.com/kinegratii/django-echarts.git
 	cd django-echarts
@@ -71,7 +71,7 @@ django-echarts的安装要求为：
 
 4 编写模板文件，可以使用相关标签（定义在 `echarts` 标签库里）渲染JS内容。
 
-::
+.. code-block:: html
 
 	{% extends 'base.html' %}
 	{% load echarts %}
@@ -115,10 +115,11 @@ django-echarts的安装要求为：
 
 示例项目请参考 example 文件夹。
 
-```shell
-cd example
-python manage.py runserver 127.0.0.1:8000
-```
+.. code-block:: shell
+
+    cd example
+    python manage.py runserver 127.0.0.1:8000
+
 
 访问本地地址： http://127.0.0.1:8000 ，示例运行结果
 
