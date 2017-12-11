@@ -88,7 +88,7 @@ django_echarts 提供两种方式的渲染视图，即：
 前端渲染
 +++++++++
 
-渲染需要继承 `EChartsFrontendView` 类，和后端渲染方式不同的是，该视图类返回是 chart.options 的 json 字符串串，而前端需要使用 ajax 等方式接收数据，并且需要使用 `setOption` 函数设置信息。
+渲染需要继承 `EChartsFrontendView` 类，和后端渲染方式不同的是，该视图类返回是 chart.options 的 json 字符串，而前端需要使用 ajax 等方式接收数据，并且需要使用 `setOption` 函数设置信息。
 
 .. code-block:: guess
 
@@ -288,23 +288,19 @@ django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化。
     >>> pluck(dates, 'hour')
     [12, 15, 21]
 
-另一种形式的原始数据转化。
+使用方法如下：
 
->>> objects = [
-...      {'id': 282, 'name': 'Alice', 'age': 30, 'sex': 'female'},
-...      {'id': 217, 'name': 'Bob', 'age': 56},
-...      {'id': 328, 'name': 'Charlie', 'age': 56, 'sex': 'male'},
-... ]
->>> pluck(objects, 'name')
-['Alice', 'Bob', 'Charlie']
->>> pluck(objects, 'age')
-[30, 56, 56]
+*pluck_demo.py*
+
+.. literalinclude:: /codes/pluck_demo.py
 
 更多可查看其主页 https://github.com/nvie/pluck 。
 
 对于复杂的关系图，可以使用 networkx_ 库构建节点和连线，并传递给 `add` 函数。
 
 .. _networkx: https://github.com/networkx/networkx
+
+*graph_demo.py*
 
 .. literalinclude:: /codes/graph_demo.py
 

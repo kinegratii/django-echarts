@@ -6,7 +6,7 @@
 Welcome to django_echarts's documentation!
 ==========================================
 
-django-echarts 是一个关于 Echarts_ 整合的 Django App，使用 pyecharts_ 作为图表构件库。
+django-echarts 是一个关于 Echarts_ 整合的 Django App，使用 pyecharts_ 作为图表构建库。
 
 主页： https://github.com/kinegratii/django-echarts
 
