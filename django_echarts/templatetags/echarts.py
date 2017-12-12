@@ -80,7 +80,7 @@ def build_echarts_initial_fragment(*charts):
             options=json_dumps(chart.options, indent=4)
         )
         contents.append(js_content)
-        return '\n'.join(contents)
+    return '\n'.join(contents)
 
 
 @register.simple_tag(takes_context=True)
