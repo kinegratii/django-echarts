@@ -10,6 +10,7 @@ pyecharts_ 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众�
 
 由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django_echarts 将遵循 Django 开发规范，试图简化开发工作，并增加了若干个 Django 项目特有的功能和特性。
 
+django_echarts 是一个标准的 Django App ，符合其所有的使用规约，关于 Django 中 *项目(Project)* 和2 *应用(Application)* 相关内容，可参考 https://docs.djangoproject.com/en/1.11/ref/applications/。
 
 项目配置
 -------------
@@ -185,7 +186,7 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
 一般来说，只需设置 `lib_js_host` 和 `map_js_host` 两个值即可，它们均支持以下几种形式的值：
 
 - 地址字符串：如 `http://115.00.00.00:8080/echarts/` 。
-- 地址格式化字符串：类似于 Python 格式化，使用 `{}` 嵌入变量。
+- 地址格式化字符串：类似于 Python 格式化，使用 `{}` 嵌入变量，如 `'{STATIC_URL}/js/echarts'` 、 `'https://demo.com/{echarts_version}'` 等。
 - CDN名称：参见下一节 “公共CDN”。
 
 举个例子，下面是某一个 Django 项目的静态文件目录结构。
@@ -210,11 +211,12 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
             - urls.py
             - views.py
 
-根据上述结构，相应的 `settings.py` 相关设置可变为以下内容：
+如果想达到上述的目录布局，相应的 `settings.py` 相关设置可设置为：
 
 ::
 
     STATIC_URL = '/static/'
+
     DJANGO_ECHARTS = {
         'lib_js_host':'/static/echarts',
         'map_js_host': '/static/map'
@@ -222,13 +224,13 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
 
 需要注意的是：
 
-- 路径末尾 `/` 不必设置。
+- 路径末尾 `/` 添加或不添加均可。
 - 无论核心库和地图文件是否在同一个目录，都要同时设置。
 
 公共CDN
 ++++++++
 
-django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体的 url 地址， django_echarts 将自动完成映射操作。
+django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体的 url 地址， django_echarts 将自动使用对应的地址。
 
 
 +------------+--------------------------------------------------------------------+
@@ -275,18 +277,7 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
         line = Line('High Temperature')
         line.add('High', ds, hs)
 
-django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化。
-
-    >>> from pluck import pluck
-    >>> dates = [
-    ...     datetime(2012, 10, 22, 12, 00),
-    ...     datetime(2012, 10, 22, 15, 14),
-    ...     datetime(2012, 10, 22, 21, 44),
-    ... ]
-    >>> pluck(dates, 'day')
-    [22, 22, 22]
-    >>> pluck(dates, 'hour')
-    [12, 15, 21]
+又比如，django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化，下面是一个比较典型的例子。
 
 使用方法如下：
 
