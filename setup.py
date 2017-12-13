@@ -20,6 +20,7 @@ lib_classifiers = [
     "License :: OSI Approved :: MIT License",
     "Topic :: Software Development :: Libraries",
     "Topic :: Utilities",
+    'Operating System :: OS Independent'
 ]
 
 packages = [
@@ -42,5 +43,6 @@ setup(
     license='MIT',
     author='Kinegratii',
     author_email='kinegratii@gmail.com',
-    description='A django app for Echarts integration with pyecharts as chart builder. '
+    description='A django app for Echarts integration with pyecharts as chart builder. ',
+    classifiers=lib_classifiers
 )
