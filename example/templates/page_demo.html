@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load echarts %}
+{% block main_content %}
+    <div class="alert alert-info" role="alert">使用Page渲染，支持自定义布局和响应式</div>
+    <div class="row">
+        {% for chart in page %}
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">{{ chart.page_title }}</div>
+                    <div class="panel-body">
+                        {% echarts_container chart %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+{% block extra_script %}
+    {% echarts_js_dependencies page %}
+    {% for chart in page %}
+        {% echarts_js_content chart %}
+    {% endfor %}
+{% endblock %}
