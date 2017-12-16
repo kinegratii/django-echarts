@@ -2,9 +2,9 @@
 
 from __future__ import unicode_literals
 
-import pluck
 import unittest
-from django_echarts.plugins.fetch import fetch, fetch_single, ifetch_multiple
+
+from django_echarts.datasets.fetch import fetch, fetch_single, ifetch_multiple
 
 DICT_LIST_DATA = [
     {'id': 282, 'name': 'Alice', 'age': 30, 'sex': 'female'},

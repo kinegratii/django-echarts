@@ -245,7 +245,7 @@ ValueError: item {'id': 217, 'name': 'Bob', 'age': 56} has no attr or key 'sex'
 Fetch
 ++++++
 
-`django_echarts.plugins.fetch.fetch(iterable, *keys, **kwargs)`
+`django_echarts.datasets.fetch.fetch(iterable, *keys, **kwargs)`
 
 *v0.2.1 新增*
 

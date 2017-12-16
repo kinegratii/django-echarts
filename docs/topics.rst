@@ -291,7 +291,7 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 
 更多可查看其主页 https://github.com/nvie/pluck 。
 
-自 v0.2.1 起，新增 `django_echarts.plugins.fetch.fetch` 是对原有 pluck + zip 函数的进一步封装。
+自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 是对原有 pluck + zip 函数的进一步封装。
 
 如
 
