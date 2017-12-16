@@ -10,7 +10,7 @@ pyecharts_ 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众�
 
 由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django_echarts 将遵循 Django 开发规范，试图简化开发工作，并增加了若干个 Django 项目特有的功能和特性。
 
-django_echarts 是一个标准的 Django App ，符合其所有的使用规约，关于 Django 中 *项目(Project)* 和2 *应用(Application)* 相关内容，可参考 https://docs.djangoproject.com/en/1.11/ref/applications/。
+django_echarts 是一个标准的 Django App ，符合其所有的使用规约，关于 Django 中 *项目(Project)* 和 *应用(Application)* 相关内容，可参考 https://docs.djangoproject.com/en/1.11/ref/applications/。
 
 项目配置
 -------------
@@ -122,16 +122,20 @@ django_echarts 提供两种方式的渲染视图，即：
 模板标签
 ---------
 
-django_echarts 实现了与 pyecharts 相似的模板标签接口，这些标签接受一个或多个的图表实例作为参数。
-
-.. image:: /_static/django-echarts-template-tags.png
-
-这些模板标签均定义在 `django_echarts.templatetags.echarts` 包，按文档有两种方式导入以这些标签能够使用。
+django_echarts 实现了与 pyecharts 相似的模板标签,均定义在 `django_echarts.templatetags.echarts` 包，按文档有两种方式导入以这些标签能够使用。
 
 - 在每个模板文件使用 `{% laod echarts %}` 导入。
 - 添加标签目录到项目配置项 `TEMPLATES.OPTIONS.libraries`_ ，这样就无需在每个模板都是用 `load` 标签。
 
 .. _TEMPLATES.OPTIONS.libraries: https://docs.djangoproject.com/en/1.11/topics/templates/#module-django.template.backends.django
+
+这些标签接受一个或多个的图表实例作为参数。
+
+.. image:: /_static/django-echarts-template-tags.png
+
+和 pyecharts 相比，这些标签函数有以下不同之处：
+
+- 不支持 `{% echarts_js_content *page %}` 形式调用。
 
 javascript文件管理
 --------------------
@@ -287,7 +291,7 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 
 更多可查看其主页 https://github.com/nvie/pluck 。
 
-对于复杂的关系图，可以使用 networkx_ 库构建节点和连线，并传递给 `add` 函数。
+特别的是，对于复杂的关系图，可以使用 networkx_ 库构建节点和连线，并传递给 `add` 函数。
 
 .. _networkx: https://github.com/networkx/networkx
 
