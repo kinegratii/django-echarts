@@ -298,7 +298,7 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 ::
 
     from pyecharts import Bar
-    from django_echarts.plugins.fetch import fetch
+    from django_echarts.datasets.fetch import fetch
 
     objects = [
         {'id': 282, 'name': 'Alice', 'age': 30},
