@@ -125,7 +125,7 @@ django_echarts 提供两种方式的渲染视图，即：
 django_echarts 实现了与 pyecharts 相似的模板标签,均定义在 `django_echarts.templatetags.echarts` 包，按文档有两种方式导入以这些标签能够使用。
 
 - 在每个模板文件使用 `{% laod echarts %}` 导入。
-- 添加标签目录到项目配置项 `TEMPLATES.OPTIONS.libraries`_ ，这样就无需在每个模板都是用 `load` 标签。
+- 添加标签目录到项目配置项 `TEMPLATES.OPTIONS.libraries`_ ，这样就无需在每个模板都使用 `load` 标签。
 
 .. _TEMPLATES.OPTIONS.libraries: https://docs.djangoproject.com/en/1.11/topics/templates/#module-django.template.backends.django
 
@@ -192,6 +192,7 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
 - 地址字符串：如 `http://115.00.00.00:8080/echarts/` 。
 - 地址格式化字符串：类似于 Python 格式化，使用 `{}` 嵌入变量，如 `'{STATIC_URL}/js/echarts'` 、 `'https://demo.com/{echarts_version}'` 等。
 - CDN名称：参见下一节 “公共CDN”。
+- 常量 `'local_host'`：表示使用 `local_host` 相同的配置。
 
 举个例子，下面是某一个 Django 项目的静态文件目录结构。
 

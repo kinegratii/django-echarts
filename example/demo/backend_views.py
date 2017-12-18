@@ -55,8 +55,6 @@ class PageDemoView(EChartsBackendView):
         battery_lifes = models.Device.objects.values('name', 'battery_life')
         print(battery_lifes)
         names, lifes = list(zip(*pluck(battery_lifes, 'name', 'battery_life')))
-        print(names)
-        print(lifes)
         bar = Bar('设备电量', page_title='设备电量', width='100%')
         bar.add("设备电量", names, lifes)
         page = Page.from_charts(pie, bar)
