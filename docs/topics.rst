@@ -18,7 +18,7 @@ django_echarts 是一个标准的 Django App ，符合其所有的使用规约�
 定义
 +++++
 
-django-echarts 遵循统一配置的原则，所有的配置均定义在项目配置模块一个名为 `settings.DJANGO_ECHARTS` 变量中，该变量是一个字典类型。如果没有任何配置采用以下的默认值：
+django-echarts 遵循统一配置的原则，所有的配置均定义在项目配置模块一个名为 `settings.DJANGO_ECHARTS` 变量中，该变量是一个字典类型。默认采用以下的配置：
 
 ::
 
@@ -292,7 +292,7 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 
 更多可查看其主页 https://github.com/nvie/pluck 。
 
-自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 是对原有 pluck + zip 函数的进一步封装。
+自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 函数，该函数是对原有 pluck + zip 函数的进一步封装。
 
 如
 
@@ -311,6 +311,22 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 
     bar = Bar()
     bar.add('The Age of Members', names, ages)
+
+如果数据来源于数据库，还可以使用 `django_echarts.datasets.managers.FieldValuesQuerySet` 链式查询方法。
+
+首先将 `FieldValuesQuerySet` 整合到自定义的 Manager 之后，就可以如下面的代码一样使用。
+
+::
+
+        hs, ds = models.TemperatureRecord.objects.all().order_by(
+            'create_time'
+        ).values(
+            'high', 'create_time'
+        ).fetch_values(
+            'high', 'create_time'
+        )
+        line = Line('High Temperature')
+        line.add('High', ds, hs)
 
 特别的是，对于复杂的关系图，可以使用 networkx_ 库构建节点和连线，并传递给 `add` 函数。
 
