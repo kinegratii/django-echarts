@@ -2,13 +2,12 @@
 
 from __future__ import unicode_literals
 
-from django.views.generic.base import TemplateView
-
 from demo import models
-from pyecharts import Line
+from django.db.models import Count
+from pluck import pluck
+from pyecharts import Line, Pie, Page, Bar
 
 from django_echarts.views.backend import EChartsBackendView
-
 from .demo_data import create_simple_bar, create_simple_kline, create_simple_map, create_simple_pie
 
 ECHARTS_DICT = {
@@ -41,3 +40,22 @@ class TemperatureEChartsView(EChartsBackendView):
         line.add('High', ds, hs)
         context['line'] = line
         return context
+
+
+class PageDemoView(EChartsBackendView):
+    echarts_instance_name = 'page'
+    template_name = 'page_demo.html'
+
+    def get_echarts_instance(self, *args, **kwargs):
+        device_data = models.Device.objects.values('device_type').annotate(count=Count('device_type'))
+        device_types, counters = list(zip(*pluck(device_data, 'device_type', 'count')))
+        pie = Pie("设备分类", page_title='设备分类', width='100%')
+        pie.add("设备分类", device_types, counters, is_label_show=True)
+
+        battery_lifes = models.Device.objects.values('name', 'battery_life')
+        print(battery_lifes)
+        names, lifes = list(zip(*pluck(battery_lifes, 'name', 'battery_life')))
+        bar = Bar('设备电量', page_title='设备电量', width='100%')
+        bar.add("设备电量", names, lifes)
+        page = Page.from_charts(pie, bar)
+        return page

@@ -10,6 +10,7 @@ pyecharts_ 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众�
 
 由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django_echarts 将遵循 Django 开发规范，试图简化开发工作，并增加了若干个 Django 项目特有的功能和特性。
 
+django_echarts 是一个标准的 Django App ，符合其所有的使用规约，关于 Django 中 *项目(Project)* 和 *应用(Application)* 相关内容，可参考 https://docs.djangoproject.com/en/1.11/ref/applications/。
 
 项目配置
 -------------
@@ -17,7 +18,7 @@ pyecharts_ 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众�
 定义
 +++++
 
-django-echarts 遵循统一配置的原则，所有的配置均定义在项目配置模块一个名为 `settings.DJANGO_ECHARTS` 变量中，该变量是一个字典类型。如果没有任何配置采用以下的默认值：
+django-echarts 遵循统一配置的原则，所有的配置均定义在项目配置模块一个名为 `settings.DJANGO_ECHARTS` 变量中，该变量是一个字典类型。默认采用以下的配置：
 
 ::
 
@@ -121,16 +122,20 @@ django_echarts 提供两种方式的渲染视图，即：
 模板标签
 ---------
 
-django_echarts 实现了与 pyecharts 相似的模板标签接口，这些标签接受一个或多个的图表实例作为参数。
+django_echarts 实现了与 pyecharts 相似的模板标签,均定义在 `django_echarts.templatetags.echarts` 包，按文档有两种方式导入以这些标签能够使用。
+
+- 在每个模板文件使用 `{% laod echarts %}` 导入。
+- 添加标签目录到项目配置项 `TEMPLATES.OPTIONS.libraries`_ ，这样就无需在每个模板都使用 `load` 标签。
+
+.. _TEMPLATES.OPTIONS.libraries: https://docs.djangoproject.com/en/1.11/topics/templates/#module-django.template.backends.django
+
+这些标签接受一个或多个的图表实例作为参数。
 
 .. image:: /_static/django-echarts-template-tags.png
 
-这些模板标签均定义在 `django_echarts.templatetags.echarts` 包，按文档有两种方式导入以这些标签能够使用。
+和 pyecharts 相比，这些标签函数有以下不同之处：
 
-- 在每个模板文件使用 `{% laod echarts %}` 导入。
-- 添加标签目录到项目配置项 `TEMPLATES.OPTIONS.libraries`_ ，这样就无需在每个模板都是用 `load` 标签。
-
-.. _TEMPLATES.OPTIONS.libraries: https://docs.djangoproject.com/en/1.11/topics/templates/#module-django.template.backends.django
+- 不支持 `{% echarts_js_content *page %}` 形式调用。
 
 javascript文件管理
 --------------------
@@ -185,8 +190,9 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
 一般来说，只需设置 `lib_js_host` 和 `map_js_host` 两个值即可，它们均支持以下几种形式的值：
 
 - 地址字符串：如 `http://115.00.00.00:8080/echarts/` 。
-- 地址格式化字符串：类似于 Python 格式化，使用 `{}` 嵌入变量。
+- 地址格式化字符串：类似于 Python 格式化，使用 `{}` 嵌入变量，如 `'{STATIC_URL}/js/echarts'` 、 `'https://demo.com/{echarts_version}'` 等。
 - CDN名称：参见下一节 “公共CDN”。
+- 常量 `'local_host'`：表示使用 `local_host` 相同的配置。
 
 举个例子，下面是某一个 Django 项目的静态文件目录结构。
 
@@ -210,11 +216,12 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
             - urls.py
             - views.py
 
-根据上述结构，相应的 `settings.py` 相关设置可变为以下内容：
+如果想达到上述的目录布局，相应的 `settings.py` 相关设置可设置为：
 
 ::
 
     STATIC_URL = '/static/'
+
     DJANGO_ECHARTS = {
         'lib_js_host':'/static/echarts',
         'map_js_host': '/static/map'
@@ -222,13 +229,13 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
 
 需要注意的是：
 
-- 路径末尾 `/` 不必设置。
+- 路径末尾 `/` 添加或不添加均可。
 - 无论核心库和地图文件是否在同一个目录，都要同时设置。
 
 公共CDN
 ++++++++
 
-django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体的 url 地址， django_echarts 将自动完成映射操作。
+django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体的 url 地址， django_echarts 将自动使用对应的地址。
 
 
 +------------+--------------------------------------------------------------------+
@@ -275,18 +282,7 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
         line = Line('High Temperature')
         line.add('High', ds, hs)
 
-django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化。
-
-    >>> from pluck import pluck
-    >>> dates = [
-    ...     datetime(2012, 10, 22, 12, 00),
-    ...     datetime(2012, 10, 22, 15, 14),
-    ...     datetime(2012, 10, 22, 21, 44),
-    ... ]
-    >>> pluck(dates, 'day')
-    [22, 22, 22]
-    >>> pluck(dates, 'hour')
-    [12, 15, 21]
+又比如，django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化，下面是一个比较典型的例子。
 
 使用方法如下：
 
@@ -296,7 +292,43 @@ django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化。
 
 更多可查看其主页 https://github.com/nvie/pluck 。
 
-对于复杂的关系图，可以使用 networkx_ 库构建节点和连线，并传递给 `add` 函数。
+自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 函数，该函数是对原有 pluck + zip 函数的进一步封装。
+
+如
+
+::
+
+    from pyecharts import Bar
+    from django_echarts.datasets.fetch import fetch
+
+    objects = [
+        {'id': 282, 'name': 'Alice', 'age': 30},
+        {'id': 217, 'name': 'Bob', 'age': 56},
+        {'id': 328, 'name': 'Charlie', 'age': 56},
+    ]
+
+    names, ages = fetch(objects, 'name', 'age')
+
+    bar = Bar()
+    bar.add('The Age of Members', names, ages)
+
+如果数据来源于数据库，还可以使用 `django_echarts.datasets.managers.FieldValuesQuerySet` 链式查询方法。
+
+首先将 `FieldValuesQuerySet` 整合到自定义的 Manager 之后，就可以如下面的代码一样使用。
+
+::
+
+        hs, ds = models.TemperatureRecord.objects.all().order_by(
+            'create_time'
+        ).values(
+            'high', 'create_time'
+        ).fetch_values(
+            'high', 'create_time'
+        )
+        line = Line('High Temperature')
+        line.add('High', ds, hs)
+
+特别的是，对于复杂的关系图，可以使用 networkx_ 库构建节点和连线，并传递给 `add` 函数。
 
 .. _networkx: https://github.com/networkx/networkx
 

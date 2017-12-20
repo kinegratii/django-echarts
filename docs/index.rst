@@ -27,7 +27,7 @@ django-echarts 是一个关于 Echarts_ 整合的 Django App，使用 pyecharts_
    tutorial
    topics
    api
-   faq
+   development
    changelog
 
 

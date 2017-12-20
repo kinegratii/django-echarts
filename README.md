@@ -1,11 +1,9 @@
 # django-echarts
 
-![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![Development](https://img.shields.io/badge/Development-Alpha-orange.svg) ![python27](https://img.shields.io/badge/Python-2.7+-blue.svg) ![python35](https://img.shields.io/badge/Python-3.5+-blue.svg) ![django18](https://img.shields.io/badge/Django-1.8+-blue.svg)
+![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![Development](https://img.shields.io/badge/Development-Beta-yellowgreen.svg) ![python27](https://img.shields.io/badge/Python-2.7+-blue.svg) ![python35](https://img.shields.io/badge/Python-3.5+-blue.svg) ![django18](https://img.shields.io/badge/Django-1.8+-blue.svg)
 
 
-django-echarts 是一个 [Echarts](http://echarts.baidu.com/index.html) 整合的  [Django](https://www.djangoproject.com) App，使用 [chenjiandongx/pyecharts](https://github.com/chenjiandongx/pyecharts) 的作为图表构建库。
-
-> 目前该项目还处于测试状态(Beta)，欢迎试用和提交 issue & PR 。
+django-echarts 是一个 [Echarts](http://echarts.baidu.com/index.html) 整合的  [Django](https://www.djangoproject.com) App，使用 [pyecharts](https://github.com/chenjiandongx/pyecharts) 的作为图表构建库。
 
 ## 概述
 

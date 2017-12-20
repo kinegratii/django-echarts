@@ -20,10 +20,12 @@ lib_classifiers = [
     "License :: OSI Approved :: MIT License",
     "Topic :: Software Development :: Libraries",
     "Topic :: Utilities",
+    'Operating System :: OS Independent'
 ]
 
 packages = [
     'django_echarts',
+    'django_echarts.datasets',
     'django_echarts.management',
     'django_echarts.management.commands',
     'django_echarts.plugins',
@@ -34,7 +36,7 @@ packages = [
 
 setup(
     name='django-echarts',
-    version='0.2.0',
+    version='0.2.1',
     packages=packages,
     url='https://github.com/kinegratii/django-echarts',
     install_requires=['pyecharts', 'Django', 'pluck'],
@@ -42,5 +44,6 @@ setup(
     license='MIT',
     author='Kinegratii',
     author_email='kinegratii@gmail.com',
-    description='A django app for Echarts integration with pyecharts as chart builder. '
+    description='A django app for Echarts integration with pyecharts as chart builder. ',
+    classifiers=lib_classifiers
 )

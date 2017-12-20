@@ -35,11 +35,11 @@ class Command(BaseCommand):
                 local_path = settings.BASE_DIR + local_path
                 self.download_js_file(remote_url, local_path)
         else:
-            self.stderr.write('No local host is specified.')
+            self.stderr.write('[Error] No local host is specified.')
 
     def download_js_file(self, remote_url, local_path, **kwargs):
-        self.stdout.write('Download file from {0}'.format(remote_url))
-        self.stdout.write('Save file to {0}'.format(local_path))
+        self.stdout.write('[Info] Download file from {0}'.format(remote_url))
+        self.stdout.write('[Info] Save file to {0}'.format(local_path))
         rsp = six.moves.urllib.request.Request(
             remote_url,
             headers={
@@ -49,3 +49,4 @@ class Command(BaseCommand):
         with six.moves.urllib.request.urlopen(rsp) as response, open(local_path, 'w+b') as out_file:
             data = response.read()
             out_file.write(data)
+            self.stdout.write('[Success] Save success!')
