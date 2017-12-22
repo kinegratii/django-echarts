@@ -1,7 +1,7 @@
 # coding=utf8
 
 from __future__ import unicode_literals
-from .plugins.staticfiles import HostStore
+from .plugins.hosts import HostStore, ECHARTS_LIB_HOSTS, ECHARTS_MAP_HOSTS
 
 DEFAULT_SETTINGS = {
     'echarts_version': '3.7.0',
@@ -13,6 +13,7 @@ DEFAULT_SETTINGS = {
 
 class SettingsStore(object):
     def __init__(self, echarts_settings=None, extra_settings=None, **kwargs):
+        # Pre check settings
         self._settings = {k: v for k, v in DEFAULT_SETTINGS.items()}
         if echarts_settings:
             if echarts_settings['lib_echarts_host'] == 'local_host':
@@ -22,7 +23,10 @@ class SettingsStore(object):
             self._settings.update(echarts_settings)
         self._extra_settings = extra_settings or {}
 
-        self._host_store = None
+        self.lib_host_store = None
+        self.map_host_store = None
+
+        self._host_store = None  # 分离两个
         self._check()
         self._setup()
 
@@ -42,11 +46,20 @@ class SettingsStore(object):
         }
         if 'STATIC_URL' in self._extra_settings:
             self._host_context.update({'STATIC_URL': self._extra_settings['STATIC_URL']})
-        self._host_store = HostStore(
-            echarts_lib_name_or_host=self._settings['lib_js_host'],
-            echarts_map_name_or_host=self._settings['map_js_host'],
-            context=self._host_context
+        self.lib_host_store = HostStore(
+            context=self._host_context,
+            default_host=self._settings['lib_js_host']
         )
+        self.map_host_store = HostStore(
+            context=self._host_context,
+            default_host=self._settings['map_js_host']
+        )
+
+    def generate_js_link(self, js_name, catalog=None, js_host=None, **kwargs):
+        pass
+
+    def get_host(self, catalog):
+        pass
 
     @property
     def settings(self):
