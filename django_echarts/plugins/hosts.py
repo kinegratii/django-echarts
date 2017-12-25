@@ -6,7 +6,7 @@ A Implement that you can use host name instead of its url.
 from __future__ import unicode_literals
 
 ECHARTS_LIB_HOSTS = {
-    'pyecharts': 'https://chfw.github.io/jupyter-echarts/echarts',
+    'pyecharts': 'https://pyecharts.github.io/jupyter-echarts/echarts',
     'cdnjs': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}',
     'npmcdn': 'https://unpkg.com/echarts@{echarts_version}/dist',
     'bootcdn': 'https://cdn.bootcss.com/echarts/{echarts_version}',
@@ -14,7 +14,7 @@ ECHARTS_LIB_HOSTS = {
 }
 
 ECHARTS_MAP_HOSTS = {
-    'pyecharts': 'https://chfw.github.io/jupyter-echarts/echarts',
+    'pyecharts': 'https://pyecharts.github.io/jupyter-echarts/echarts',
     'echarts': 'http://echarts.baidu.com/asset/map/js'
 }
 
