@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-from django_echarts.plugins.hosts import HostStore, ECHARTS_LIB_HOSTS, ECHARTS_MAP_HOSTS
+from django_echarts.plugins.hosts import LibHostStore, MapHostStore
 
 
 class HostStoreTestCase(unittest.TestCase):
@@ -14,7 +14,7 @@ class HostStoreTestCase(unittest.TestCase):
             'STATIC_URL': '/static/',
             'echarts_version': '3.7.0'
         }
-        hs = HostStore.from_hosts(m_context, ECHARTS_LIB_HOSTS, 'bootcdn')
+        hs = LibHostStore(m_context, 'bootcdn')
         self.assertEqual(
             'https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js',
             hs.generate_js_link('echarts.min')
@@ -37,9 +37,9 @@ class HostStoreTestCase(unittest.TestCase):
             'STATIC_URL': '/static/',
             'echarts_version': '3.7.0'
         }
-        hs = HostStore.from_hosts(m_context, ECHARTS_MAP_HOSTS, 'echarts')
+        hs = MapHostStore(m_context, 'echarts')
         self.assertEqual(
-            'https://chfw.github.io/jupyter-echarts/echarts/china.js',
+            'https://pyecharts.github.io/jupyter-echarts/echarts/china.js',
             hs.generate_js_link('china', js_host='pyecharts')
         )
         # Add

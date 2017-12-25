@@ -47,13 +47,12 @@ class HostStore(object):
         self._host_dict.update({host_name: host_url})
 
     def generate_js_link(self, js_name, js_host=None):
-        js_host = js_host or self._default_host
-        host_url = self._host_dict.get(js_host)
-        if not host_url:
-            if js_host:
-                host_url = self._ensure_host_url(js_host)
-            else:
-                raise ValueError('No host is assigned.')
+        if js_host:
+            host_url = self._ensure_host_url(js_host)
+        else:
+            host_url = self._default_host
+        if host_url is None:
+            raise ValueError('No host is specified.')
         return '{}/{}.js'.format(host_url, js_name)
 
     def _ensure_host_url(self, name_or_url):
