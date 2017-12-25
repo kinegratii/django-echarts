@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import six
 
-from django_echarts.utils import DJANGO_ECHARTS_SETTINGS
+from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 
 
 class Command(BaseCommand):
@@ -25,17 +25,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         js_names = options['js_name']
-        remote_host_store = DJANGO_ECHARTS_SETTINGS.host_store
-        local_host_store = DJANGO_ECHARTS_SETTINGS.create_local_host()
-        if local_host_store:
-            for js_name in js_names:
-                remote_url = remote_host_store.generate_js_link(js_name, js_host=options['js_host'])
-                local_path = local_host_store.generate_js_link(js_name)
-                local_path = local_path.replace('/', os.sep)
-                local_path = settings.BASE_DIR + local_path
-                self.download_js_file(remote_url, local_path)
-        else:
-            self.stderr.write('[Error] No local host is specified.')
+        js_host = options.get('js_host')
+        for js_name in js_names:
+            remote_url = DJANGO_ECHARTS_SETTINGS.generate_js_link(js_name, js_host)
+            local_url = DJANGO_ECHARTS_SETTINGS.generate_local_url(js_name)
+            local_path = settings.BASE_DIR + local_url.replace('/', os.sep)  # url => path
+            self.download_js_file(remote_url, local_path)
 
     def download_js_file(self, remote_url, local_path, **kwargs):
         self.stdout.write('[Info] Download file from {0}'.format(remote_url))

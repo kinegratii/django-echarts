@@ -1,7 +1,8 @@
 # coding=utf8
 
 from __future__ import unicode_literals
-from .plugins.staticfiles import HostStore
+
+from django_echarts.plugins.hosts import LibHostStore, MapHostStore, JsUtils
 
 DEFAULT_SETTINGS = {
     'echarts_version': '3.7.0',
@@ -13,16 +14,19 @@ DEFAULT_SETTINGS = {
 
 class SettingsStore(object):
     def __init__(self, echarts_settings=None, extra_settings=None, **kwargs):
+        # Pre check settings
         self._settings = {k: v for k, v in DEFAULT_SETTINGS.items()}
         if echarts_settings:
-            if echarts_settings['lib_echarts_host'] == 'local_host':
-                echarts_settings['lib_echarts_host'] = echarts_settings['local_host']
+            if echarts_settings['lib_js_host'] == 'local_host':
+                echarts_settings['lib_js_host'] = echarts_settings['local_host']
             if echarts_settings['map_js_host'] == 'local_host':
                 echarts_settings['map_js_host'] = echarts_settings['local_host']
             self._settings.update(echarts_settings)
         self._extra_settings = extra_settings or {}
 
-        self._host_store = None
+        self.lib_host_store = None
+        self.map_host_store = None
+
         self._check()
         self._setup()
 
@@ -42,16 +46,39 @@ class SettingsStore(object):
         }
         if 'STATIC_URL' in self._extra_settings:
             self._host_context.update({'STATIC_URL': self._extra_settings['STATIC_URL']})
-        self._host_store = HostStore(
-            echarts_lib_name_or_host=self._settings['lib_js_host'],
-            echarts_map_name_or_host=self._settings['map_js_host'],
-            context=self._host_context
+        self.lib_host_store = LibHostStore(
+            context=self._host_context,
+            default_host=self._settings['lib_js_host']
         )
+        self.map_host_store = MapHostStore(
+            context=self._host_context,
+            default_host=self._settings['map_js_host']
+        )
+
+    # #### Public API: Generate js link using current configure ########
+
+    def generate_js_link(self, js_name, js_host=None, **kwargs):
+        if JsUtils.is_lib_js(js_name):
+            hs = self.lib_host_store
+        else:
+            hs = self.map_host_store
+        return hs.generate_js_link(js_name=js_name, js_host=js_host)
+
+    def generate_lib_js_link(self, js_name, js_host=None, **kwargs):
+        return self.lib_host_store.generate_js_link(js_name=js_name, js_host=js_host)
+
+    def generate_map_js_link(self, js_name, js_host=None, **kwargs):
+        return self.map_host_store.generate_js_link(js_name=js_name, js_host=js_host)
+
+    def generate_local_url(self, js_name):
+        """
+        Generate the local url for a js file.
+        :param js_name:
+        :return:
+        """
+        host = self._settings['local_host'].format(**self._host_context).rstrip('/')
+        return '{}/{}.js'.format(host, js_name)
 
     @property
     def settings(self):
         return self._settings
-
-    @property
-    def host_store(self):
-        return self._host_store

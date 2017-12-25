@@ -12,7 +12,7 @@ from django.utils import six
 from pyecharts.base import Base
 from pyecharts.utils import json_dumps
 
-from ..utils import DJANGO_ECHARTS_SETTINGS
+from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 
 register = template.Library()
 
@@ -60,7 +60,7 @@ def echarts_js_dependencies(context, *args):
     if len(dependencies) > 1:
         dependencies.remove('echarts')
         dependencies = ['echarts'] + list(dependencies)
-    links = map(DJANGO_ECHARTS_SETTINGS.host_store.generate_js_link, dependencies)
+    links = map(DJANGO_ECHARTS_SETTINGS.generate_js_link, dependencies)
 
     return template.Template(
         '<br/>'.join(['<script src="{link}"></script>'.format(link=l) for l in links])
