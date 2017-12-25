@@ -52,3 +52,22 @@ class HostStoreTestCase(unittest.TestCase):
             'http://echarts.baidu.com/asset/map/js/china.js',
             hs.generate_js_link('china')
         )
+
+
+class CustomHostTestCase(unittest.TestCase):
+    def test_add_host(self):
+        m_context = {
+            'echarts_version': '3.8.5'
+        }
+
+        mhs = MapHostStore(m_context, 'pyecharts')
+        mhs.add_host('/demo/', 'demo')
+        mhs.add_host('/demo2/{echarts_version}', 'demo2')
+        self.assertEqual(
+            '/demo/fujian.js',
+            mhs.generate_js_link('fujian', js_host='demo')
+        )
+        self.assertEqual(
+            '/demo2/3.8.5/fujian.js',
+            mhs.generate_js_link('fujian', js_host='demo2')
+        )
