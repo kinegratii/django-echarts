@@ -30,7 +30,7 @@ class JsUtils(object):
 
     @staticmethod
     def is_lib_js(js_name):
-        return js_name in JsUtils.is_lib_js(js_name)
+        return js_name in JsUtils.ECHARTS_LIB_NAMES
 
 
 class HostStore(object):

@@ -17,8 +17,8 @@ class SettingsStore(object):
         # Pre check settings
         self._settings = {k: v for k, v in DEFAULT_SETTINGS.items()}
         if echarts_settings:
-            if echarts_settings['lib_echarts_host'] == 'local_host':
-                echarts_settings['lib_echarts_host'] = echarts_settings['local_host']
+            if echarts_settings['lib_js_host'] == 'local_host':
+                echarts_settings['lib_js_host'] = echarts_settings['local_host']
             if echarts_settings['map_js_host'] == 'local_host':
                 echarts_settings['map_js_host'] = echarts_settings['local_host']
             self._settings.update(echarts_settings)
@@ -55,6 +55,8 @@ class SettingsStore(object):
             default_host=self._settings['map_js_host']
         )
 
+    # #### Public API: Generate js link using current configure ########
+
     def generate_js_link(self, js_name, js_host=None, **kwargs):
         if JsUtils.is_lib_js(js_name):
             hs = self.lib_host_store
@@ -67,6 +69,15 @@ class SettingsStore(object):
 
     def generate_map_js_link(self, js_name, js_host=None, **kwargs):
         return self.map_host_store.generate_js_link(js_name=js_name, js_host=js_host)
+
+    def generate_local_url(self, js_name):
+        """
+        Generate the local url for a js file.
+        :param js_name:
+        :return:
+        """
+        host = self._settings['local_host'].format(**self._host_context).rstrip('/')
+        return '{}/{}.js'.format(host, js_name)
 
     @property
     def settings(self):
