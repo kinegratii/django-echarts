@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-from django_echarts.conf import SettingsStore
+from django_echarts.plugins.store import SettingsStore
 
 
 class SettingsWithStaticUrlTestCase(unittest.TestCase):
@@ -17,5 +17,5 @@ class SettingsWithStaticUrlTestCase(unittest.TestCase):
         self.assertIsNone(target_store.settings['local_host'])
         self.assertEqual(
             'https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js',
-            target_store.host_store.generate_js_link('echarts.min')
+            target_store.generate_lib_js_link('echarts.min')
         )

@@ -1,7 +1,8 @@
 # coding=utf8
 
 from __future__ import unicode_literals
-from .plugins.hosts import HostStore, ECHARTS_LIB_HOSTS, ECHARTS_MAP_HOSTS
+
+from django_echarts.plugins.hosts import LibHostStore, MapHostStore, JsUtils
 
 DEFAULT_SETTINGS = {
     'echarts_version': '3.7.0',
@@ -26,7 +27,6 @@ class SettingsStore(object):
         self.lib_host_store = None
         self.map_host_store = None
 
-        self._host_store = None  # 分离两个
         self._check()
         self._setup()
 
@@ -46,25 +46,28 @@ class SettingsStore(object):
         }
         if 'STATIC_URL' in self._extra_settings:
             self._host_context.update({'STATIC_URL': self._extra_settings['STATIC_URL']})
-        self.lib_host_store = HostStore(
+        self.lib_host_store = LibHostStore(
             context=self._host_context,
             default_host=self._settings['lib_js_host']
         )
-        self.map_host_store = HostStore(
+        self.map_host_store = MapHostStore(
             context=self._host_context,
             default_host=self._settings['map_js_host']
         )
 
-    def generate_js_link(self, js_name, catalog=None, js_host=None, **kwargs):
-        pass
+    def generate_js_link(self, js_name, js_host=None, **kwargs):
+        if JsUtils.is_lib_js(js_name):
+            hs = self.lib_host_store
+        else:
+            hs = self.map_host_store
+        return hs.generate_js_link(js_name=js_name, js_host=js_host)
 
-    def get_host(self, catalog):
-        pass
+    def generate_lib_js_link(self, js_name, js_host=None, **kwargs):
+        return self.lib_host_store.generate_js_link(js_name=js_name, js_host=js_host)
+
+    def generate_map_js_link(self, js_name, js_host=None, **kwargs):
+        return self.map_host_store.generate_js_link(js_name=js_name, js_host=js_host)
 
     @property
     def settings(self):
         return self._settings
-
-    @property
-    def host_store(self):
-        return self._host_store
