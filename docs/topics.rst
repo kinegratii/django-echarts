@@ -36,7 +36,7 @@ django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Bas
 访问
 ++++++
 
-在开发中，使用全局变量 `django_echarts.utils.DJANGO_ECHARTS_SETTINGS` 访问项目配置值，支持以下两种形式访问：
+在开发中，使用全局变量 `django_echarts.conf.DJANGO_ECHARTS_SETTINGS` 访问项目配置值，支持以下两种形式访问：
 
 - 键值访问：如 `DJANGO_ECHARTS_SETTINGS['echarts_version']` 。
 - 属性访问，如 `DJANGO_ECHARTS_SETTINGS.echarts_version` 。
@@ -47,7 +47,7 @@ django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Bas
 
 ::
 
-    from django_echarts.utils import DJANGO_ECHARTS_SETTINGS
+    from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
     print(DJANGO_ECHARTS_SETTINGS.echarts_version)
 
 以下是不推荐的使用方法，不应当直接访问配置字典。
@@ -166,8 +166,8 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
 
 由于不同仓库提供的 js 不同，django_echarts 将相关其大致分为两类：
 
-- 核心库文件
-- 地图文件
+- 核心库文件(lib)
+- 地图文件(map)
 
 以下文件常用 CDN 都有携带的文件，均被视为是核心库文件，
 
@@ -247,7 +247,7 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 +------------+--------------------------------------------------------------------+
 | bootcdn    | https://cdn.bootcss.com/echarts/{echarts_version}                  |
 +------------+--------------------------------------------------------------------+
-| pyecharts  | https://chfw.github.io/jupyter-echarts/echarts                     |
+| pyecharts  | https://pyecharts.github.io/jupyter-echarts/echarts                |
 +------------+--------------------------------------------------------------------+
 | echarts    | http://echarts.baidu.com/dist                                      |
 +------------+--------------------------------------------------------------------+
@@ -383,7 +383,15 @@ django_echarts 提供了一个包含若干个命令的 CLI 工具，这些命令
 文件下载
 ++++++++
 
-download_echarts_js 命令将从远程地址下载文件到项目的静态目录中。
+django-echarts 提供了一些下载命令，可以从远程地址下载文件到项目的静态目录中。这些命令包括：
+
+- download_echarts_js 通用下载
+- download_lib_js 下载 Echarts 核心库
+- download_map_js 下载 地图文件
+
+后面二者自 v0.2.2 新增。
+
+使用用法可用 `-h` 查看：
 
 ::
 
@@ -421,7 +429,17 @@ download_echarts_js 还支持同时下载多个文件，如：
 
 ::
 
-    python manage.py download_echarts_js echarts.min china fujian
+    python manage.py download_echarts_js echarts.min china fujian anhui
+
+`download_echarts_js` 支持同时下载核心库和地图文件，根据 `django_echarts.plugins.hosts.JsUtils.is_lib_js` 区分。如果你出现文件归类错误，可以使用更为明确的命令。
+
+如上述了例子也可以分为下面两个命令
+
+::
+
+    python manage.py download_lib_js echarts.min
+    python manage.py download_map_js fujian anhui
 
 
 download_echarts_js内部采用内置的 `urlopen` 函数实现文件下载。如果在执行过程中出现错误，请依据该函数文档进行排查。
+
