@@ -1,6 +1,15 @@
 项目开发
 =========
 
+pyecharts接口
+--------------
+
+django-echarts 基于 `pyecharts API`_ 整合开发。
+
+.. _`pyecharts API`: https://github.com/pyecharts/pyecharts/blob/master/docs/zh-cn/doc_api.md
+
+由于 Python 语言的"Duck Type" 特性，django-echarts 并不会直接引入 `pyecharts.base.Base` 或 `pyecharts.custom.page.Page` 等实际图表类，而是仅使用其接口。
+
 FAQ
 -----
 
