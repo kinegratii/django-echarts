@@ -58,7 +58,7 @@ def ifetch_multiple(iterable, defaults, *keys):
 
 
 def ifetch(iterable, key, *keys, **kwargs):
-    """Iterator version of pluck()."""
+    """Iterator version of fetch()."""
     if len(keys) > 0:
         defaults = kwargs.pop('defaults', {})
         return map(list, ifetch_multiple(iterable, defaults, key, *keys))
