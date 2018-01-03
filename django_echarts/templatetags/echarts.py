@@ -5,25 +5,13 @@
 
 from __future__ import unicode_literals
 
-import warnings
-
 from django import template
 from django.utils import six
-from pyecharts.base import Base
-from pyecharts.utils import json_dumps
 
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
+from django_echarts.utils.interfaces import dump_options_json
 
 register = template.Library()
-
-
-@register.inclusion_tag('tags/echarts.html')
-def echarts_options(echarts):
-    warnings.warn('The template tag echarts_options is deprecated.', DeprecationWarning)
-    assert isinstance(echarts, Base), 'A pyecharts.base.Base object is required.'
-    return {
-        'echarts_options': echarts.render_embed()
-    }
 
 
 @register.simple_tag(takes_context=True)
@@ -77,7 +65,7 @@ def build_echarts_initial_fragment(*charts):
           '''
         js_content = content_fmt.format(
             chart_id=chart.chart_id,
-            options=json_dumps(chart.options, indent=4)
+            options=dump_options_json(chart.options, indent=4)
         )
         contents.append(js_content)
     return '\n'.join(contents)
