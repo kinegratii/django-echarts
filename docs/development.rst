@@ -1,6 +1,15 @@
 项目开发
 =========
 
+pyecharts接口
+--------------
+
+django-echarts 基于 `pyecharts API`_ 整合开发。
+
+.. _`pyecharts API`: https://github.com/pyecharts/pyecharts/blob/master/docs/zh-cn/doc_api.md
+
+由于 Python 语言的"Duck Type" 特性，django-echarts 并不会直接引入 `pyecharts.base.Base` 或 `pyecharts.custom.page.Page` 等实际图表类，而是仅使用其接口。
+
 FAQ
 -----
 
@@ -11,14 +20,14 @@ A: 目前 django-echarts 运行环境要求如下：
 - Python2.7 或 Python3.5+
 - Django1.8+ 或 Django2.0+
 
-我们推荐大家尽量使用 Python3 以及 Django1.11 LTS 或Django 2.0。
+我们推荐大家尽量使用 Python3 以及 Django1.11 LTS 或 Django 2.0。
 
 **Q: django_echarts 对于 pyecharts 有什么改造？**
 
 A：首先需要明确的一点的是： django_echarts 仅使用了 pyecharts 当中的图表构建模块。对 pyecharts 的运行环境和功能特性作了一定的调整，包括：
 
 - jshost 不支持对象级别设置
-- javascript 链接不支持内部嵌入方式引用
+- javascript 标签渲染不支持内部嵌入方式
 
 **Q: 本地部署无法引用 echarts.js 文件 ？**
 
@@ -34,7 +43,7 @@ django-echarts 基于 MIT 开源协议。
 
     MIT License
 
-    Copyright (c) 2017
+    Copyright (c) 2017-2018
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

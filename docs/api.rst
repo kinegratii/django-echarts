@@ -76,7 +76,7 @@ lib_js_host
 +------------+--------------------------------------------------------------------+
 | bootcdn    | https://cdn.bootcss.com/echarts/{echarts_version}                  |
 +------------+--------------------------------------------------------------------+
-| pyecharts  | https://chfw.github.io/jupyter-echarts/echarts                     |
+| pyecharts  | https://pyecharts.github.io/jupyter-echarts/echarts                |
 +------------+--------------------------------------------------------------------+
 | echarts    | http://echarts.baidu.com/dist                                      |
 +------------+--------------------------------------------------------------------+
@@ -87,9 +87,9 @@ map_js_host
 **Echarts地图数据文件(Echarts map javascript file)** 的仓库名称或路径。可支持仓库名称如下表：
 
 +------------+--------------------------------------------------------------------+
-| 名称        |url格式                                                            |
+| 名称       |   url格式                                                          |
 +============+====================================================================+
-| pyecharts  | https://chfw.github.io/jupyter-echarts/echarts                     |
+| pyecharts  | https://pyecharts.github.io/jupyter-echarts/echarts                |
 +------------+--------------------------------------------------------------------+
 | echarts    | http://echarts.baidu.com/asset/map/js                              |
 +------------+--------------------------------------------------------------------+
@@ -107,23 +107,15 @@ local_host
 DJANGO_ECHARTS_SETTINGS
 ++++++++++++++++++++++++
 
- `django_echarts.utils.DJANGO_ECHARTS_SETTINGS` 
+ `django_echarts.conf.DJANGO_ECHARTS_SETTINGS`
 
- |  v0.1.3新增
 
 在代码中，应当使用模块全局变量 `DJANGO_ECHARTS_SETTINGS` 访问项目的一些配置及其相关属性。该变量是类 `SettingsStore` 的一个实例。
-
-DJANGO_ECHARTS_SETTING
-+++++++++++++++++++++++++++
-
- | 已废弃
-
-`DJANGO_ECHARTS_SETTINGS` 的别名，将在v0.2后移除。
 
 SettingsStore
 ++++++++++++++++
 
- `django_echarts.utils.SettingsStore(**kwargs)` 
+ `django_echarts.plugins.store.SettingsStore(**kwargs)`
 
 项目配置访问类
 
@@ -179,17 +171,10 @@ echarts_js_content_wrap
 
 *django-echarts* 提供了一些插件用于辅助功能。
 
-Host
-++++++++++
-
- `django_echarts.plugins.staticfiles.HostStore(name_or_host, context=None, host_lookup=None)` 
-
-代表一个远程仓库的一个实体类，用于构建路径。
-
 HostStore
 +++++++++++
 
- `django_echarts.plugins.staticfiles.HostStore(context=None, echarts_lib_name_or_host=None, echarts_map_name_or_host=None, **kwargs)` 
+ `django_echarts.plugins.hosts.HostStore(context=None, default_host=None, **kwargs)`
 
 一个仓库的集合，包含了若干个Host，和Host一样也能构建路径。
 
@@ -309,4 +294,31 @@ download_echarts_js
 远程仓库的选择依据以下顺序
 
 - `js_host` 参数
-- `settings.DJANGO_ECHARTS['lib_js_host']` 或者 `settings.DJANGO_ECHARTS['map_js_host']` 
+- `settings.DJANGO_ECHARTS['lib_js_host']` 或者 `settings.DJANGO_ECHARTS['map_js_host']`
+
+download_lib_js
++++++++++++++++++
+
+下载核心文件到本地。用法同 `download_echarts_js`
+
+::
+
+    usage: manage.py download_lib_js [-h] [--version] [-v {0,1,2,3}]
+                                          [--settings SETTINGS]
+                                          [--pythonpath PYTHONPATH] [--traceback]
+                                          [--no-color] [--js_host JS_HOST]
+                                          js_name [js_name ...]
+
+
+download_map_js
++++++++++++++++++
+
+下载地图文件到本地。用法同 `download_echarts_js`
+
+::
+
+    usage: manage.py download_map_js [-h] [--version] [-v {0,1,2,3}]
+                                          [--settings SETTINGS]
+                                          [--pythonpath PYTHONPATH] [--traceback]
+                                          [--no-color] [--js_host JS_HOST]
+                                          js_name [js_name ...]

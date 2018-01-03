@@ -1,6 +1,15 @@
 更新日志
 =========
 
+v0.2.2
+--------
+
+- 新增 `download_lib_js` 和 `download_map_js` 下载命令
+- 更新 pyecharts CDN 路径
+- `staticfiles` 模块重名为 `hosts`
+- 修正配置访问的bug
+- 原有下载命令 `download_echarts_js` 不再推荐使用
+
 v0.2.1 (20171220)
 -----------------
 

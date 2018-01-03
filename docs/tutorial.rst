@@ -9,7 +9,7 @@
 django-echarts的安装要求为：
 
 - Python2.7+或者3.5+
-- Django 1.8+
+- Django 1.8+ （建议使用 1.11 LTS 或 2.0）
 - pyecharts 0.3.0+
 
 可以从pypi安装

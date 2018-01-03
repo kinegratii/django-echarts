@@ -16,6 +16,7 @@ lib_classifiers = [
     "Framework :: Django :: 1.9",
     "Framework :: Django :: 1.10",
     "Framework :: Django :: 1.11",
+    "Framework :: Django :: 2.0",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Topic :: Software Development :: Libraries",
@@ -25,18 +26,18 @@ lib_classifiers = [
 
 packages = [
     'django_echarts',
+    'django_echarts.conf'
     'django_echarts.datasets',
     'django_echarts.management',
     'django_echarts.management.commands',
     'django_echarts.plugins',
     'django_echarts.templatetags',
     'django_echarts.views',
-
 ]
 
 setup(
     name='django-echarts',
-    version='0.2.1',
+    version='0.2.2',
     packages=packages,
     url='https://github.com/kinegratii/django-echarts',
     install_requires=['pyecharts', 'Django', 'pluck'],
