@@ -8,6 +8,14 @@ from __future__ import unicode_literals
 
 from datetime import datetime, date
 import json
+from django.utils import six
+
+
+def to_css_length(l):
+    if isinstance(l, (int, float)):
+        return '{}px'.format(l)
+    else:
+        return l
 
 
 class DefaultEncoder(json.JSONEncoder):
@@ -27,3 +35,26 @@ class DefaultEncoder(json.JSONEncoder):
 
 def dump_options_json(data, indent=0):
     return json.dumps(data, indent=indent, cls=DefaultEncoder)
+
+
+def merge_js_dependencies(*chart_or_name_list):
+    first_items_const = ['echarts', 'echartsgl']
+    dependencies = []
+    fist_items = set()
+
+    def _add(_d):
+        if _d in first_items_const:
+            fist_items.add(_d)
+        elif _d not in dependencies:
+            dependencies.append(_d)
+
+    for d in chart_or_name_list:
+        if hasattr(d, 'js_dependencies'):
+            for x in d.js_dependencies:
+                _add(x)
+        elif isinstance(d, (list, tuple)):
+            for x in d:
+                _add(x)
+        elif isinstance(d, six.text_type):
+            _add(d)
+    return [x for x in first_items_const if x in fist_items] + dependencies
