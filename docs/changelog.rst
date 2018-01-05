@@ -1,6 +1,14 @@
 更新日志
 =========
 
+v0.2.3
+------
+
+该版本重构了整合层，移除了 pyecharts 显式引入。
+
+- 新增 `django_echarts.utils.interfaces` 接口整合模块
+- 移除 `django_echarts.plugins.jinja2` 模块
+
 v0.2.2 (20180103)
 -----------------
 

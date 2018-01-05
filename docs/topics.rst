@@ -343,32 +343,6 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 
 更多信息可查看 API 文件。
 
-Jinja2模板引擎
---------------
-
-自 Django v1.8 起，Django 支持多模板引擎，内置了 Jinja2 模板引擎。 如果你的项目是采用 jinja2 模板引擎来渲染页面，通过简单的代码，就可以在你的项目直接使用 pyecharts 提供的 jinja2 模板函数。
-
-只需将 `OPTIONS.environment` 指向 `django_echarts.plugins.jinja2.environment` 回调函数。
-
-
-
-::
-
-    TEMPLATES = [
-        {
-            'BACKEND': 'django.template.backends.jinja2.Jinja2',
-            'DIRS': [],
-            'APP_DIRS': True,
-            'OPTIONS': {
-                'environment': 'django_echarts.plugins.jinja2.environment'
-            },
-        },
-    ]
-
-其余选项设置可参考 `Django 官方文档`_ 。
-
-.. _Django 官方文档: https://docs.djangoproject.com/en/1.11/topics/templates/#django.template.backends.jinja2.Jinja2
-
 CLI工具
 --------
 
