@@ -38,12 +38,15 @@ def dump_options_json(data, indent=0):
 
 
 def merge_js_dependencies(*chart_or_name_list):
-    first_items_const = ['echarts', 'echartsgl']
+    front_must_items = ['echarts']
+    front_optional_items = ['echartsgl']
     dependencies = []
     fist_items = set()
 
     def _add(_d):
-        if _d in first_items_const:
+        if _d in front_must_items:
+            pass
+        elif _d in front_optional_items:
             fist_items.add(_d)
         elif _d not in dependencies:
             dependencies.append(_d)
@@ -57,4 +60,4 @@ def merge_js_dependencies(*chart_or_name_list):
                 _add(x)
         elif isinstance(d, six.text_type):
             _add(d)
-    return [x for x in first_items_const if x in fist_items] + dependencies
+    return front_must_items + [x for x in front_optional_items if x in fist_items] + dependencies
