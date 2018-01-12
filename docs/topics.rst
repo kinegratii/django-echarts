@@ -6,7 +6,7 @@
 
 pyecharts_ 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众多的图表类型，还支持在不同环境下（如纯Python、Jupyter Notebook以及web框架）运行。
 
-.. _pyecharts: https://github.com/chenjiandongx/pyecharts
+.. _pyecharts: https://github.com/pyecharts/pyecharts
 
 由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django_echarts 将遵循 Django 开发规范，试图简化开发工作，并增加了若干个 Django 项目特有的功能和特性。
 
