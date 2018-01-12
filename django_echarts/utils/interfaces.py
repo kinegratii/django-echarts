@@ -43,19 +43,19 @@ def merge_js_dependencies(*chart_or_name_list):
     dependencies = []
     fist_items = set()
 
-    def _add(_d):
-        if _d in front_must_items:
+    def _add(_item):
+        if _item in front_must_items:
             pass
-        elif _d in front_optional_items:
-            fist_items.add(_d)
-        elif _d not in dependencies:
-            dependencies.append(_d)
+        elif _item in front_optional_items:
+            fist_items.add(_item)
+        elif _item not in dependencies:
+            dependencies.append(_item)
 
     for d in chart_or_name_list:
         if hasattr(d, 'js_dependencies'):
             for x in d.js_dependencies:
                 _add(x)
-        elif isinstance(d, (list, tuple)):
+        elif isinstance(d, (list, tuple, set)):
             for x in d:
                 _add(x)
         elif isinstance(d, six.text_type):

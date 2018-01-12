@@ -63,3 +63,19 @@ class JsMergeTestCase(unittest.TestCase):
             ['echarts', 'fujian'],
             merge_js_dependencies('echarts', ['echarts', 'fujian'])
         )
+
+    def test_nested_js_dependencies(self):
+        self.assertListEqual(
+            ['echarts', 'echartsgl', 'fujian'],
+            merge_js_dependencies(
+                merge_js_dependencies(self.BASE_CHART), self.MAP_CHART, self.THREE_D_CHART
+            )
+        )
+        self.assertListEqual(
+            ['echarts', 'echartsgl', 'fujian', 'zhejiang'],
+            merge_js_dependencies(
+                merge_js_dependencies(self.BASE_CHART, self.MAP_CHART),
+                self.THREE_D_CHART,
+                'zhejiang'
+            )
+        )
