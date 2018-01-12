@@ -282,14 +282,6 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
         line = Line('High Temperature')
         line.add('High', ds, hs)
 
-又比如，django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化，下面是一个比较典型的例子。
-
-使用方法如下：
-
-*pluck_demo.py*
-
-.. literalinclude:: /codes/pluck_demo.py
-
 更多可查看其主页 https://github.com/nvie/pluck 。
 
 自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 函数，该函数是对原有 pluck + zip 函数的进一步封装。
