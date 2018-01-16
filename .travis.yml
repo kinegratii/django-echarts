@@ -6,6 +6,10 @@ python:
 env:
   - DJANGO_VERSION=1.11.8
   - DJANGO_VERSION=2.0
+matrix：
+  exclude：
+  - python: 2.7
+    DJANGO_VERSION: 2.0
 install:
   - pip install -q Django==$DJANGO_VERSION
   - pip install -q pyecharts==0.3.1
