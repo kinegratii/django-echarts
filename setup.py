@@ -26,7 +26,7 @@ lib_classifiers = [
 
 packages = [
     'django_echarts',
-    'django_echarts.conf'
+    'django_echarts.conf',
     'django_echarts.datasets',
     'django_echarts.management',
     'django_echarts.management.commands',
