@@ -5,61 +5,28 @@
 
 from __future__ import unicode_literals
 
-import warnings
-
 from django import template
-from django.utils import six
-from pyecharts.base import Base
-from pyecharts.utils import json_dumps
 
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
+from django_echarts.utils.interfaces import to_css_length, dump_options_json, merge_js_dependencies
 
 register = template.Library()
 
 
-@register.inclusion_tag('tags/echarts.html')
-def echarts_options(echarts):
-    warnings.warn('The template tag echarts_options is deprecated.', DeprecationWarning)
-    assert isinstance(echarts, Base), 'A pyecharts.base.Base object is required.'
-    return {
-        'echarts_options': echarts.render_embed()
-    }
-
-
 @register.simple_tag(takes_context=True)
 def echarts_container(context, echarts):
-    def ex_wh(x):
-        if isinstance(x, (int, float)):
-            return '{}px'.format(x)
-        else:
-            return x
-
     return template.Template(
         '<div id="{chart_id}" style="width:{width};height:{height};"></div>'.format(
             chart_id=echarts.chart_id,
-            width=ex_wh(echarts.width),
-            height=ex_wh(echarts.height)
+            width=to_css_length(echarts.width),
+            height=to_css_length(echarts.height)
         )
     ).render(context)
 
 
 @register.simple_tag(takes_context=True)
 def echarts_js_dependencies(context, *args):
-    dependencies = []
-
-    def _add(_x):
-        if _x not in dependencies:
-            dependencies.append(_x)
-
-    for a in args:
-        if hasattr(a, 'js_dependencies'):
-            for d in a.js_dependencies:
-                _add(d)
-        elif isinstance(a, six.text_type):
-            _add(a)
-    if len(dependencies) > 1:
-        dependencies.remove('echarts')
-        dependencies = ['echarts'] + list(dependencies)
+    dependencies = merge_js_dependencies(*args)
     links = map(DJANGO_ECHARTS_SETTINGS.generate_js_link, dependencies)
 
     return template.Template(
@@ -77,7 +44,7 @@ def build_echarts_initial_fragment(*charts):
           '''
         js_content = content_fmt.format(
             chart_id=chart.chart_id,
-            options=json_dumps(chart.options, indent=4)
+            options=dump_options_json(chart.options, indent=4)
         )
         contents.append(js_content)
     return '\n'.join(contents)

@@ -200,6 +200,8 @@ Cast
 Pluck
 ++++++++
 
+*此库不再推荐使用，将在v0.3移除*
+
  `pluck.pluck(iterable, *keys, **kwargs)` 
 
 选取一个或多个字段组成新的列表。

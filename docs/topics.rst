@@ -6,7 +6,7 @@
 
 pyecharts_ 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众多的图表类型，还支持在不同环境下（如纯Python、Jupyter Notebook以及web框架）运行。
 
-.. _pyecharts: https://github.com/chenjiandongx/pyecharts
+.. _pyecharts: https://github.com/pyecharts/pyecharts
 
 由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django_echarts 将遵循 Django 开发规范，试图简化开发工作，并增加了若干个 Django 项目特有的功能和特性。
 
@@ -282,14 +282,6 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
         line = Line('High Temperature')
         line.add('High', ds, hs)
 
-又比如，django_echarts 内置了 `pluck` 库，提供了其他形式的数据转化，下面是一个比较典型的例子。
-
-使用方法如下：
-
-*pluck_demo.py*
-
-.. literalinclude:: /codes/pluck_demo.py
-
 更多可查看其主页 https://github.com/nvie/pluck 。
 
 自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 函数，该函数是对原有 pluck + zip 函数的进一步封装。
@@ -342,32 +334,6 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 
 
 更多信息可查看 API 文件。
-
-Jinja2模板引擎
---------------
-
-自 Django v1.8 起，Django 支持多模板引擎，内置了 Jinja2 模板引擎。 如果你的项目是采用 jinja2 模板引擎来渲染页面，通过简单的代码，就可以在你的项目直接使用 pyecharts 提供的 jinja2 模板函数。
-
-只需将 `OPTIONS.environment` 指向 `django_echarts.plugins.jinja2.environment` 回调函数。
-
-
-
-::
-
-    TEMPLATES = [
-        {
-            'BACKEND': 'django.template.backends.jinja2.Jinja2',
-            'DIRS': [],
-            'APP_DIRS': True,
-            'OPTIONS': {
-                'environment': 'django_echarts.plugins.jinja2.environment'
-            },
-        },
-    ]
-
-其余选项设置可参考 `Django 官方文档`_ 。
-
-.. _Django 官方文档: https://docs.djangoproject.com/en/1.11/topics/templates/#django.template.backends.jinja2.Jinja2
 
 CLI工具
 --------

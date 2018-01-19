@@ -1,8 +1,19 @@
 更新日志
 =========
 
-v0.2.2
---------
+v0.2.3 (20180114)
+-----------------
+
+该版本重构了整合层，移除了 pyecharts 显式引入。
+
+- Django1.10及其以下不再推荐使用，将在v0.3移除支持
+- 新增 `django_echarts.utils.interfaces` 接口整合模块
+- 新增 `django_echarts.datasets.fetch` 模块
+- `pluck` 模块不再推荐使用
+- 移除 `django_echarts.plugins.jinja2` 模块
+
+v0.2.2 (20180103)
+-----------------
 
 - 新增 `download_lib_js` 和 `download_map_js` 下载命令
 - 更新 pyecharts CDN 路径
