@@ -1,0 +1,118 @@
+数据构建工具
+============
+
+本文叙述了一些常见的数据构建的工具库，这些并不是 django_echarts 核心库的一部分。
+
+这些工具的目标可能在 numpy 和pandas 库也有更好的实现方式，因此这里的工具针对非数据分析领域的使用者。
+
+数据分离
+--------
+
+zip 函数
++++++++++
+
+`pyecharts.base.Base.add` 函数通常要求数据是两个长度相等的列表。
+
+如果原始数据是其他形式的字典或元组列表，pyecharts 和 django_echarts 提供了若干个可以数据构建和转化的函数，以适配图表的相关方法。
+
+例如内置的 `zip` 函数，可将列表按元素键名分解成多个列表。
+
+
+::
+
+        t_data = models.TemperatureRecord.objects.all().order_by('create_time').values_list('high', 'create_time')
+        # t_data = [(21, '2017-12-01'), (19, '2017-12-02'), (20, '2017-12-03')]
+        hs, ds = zip(*t_data)
+        line = Line('High Temperature')
+        line.add('High', ds, hs)
+
+fetch 函数
++++++++++++
+
+自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 函数，该函数是对原有 pluck + zip 函数的进一步封装。
+
+如
+
+::
+
+    from pyecharts import Bar
+    from django_echarts.datasets.fetch import fetch
+
+    objects = [
+        {'id': 282, 'name': 'Alice', 'age': 30},
+        {'id': 217, 'name': 'Bob', 'age': 56},
+        {'id': 328, 'name': 'Charlie', 'age': 56},
+    ]
+
+    names, ages = fetch(objects, 'name', 'age')
+
+    bar = Bar()
+    bar.add('The Age of Members', names, ages)
+
+如果数据来源于数据库，还可以使用 `django_echarts.datasets.managers.FieldValuesQuerySet` 链式查询方法。
+
+首先将 `FieldValuesQuerySet` 整合到自定义的 Manager 之后，就可以如下面的代码一样使用。
+
+::
+
+        hs, ds = models.TemperatureRecord.objects.all().order_by(
+            'create_time'
+        ).values(
+            'high', 'create_time'
+        ).fetch_values(
+            'high', 'create_time'
+        )
+        line = Line('High Temperature')
+        line.add('High', ds, hs)
+
+计数工具库
+-----------
+
+BSectionCounter 库用于计算符合一系列条件的数目计数类。
+
+::
+
+    data_list = list(df['stars'])
+    labels = ['00~00', '01~10', '11~50', '51~100', '101~500', '501~1000', '>1000']
+    sizes = []
+    sizes.append(len([pp for pp in data_list if pp == 0]))
+    sizes.append(len([pp for pp in data_list if pp >= 1 and pp <= 10]))
+    sizes.append(len([pp for pp in data_list if pp >= 11 and pp <= 50]))
+    sizes.append(len([pp for pp in data_list if pp >= 51 and pp <= 100]))
+    sizes.append(len([pp for pp in data_list if pp >= 101 and pp <= 500]))
+    sizes.append(len([pp for pp in data_list if pp >= 501 and pp <= 1000]))
+    sizes.append(len([pp for pp in data_list if pp >= 1001]))
+    stargazer_bar = Bar("stars", "stars hist graph of users", width=CHART_WIDTH)
+    stargazer_bar.add("", labels, sizes, is_label_show=True, mark_line=["average"])
+
+使用 BSelectionCounter 后，简化为
+
+::
+
+    data_list = list(df['stars'])
+    rc = BSectionCounter.from_simple(0,[1, 10], [11, 50], [51, 100], [101, 500], [501, 1000], [1001, None])
+    labels, sizes = rc.feed_as_axises(data_list)
+    stargazer_bar = Bar("stars", "stars hist graph of users", width=CHART_WIDTH)
+    stargazer_bar.add("", labels, sizes, is_label_show=True, mark_line=["average"])
+
+Dataset库
+----------
+
+该库将基于 Echarts 4.0 新增的 Dataset 特性。
+
+敬请期待。
+
+关系图数据构建
+------------------
+
+对于复杂的关系图，可以使用 networkx_ 库构建节点和连线，并传递给 `add` 函数。
+
+.. _networkx: https://github.com/networkx/networkx
+
+*graph_demo.py*
+
+.. literalinclude:: /codes/graph_demo.py
+
+渲染后的关系图如下：
+
+.. image:: /_static/networkx-graph-demo.png
