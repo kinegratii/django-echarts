@@ -54,3 +54,19 @@ class BSectionCounterTestCase(unittest.TestCase):
         self.assertEqual(4, c['0~50'])
         self.assertEqual(3, c['50~100'])
         self.assertEqual(1, c['≥100'])
+
+    def test_feed_as_axis(self):
+        rc = BSectionCounter.from_simple([0, 50], [50, 100], [100, None])
+        a, b = rc.feed_as_axises([0, 12, 23, 34, 50, 60, 67, 100])  # 4,3,1
+        self.assertTupleEqual(('0~50', '50~100', '≥100'), a)
+        self.assertTupleEqual((4, 3, 1), b)
+
+    def test_missing_index(self):
+        rc = BSectionCounter(
+            BRangeIndex(None, 0),
+            BRangeIndex(0, 50),
+            BRangeIndex(50, 100),
+            BRangeIndex(100)
+        )
+        c = rc.feed([0, 12, 23, 34, 50, 60, 67, 100])  # 4,3,1
+        self.assertEqual(0, c['<0'])
