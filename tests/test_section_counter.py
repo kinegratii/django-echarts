@@ -12,17 +12,17 @@ class BRangeIndexTestCase(unittest.TestCase):
         ri = BRangeIndex(3, 7)
         self.assertFalse(2 in ri)
         self.assertTrue(5 in ri)
-        self.assertEqual('3~7', ri.__str__())
+        self.assertEqual('3~7', str(ri))
 
         ri = BRangeIndex(2)
         self.assertTrue(2 in ri)
         self.assertTrue(1000 in ri)
-        self.assertEqual('≥2', ri.__str__())
+        self.assertEqual('≥2', str(ri))
 
         ri = BRangeIndex(upper=23)
         self.assertTrue(22 in ri)
         self.assertFalse(23 in ri)
-        self.assertEqual('<23', ri.__str__())
+        self.assertEqual('<23', str(ri))
 
 
 class BSectionCounterTestCase(unittest.TestCase):

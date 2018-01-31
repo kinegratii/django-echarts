@@ -38,6 +38,39 @@ class BValueIndex(BIndex):
         return self.value
 
 
+class BSectionIndex(BIndex):
+    def __init__(self, lower=None, upper=None):
+        self.lower = lower
+        self.upper = upper
+        self._lower_specified = self.lower is not None
+        self._upper_specified = self.upper is not None
+
+    def __contains__(self, item):
+        if self._lower_specified:
+            if self._upper_specified:
+                return self.lower <= item <= self.upper
+            else:
+                return self.lower <= item
+        else:
+            if self._upper_specified:
+                return item <= self.upper
+            else:
+                return True
+
+    def __str__(self):
+        if self._lower_specified and self._upper_specified:
+            return '{0}~{1}'.format(self.lower, self.upper)
+        elif self._lower_specified:
+            return '≥{}'.format(self.lower)
+        elif self._upper_specified:
+            return '≤{}'.format(self.upper)
+        else:
+            return '~'
+
+    def _key(self):
+        return self.lower if self._lower_specified else MIN_LOWER
+
+
 class BRangeIndex(BIndex):
     def __init__(self, lower=None, upper=None):
         self.lower = lower
