@@ -1,11 +1,11 @@
 数据构建工具
 ============
 
-本文叙述了一些常见的数据构建的工具库，这些并不是 django_echarts 核心库的一部分。
+本文叙述了一些常见的数据构建的工具库，这些并不是 django-echarts 核心库的一部分。
 
 这些工具的目标可能在 numpy 和pandas 库也有更好的实现方式，因此这里的工具针对非数据分析领域的使用者。
 
-数据分离
+数据拾取
 --------
 
 zip 函数
@@ -13,7 +13,7 @@ zip 函数
 
 `pyecharts.base.Base.add` 函数通常要求数据是两个长度相等的列表。
 
-如果原始数据是其他形式的字典或元组列表，pyecharts 和 django_echarts 提供了若干个可以数据构建和转化的函数，以适配图表的相关方法。
+如果原始数据是其他形式的字典或元组列表，pyecharts 和 django-echarts 提供了若干个可以数据构建和转化的函数，以适配图表的相关方法。
 
 例如内置的 `zip` 函数，可将列表按元素键名分解成多个列表。
 
@@ -49,9 +49,20 @@ fetch 函数
     bar = Bar()
     bar.add('The Age of Members', names, ages)
 
+FieldValuesQuerySet类
+++++++++++++++++++++++++++
+
 如果数据来源于数据库，还可以使用 `django_echarts.datasets.managers.FieldValuesQuerySet` 链式查询方法。
 
-首先将 `FieldValuesQuerySet` 整合到自定义的 Manager 之后，就可以如下面的代码一样使用。
+首先将 `FieldValuesQuerySet` 整合到自定义的 Manager 。
+
+::
+
+    class TemperatureRecord(models.Model):
+        # ...fields
+        objects = FieldValuesQuerySet.as_manager()
+
+就可以如下面的代码一样使用。
 
 ::
 
@@ -65,8 +76,8 @@ fetch 函数
         line = Line('High Temperature')
         line.add('High', ds, hs)
 
-计数工具库
------------
+计数工具库 BSectionCounter
+------------------------------
 
 BSectionCounter 库用于计算符合一系列条件的数目计数类。
 
