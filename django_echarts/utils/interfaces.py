@@ -4,8 +4,6 @@ A interface module for pyecharts.
 In the practice, pyecharts should not be explicitly imported.
 """
 
-from __future__ import unicode_literals
-
 from datetime import datetime, date
 import json
 from django.utils import six

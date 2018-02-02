@@ -3,8 +3,6 @@
 A Implement that you can use host name instead of its url.
 """
 
-from __future__ import unicode_literals
-
 ECHARTS_LIB_HOSTS = {
     'pyecharts': 'https://pyecharts.github.io/jupyter-echarts/echarts',
     'cdnjs': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}',

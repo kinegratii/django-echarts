@@ -4,14 +4,8 @@
 fetch is the way to fetch some field values to it own list;
 """
 
-from __future__ import unicode_literals
-
-from django.utils import six
-
-if not six.PY3:
-    from future_builtins import map, zip
-from itertools import tee
 import operator
+from itertools import tee
 
 
 class Empty(object):

@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+# coding=utf8
 
 from django.db import models
 from .fetch import fetch

@@ -6,7 +6,6 @@ A indexes-based counter module for value list.
 3. The counter of missing index will be set to 0
 4. export to counter or axis data list
 """
-from __future__ import unicode_literals
 
 from collections import Counter
 

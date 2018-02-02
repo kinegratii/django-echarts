@@ -4,8 +4,6 @@
 Expose the settings objects.
 """
 
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.utils.functional import SimpleLazyObject
 

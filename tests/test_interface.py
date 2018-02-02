@@ -1,7 +1,5 @@
 # coding=utf8
 
-from __future__ import unicode_literals
-
 import unittest
 
 from django_echarts.utils.interfaces import merge_js_dependencies
