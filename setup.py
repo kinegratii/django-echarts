@@ -38,7 +38,7 @@ packages = [
 
 setup(
     name='django-echarts',
-    version='0.2.3',
+    version='0.3.0b1',
     packages=packages,
     url='https://github.com/kinegratii/django-echarts',
     install_requires=['pyecharts', 'Django', 'pluck'],
