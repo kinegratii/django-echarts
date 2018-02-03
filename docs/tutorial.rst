@@ -12,7 +12,7 @@
 
     pip install django-echarts
 
-如果使用的是 Python2 的环境，可以使用 0.2 版本。
+如果使用的是 Python2 的环境，可以使用 0.2 系列的最新版本。
 
 ::
 

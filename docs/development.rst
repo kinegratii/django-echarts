@@ -17,10 +17,7 @@ FAQ
 
 A: 目前 django-echarts 运行环境要求如下：
 
-- Python2.7 或 Python3.5+
-- Django1.8+ 或 Django2.0+
-
-我们推荐大家尽量使用 Python3 以及 Django1.11 LTS 或 Django 2.0。
+Python3.5+ 和 Django2.0+
 
 **Q: django_echarts 对于 pyecharts 有什么改造？**
 

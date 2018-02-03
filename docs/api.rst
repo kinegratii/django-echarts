@@ -174,7 +174,7 @@ echarts_js_content_wrap
 HostStore
 +++++++++++
 
- `django_echarts.plugins.hosts.HostStore(context=None, default_host=None, **kwargs)`
+ `django_echarts.plugins.hosts.HostStore(*, context=None, default_host=None, **kwargs)`
 
 一个仓库的集合，包含了若干个Host，和Host一样也能构建路径。
 

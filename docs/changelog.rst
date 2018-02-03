@@ -4,8 +4,13 @@
 v0.3.0b1
 --------
 
+自v0.3起，django-echarts 仅支持 Python3.5+ 和 Django 2.0+
+
 - 移除对 Python2 的支持
 - 新增计数模块 `datasets.section_counter`
+- 部分函数增加 Key-Only Arguments (`PEP3102`_) 限定
+
+.. _PEP3102: https://www.python.org/dev/peps/pep-3102/
 
 v0.2.3 (20180114)
 -----------------
