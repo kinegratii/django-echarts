@@ -34,7 +34,7 @@ class JsUtils(object):
 class HostStore(object):
     HOST_DICT = {}
 
-    def __init__(self, context=None, default_host=None):
+    def __init__(self, *, context=None, default_host=None):
         self._context = context or {}
         self._host_dict = {} or self.HOST_DICT
         self._default_host = self._ensure_host_url(default_host)

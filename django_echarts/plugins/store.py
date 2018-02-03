@@ -12,7 +12,7 @@ DEFAULT_SETTINGS = {
 
 
 class SettingsStore(object):
-    def __init__(self, echarts_settings=None, extra_settings=None, **kwargs):
+    def __init__(self, *, echarts_settings=None, extra_settings=None, **kwargs):
         # Pre check settings
         self._settings = {k: v for k, v in DEFAULT_SETTINGS.items()}
         if echarts_settings:
