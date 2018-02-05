@@ -1,12 +1,10 @@
 # coding=utf8
 
-from __future__ import unicode_literals
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils import timezone
 
 
-@python_2_unicode_compatible
 class Device(models.Model):
     mac = models.CharField(max_length=50, unique=True, verbose_name="MAC地址", )
     name = models.CharField(max_length=50, default='-', verbose_name="设备名称")
@@ -23,10 +21,9 @@ class Device(models.Model):
         return self.mac
 
 
-@python_2_unicode_compatible
 class DataRecord(models.Model):
-    device = models.ForeignKey(Device)
-    record_time = models.DateTimeField()
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
+    record_time = models.DateTimeField(default=timezone.now)
     val1 = models.IntegerField()
     val2 = models.IntegerField()
 
@@ -34,23 +31,21 @@ class DataRecord(models.Model):
         return 'Data Record {0}'.format(self.device.mac)
 
 
-@python_2_unicode_compatible
 class Blog(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField(max_length=1000)
     author = models.CharField(max_length=50)
-    post_time = models.DateTimeField()
+    post_time = models.DateTimeField(default=timezone.now)
     read_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
 
 
-@python_2_unicode_compatible
 class TemperatureRecord(models.Model):
     high = models.FloatField()
     low = models.FloatField()
-    create_time = models.DateTimeField()
+    create_time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return 'Temperature Record'

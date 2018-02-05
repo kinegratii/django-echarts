@@ -1,1 +1,3 @@
-nosetests --with-coverage --cover-package django_echarts
+nosetests
+cd example
+python manage.py test
