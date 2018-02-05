@@ -143,7 +143,7 @@ echarts_container
 
  `django_echarts.templatetags.echarts.echarts_container(echarts_instance)` 
 
-渲染图表容易(默认为 `<div></div>` )。
+渲染图表容器(默认为 `<div></div>` )。
 
 echarts_js_dependencies
 +++++++++++++++++++++++++++++
@@ -184,88 +184,6 @@ Jinja2Environment
  `django_echarts.plugins.jinja2.environment` 
 
 jinja2模板引擎回调函数，返回 jinja2 模板引擎对象。
-
-数据构建工具(Data Builder Tools)
-----------------------------------
-
-这些工具用于数据构建等方面。
-
-Cast
-++++++++
-
- `pyecharts.base.Base.cast(seq)` 
-
-转化含有字段或数元组的序列到多个列表。
-
-Pluck
-++++++++
-
-*此库不再推荐使用，将在v0.3移除*
-
- `pluck.pluck(iterable, *keys, **kwargs)` 
-
-选取一个或多个字段组成新的列表。
-
-例如
-
->>> dates = [
-...     datetime(2012, 10, 22, 12, 00),
-...     datetime(2012, 10, 22, 15, 14),
-...     datetime(2012, 10, 22, 21, 44),
-... ]
->>> objects = [
-...      {'id': 282, 'name': 'Alice', 'age': 30, 'sex': 'female'},
-...      {'id': 217, 'name': 'Bob', 'age': 56},
-...      {'id': 328, 'name': 'Charlie', 'age': 56, 'sex': 'male'},
-... ]
->>> pluck(dates, 'hour')
-[12, 15, 21]
->>> pluck(objects, 'name')
-['Alice', 'Bob', 'Charlie']
->>> pluck(objects, 'name', 'age')
-[('Alice', 30), ('Bob', 56), ('Charlie': 56)]
->>> pluck(objects, 'name', 'sex')
-ValueError: item {'id': 217, 'name': 'Bob', 'age': 56} has no attr or key 'sex'
->>> pluck(dates, 'name', 'sex', defaults={'sex': 'unknown'})
-[('Alice', 'female'), ('Bob', 'unknown'), ('Charlie': 'male')]
-
-Fetch
-++++++
-
-`django_echarts.datasets.fetch.fetch(iterable, *keys, **kwargs)`
-
-*v0.2.1 新增*
-
-从可迭代的列表中获取某几个属性的值，组成一列。
-
-例子：
-
->>> dates = [
-...     datetime(2012, 10, 22, 12, 00),
-...     datetime(2012, 10, 22, 15, 14),
-...     datetime(2012, 10, 22, 21, 44),
-... ]
->>> objects = [
-...      {'id': 282, 'name': 'Alice', 'age': 30, 'sex': 'female'},
-...      {'id': 217, 'name': 'Bob', 'age': 56},
-...      {'id': 328, 'name': 'Charlie', 'age': 56, 'sex': 'male'},
-... ]
->>> fetch(dates, 'hour')
-[12, 15, 21]
->>> fetch(objects, 'name')
-['Alice', 'Bob', 'Charlie']
->>> names, ages = fetch(objects, 'name', 'age')
->>> names
-['Alice', 'Bob', 'Charlie']
->>> ages
-[30, 56, 56]
->>> names, sexs = fetch(objects, 'name', 'sex')
-ValueError: item {'id': 217, 'name': 'Bob', 'age': 56} has no attr or key 'sex'
->>> names, sexs = fetch(dates, 'name', 'sex', defaults={'sex': 'unknown'})
->>> names
-['Alice', 'Bob', 'Charlie']
->>> sexs
-['female', 'unknown', 'male]
 
 Django管理命令(Django Manage Commands)
 ---------------------------------------
