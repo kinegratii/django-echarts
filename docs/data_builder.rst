@@ -49,30 +49,45 @@ fetch 函数
     bar = Bar()
     bar.add('The Age of Members', names, ages)
 
-FieldValuesQuerySet类
+AxisValuesQuerySet 类
 ++++++++++++++++++++++++++
 
-如果数据来源于数据库，还可以使用 `django_echarts.datasets.managers.FieldValuesQuerySet` 链式查询方法。
+如果数据来源于数据库，还可以使用 `django_echarts.datasets.managers.AxisValuesQuerySet` 链式查询方法。
 
-首先将 `FieldValuesQuerySet` 整合到自定义的 Manager 。
+首先需要通过以下两种方式将 `AxisValuesQuerySet` 整合到自定义的 Manager 。
 
 ::
 
     class TemperatureRecord(models.Model):
         # ...fields
-        objects = FieldValuesQuerySet.as_manager()
+        objects = AxisValuesQuerySet.as_manager()
+        # Another way
+        # objects = models.Manager.from_queryset(AxisValuesQuerySet)()
 
 就可以如下面的代码一样使用。
 
 ::
 
-        hs, ds = models.TemperatureRecord.objects.all().order_by(
-            'create_time'
-        ).values(
-            'high', 'create_time'
-        ).fetch_values(
-            'high', 'create_time'
-        )
+        hs, ds = models.TemperatureRecord.objects.all().order_by('create_time').as_axis_values('high', 'create_time')
+        line = Line('High Temperature')
+        line.add('High', ds, hs)
+
+
+还可以配合 `values` 和 `values_list` 函数使用，以上查询也可以写成
+
+values
+
+::
+
+        hs, ds = models.TemperatureRecord.objects.all().order_by('create_time').values('high', 'create_time').as_axis_values('high', 'create_time')
+        line = Line('High Temperature')
+        line.add('High', ds, hs)
+
+values_list，需要确保 named=True ，否则应当使用内置的 zip 函数。
+
+::
+
+        hs, ds = models.TemperatureRecord.objects.all().order_by('create_time').values_list('high', 'create_time', named=True).as_axis_values('high', 'create_time')
         line = Line('High Temperature')
         line.add('High', ds, hs)
 

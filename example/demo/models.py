@@ -4,6 +4,8 @@
 from django.db import models
 from django.utils import timezone
 
+from django_echarts.datasets.managers import AxisValuesQuerySet
+
 
 class Device(models.Model):
     mac = models.CharField(max_length=50, unique=True, verbose_name="MAC地址", )
@@ -46,6 +48,8 @@ class TemperatureRecord(models.Model):
     high = models.FloatField()
     low = models.FloatField()
     create_time = models.DateTimeField(default=timezone.now)
+
+    objects = models.Manager.from_queryset(AxisValuesQuerySet)()
 
     def __str__(self):
         return 'Temperature Record'
