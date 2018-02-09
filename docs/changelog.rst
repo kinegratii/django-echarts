@@ -10,6 +10,7 @@ v0.3.0b1
 - 新增计数模块 `datasets.section_counter`
 - 部分函数增加 Key-Only Arguments (`PEP 3102`_) 限定
 - 发布数据构建模块文档
+- 下载命令增加 `--fake` 选项，支持预览调试
 
 .. _PEP 3102: https://www.python.org/dev/peps/pep-3102/
 

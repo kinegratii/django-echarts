@@ -24,16 +24,30 @@ class DownloadBaseCommand(BaseCommand):
             dest='js_host',
             help='The host where the file will be downloaded from.'
         )
+        parser.add_argument(
+            '--fake',
+            action='store_true',
+            help='Print the remote url and local path.'
+        )
 
     def handle(self, *args, **options):
         js_names = options['js_name']
         js_host = options.get('js_host')
+        fake = options.get('fake', False)
         # Start handle
-        for js_name in js_names:
+        fake_result = []
+        for i, js_name in enumerate(js_names):
             remote_url = self.get_remote_url(settings, DJANGO_ECHARTS_SETTINGS, js_name, js_host)
             local_url = DJANGO_ECHARTS_SETTINGS.generate_local_url(js_name)
             local_path = settings.BASE_DIR + local_url.replace('/', os.sep)  # url => path
-            self.download_js_file(remote_url, local_path)
+            fake_result.append((remote_url, local_path, local_url))
+            if fake:
+                self.stdout.write('[Info] Download Meta for [{}]'.format(js_name))
+                self.stdout.write('        Remote Url: {}'.format(remote_url))
+                self.stdout.write('        Local  Url: {}'.format(local_url))
+                self.stdout.write('        Local Path: {}'.format(local_path))
+            else:
+                self.download_js_file(remote_url, local_path)
 
     def download_js_file(self, remote_url, local_path, **kwargs):
         self.stdout.write('[Info] Download file from {0}'.format(remote_url))

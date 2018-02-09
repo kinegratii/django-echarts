@@ -288,13 +288,38 @@ django-echarts 提供了一些下载命令，可以从远程地址下载文件�
 
 使用用法可用 `-h` 查看：
 
-::
+.. code-block:: none
 
     usage: manage.py download_echarts_js [-h] [--version] [-v {0,1,2,3}]
                                          [--settings SETTINGS]
                                          [--pythonpath PYTHONPATH] [--traceback]
-                                         [--no-color] [--js_host JS_HOST]
+                                         [--no-color] [--js_host JS_HOST] [--fake]
                                          js_name [js_name ...]
+
+    Download one or some javascript files from remote CDN to project staticfile
+    dirs.
+
+    positional arguments:
+      js_name
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output,
+                            2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g.
+                            "myproject.settings.main". If this isn't provided, the
+                            DJANGO_SETTINGS_MODULE environment variable will be
+                            used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g.
+                            "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --js_host JS_HOST     The host where the file will be downloaded from.
+      --fake                Print the remote url and local path.
+
 
 在使用之前需进行一些配置，如下面的例子：
 

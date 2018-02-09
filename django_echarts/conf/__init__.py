@@ -9,6 +9,8 @@ from django.utils.functional import SimpleLazyObject
 
 from django_echarts.plugins.store import SettingsStore, DEFAULT_SETTINGS
 
+__all__ = ['DJANGO_ECHARTS_SETTINGS']
+
 
 def get_django_echarts_settings():
     project_echarts_settings = {k: v for k, v in DEFAULT_SETTINGS.items()}
