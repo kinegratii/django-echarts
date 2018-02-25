@@ -128,16 +128,6 @@ SettingsStore
 
 这些标签都定义在 *echarts* 模块，在使用之前需要先行导入。
 
-
-echarts_options
-++++++++++++++++++++
-
- `django_echarts.templatetags.echarts.echarts_options(echarts)` 
-
- | 已废弃，使用 `echarts_js_content` 代替。
-
-渲染图表js代码。
-
 echarts_container
 ++++++++++++++++++
 
@@ -177,13 +167,6 @@ HostStore
  `django_echarts.plugins.hosts.HostStore(*, context=None, default_host=None, **kwargs)`
 
 一个仓库的集合，包含了若干个Host，和Host一样也能构建路径。
-
-Jinja2Environment
-++++++++++++++++++
-
- `django_echarts.plugins.jinja2.environment` 
-
-jinja2模板引擎回调函数，返回 jinja2 模板引擎对象。
 
 Django管理命令(Django Manage Commands)
 ---------------------------------------

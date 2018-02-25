@@ -361,5 +361,6 @@ download_echarts_js 还支持同时下载多个文件，如：
     python manage.py download_map_js fujian anhui
 
 
-download_echarts_js内部采用内置的 `urlopen` 函数实现文件下载。如果在执行过程中出现错误，请依据该函数文档进行排查。
+download_echarts_js内部采用内置的 `urllib.request.urlopen`_ 函数实现文件下载。如果在执行过程中出现错误，请依据该函数文档进行排查。
 
+.. _urllib.request.urlopen: https://docs.python.org/3/library/urllib.request.html#urllib.request.urlopen

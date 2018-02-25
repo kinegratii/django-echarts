@@ -1,8 +1,7 @@
 # coding=utf8
 
-from __future__ import unicode_literals
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 lib_classifiers = [
     "Development Status :: 4 - Beta",
@@ -18,22 +17,10 @@ lib_classifiers = [
     'Operating System :: OS Independent'
 ]
 
-packages = [
-    'django_echarts',
-    'django_echarts.conf',
-    'django_echarts.datasets',
-    'django_echarts.management',
-    'django_echarts.management.commands',
-    'django_echarts.plugins',
-    'django_echarts.templatetags',
-    'django_echarts.utils',
-    'django_echarts.views',
-]
-
 setup(
     name='django-echarts',
-    version='0.3.0b1',
-    packages=packages,
+    version='0.3.0',
+    packages=find_packages(exclude=['tests']),
     url='https://github.com/kinegratii/django-echarts',
     install_requires=['Django'],
     include_package_data=True,
