@@ -264,77 +264,6 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 
 除了 echarts 官方网址外，均采用 HTTPS 协议地址。 echarts 和 pyecharts 不是正式CDN，仅供演示，不建议运用于实际环境，可下载本地部署。
 
-数据构建
----------
-
-`pyecharts.base.Base.add` 函数通常要求数据是两个长度相等的列表。
-
-如果原始数据是其他形式的字典或元组列表，pyecharts 和 django_echarts 提供了若干个可以数据构建和转化的函数，以适配图表的相关方法。
-
-例如内置的 `zip` 函数，可将列表按元素键名分解成多个列表。
-
-
-::
-
-        t_data = models.TemperatureRecord.objects.all().order_by('create_time').values_list('high', 'create_time')
-        # t_data = [(21, '2017-12-01'), (19, '2017-12-02'), (20, '2017-12-03')]
-        hs, ds = zip(*t_data)
-        line = Line('High Temperature')
-        line.add('High', ds, hs)
-
-更多可查看其主页 https://github.com/nvie/pluck 。
-
-自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 函数，该函数是对原有 pluck + zip 函数的进一步封装。
-
-如
-
-::
-
-    from pyecharts import Bar
-    from django_echarts.datasets.fetch import fetch
-
-    objects = [
-        {'id': 282, 'name': 'Alice', 'age': 30},
-        {'id': 217, 'name': 'Bob', 'age': 56},
-        {'id': 328, 'name': 'Charlie', 'age': 56},
-    ]
-
-    names, ages = fetch(objects, 'name', 'age')
-
-    bar = Bar()
-    bar.add('The Age of Members', names, ages)
-
-如果数据来源于数据库，还可以使用 `django_echarts.datasets.managers.FieldValuesQuerySet` 链式查询方法。
-
-首先将 `FieldValuesQuerySet` 整合到自定义的 Manager 之后，就可以如下面的代码一样使用。
-
-::
-
-        hs, ds = models.TemperatureRecord.objects.all().order_by(
-            'create_time'
-        ).values(
-            'high', 'create_time'
-        ).fetch_values(
-            'high', 'create_time'
-        )
-        line = Line('High Temperature')
-        line.add('High', ds, hs)
-
-特别的是，对于复杂的关系图，可以使用 networkx_ 库构建节点和连线，并传递给 `add` 函数。
-
-.. _networkx: https://github.com/networkx/networkx
-
-*graph_demo.py*
-
-.. literalinclude:: /codes/graph_demo.py
-
-渲染后的关系图如下：
-
-.. image:: /_static/networkx-graph-demo.png
-
-
-更多信息可查看 API 文件。
-
 CLI工具
 --------
 
@@ -359,13 +288,38 @@ django-echarts 提供了一些下载命令，可以从远程地址下载文件�
 
 使用用法可用 `-h` 查看：
 
-::
+.. code-block:: none
 
     usage: manage.py download_echarts_js [-h] [--version] [-v {0,1,2,3}]
                                          [--settings SETTINGS]
                                          [--pythonpath PYTHONPATH] [--traceback]
-                                         [--no-color] [--js_host JS_HOST]
+                                         [--no-color] [--js_host JS_HOST] [--fake]
                                          js_name [js_name ...]
+
+    Download one or some javascript files from remote CDN to project staticfile
+    dirs.
+
+    positional arguments:
+      js_name
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output,
+                            2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g.
+                            "myproject.settings.main". If this isn't provided, the
+                            DJANGO_SETTINGS_MODULE environment variable will be
+                            used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g.
+                            "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --js_host JS_HOST     The host where the file will be downloaded from.
+      --fake                Print the remote url and local path.
+
 
 在使用之前需进行一些配置，如下面的例子：
 
@@ -407,5 +361,6 @@ download_echarts_js 还支持同时下载多个文件，如：
     python manage.py download_map_js fujian anhui
 
 
-download_echarts_js内部采用内置的 `urlopen` 函数实现文件下载。如果在执行过程中出现错误，请依据该函数文档进行排查。
+download_echarts_js内部采用内置的 `urllib.request.urlopen`_ 函数实现文件下载。如果在执行过程中出现错误，请依据该函数文档进行排查。
 
+.. _urllib.request.urlopen: https://docs.python.org/3/library/urllib.request.html#urllib.request.urlopen

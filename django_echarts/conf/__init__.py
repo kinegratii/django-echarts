@@ -4,12 +4,12 @@
 Expose the settings objects.
 """
 
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.utils.functional import SimpleLazyObject
 
 from django_echarts.plugins.store import SettingsStore, DEFAULT_SETTINGS
+
+__all__ = ['DJANGO_ECHARTS_SETTINGS']
 
 
 def get_django_echarts_settings():

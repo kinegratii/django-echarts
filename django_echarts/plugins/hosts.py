@@ -3,8 +3,6 @@
 A Implement that you can use host name instead of its url.
 """
 
-from __future__ import unicode_literals
-
 ECHARTS_LIB_HOSTS = {
     'pyecharts': 'https://pyecharts.github.io/jupyter-echarts/echarts',
     'cdnjs': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}',
@@ -36,7 +34,7 @@ class JsUtils(object):
 class HostStore(object):
     HOST_DICT = {}
 
-    def __init__(self, context=None, default_host=None):
+    def __init__(self, *, context=None, default_host=None):
         self._context = context or {}
         self._host_dict = {} or self.HOST_DICT
         self._default_host = self._ensure_host_url(default_host)

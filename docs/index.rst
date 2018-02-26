@@ -8,6 +8,10 @@ Welcome to django_echarts's documentation!
 
 django-echarts 是一个关于 Echarts_ 整合的 Django App，使用 pyecharts_ 作为图表构建库。
 
+::
+
+    自v0.3起，django-echarts 仅支持 Python3.5+ 和 Django 2.0+
+
 主页： https://github.com/kinegratii/django-echarts
 
 它提供了以下特性：
@@ -26,6 +30,7 @@ django-echarts 是一个关于 Echarts_ 整合的 Django App，使用 pyecharts_
    
    tutorial
    topics
+   data_builder
    api
    development
    changelog

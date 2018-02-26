@@ -2,29 +2,28 @@
 
 ![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) [![Build Status](https://travis-ci.org/kinegratii/django-echarts.svg?branch=master)](https://travis-ci.org/kinegratii/django-echarts) ![Development](https://img.shields.io/badge/Development-Beta-yellowgreen.svg) ![python35](https://img.shields.io/badge/Python-3.5+-blue.svg) ![django20](https://img.shields.io/badge/Django-2.0+-blue.svg)
 
+django-echarts is a [Django](https://www.djangoproject.com) app for [Echarts](http://echarts.baidu.com/index.html) integration using [pyecharts](https://github.com/pyecharts/pyecharts) as chart builder.
 
-django-echarts 是一个 [Echarts](http://echarts.baidu.com/index.html) 整合的  [Django](https://www.djangoproject.com) App，使用 [pyecharts](https://github.com/pyecharts/pyecharts) 的作为图表构建库。
+## Overview
 
-## 概述
+django-echarts provides these features:
 
-django-echarts 主要提供了以下的内容：
+- Frontend and backend views
+- A javascript file manager
+- Data builder library
+- A CLI based on django command
 
-- 基于前端或后端的数据渲染
-- javascript静态文件管理和加载
-- 数据构建工具函数库
-- 基于Django命令的CLI工具
-
-## 安装
+## Installation
 
 ### Python3
 
-自 v0.3 开始，django-echarts 只支持 Python3.5以上 的开发环境。
+From v0.3, django-echarts only support Python 3.5+ and Django 2.0+.
 
 ```shell
 pip install django-echarts
 ```
 
-或者使用源码构建
+Or use source code
 
 ```shell
 git clone https://github.com/kinegratii/django-echarts.git
@@ -34,7 +33,7 @@ python setup.py install
 
 ### Python2
 
-如果使用的是 Python2 的环境，可以使用 0.2 版本。
+You can use the version series of 0.2.x on Python 2.
 
 ```shell
 pip install django-echarts==0.2.3
@@ -42,15 +41,15 @@ pip install django-echarts==0.2.3
 
 ### pyecharts
 
-其他安装要求为：
+pyecharts requires 0.3+:
 
 - pyecharts>=0.3.0
 
 
 
-## 快速使用
+## Quickstart
 
-1 添加 django_echarts包到项目配置模块的 `INSTALL_APPS`列表。
+1 Add django_echarts to the `INSTALL_APPS` list in the settings module file.
 
 ```python
 INSTALL_APPS = (
@@ -60,7 +59,7 @@ INSTALL_APPS = (
 )
 ```
 
-2 根据实际场景需要设置一些配置参数，这些参数必须定义在项目模块中一个名为 `DJANGO_ECHARTS` 的字典里。
+2 Custom your settings with `DJANGO_ECHARTS` variable in the settings module.e.g
 
 ```python
 DJANGO_ECHARTS = {
@@ -68,9 +67,9 @@ DJANGO_ECHARTS = {
 }
 ```
 
-或者全部采用默认值。
+Or leave to the default values.
 
-3 编写视图类，模板页面和路由。
+3 Add views, urls.
 
 ```python
 def create_simple_bar():
@@ -85,7 +84,7 @@ def create_simple_bar():
         return create_simple_bar()
 ```
 
-4 编写模板文件，可以使用相关标签（定义在`echarts`标签库里）渲染JS内容。
+4 Write template files.
 
 ```html
 {% extends 'base.html' %}
@@ -117,31 +116,29 @@ def create_simple_bar():
 
 {% block extra_script %}
     {# 渲染依赖文件 #}
-    {% echarts_js_dependencies echarts_instance %} 
+    {% echarts_js_dependencies echarts_instance %}
     {# 渲染初始化文本 #}
     {% echarts_js_content echarts_instance %}
 {% endblock %}
 ```
 
-5 在部署到正式环境时，如果需要使用公共CDN托管常用JS文件，可修改项目配置，使得 `lib_js_host`或者`map_js_host`指向公共CDN。
+## Document
 
-## 文档
+[Online Document](http://django-echarts.readthedocs.io/zh_CN/latest/index.html)
 
-[在线文档](http://django-echarts.readthedocs.io/zh_CN/latest/index.html)
+## Demo
 
-## 示例
-
-示例项目请参考 example 文件夹。
+The example project is under example directory
 
 ```shell
 cd example
 python manage.py runserver 127.0.0.1:8000
 ```
 
-访问本地地址： http://127.0.0.1:8000 ，示例运行结果
+Access the web url http://127.0.0.1:8000 , the screencut is the following picture.
 
 ![Demo](docs/images/django-echarts-demo.gif)
 
-## 开源协议
+## License
 
-项目基于 MIT开源协议，欢迎提交 Issue & Pull request 。
+This project is under the MIT license, Issues & Pull requests are welcome.

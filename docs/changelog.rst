@@ -1,12 +1,25 @@
 更新日志
 =========
 
+v0.3.0 (20180226)
+-----------------
+
+自v0.3起，django-echarts 仅支持 Python3.5+ 和 Django 2.0+
+
+- 移除对 Python2 的支持
+- 新增计数模块 `datasets.section_counter`
+- 部分函数增加 Key-Only Arguments (`PEP 3102`_) 限定
+- 下载命令增加 `--fake` 选项，支持预览调试
+- 整合单元测试
+- 发布数据构建模块文档
+
+.. _PEP 3102: https://www.python.org/dev/peps/pep-3102/
+
 v0.2.3 (20180114)
 -----------------
 
 该版本重构了整合层，移除了 pyecharts 显式引入。
 
-- Django1.10及其以下不再推荐使用，将在v0.3移除支持
 - 新增 `django_echarts.utils.interfaces` 接口整合模块
 - 新增 `django_echarts.datasets.fetch` 模块
 - `pluck` 模块不再推荐使用

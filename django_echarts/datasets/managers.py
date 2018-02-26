@@ -1,9 +1,9 @@
-from __future__ import unicode_literals
+# coding=utf8
 
 from django.db import models
 from .fetch import fetch
 
 
-class FieldValuesQuerySet(models.QuerySet):
-    def fetch_values(self, *keys, **kwargs):
+class AxisValuesQuerySet(models.QuerySet):
+    def as_axis_values(self, *keys, **kwargs):
         return fetch(self, *keys, **kwargs)

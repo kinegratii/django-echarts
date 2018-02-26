@@ -4,11 +4,8 @@ A interface module for pyecharts.
 In the practice, pyecharts should not be explicitly imported.
 """
 
-from __future__ import unicode_literals
-
 from datetime import datetime, date
 import json
-from django.utils import six
 
 
 def to_css_length(l):
@@ -58,6 +55,6 @@ def merge_js_dependencies(*chart_or_name_list):
         elif isinstance(d, (list, tuple, set)):
             for x in d:
                 _add(x)
-        elif isinstance(d, six.text_type):
+        elif isinstance(d, str):
             _add(d)
     return front_must_items + [x for x in front_optional_items if x in fist_items] + dependencies

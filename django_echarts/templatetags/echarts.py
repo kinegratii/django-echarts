@@ -3,8 +3,6 @@
 
 """
 
-from __future__ import unicode_literals
-
 from django import template
 
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS

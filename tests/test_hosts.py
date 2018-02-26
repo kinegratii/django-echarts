@@ -1,6 +1,5 @@
 # coding=utf8
 
-from __future__ import unicode_literals
 
 import unittest
 
@@ -14,7 +13,7 @@ class HostStoreTestCase(unittest.TestCase):
             'STATIC_URL': '/static/',
             'echarts_version': '3.7.0'
         }
-        hs = LibHostStore(m_context, 'bootcdn')
+        hs = LibHostStore(context=m_context, default_host='bootcdn')
         self.assertEqual(
             'https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js',
             hs.generate_js_link('echarts.min')
@@ -37,7 +36,7 @@ class HostStoreTestCase(unittest.TestCase):
             'STATIC_URL': '/static/',
             'echarts_version': '3.7.0'
         }
-        hs = MapHostStore(m_context, 'echarts')
+        hs = MapHostStore(context=m_context, default_host='echarts')
         self.assertEqual(
             'https://pyecharts.github.io/jupyter-echarts/echarts/china.js',
             hs.generate_js_link('china', js_host='pyecharts')
@@ -60,7 +59,7 @@ class CustomHostTestCase(unittest.TestCase):
             'echarts_version': '3.8.5'
         }
 
-        mhs = MapHostStore(m_context, 'pyecharts')
+        mhs = MapHostStore(context=m_context, default_host='pyecharts')
         mhs.add_host('/demo/', 'demo')
         mhs.add_host('/demo2/{echarts_version}', 'demo2')
         self.assertEqual(
