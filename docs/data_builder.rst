@@ -125,7 +125,7 @@ BSectionCounter 库用于计算符合一系列条件的数目计数类。
         BSectionIndex(501, 1000),
         BSectionIndex(1001)
     )
-    labels, sizes = rc1.feed_as_axises(source_data)
+    labels, sizes = rc1.feed_as_axises(data_list)
     stargazer_bar = Bar("stars", "stars hist graph of users", width=CHART_WIDTH)
     stargazer_bar.add("", labels, sizes, is_label_show=True, mark_line=["average"])
 
