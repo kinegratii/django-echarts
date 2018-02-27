@@ -14,14 +14,15 @@ DEFAULT_SETTINGS = {
 class SettingsStore(object):
     def __init__(self, *, echarts_settings=None, extra_settings=None, **kwargs):
         # Pre check settings
-        self._settings = {k: v for k, v in DEFAULT_SETTINGS.items()}
-        if echarts_settings:
-            if echarts_settings['lib_js_host'] == 'local_host':
-                echarts_settings['lib_js_host'] = echarts_settings['local_host']
-            if echarts_settings['map_js_host'] == 'local_host':
-                echarts_settings['map_js_host'] = echarts_settings['local_host']
-            self._settings.update(echarts_settings)
+
         self._extra_settings = extra_settings or {}
+        if self._extra_settings.get('lib_js_host') == 'local_host':
+            self._extra_settings['lib_js_host'] = echarts_settings['local_host']
+        if self._extra_settings.get('map_js_host') == 'local_host':
+            self._extra_settings['map_js_host'] = echarts_settings['local_host']
+
+        # Merge echarts settings
+        self._settings = {**DEFAULT_SETTINGS, **self._extra_settings}
 
         self.lib_host_store = None
         self.map_host_store = None
