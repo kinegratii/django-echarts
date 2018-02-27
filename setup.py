@@ -9,6 +9,7 @@ lib_classifiers = [
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Framework :: Django",
+    "Framework :: Django :: 1.11",
     "Framework :: Django :: 2.0",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",

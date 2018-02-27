@@ -3,6 +3,7 @@ python:
   - "3.5"
   - "3.6"
 env:
+  - DJANGO_VERSION=1.11
   - DJANGO_VERSION=2.0
 install:
   - pip install -q Django==$DJANGO_VERSION

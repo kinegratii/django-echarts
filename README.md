@@ -18,7 +18,7 @@ django-echarts 主要提供了以下的内容：
 
 ### Python3
 
-自 v0.3 开始，django-echarts 只支持 Python3.5以上 的开发环境。
+自 v0.3 开始，django-echarts 只支持 Python3.5 以上 的开发环境。
 
 ```shell
 pip install django-echarts
@@ -40,11 +40,12 @@ python setup.py install
 pip install django-echarts==0.2.3
 ```
 
-### pyecharts
+### 其他
 
 其他安装要求为：
 
-- pyecharts>=0.3.0
+- pyecharts 0.3+
+- Django 1.11 LTS 或 Django 2.0+
 
 
 
