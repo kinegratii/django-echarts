@@ -20,7 +20,7 @@ class FetchTestCase(unittest.TestCase):
         self.assertListEqual(sexs, ['female', 'male', 'male'])
 
     def test_ifetch_multiple(self):
-        names, ages = map(list, ifetch_multiple(DICT_LIST_DATA, {}, 'name', 'age'))
+        names, ages = map(list, ifetch_multiple(DICT_LIST_DATA, {}, None, 'name', 'age'))
         self.assertListEqual(names, ['Alice', 'Bob', 'Charlie'])
         self.assertListEqual(ages, [30, 56, 56])
 
@@ -39,3 +39,28 @@ class FetchTestCase(unittest.TestCase):
         self.assertListEqual(names, ['Alice', 'Bob', 'Charlie'])
         self.assertListEqual(ages, [30, 56, 56])
         self.assertListEqual(sexs, ['female', 'male', 'male'])
+
+
+class MockItem:
+    def __init__(self, x, y, z):
+        self._data = {'x': x, 'y': y, 'z': z}
+
+    def get(self, key):
+        return self._data.get(key)
+
+
+class FetchCustomGetterTestCase(unittest.TestCase):
+    def test_custom_getter(self):
+        my_getter = lambda item, key: item.get(key)
+        data_list = [MockItem(1, 2, 3), MockItem(4, 5, 6), MockItem(7, 8, 9)]
+        xs, ys, zs = fetch(data_list, 'x', 'y', 'z', getter=my_getter)
+        self.assertListEqual([1, 4, 7], xs)
+
+    def test_with_dict(self):
+        """
+        Use dict.get(key) to pick item.
+        """
+        my_getter = lambda item, key: item.get(key)
+        names, ages = fetch(DICT_LIST_DATA, 'name', 'age', getter=my_getter)
+        self.assertListEqual(names, ['Alice', 'Bob', 'Charlie'])
+        self.assertListEqual(ages, [30, 56, 56])
