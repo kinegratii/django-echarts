@@ -6,6 +6,7 @@ from pyecharts import Bar, Kline, Map, Pie
 def create_simple_bar():
     bar = Bar("我的第一个图表", "这里是副标题")
     bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
+    bar.renderer = 'svg'
     return bar
 
 
@@ -44,6 +45,7 @@ def create_simple_kline():
 
     kline = Kline("K 线图示例")
     kline.add("日K", ["2017/7/{}".format(i + 1) for i in range(31)], v1)
+    kline.renderer = 'svg'
     return kline
 
 
@@ -52,6 +54,7 @@ def create_simple_map():
     attr = ["福建", "山东", "北京", "上海"]
     map1 = Map("全国地图示例", width=1200, height=600)
     map1.add("", attr, value, maptype='china')
+    map1.renderer = 'svg'
     return map1
 
 
@@ -77,4 +80,5 @@ def create_simple_pie():
             label_pos='center', is_label_show=True, label_text_color=None)
     pie.add("", ["犯罪", ""], [28, 72], center=[90, 70], radius=[18, 24],
             label_pos='center', is_label_show=True, label_text_color=None, is_legend_show=True, legend_top="center")
+    pie.renderer = 'svg'
     return pie

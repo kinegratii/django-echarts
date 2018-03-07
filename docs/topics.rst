@@ -23,7 +23,8 @@ django-echarts 遵循统一配置的原则，所有的配置均定义在项目�
 ::
 
 	DJANGO_ECHARTS = {
-		'echarts_version':'3.7.0',
+		'echarts_version':'4.0.4',
+		'renderer': 'canvas',
 		'lib_js_host':'bootcdn',
 		'map_js_host':'echarts'，
 		'local_host':None
@@ -56,6 +57,31 @@ django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Bas
 
     from django.conf import settings
     print(settings.DJANGO_ECHARTS['echarts_version'])
+
+SVG渲染配置
+-------------
+
+*v0.3.1以上*
+
+ECharts 4.0 支持 SVG 渲染器。详细情况可以查看 文档_ 。
+
+.. _文档: http://echarts.baidu.com/tutorial.html#%E4%BD%BF%E7%94%A8%20Canvas%20%E6%88%96%E8%80%85%20SVG%20%E6%B8%B2%E6%9F%93
+
+django-echarts 按照以下顺序选择渲染方式：
+
+- 图表属性 `Chart.renderer`
+- 项目配置的 `DJANGO_ECHARTS['renderer']` 的设置
+
+django-echarts 默认使用 canvas 渲染器，可以通过以下方式更改为 svg 渲染。
+
+::
+
+	DJANGO_ECHARTS = {
+		'echarts_version':'4.0.4',
+		'renderer': 'svg'
+	}
+
+注意的是只有 echarts_version 大于 4 时，才可以使用 svg 渲染。django-echarts 并不会强制检查这一点，请使用者自行确认。
 
 
 视图渲染

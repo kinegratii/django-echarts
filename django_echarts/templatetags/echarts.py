@@ -41,7 +41,7 @@ def build_echarts_initial_fragment(*charts):
           var option_{chart_id} = {options};
           myChart_{chart_id}.setOption(option_{chart_id});
           '''
-        renderer = getattr(chart, 'renderer', 'canvas')
+        renderer = getattr(chart, 'renderer', DJANGO_ECHARTS_SETTINGS.get('renderer'))
         div_v_name = "div_{0}".format(chart.chart_id)
         js_content = content_fmt.format(
             init_params=JsDumper.as_parameters(div_v_name, None, {'renderer': renderer}, variables=[div_v_name]),

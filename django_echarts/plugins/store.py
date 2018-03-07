@@ -4,7 +4,8 @@
 from django_echarts.plugins.hosts import LibHostStore, MapHostStore, JsUtils
 
 DEFAULT_SETTINGS = {
-    'echarts_version': '3.7.0',
+    'echarts_version': '4.0.4',
+    'renderer': 'canvas',
     'lib_js_host': 'bootcdn',
     'map_js_host': 'echarts',
     'local_host': None
@@ -82,3 +83,6 @@ class SettingsStore(object):
     @property
     def settings(self):
         return self._settings
+
+    def get(self, key, default=None):
+        return self._settings.get(key, default)

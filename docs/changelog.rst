@@ -6,6 +6,7 @@ v0.3.1
 
 - 恢复对 Django 1.11 LTS 的支持
 - `fetch` 函数支持自定义 getter 参数
+- ECharts 默认版本更新至v4.0.4
 - 支持 ECharts 4.0 SVG渲染器的配置
 
 v0.3.0 (20180226)
