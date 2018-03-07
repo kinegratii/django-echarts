@@ -6,7 +6,7 @@
 from django import template
 
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.utils.interfaces import to_css_length, dump_options_json, merge_js_dependencies
+from django_echarts.utils.interfaces import to_css_length, JsDumper, merge_js_dependencies
 
 register = template.Library()
 
@@ -36,13 +36,17 @@ def build_echarts_initial_fragment(*charts):
     contents = []
     for chart in charts:
         content_fmt = '''
-          var myChart_{chart_id} = echarts.init(document.getElementById('{chart_id}'));
+          var div_{chart_id} = document.getElementById('{chart_id}');
+          var myChart_{chart_id} = echarts.init({init_params});
           var option_{chart_id} = {options};
           myChart_{chart_id}.setOption(option_{chart_id});
           '''
+        renderer = getattr(chart, 'renderer', 'canvas')
+        div_v_name = "div_{0}".format(chart.chart_id)
         js_content = content_fmt.format(
+            init_params=JsDumper.as_parameters(div_v_name, None, {'renderer': renderer}, variables=[div_v_name]),
             chart_id=chart.chart_id,
-            options=dump_options_json(chart.options, indent=4)
+            options=JsDumper.as_object(chart.options)
         )
         contents.append(js_content)
     return '\n'.join(contents)
