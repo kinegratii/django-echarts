@@ -20,7 +20,7 @@ class FetchTestCase(unittest.TestCase):
         self.assertListEqual(sexs, ['female', 'male', 'male'])
 
     def test_ifetch_multiple(self):
-        names, ages = map(list, ifetch_multiple(DICT_LIST_DATA, {}, None, 'name', 'age'))
+        names, ages = map(list, ifetch_multiple(DICT_LIST_DATA, 'name', 'age'))
         self.assertListEqual(names, ['Alice', 'Bob', 'Charlie'])
         self.assertListEqual(ages, [30, 56, 56])
 
