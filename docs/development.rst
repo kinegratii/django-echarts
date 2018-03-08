@@ -17,14 +17,17 @@ FAQ
 
 A: 目前 django-echarts 运行环境要求如下：
 
-Python3.5+ 和 Django2.0+
+- Python3.5+
+- Django 1.11 LTS 和 Django 2.0
 
 **Q: django_echarts 对于 pyecharts 有什么改造？**
 
-A：首先需要明确的一点的是： django_echarts 仅使用了 pyecharts 当中的图表构建模块。对 pyecharts 的运行环境和功能特性作了一定的调整，包括：
+A：首先需要明确的一点的是： django-echarts 仅使用了 pyecharts 当中的图表构建模块。对 pyecharts 的运行环境和功能特性作了一定的调整，包括：
 
 - jshost 不支持对象级别设置
 - javascript 标签渲染不支持内部嵌入方式
+
+需要注意的是： pyecharts v0.3.2 之后 ，jshost 也不支持对象级别设置了，可以使用 `pyecharts.configure` 或者 `pyecharts.online` 函数进行全局设置。
 
 **Q: 本地部署无法引用 echarts.js 文件 ？**
 

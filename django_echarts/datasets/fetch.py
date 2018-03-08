@@ -1,11 +1,12 @@
 # coding=utf8
-
 """
-fetch is the way to fetch some field values to it own list;
+fetch is a enhance module with fetch. And adjust the parameter order of calling to fit the habit.
 """
-
 import operator
 from itertools import tee
+from functools import partial
+
+__all__ = ['fetch', 'ifetch', 'fetch_single', 'ifetch_multiple']
 
 
 class Empty(object):
@@ -15,51 +16,57 @@ class Empty(object):
 EMPTY = Empty()
 
 
-def ifetch_single(iterable, key, default=EMPTY):
-    attrgetter = operator.attrgetter(key)
-    itemgetter = operator.itemgetter(key)
+def ifetch_single(iterable, key, default=EMPTY, getter=None):
+    """
+    getter() g(item, key):pass
+    """
 
-    def getter(item):
-        try:
-            return attrgetter(item)
-        except AttributeError:
-            pass
+    def _getter(item):
+        if getter:
+            custom_getter = partial(getter, key=key)
+            return custom_getter(item)
+        else:
+            try:
+                attrgetter = operator.attrgetter(key)
+                return attrgetter(item)
+            except AttributeError:
+                pass
 
-        try:
-            return itemgetter(item)
-        except KeyError:
-            pass
+            try:
+                itemgetter = operator.itemgetter(key)
+                return itemgetter(item)
+            except KeyError:
+                pass
 
-        if default is not EMPTY:
-            return default
+            if default is not EMPTY:
+                return default
 
-        raise ValueError('Item %r has no attr or key for %r' % (item, key))
+            raise ValueError('Item %r has no attr or key for %r' % (item, key))
 
-    return map(getter, iterable)
-
-
-def fetch_single(iterable, key, default=EMPTY):
-    return list(ifetch_single(iterable, key, default))
+    return map(_getter, iterable)
 
 
-def ifetch_multiple(iterable, defaults, *keys):
+def fetch_single(iterable, key, default=EMPTY, getter=None):
+    return list(ifetch_single(iterable, key, default=default, getter=getter))
+
+
+def ifetch_multiple(iterable, *keys, defaults=None, getter=None):
+    defaults = defaults or {}
     if len(keys) > 1:
         iters = tee(iterable, len(keys))
     else:
         iters = (iterable,)
-    iters = [ifetch_single(it, key, default=defaults.get(key, EMPTY)) for it, key in zip(iters, keys)]
+    iters = [ifetch_single(it, key, default=defaults.get(key, EMPTY), getter=getter) for it, key in zip(iters, keys)]
     return iters
 
 
-def ifetch(iterable, key, *keys, **kwargs):
-    """Iterator version of fetch()."""
+def ifetch(iterable, key, *keys, default=EMPTY, defaults=None, getter=None):
     if len(keys) > 0:
-        defaults = kwargs.pop('defaults', {})
-        return map(list, ifetch_multiple(iterable, defaults, key, *keys))
+        keys = (key,) + keys
+        return map(list, ifetch_multiple(iterable, *keys, defaults=defaults, getter=getter))
     else:
-        default = kwargs.pop('default', EMPTY)
-        return ifetch_single(iterable, key, default=default)
+        return ifetch_single(iterable, key, default=default, getter=getter)
 
 
-def fetch(iterable, *keys, **kwargs):
-    return list(ifetch(iterable, *keys, **kwargs))
+def fetch(iterable, key, *keys, default=EMPTY, defaults=None, getter=None):
+    return list(ifetch(iterable, key, *keys, default=default, defaults=defaults, getter=getter))

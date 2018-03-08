@@ -9,6 +9,7 @@ lib_classifiers = [
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Framework :: Django",
+    "Framework :: Django :: 1.11",
     "Framework :: Django :: 2.0",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -19,7 +20,7 @@ lib_classifiers = [
 
 setup(
     name='django-echarts',
-    version='0.3.0',
+    version='0.3.1',
     packages=find_packages(exclude=['tests']),
     url='https://github.com/kinegratii/django-echarts',
     install_requires=['Django'],

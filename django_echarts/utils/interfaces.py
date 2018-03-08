@@ -8,30 +8,13 @@ from datetime import datetime, date
 import json
 
 
+# ---------- Adapter for Chart Attributes ----------
+
 def to_css_length(l):
     if isinstance(l, (int, float)):
         return '{}px'.format(l)
     else:
         return l
-
-
-class DefaultEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, (datetime, date)):
-            return obj.isoformat()
-        else:
-            # Pandas and Numpy lists
-            try:
-                return obj.astype(float).tolist()
-            except Exception:
-                try:
-                    return obj.astype(str).tolist()
-                except Exception:
-                    return json.JSONEncoder.default(self, obj)
-
-
-def dump_options_json(data, indent=0):
-    return json.dumps(data, indent=indent, cls=DefaultEncoder)
 
 
 def merge_js_dependencies(*chart_or_name_list):
@@ -58,3 +41,47 @@ def merge_js_dependencies(*chart_or_name_list):
         elif isinstance(d, str):
             _add(d)
     return front_must_items + [x for x in front_optional_items if x in fist_items] + dependencies
+
+
+# ---------- Javascript Dump Tools ----------
+
+class DefaultEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        else:
+            # Pandas and Numpy lists
+            try:
+                return obj.astype(float).tolist()
+            except Exception:
+                try:
+                    return obj.astype(str).tolist()
+                except Exception:
+                    return json.JSONEncoder.default(self, obj)
+
+
+class JsDumper:
+    @staticmethod
+    def as_object(data):
+        """
+        Dump object to multiple-line javascript object.
+        :param data:
+        :return:
+        """
+        return json.dumps(data, indent=4, cls=DefaultEncoder)
+
+    @staticmethod
+    def as_parameters(*parameters, variables=None):
+        """
+        Dump python list as the parameter of javascript function
+        :param parameters:
+        :param variables:
+        :return:
+        """
+        s = json.dumps(parameters)
+        s = s[1:-1]
+        if variables:
+            for v in variables:
+                if v in parameters:
+                    s = s.replace('"' + v + '"', v)
+        return s

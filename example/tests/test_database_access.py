@@ -1,11 +1,15 @@
 # coding=utf8
 
 from datetime import timedelta
+import unittest
 
+import django
 from django.test import TestCase
 from django.utils import timezone
 
 from demo import models
+
+DJANGO1 = django.get_version()[0] == '1'
 
 
 class FetchQuerySetTestCase(TestCase):
@@ -31,6 +35,7 @@ class FetchQuerySetTestCase(TestCase):
         self.assertEqual(30, len(low_values))
         self.assertTrue(all([x == 12 for x in low_values]))
 
+    @unittest.skipIf(DJANGO1, 'named parameter is not support on Django 1.x .')
     def test_fetch_with_values_list(self):
         high_values, low_values = models.TemperatureRecord.objects.values_list(
             'high', 'low', named=True

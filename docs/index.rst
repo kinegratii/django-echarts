@@ -10,7 +10,7 @@ django-echarts 是一个关于 Echarts_ 整合的 Django App，使用 pyecharts_
 
 ::
 
-    自v0.3起，django-echarts 仅支持 Python3.5+ 和 Django 2.0+
+    自v0.3起，django-echarts 仅支持 Python3.5+ 的开发环境, Django 版本要求为 2.0+ 或 1.11 LTS 。
 
 主页： https://github.com/kinegratii/django-echarts
 

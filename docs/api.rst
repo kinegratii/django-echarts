@@ -42,8 +42,9 @@ EChartsBackendView
 
 ::
 
-	{
-		'echarts_version':'3.7.0',
+	DJANGO_ECHARTS = {
+		'echarts_version':'4.0.4',
+		'renderer': 'canvas',
 		'lib_js_host':'bootcdn',
 		'map_js_host':'echarts'，
 		'local_host':None

@@ -46,11 +46,13 @@
 ::
 
 	DJANGO_ECHARTS = {
-		'lib_js_host':'cdnjs'
+	    'echarts_version': '4.0.4',
+	    'lib_js_host':'cdnjs'
 	}
 
+由于不同 ECharts 版本会有一些功能和形式上的区别，建议自行指定某一个版本。
 
-或者全部采用默认值，更多可选值请参 API 文档。
+更多可选值请参 API 文档。
 
 3 编写视图类，模板页面和路由。
 

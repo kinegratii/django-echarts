@@ -1,6 +1,7 @@
 # django-echarts
 
-![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) [![Build Status](https://travis-ci.org/kinegratii/django-echarts.svg?branch=master)](https://travis-ci.org/kinegratii/django-echarts) ![Development](https://img.shields.io/badge/Development-Beta-yellowgreen.svg) ![python35](https://img.shields.io/badge/Python-3.5+-blue.svg) ![django20](https://img.shields.io/badge/Django-2.0+-blue.svg)
+![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) [![Build Status](https://travis-ci.org/kinegratii/django-echarts.svg?branch=master)](https://travis-ci.org/kinegratii/django-echarts) ![PyPI - Status](https://img.shields.io/pypi/status/django-echarts.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-echarts.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-echarts.svg)
+
 
 
 django-echarts 是一个 [Echarts](http://echarts.baidu.com/index.html) 整合的  [Django](https://www.djangoproject.com) App，使用 [pyecharts](https://github.com/pyecharts/pyecharts) 的作为图表构建库。
@@ -18,7 +19,7 @@ django-echarts 主要提供了以下的内容：
 
 ### Python3
 
-自 v0.3 开始，django-echarts 只支持 Python3.5以上 的开发环境。
+自 v0.3 开始，django-echarts 只支持 Python3.5 以上 的开发环境。
 
 ```shell
 pip install django-echarts
@@ -40,11 +41,12 @@ python setup.py install
 pip install django-echarts==0.2.3
 ```
 
-### pyecharts
+### 其他
 
 其他安装要求为：
 
-- pyecharts>=0.3.0
+- pyecharts 0.3+
+- Django 1.11 LTS 或 Django 2.0+
 
 
 
@@ -64,11 +66,12 @@ INSTALL_APPS = (
 
 ```python
 DJANGO_ECHARTS = {
+    'echarts_version': '4.0.4',
     'lib_js_host':'cdnjs'
 }
 ```
 
-或者全部采用默认值。
+由于不同 ECharts 版本会有一些功能和形式上的区别，建议自行指定某一个版本。
 
 3 编写视图类，模板页面和路由。
 

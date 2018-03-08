@@ -63,11 +63,10 @@ INSTALL_APPS = (
 
 ```python
 DJANGO_ECHARTS = {
+    'echarts_version': '4.0.4',
     'lib_js_host':'cdnjs'
 }
 ```
-
-Or leave to the default values.
 
 3 Add views, urls.
 
