@@ -8,9 +8,9 @@ pyecharts_ 是一个优秀的 Echarts 的 Python 接口库，不仅实现了众�
 
 .. _pyecharts: https://github.com/pyecharts/pyecharts
 
-由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django_echarts 将遵循 Django 开发规范，试图简化开发工作，并增加了若干个 Django 项目特有的功能和特性。
+由于目标环境和使用场景的通用性，pyecharts 并不适合直接应用于 Django 项目。基于此， django-echarts 将遵循 Django 开发规范，试图简化开发工作，并增加了若干个 Django 项目特有的功能和特性。
 
-django_echarts 是一个标准的 Django App ，符合其所有的使用规约，关于 Django 中 *项目(Project)* 和 *应用(Application)* 相关内容，可参考 https://docs.djangoproject.com/en/1.11/ref/applications/。
+django-echarts 是一个标准的 Django App ，符合其所有的使用规约，关于 Django 中 *项目(Project)* 和 *应用(Application)* 相关内容，可参考 https://docs.djangoproject.com/en/1.11/ref/applications/。
 
 项目配置
 -------------
@@ -37,12 +37,11 @@ django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Bas
 访问
 ++++++
 
-在开发中，使用全局变量 `django_echarts.conf.DJANGO_ECHARTS_SETTINGS` 访问项目配置值，支持以下两种形式访问：
+在开发中，使用全局变量 `django_echarts.conf.DJANGO_ECHARTS_SETTINGS` 访问项目配置值，支持以下字典形式访问：
 
-- 键值访问：如 `DJANGO_ECHARTS_SETTINGS['echarts_version']` 。
-- 属性访问，如 `DJANGO_ECHARTS_SETTINGS.echarts_version` 。
+- 键值访问 `DJANGO_ECHARTS_SETTINGS.get('echarts_version')` 。
 
-`DJANGO_ECHARTS_SETTINGS` 还提供了若干个方法，用于 js 依赖文件管理和其他功能。
+`DJANGO_ECHARTS_SETTINGS` 还提供了若干个方法，用于获取当前项目的 js 依赖文件管理和其他功能配置。
 
 以下是正确的使用方法：
 
@@ -77,8 +76,8 @@ django-echarts 默认使用 canvas 渲染器，可以通过以下方式更改为
 ::
 
 	DJANGO_ECHARTS = {
-		'echarts_version':'4.0.4',
-		'renderer': 'svg'
+	    'echarts_version':'4.0.4',
+	    'renderer': 'svg'
 	}
 
 注意的是只有 echarts_version 大于 4 时，才可以使用 svg 渲染。django-echarts 并不会强制检查这一点，请使用者自行确认。
@@ -148,7 +147,7 @@ django_echarts 提供两种方式的渲染视图，即：
 模板标签
 ---------
 
-django_echarts 实现了与 pyecharts 相似的模板标签,均定义在 `django_echarts.templatetags.echarts` 包，按文档有两种方式导入以这些标签能够使用。
+django-echarts 实现了与 pyecharts 相似的模板标签,均定义在 `django_echarts.templatetags.echarts` 包，按文档有两种方式导入以这些标签能够使用。
 
 - 在每个模板文件使用 `{% laod echarts %}` 导入。
 - 添加标签目录到项目配置项 `TEMPLATES.OPTIONS.libraries`_ ，这样就无需在每个模板都使用 `load` 标签。
@@ -159,9 +158,7 @@ django_echarts 实现了与 pyecharts 相似的模板标签,均定义在 `django
 
 .. image:: /_static/django-echarts-template-tags.png
 
-和 pyecharts 相比，这些标签函数有以下不同之处：
-
-- 不支持 `{% echarts_js_content *page %}` 形式调用。
+和 pyecharts 所使用的 Jinja2 模板不同的是， Django 模板不支持 Python 调用，因此不支持 `{% echarts_js_content *page %}` 形式调用。
 
 javascript文件管理
 --------------------
@@ -169,11 +166,11 @@ javascript文件管理
 仓库
 +++++++
 
-django_echarts 支持从多个地址引用 javascript 依赖文件，在引用某一个具体文件时，需指定仓库和文件名称两个值。
+django-echarts 支持从多个地址引用 javascript 依赖文件，在引用某一个具体文件时，需指定仓库和文件名称两个值。
 
 ::
 
-    django_echarts只支持外部链接方式，不支持内部嵌入方式。
+    django-echarts只支持外部链接方式，不支持内部嵌入方式。
 
 如下面两个 js 文件链接例子中， `https://cdn.bootcss.com/echarts/3.7.0/` 和 `/static/js/` 称之为仓库地址。
 
@@ -190,7 +187,7 @@ django_echarts 支持从多个地址引用 javascript 依赖文件，在引用�
 核心库文件和地图文件
 +++++++++++++++++++++++++++++
 
-由于不同仓库提供的 js 不同，django_echarts 将相关其大致分为两类：
+由于不同仓库提供的 js 不同，django-echarts 将相关其大致分为两类：
 
 - 核心库文件(lib)
 - 地图文件(map)
@@ -293,7 +290,7 @@ django_echarts 内置几个常用的 CDN ，你可以只写名称而不是具体
 CLI工具
 --------
 
-django_echarts 提供了一个包含若干个命令的 CLI 工具，这些命令都是标准的 Django 管理命令，均定义在 `django_echarts.management.commands` 包下。
+django-echarts 提供了一个包含若干个命令的 CLI 工具，这些命令都是标准的 Django 管理命令，均定义在 `django_echarts.management.commands` 包下。
 
 你可以使用以下命令查看帮助信息。
 
@@ -387,6 +384,6 @@ download_echarts_js 还支持同时下载多个文件，如：
     python manage.py download_map_js fujian anhui
 
 
-download_echarts_js内部采用内置的 `urllib.request.urlopen`_ 函数实现文件下载。如果在执行过程中出现错误，请依据该函数文档进行排查。
+download_echarts_js内部采用 Python 标准库的 `urllib.request.urlopen`_ 函数实现文件下载。如果在执行过程中出现错误，请依据该函数文档进行排查。
 
 .. _urllib.request.urlopen: https://docs.python.org/3/library/urllib.request.html#urllib.request.urlopen
