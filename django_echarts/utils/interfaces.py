@@ -4,8 +4,9 @@ A interface module for pyecharts.
 In the practice, pyecharts should not be explicitly imported.
 """
 
-from datetime import datetime, date
+from datetime import datetime, date, time
 import json
+from functools import singledispatch
 
 
 # ---------- Adapter for Chart Attributes ----------
@@ -44,20 +45,16 @@ def merge_js_dependencies(*chart_or_name_list):
 
 
 # ---------- Javascript Dump Tools ----------
+@singledispatch
+def json_encoder(obj):
+    raise TypeError(repr(obj) + " is not JSON serializable")
 
-class DefaultEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, (datetime, date)):
-            return obj.isoformat()
-        else:
-            # Pandas and Numpy lists
-            try:
-                return obj.astype(float).tolist()
-            except Exception:
-                try:
-                    return obj.astype(str).tolist()
-                except Exception:
-                    return json.JSONEncoder.default(self, obj)
+
+@json_encoder.register(datetime)
+@json_encoder.register(date)
+@json_encoder.register(time)
+def encode_date_time(obj):
+    return obj.isoformat()
 
 
 class JsDumper:
@@ -68,7 +65,7 @@ class JsDumper:
         :param data:
         :return:
         """
-        return json.dumps(data, indent=4, cls=DefaultEncoder)
+        return json.dumps(data, indent=4, default=json_encoder)
 
     @staticmethod
     def as_parameters(*parameters, variables=None):
