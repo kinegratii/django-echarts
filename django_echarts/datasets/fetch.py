@@ -6,7 +6,7 @@ import operator
 from itertools import tee
 from functools import partial
 
-__all__ = ['fetch', 'ifetch', 'fetch_single', 'ifetch_multiple']
+__all__ = ['fetch', 'ifetch', 'fetch_single', 'ifetch_multiple', 'ifetch_single']
 
 
 class Empty(object):
