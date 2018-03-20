@@ -48,7 +48,7 @@ django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Bas
 ::
 
     from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-    print(DJANGO_ECHARTS_SETTINGS.echarts_version)
+    print(DJANGO_ECHARTS_SETTINGS.get('echarts_version'))
 
 以下是不推荐的使用方法，不应当直接访问配置字典。
 
@@ -60,7 +60,7 @@ django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Bas
 SVG渲染配置
 -------------
 
-*v0.3.1以上*
+.. versionadded:: 0.3.1
 
 ECharts 4.0 支持 SVG 渲染器。详细情况可以查看 文档_ 。
 
@@ -300,13 +300,14 @@ django-echarts 提供了一个包含若干个命令的 CLI 工具，这些命令
 文件下载
 ++++++++
 
+.. versionadded:: 0.2.2
+   新增 `download_lib_js` 和 `download_map_js` 命令。
+
 django-echarts 提供了一些下载命令，可以从远程地址下载文件到项目的静态目录中。这些命令包括：
 
 - download_echarts_js 通用下载
 - download_lib_js 下载 Echarts 核心库
 - download_map_js 下载 地图文件
-
-后面二者自 v0.2.2 新增。
 
 使用用法可用 `-h` 查看：
 

@@ -35,7 +35,6 @@ setup(
     version=retrieve_version(),
     packages=find_packages(exclude=['tests']),
     url='https://github.com/kinegratii/django-echarts',
-    install_requires=['Django'],
     include_package_data=True,
     license='MIT',
     author='Kinegratii',
