@@ -106,7 +106,7 @@ django_echarts 提供两种方式的渲染视图，即：
 后端渲染
 +++++++++
 
-你可以按照 :ref:`tutorial-start` 文档所述的方法实现一个简单的后端渲染图表。
+你可以按照 :doc:`tutorial` 所述的方法实现一个简单的后端渲染图表。
 
 `EChartsBackendView` 是后端渲染方式主要使用的视图类，该类继承自 `django.views.generic.base.TemplateView`，因此返回给浏览器的是一个 TemplateResponse 对象。
 
