@@ -4,7 +4,7 @@
 from django.views.generic.base import TemplateView
 from django_echarts.views.frontend import EChartsFrontView
 
-from .demo_data import create_simple_bar, create_simple_kline, create_simple_map, create_simple_pie
+from .demo_data import create_simple_bar, create_simple_kline, create_simple_map, create_simple_pie, create_word_cloud
 
 
 class IndexView(TemplateView):
@@ -33,3 +33,8 @@ class SimpleMapView(EChartsFrontView):
 class SimplePieView(EChartsFrontView):
     def get_echarts_instance(self, **kwargs):
         return create_simple_pie()
+
+
+class WordCloudView(EChartsFrontView):
+    def get_echarts_instance(self, *args, **kwargs):
+        return create_word_cloud()
