@@ -15,6 +15,11 @@ def retrieve_version():
         return RuntimeError("No version retrieved in package file.")
 
 
+def read_long_description():
+    with open('long_description.md', encoding='utf8') as f:
+        return f.read()
+
+
 lib_classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python :: 3",
@@ -40,5 +45,7 @@ setup(
     author='Kinegratii',
     author_email='kinegratii@gmail.com',
     description='A django app for Echarts integration with pyecharts as chart builder. ',
+    long_description=read_long_description(),
+    long_description_content_type='text/markdown',
     classifiers=lib_classifiers
 )
