@@ -5,6 +5,30 @@ import json
 from pyecharts import Bar, Kline, Map, Pie, WordCloud
 
 
+class ChartFactory:
+    def __init__(self):
+        self._func = {}
+        self._charts = {}
+
+    def collect(self, name):
+        def _inject(func):
+            self._func[name] = func
+            return func
+
+        return _inject
+
+    def create(self, name):
+        if name in self._func:
+            chart = self._func[name]()
+            return chart
+        else:
+            raise ValueError('No Chart builder for {}'.format(name))
+
+
+FACTORY = ChartFactory()
+
+
+@FACTORY.collect('bar')
 def create_simple_bar():
     bar = Bar("我的第一个图表", "这里是副标题")
     bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
@@ -12,6 +36,7 @@ def create_simple_bar():
     return bar
 
 
+@FACTORY.collect('kline')
 def create_simple_kline():
     v1 = [[2320.26, 2320.26, 2287.3, 2362.94],
           [2300, 2291.3, 2288.26, 2308.38],
@@ -51,6 +76,7 @@ def create_simple_kline():
     return kline
 
 
+@FACTORY.collect('map')
 def create_simple_map():
     value = [155, 10, 66, 78]
     attr = ["福建", "山东", "北京", "上海"]
@@ -60,6 +86,7 @@ def create_simple_map():
     return map1
 
 
+@FACTORY.collect('pie')
 def create_simple_pie():
     pie = Pie('各类电影中"好片"所占的比例', "数据来着豆瓣", title_pos='center')
     pie.add("", ["剧情", ""], [25, 75], center=[10, 30], radius=[18, 24],
@@ -86,6 +113,7 @@ def create_simple_pie():
     return pie
 
 
+@FACTORY.collect('word_cloud')
 def create_word_cloud():
     name = [
         'Sam S Club', 'Macys', 'Amy Schumer', 'Jurassic World', 'Charter Communications',
