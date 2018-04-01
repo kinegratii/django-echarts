@@ -125,5 +125,4 @@ def create_word_cloud():
         965, 847, 582, 555, 550, 462, 366, 360, 282, 273, 265]
     wordcloud = WordCloud(width=1300, height=620)
     wordcloud.add("", name, value, word_size_range=[20, 100])
-    print(json.dumps(wordcloud.options, indent=4))
     return wordcloud

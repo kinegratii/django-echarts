@@ -17,6 +17,12 @@ class BackendEChartsTemplate(EChartsBackendView):
         name = self.request.GET.get('name', 'bar')
         return FACTORY.create(name)
 
+    def get_template_names(self):
+        if self.request.GET.get('name') == 'word_cloud':
+            return ['word_cloud.html']
+        else:
+            return super().get_template_names()
+
 
 class TemperatureEChartsView(EChartsBackendView):
     echarts_instance_name = 'line'

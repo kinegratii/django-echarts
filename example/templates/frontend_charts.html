@@ -31,7 +31,7 @@
 
 
 {% block extra_script %}
-    <script src="https://cdn.bootcss.com/echarts/3.8.5/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/3.6.5/echarts.min.js"></script>
     <script src="http://echarts.baidu.com/asset/map/js/china.js"></script>
     <script src="https://pyecharts.github.io/jupyter-echarts/echarts/echarts-wordcloud.min.js"></script>
     <script type="text/javascript">
@@ -51,6 +51,7 @@
             }).done(function (data) {
                 mChart.hideLoading();
                 mChart.setOption(data);
+                console.log(data);
             });
         }
         $(document).ready(function () {
