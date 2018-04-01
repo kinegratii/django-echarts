@@ -31,9 +31,9 @@
 
 
 {% block extra_script %}
-    <script src="https://cdn.bootcss.com/echarts/3.6.5/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/3.8.5/echarts.min.js"></script>
     <script src="http://echarts.baidu.com/asset/map/js/china.js"></script>
-    <script src="https://pyecharts.github.io/jupyter-echarts/echarts/echarts-wordcloud.min.js"></script>
+    <script src="{{ STATIC_URL }}echarts/echarts-wordcloud.min.js"></script>
     <script type="text/javascript">
         var mChart;
         function loadEcharts(name) {
