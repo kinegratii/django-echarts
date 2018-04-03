@@ -9,6 +9,7 @@
                 <a href="javascript:" class="list-group-item" data-echarts-name="simpleKLine">K线图(KLine)</a>
                 <a href="javascript:" class="list-group-item" data-echarts-name="simpleMap">地图(Map)</a>
                 <a href="javascript:" class="list-group-item" data-echarts-name="simplePie">饼图(Pie)</a>
+                <a href="javascript:" class="list-group-item" data-echarts-name="wordCloud">词云(WordCloud)</a>
             </div>
         </div>
         <!--/.sidebar-offcanvas-->
@@ -32,6 +33,7 @@
 {% block extra_script %}
     <script src="https://cdn.bootcss.com/echarts/3.8.5/echarts.min.js"></script>
     <script src="http://echarts.baidu.com/asset/map/js/china.js"></script>
+    <script src="{{ STATIC_URL }}echarts/echarts-wordcloud.min.js"></script>
     <script type="text/javascript">
         var mChart;
         function loadEcharts(name) {
@@ -49,6 +51,7 @@
             }).done(function (data) {
                 mChart.hideLoading();
                 mChart.setOption(data);
+                console.log(data);
             });
         }
         $(document).ready(function () {

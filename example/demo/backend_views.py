@@ -7,14 +7,7 @@ from pyecharts import Line, Pie, Page, Bar
 from django_echarts.views.backend import EChartsBackendView
 from django_echarts.datasets.fetch import fetch
 from demo import models
-from .demo_data import create_simple_bar, create_simple_kline, create_simple_map, create_simple_pie
-
-ECHARTS_DICT = {
-    'bar': create_simple_bar,
-    'kine': create_simple_kline,
-    'map': create_simple_map,
-    'pie': create_simple_pie
-}
+from .demo_data import FACTORY
 
 
 class BackendEChartsTemplate(EChartsBackendView):
@@ -22,9 +15,13 @@ class BackendEChartsTemplate(EChartsBackendView):
 
     def get_echarts_instance(self, *args, **kwargs):
         name = self.request.GET.get('name', 'bar')
-        if name not in ECHARTS_DICT:
-            name = 'bar'
-        return ECHARTS_DICT[name]()
+        return FACTORY.create(name)
+
+    def get_template_names(self):
+        if self.request.GET.get('name') == 'word_cloud':
+            return ['word_cloud.html']
+        else:
+            return super().get_template_names()
 
 
 class TemperatureEChartsView(EChartsBackendView):

@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'options/simpleKLine/', frontend_views.SimpleKLineView.as_view()),
     url(r'options/simpleMap/', frontend_views.SimpleMapView.as_view()),
     url(r'options/simplePie/', frontend_views.SimplePieView.as_view()),
+    url(r'options/wordCloud/', frontend_views.WordCloudView.as_view()),
     url(r'page_demo/', backend_views.PageDemoView.as_view()),
     url(r'^demo/', include(demo_urls))
 ]

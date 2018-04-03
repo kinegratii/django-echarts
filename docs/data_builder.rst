@@ -27,6 +27,8 @@ zip 函数
 fetch 函数
 +++++++++++
 
+更多请查看 :doc:`fetch` 。
+
 自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 函数，该函数是对原有 pluck + zip 函数的进一步封装。
 
 如

@@ -12,8 +12,10 @@ ECHARTS_LIB_HOSTS = {
 }
 
 ECHARTS_MAP_HOSTS = {
-    'pyecharts': 'https://pyecharts.github.io/jupyter-echarts/echarts',
-    'echarts': 'http://echarts.baidu.com/asset/map/js'
+    'echarts': 'http://echarts.baidu.com/asset/map/js',
+    'china-provinces': 'https://echarts-maps.github.io/echarts-china-provinces-js/',
+    'china-cities': 'https://echarts-maps.github.io/echarts-china-cities-js/',
+    'united-kingdom': 'https://echarts-maps.github.io/echarts-united-kingdom-js'
 }
 
 

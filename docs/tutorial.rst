@@ -1,5 +1,3 @@
-.. _tutorial-start:
-
 入门教程
 =========
 
@@ -56,57 +54,12 @@
 
 3 编写视图类，模板页面和路由。
 
-::
-
-	def create_simple_bar():
-		bar = Bar("我的第一个图表", "这里是副标题")
-		bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
-		return bar
-
-	 class BackendEChartsTemplate(EChartsBackendView):
-		template_name = 'backend_charts.html'
-
-		def get_echarts_instance(self, *args, **kwargs):
-			return create_simple_bar()
+.. literalinclude:: /codes/bar_backend_view.py
 
 
 4 编写模板文件，可以使用相关标签（定义在 `echarts` 标签库里）渲染JS内容。
 
-.. code-block:: html
-
-	{% extends 'base.html' %}
-	{% load echarts %}
-
-	{% block main_content %}
-		<div class="row row-offcanvas row-offcanvas-right">
-			<div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
-				<div class="list-group">
-					<a href="?name=bar" class="list-group-item">柱形图(Bar)</a>
-					<a href="?name=kine" class="list-group-item">K线图(KLine)</a>
-					<a href="?name=map" class="list-group-item">地图(Map)</a>
-					<a href="?name=pie" class="list-group-item">饼图(Pie)</a>
-				</div>
-			</div>
-			<!--/.sidebar-offcanvas-->
-			<div class="col-xs-12 col-sm-10">
-				<p class="pull-right visible-xs">
-					<button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
-				</p>
-				{# 渲染容器 #}
-				{% echarts_container echarts_instance %}
-
-			</div>
-			<!--/.col-xs-12.col-sm-9-->
-		</div>
-
-	{% endblock %}
-
-	{% block extra_script %}
-		{# 渲染依赖文件 #}
-		{% echarts_js_dependencies echarts_instance %} 
-		{# 渲染初始化文本 #}
-		{% echarts_js_content echarts_instance %}
-	{% endblock %}
+.. literalinclude:: /codes/backend_charts.html
 
 
 5 在部署到正式环境时，如果需要使用公共CDN托管常用JS文件，可修改项目配置，使得 `lib_js_host` 或者 `map_js_host` 指向公共CDN。

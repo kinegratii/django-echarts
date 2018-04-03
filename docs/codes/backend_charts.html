@@ -6,10 +6,9 @@
         <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
             <div class="list-group">
                 <a href="?name=bar" class="list-group-item">柱形图(Bar)</a>
-                <a href="?name=kline" class="list-group-item">K线图(KLine)</a>
+                <a href="?name=kine" class="list-group-item">K线图(KLine)</a>
                 <a href="?name=map" class="list-group-item">地图(Map)</a>
                 <a href="?name=pie" class="list-group-item">饼图(Pie)</a>
-                <a href="?name=word_cloud" class="list-group-item">词云(WordCloud)</a>
             </div>
         </div>
         <!--/.sidebar-offcanvas-->
@@ -17,20 +16,18 @@
             <p class="pull-right visible-xs">
                 <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
             </p>
-            <div class="alert alert-info" role="alert">后端渲染方式采用Django模板渲染页面。切换左侧菜单，会改变页面URL。<br/>
-            当前配置：ECharts 4.0.4 +  svg渲染</div>
+            {# 渲染容器 #}
             {% echarts_container echarts_instance %}
 
         </div>
         <!--/.col-xs-12.col-sm-9-->
-
-
     </div>
 
 {% endblock %}
 
-
 {% block extra_script %}
+    {# 渲染依赖文件 #}
     {% echarts_js_dependencies echarts_instance %}
+    {# 渲染初始化文本 #}
     {% echarts_js_content echarts_instance %}
 {% endblock %}
