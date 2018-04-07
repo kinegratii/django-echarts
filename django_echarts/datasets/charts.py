@@ -3,7 +3,7 @@
 from django_echarts.utils.interfaces import merge_js_dependencies
 
 
-class MCharts:
+class NamedCharts:
     """
     A list containing multiple named charts.
     """

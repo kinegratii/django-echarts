@@ -6,7 +6,7 @@ from pyecharts import Line, Pie, Page, Bar
 
 from django_echarts.views.backend import EChartsBackendView
 from django_echarts.datasets.fetch import fetch
-from django_echarts.datasets.charts import MCharts
+from django_echarts.datasets.charts import NamedCharts
 from demo import models
 from .demo_data import FACTORY
 
@@ -71,5 +71,5 @@ class MultipleChartsView(EChartsBackendView):
         names, lifes = fetch(battery_lifes, 'name', 'battery_life')
         bar = Bar('设备电量', page_title='设备电量', width='100%')
         bar.add("设备电量", names, lifes)
-        charts = MCharts().add_chart(pie, name='pie').add_chart(bar, name='bar')
+        charts = NamedCharts().add_chart(pie, name='pie').add_chart(bar, name='bar')
         return charts
