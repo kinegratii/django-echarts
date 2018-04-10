@@ -32,8 +32,6 @@ django-echarts 遵循统一配置的原则，所有的配置均定义在项目�
 
 该变量不建议作为配置访问的接口，关于如何访问配置信息请参考下面的内容。
 
-django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Base.jshost` 和 `pyecharts.custom.page.Page.jshost` 两个属性无效，应当在 `settings.DJANGO_ECHARTS` 中统一配置。
-
 访问
 ++++++
 
@@ -102,6 +100,7 @@ django_echarts 提供两种方式的渲染视图，即：
 函数 `get_echarts_instance` 需要返回一个图表实例对象，包括：
 
 - `pyecharts.base.Base`
+- `django_echarts.datasets.charts.NamedCharts`
 
 后端渲染
 +++++++++

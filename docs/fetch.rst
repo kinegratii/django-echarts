@@ -1,10 +1,21 @@
-fetch模块文档
-==============
+borax.fetch模块
+================
 
-概述
------
+安装
+----
 
-`django_echarts.datasets.fetch` 模块实现了从数据列表按照指定的一个或多个属性/键选取数据。
+自 v0.3.4 开始，`django_echarts.datasets.fetch` 模块将独立发布为 `borax.fetch` 模块，`django_echarts` 自动会安装 `borax` 库。 也可以通过以下命令安装 *borax* ：
+
+::
+
+    pip install borax
+
+原有的 `django_echarts.datasets.fetch` 模块将在 v0.4 后移除。
+
+函数接口
+--------
+
+`borax.fetch` 模块实现了从数据列表按照指定的一个或多个属性/键选取数据。
 
 `fetch` 模块包含了以下几个函数：
 
@@ -34,7 +45,7 @@ fetch模块文档
 
 ::
 
-    from django_echarts.datasets.fetch import fetch
+    from borax.fetch import fetch
 
     objects = [
         {'id': 282, 'name': 'Alice', 'age': 30},
@@ -59,7 +70,7 @@ fetch模块文档
 
 ::
 
-    from django_echarts.datasets.fetch import fetch
+    from borax.fetch import fetch
 
     objects = [
         {'id': 282, 'name': 'Alice', 'age': 30},
@@ -85,7 +96,7 @@ fetch模块文档
 
 ::
 
-    from django_echarts.datasets.fetch import fetch
+    from borax.fetch import fetch
 
     objects = [
         {'id': 282, 'name': 'Alice', 'age': 30, 'gender': 'female'},
@@ -119,7 +130,7 @@ fetch模块文档
 
 ::
 
-    from django_echarts.datasets.fetch import fetch
+    from borax.fetch import fetch
 
 
     class Point:
@@ -174,7 +185,7 @@ getter 需满足下列的几个条件：
 
 ::
 
-    from django_echarts.datasets.fetch import fetch
+    from borax.fetch import fetch
 
 
     class Point:
