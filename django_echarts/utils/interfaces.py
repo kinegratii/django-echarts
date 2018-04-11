@@ -8,10 +8,18 @@ from datetime import datetime, date, time
 import json
 from functools import singledispatch
 
+__all__ = ['to_css_length', 'merge_js_dependencies', 'JsDumper']
+
 
 # ---------- Adapter for Chart Attributes ----------
 
 def to_css_length(l):
+    """
+    Return the standard length string of css.
+    It's compatible with number values in old versions.
+    :param l: source css length.
+    :return: A string.
+    """
     if isinstance(l, (int, float)):
         return '{}px'.format(l)
     else:
@@ -19,13 +27,13 @@ def to_css_length(l):
 
 
 def merge_js_dependencies(*chart_or_name_list):
-    front_must_items = ['echarts']
+    front_required_items = ['echarts']
     front_optional_items = ['echartsgl']
     dependencies = []
     fist_items = set()
 
     def _add(_item):
-        if _item in front_must_items:
+        if _item in front_required_items:
             pass
         elif _item in front_optional_items:
             fist_items.add(_item)
@@ -41,7 +49,7 @@ def merge_js_dependencies(*chart_or_name_list):
                 _add(x)
         elif isinstance(d, str):
             _add(d)
-    return front_must_items + [x for x in front_optional_items if x in fist_items] + dependencies
+    return front_required_items + [x for x in front_optional_items if x in fist_items] + dependencies
 
 
 # ---------- Javascript Dump Tools ----------
