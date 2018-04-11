@@ -11,6 +11,6 @@ env:
   - DJANGO_VERSION=2.0
 install:
   - pip install -q Django==$DJANGO_VERSION
-  - pip install -q pyecharts==0.4.2
+  - pip install -q pyecharts==0.4.1
 script:
   make test
