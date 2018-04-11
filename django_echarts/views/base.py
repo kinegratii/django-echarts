@@ -1,7 +1,6 @@
 # coding=utf8
 
 
-
 class EChartsMixin(object):
     """
     Base Mixin for build echarts instance
