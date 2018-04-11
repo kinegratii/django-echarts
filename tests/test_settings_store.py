@@ -14,11 +14,11 @@ class SettingsWithStaticUrlTestCase(unittest.TestCase):
         )
         self.assertIsNone(target_store.settings['local_host'])
         self.assertEqual(
-            'https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js',
+            'https://cdn.bootcss.com/echarts/4.0.4/echarts.min.js',
             target_store.generate_js_link('echarts.min')
         )
         self.assertEqual(
-            'https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js',
+            'https://cdn.bootcss.com/echarts/4.0.4/echarts.min.js',
             target_store.generate_lib_js_link('echarts.min')
         )
         self.assertEqual(
