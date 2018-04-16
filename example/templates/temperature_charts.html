@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>气温趋势图</title>
-    {% echarts_js_dependencies line %}
+
 </head>
 <body>
-{% echarts_options line %}
+{% echarts_container line %}
+{% echarts_js_dependencies line %}
+{% echarts_js_content line %}
 </body>
 </html>
