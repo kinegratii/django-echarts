@@ -26,6 +26,9 @@ class NamedCharts:
         for chart in self._charts:
             yield chart
 
+    def __len__(self):
+        return len(self._charts)
+
     def __contains__(self, item):
         return item in self._names
 
