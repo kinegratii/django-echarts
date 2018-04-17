@@ -25,6 +25,7 @@ lib_classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3 :: Only",
     "Framework :: Django",
     "Framework :: Django :: 1.11",
     "Framework :: Django :: 2.0",
