@@ -7,6 +7,7 @@ v0.3.4
 - 适配 pyecharts v0.4.x
 - 发布独立的 `borax.fetch` 工具包，`django_echarts.datasets.fetch` 将在 v0.4 后移除
 - 新增 `django_echarts.datasets.NamedCharts` 的多图表类，支持图表可命名
+- 原有的 `pyecharts.custom.page.Page` 类不再推荐使用
 
 v0.3.3 (20180404)
 -----------------
