@@ -1,12 +1,13 @@
 # coding=utf8
 
 
+from borax.fetch import fetch
+
 from django.db.models import Count
 from pyecharts import Line, Pie, Page, Bar
-
-from django_echarts.views.backend import EChartsBackendView
-from django_echarts.datasets.fetch import fetch
 from django_echarts.datasets.charts import NamedCharts
+from django_echarts.views.backend import EChartsBackendView
+
 from demo import models
 from .demo_data import FACTORY
 
