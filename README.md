@@ -17,9 +17,9 @@ django-echarts 主要提供了以下的内容：
 
 ## 安装
 
-### Python3
+### Python3 Only
 
-自 v0.3 开始，django-echarts 只支持 Python3.5 以上 的开发环境。
+django-echarts 只支持 Python3.5 以上 的开发环境。
 
 ```shell
 pip install django-echarts
@@ -31,14 +31,6 @@ pip install django-echarts
 git clone https://github.com/kinegratii/django-echarts.git
 cd django-echarts
 python setup.py install
-```
-
-### Python2
-
-如果使用的是 Python2 的环境，可以使用 0.2 版本。
-
-```shell
-pip install django-echarts==0.2.3
 ```
 
 ### 其他
@@ -76,16 +68,17 @@ DJANGO_ECHARTS = {
 3 编写视图类，模板页面和路由。
 
 ```python
-def create_simple_bar():
-    bar = Bar("我的第一个图表", "这里是副标题")
-    bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
-    return bar
 
- class BackendEChartsTemplate(EChartsBackendView):
+from pyecharts import Bar
+from django_echarts.views.backend import EChartsBackendView
+
+class BackendEChartsTemplate(EChartsBackendView):
     template_name = 'backend_charts.html'
 
     def get_echarts_instance(self, *args, **kwargs):
-        return create_simple_bar()
+        bar = Bar("我的第一个图表", "这里是副标题")
+        bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
+        return bar
 ```
 
 4 编写模板文件，可以使用相关标签（定义在`echarts`标签库里）渲染JS内容。

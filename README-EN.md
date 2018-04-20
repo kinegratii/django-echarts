@@ -15,9 +15,9 @@ django-echarts provides these features:
 
 ## Installation
 
-### Python3
+### Python3 Only
 
-From v0.3, django-echarts only support Python 3.5+ and Django 2.0+.
+django-echarts only support Python 3.5+ and Django 2.0+.
 
 ```shell
 pip install django-echarts
@@ -31,15 +31,7 @@ cd django-echarts
 python setup.py install
 ```
 
-### Python2
-
-You can use the version series of 0.2.x on Python 2.
-
-```shell
-pip install django-echarts==0.2.3
-```
-
-### pyecharts
+### Other Dependencies
 
 pyecharts requires 0.3+:
 
@@ -71,16 +63,17 @@ DJANGO_ECHARTS = {
 3 Add views, urls.
 
 ```python
-def create_simple_bar():
-    bar = Bar("我的第一个图表", "这里是副标题")
-    bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
-    return bar
 
- class BackendEChartsTemplate(EChartsBackendView):
+from pyecharts import Bar
+from django_echarts.views.backend import EChartsBackendView
+
+class BackendEChartsTemplate(EChartsBackendView):
     template_name = 'backend_charts.html'
 
     def get_echarts_instance(self, *args, **kwargs):
-        return create_simple_bar()
+        bar = Bar("我的第一个图表", "这里是副标题")
+        bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
+        return bar
 ```
 
 4 Write template files.
