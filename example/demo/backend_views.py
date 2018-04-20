@@ -56,7 +56,7 @@ class PageDemoView(EChartsBackendView):
         return page
 
 
-class MultipleChartsView(EChartsBackendView):
+class NamedChartsView(EChartsBackendView):
     echarts_instance_name = 'charts'
     template_name = 'multiple_charts.html'
 

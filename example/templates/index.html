@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 {% block main_content %}
+    <div class="jumbotron">
+        <h1>django-echarts</h1>
+        <p>一个 <a href="http://echarts.baidu.com/index.html" target="_blank">Echarts</a> 整合的 <a
+                href="https://www.djangoproject.com" target="_blank">Django</a> App，使用
+            <a href="https://github.com/pyecharts/pyecharts" target="_blank">pyecharts</a>的作为图表构建库。</p>
+        <p class="small">最新版本：<img src="https://img.shields.io/pypi/v/django-echarts.svg" alt="version"/></p>
+    </div>
     <div class="page-header">
         <h2>基础示例</h2>
     </div>
@@ -8,7 +15,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">前端渲染示例</div>
                 <div class="panel-body">
-                    <p><a href="/frontend_charts_list/">前端渲染示例</a></p>
+                    <p><a href="{% url 'frontend_demo' %}">前端渲染示例</a></p>
                 </div>
             </div>
         </div>
@@ -16,7 +23,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">后端渲染示例</div>
                 <div class="panel-body">
-                    <p><a href="/backend_charts_list/">后端渲染示例</a></p>
+                    <p><a href="{% url 'backend_demo' %}">后端渲染示例</a></p>
                 </div>
             </div>
         </div>
@@ -30,7 +37,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">多图表(NameDCharts)</div>
                 <div class="panel-body">
-                    <p><a href="/multiple_charts/">多图表(NameDCharts)</a></p>
+                    <p><a href="{% url 'namedcharts_demo' %}">多图表(NameDCharts)</a></p>
                 </div>
             </div>
         </div>
@@ -38,7 +45,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">多图表(Page)</div>
                 <div class="panel-body">
-                    <p><a href="/page_demo/">多图表(Page)</a></p>
+                    <p><a href="{% url 'page_demo' %}">多图表(Page)</a></p>
                 </div>
             </div>
         </div>
