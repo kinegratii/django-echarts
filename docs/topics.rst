@@ -32,8 +32,6 @@ django-echarts 遵循统一配置的原则，所有的配置均定义在项目�
 
 该变量不建议作为配置访问的接口，关于如何访问配置信息请参考下面的内容。
 
-django_echarts 目前不接受对象级别的配置，因此 `pyecharts.base.Base.jshost` 和 `pyecharts.custom.page.Page.jshost` 两个属性无效，应当在 `settings.DJANGO_ECHARTS` 中统一配置。
-
 访问
 ++++++
 
@@ -102,6 +100,7 @@ django_echarts 提供两种方式的渲染视图，即：
 函数 `get_echarts_instance` 需要返回一个图表实例对象，包括：
 
 - `pyecharts.base.Base`
+- `django_echarts.datasets.charts.NamedCharts`
 
 后端渲染
 +++++++++
@@ -142,6 +141,58 @@ django_echarts 提供两种方式的渲染视图，即：
             loadEcharts('simpleBar');
         });
     </script>
+
+多图表渲染
+----------
+
+.. versionadded:: 0.3.4
+
+自 v0.3.4 新增 `django_echarts.datasets.charts.NamedCharts` 用于多图表渲染，该类是对于原有的 `pyecharts.custom.page.Page` 进行改善，包括：
+
+- 增加图表对象命名引用
+- 移除了 `list` 的相关方法
+
+基本使用
+++++++++
+
+视图代码
+
+::
+
+
+    class MultipleChartsView(EChartsBackendView):
+        echarts_instance_name = 'charts'
+        template_name = 'multiple_charts.html'
+
+        def get_echarts_instance(self, *args, **kwargs):
+            device_data = models.Device.objects.values('device_type').annotate(count=Count('device_type'))
+            device_types, counters = fetch(device_data, 'device_type', 'count')
+            pie = Pie("设备分类", page_title='设备分类', width='100%')
+            pie.add("设备分类", device_types, counters, is_label_show=True)
+
+            battery_lifes = models.Device.objects.values('name', 'battery_life')
+            names, lifes = fetch(battery_lifes, 'name', 'battery_life')
+            bar = Bar('设备电量', page_title='设备电量', width='100%')
+            bar.add("设备电量", names, lifes)
+            charts = NamedCharts().add_chart(pie, name='pie').add_chart(bar, name='bar')
+            return charts
+
+在创建一个 `NamedCharts` 实例 `charts` ，后，使用 `add_chart` 添加一个图表对象，可以使用 `name` 为之起一个引用变量，之后可以像属性一样访问该图表对象。
+
+::
+
+    print(charts.pie.page_title) # 等价于 charts[0].page_title
+
+但是在 Django 模板中不推荐使用 `{{ charts.0.page_title }}` 的方式引用列表的元素，可以使用 `{{ charts.pie.page_title }}` 。
+
+NamedCharts VS Page
++++++++++++++++++++
+
+区别。
+
+.. image:: /_static/namedcharts-vs-page.png
+
+`NamedCharts` 内部使用两个列表分别保存图表名称和实例，对外保持一个列表的相关方法，同时支持属性访问，
 
 模板标签
 ---------

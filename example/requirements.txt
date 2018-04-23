@@ -1,0 +1,3 @@
+django
+django-echarts
+pyecharts>=0.4

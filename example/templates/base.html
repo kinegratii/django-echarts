@@ -32,10 +32,15 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li><a href="/">首页</a></li>
-                <li><a href="/frontend_charts_list/">前端渲染示例</a></li>
-                <li><a href="/backend_charts_list/">后端渲染示例</a></li>
-                <li><a href="/page_demo/">Page示例</a></li>
+                <li><a href="{% url 'index' %}">首页</a></li>
+                <li><a href="{% url 'frontend_demo' %}">前端渲染示例</a></li>
+                <li><a href="{% url 'backend_demo' %}">后端渲染示例</a></li>
+                <li><a href="{% url 'page_demo' %}">Page示例</a></li>
+                <li><a href="{% url 'namedcharts_demo' %}">NamedCharts示例</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="https://github.com/kinegratii/django-echarts">github 仓库</a></li>
+                <li><a href="http://django-echarts.readthedocs.io/zh_CN/latest/index.html">在线文档</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
@@ -50,7 +55,7 @@
     <footer>
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
-                <p>&copy; Powered by Django-Echarts</p>
+                <p>&copy; 2017-2018, Powered by Django-Echarts</p>
             </div>
         </div>
     </footer>

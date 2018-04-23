@@ -24,31 +24,6 @@ zip 函数
         line = Line('High Temperature')
         line.add('High', ds, hs)
 
-fetch 函数
-+++++++++++
-
-更多请查看 :doc:`fetch` 。
-
-自 v0.2.1 起，新增 `django_echarts.datasets.fetch.fetch` 函数，该函数是对原有 pluck + zip 函数的进一步封装。
-
-如
-
-::
-
-    from pyecharts import Bar
-    from django_echarts.datasets.fetch import fetch
-
-    objects = [
-        {'id': 282, 'name': 'Alice', 'age': 30},
-        {'id': 217, 'name': 'Bob', 'age': 56},
-        {'id': 328, 'name': 'Charlie', 'age': 56},
-    ]
-
-    names, ages = fetch(objects, 'name', 'age')
-
-    bar = Bar()
-    bar.add('The Age of Members', names, ages)
-
 AxisValuesQuerySet 类
 ++++++++++++++++++++++++++
 

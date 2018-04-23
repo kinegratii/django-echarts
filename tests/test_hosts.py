@@ -38,8 +38,8 @@ class HostStoreTestCase(unittest.TestCase):
         }
         hs = MapHostStore(context=m_context, default_host='echarts')
         self.assertEqual(
-            'https://pyecharts.github.io/jupyter-echarts/echarts/china.js',
-            hs.generate_js_link('china', js_host='pyecharts')
+            'https://echarts-maps.github.io/echarts-china-provinces-js/china.js',
+            hs.generate_js_link('china', js_host='china-provinces')
         )
         # Add
         hs.add_host('https://amap.com/js', 'amap')

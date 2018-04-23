@@ -1,4 +1,8 @@
 language: python
+branches:
+  only:
+  - master
+  - dev
 python:
   - "3.5"
   - "3.6"
@@ -6,7 +10,8 @@ env:
   - DJANGO_VERSION=1.11
   - DJANGO_VERSION=2.0
 install:
+  - pip install -r requirements.txt
   - pip install -q Django==$DJANGO_VERSION
-  - pip install -q pyecharts==0.3.1
+  - pip install -q pyecharts==0.4.1
 script:
   make test
