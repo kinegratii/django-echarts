@@ -1,8 +1,8 @@
 更新日志
 =========
 
-v0.3.4
-------
+v0.3.4 (20180423)
+-----------------
 
 - 适配 pyecharts v0.4.x
 - 发布独立的 `borax.fetch` 工具包，`django_echarts.datasets.fetch` 将在 v0.4 后移除
