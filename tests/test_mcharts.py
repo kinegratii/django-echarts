@@ -43,6 +43,6 @@ class MChartsPY36TestCase(unittest.TestCase):
         nc.add_chart(MockChart('Map Chart'), name='map')
         self.assertEqual('Bar Chart', nc.bar.page_title)
         self.assertListEqual(
-            ['Line Chart', 'Bar Chart', 'Map Chart'],
+            ['Bar Chart', 'Line Chart', 'Map Chart'],
             [c.page_title for c in nc]
         )
