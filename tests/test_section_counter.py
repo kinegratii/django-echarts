@@ -93,15 +93,15 @@ class ComprehensiveTestCase(unittest.TestCase):
         source_data = [random.choice(range(1500)) for _ in range(2000)]
 
         # Test Using len Counter
-        labels = ['00~00', '01~10', '11~50', '51~100', '101~500', '501~1000', '>1000']
-        sizes = []
-        sizes.append(len([pp for pp in source_data if pp == 0]))
-        sizes.append(len([pp for pp in source_data if pp >= 1 and pp <= 10]))
-        sizes.append(len([pp for pp in source_data if pp >= 11 and pp <= 50]))
-        sizes.append(len([pp for pp in source_data if pp >= 51 and pp <= 100]))
-        sizes.append(len([pp for pp in source_data if pp >= 101 and pp <= 500]))
-        sizes.append(len([pp for pp in source_data if pp >= 501 and pp <= 1000]))
-        sizes.append(len([pp for pp in source_data if pp >= 1001]))
+        sizes = [
+            len([pp for pp in source_data if pp == 0]),
+            len([pp for pp in source_data if 1 <= pp <= 10]),
+            len([pp for pp in source_data if 11 <= pp <= 50]),
+            len([pp for pp in source_data if 51 <= pp <= 100]),
+            len([pp for pp in source_data if 101 <= pp <= 500]),
+            len([pp for pp in source_data if 501 <= pp <= 1000]),
+            len([pp for pp in source_data if pp >= 1001])
+        ]
 
         # Test Using section counter
         rc1 = BSectionCounter(

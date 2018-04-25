@@ -1,6 +1,5 @@
 # coding=utf8
 
-import json
 
 from pyecharts import Bar, Kline, Map, Pie, WordCloud
 

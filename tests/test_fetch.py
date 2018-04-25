@@ -51,16 +51,14 @@ class MockItem:
 
 class FetchCustomGetterTestCase(unittest.TestCase):
     def test_custom_getter(self):
-        my_getter = lambda item, key: item.get(key)
         data_list = [MockItem(1, 2, 3), MockItem(4, 5, 6), MockItem(7, 8, 9)]
-        xs, ys, zs = fetch(data_list, 'x', 'y', 'z', getter=my_getter)
+        xs, ys, zs = fetch(data_list, 'x', 'y', 'z', getter=lambda item, key: item.get(key))
         self.assertListEqual([1, 4, 7], xs)
 
     def test_with_dict(self):
         """
         Use dict.get(key) to pick item.
         """
-        my_getter = lambda item, key: item.get(key)
-        names, ages = fetch(DICT_LIST_DATA, 'name', 'age', getter=my_getter)
+        names, ages = fetch(DICT_LIST_DATA, 'name', 'age', getter=lambda item, key: item.get(key))
         self.assertListEqual(names, ['Alice', 'Bob', 'Charlie'])
         self.assertListEqual(ages, [30, 56, 56])
