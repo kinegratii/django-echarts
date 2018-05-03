@@ -155,7 +155,8 @@ django_echarts 提供两种方式的渲染视图，即：
 基本使用
 ++++++++
 
-视图代码
+
+在创建一个 `NamedCharts` 实例 `charts` ，后，使用 `add_chart` 添加一个图表对象，可以使用 `name` 为之起一个引用名称，如果没有指定引用名称，则使用 c0,c1 命名。
 
 ::
 
@@ -174,25 +175,50 @@ django_echarts 提供两种方式的渲染视图，即：
             names, lifes = fetch(battery_lifes, 'name', 'battery_life')
             bar = Bar('设备电量', page_title='设备电量', width='100%')
             bar.add("设备电量", names, lifes)
-            charts = NamedCharts().add_chart(pie, name='pie').add_chart(bar, name='bar')
+            charts = NamedCharts().add_chart(pie, name='pie').add_chart(bar)
             return charts
 
-在创建一个 `NamedCharts` 实例 `charts` ，后，使用 `add_chart` 添加一个图表对象，可以使用 `name` 为之起一个引用变量，之后可以像属性一样访问该图表对象。
+元素访问
+++++++++
+
+.. versionchanged:: 0.3.5
+   图表访问方式从 *属性访问* 改为 *字典访问* 。
+
+对于 包含若干图表的 `NamedCharts` 实例，可以像字典一样访问该图表对象。
+
+Python 代码的访问方式
 
 ::
 
-    print(charts.pie.page_title) # 等价于 charts[0].page_title
+    # 访问 pie 对象 page_title
+    print(charts['pie'].page_title)
 
-但是在 Django 模板中不推荐使用 `{{ charts.0.page_title }}` 的方式引用列表的元素，可以使用 `{{ charts.pie.page_title }}` 。
+    # 访问 bar 对象 page_title
+    print(charts['c1'].page_title) # 推荐
+    print(charts[1].page_title) # 不再推荐
+
+模板代码的访问方式：
+
+::
+
+    {{ charts.pie.page_title }}
+    {{ charts.c1.page_title }}
+
+注意
+
+::
+
+    无论是 Jinja2 模板还是 Django 模板，均不提倡使用 `charts.1` 形式访问列表中的某一个元素。
 
 NamedCharts VS Page
 +++++++++++++++++++
 
-区别。
+`NamedCharts` 内部使用 `collections.OrderedDict` 保存图表名称和实例，支持字典访问方式，同时扩展原有的 `Page` 的列表特性。
+
+具体差别如下表：
 
 .. image:: /_static/namedcharts-vs-page.png
 
-`NamedCharts` 内部使用两个列表分别保存图表名称和实例，对外保持一个列表的相关方法，同时支持属性访问，
 
 模板标签
 ---------
@@ -352,7 +378,7 @@ django-echarts 提供了一个包含若干个命令的 CLI 工具，这些命令
 ++++++++
 
 .. versionadded:: 0.2.2
-   新增 `download_lib_js` 和 `download_map_js` 命令。
+    新增 `download_lib_js` 和 `download_map_js` 命令。
 
 django-echarts 提供了一些下载命令，可以从远程地址下载文件到项目的静态目录中。这些命令包括：
 
