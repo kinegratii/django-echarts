@@ -33,6 +33,7 @@ class MChartsTestCase(unittest.TestCase):
         )
         with self.assertRaises(KeyError):
             c = nc['no_charts']
+            print(c.page_title)
         self.assertEqual('Bar Chart', nc[1].page_title)
 
 
