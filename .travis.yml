@@ -11,7 +11,11 @@ env:
   - DJANGO_VERSION=2.0
 install:
   - pip install -r requirements.txt
+  - pip install -r requirements_dev.txt
   - pip install -q Django==$DJANGO_VERSION
   - pip install -q pyecharts==0.4.1
+  - python setup.py install
 script:
-  make test
+  - nosetests tests
+  - python example/manage.py test --noinput
+  - flake8 django_echarts tests example --ignore=E501 --max-complexity 10

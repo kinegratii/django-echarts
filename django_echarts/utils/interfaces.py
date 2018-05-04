@@ -26,6 +26,14 @@ def to_css_length(l):
         return l
 
 
+def _flat(ele):
+    if hasattr(ele, 'js_dependencies'):
+        return list(ele.js_dependencies)
+    if isinstance(ele, (list, tuple, set)):
+        return ele
+    return ele,
+
+
 def merge_js_dependencies(*chart_or_name_list):
     front_required_items = ['echarts']
     front_optional_items = ['echartsgl']
@@ -41,14 +49,8 @@ def merge_js_dependencies(*chart_or_name_list):
             dependencies.append(_item)
 
     for d in chart_or_name_list:
-        if hasattr(d, 'js_dependencies'):
-            for x in d.js_dependencies:
-                _add(x)
-        elif isinstance(d, (list, tuple, set)):
-            for x in d:
-                _add(x)
-        elif isinstance(d, str):
-            _add(d)
+        for _d in _flat(d):
+            _add(_d)
     return front_required_items + [x for x in front_optional_items if x in fist_items] + dependencies
 
 
