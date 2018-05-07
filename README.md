@@ -37,6 +37,8 @@ django-echarts **只支持** ：
 
 ### 安装方式
 
+可以使用 pip 在线安装。
+
 ```shell
 pip install django-echarts
 ```
