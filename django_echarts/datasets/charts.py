@@ -8,10 +8,10 @@ class NamedCharts:
     A data structure class containing multiple named charts.
     """
 
-    def __init__(self, page_title='EChart', **kwargs):
+    def __init__(self, page_title='EChart', **name_chart_pair):
         self.page_title = page_title
         self._charts = OrderedDict()
-        for k, v in kwargs.items():
+        for k, v in name_chart_pair.items():
             self.add_chart(chart=v, name=k)
 
     def add_chart(self, chart, name=None):
@@ -20,7 +20,7 @@ class NamedCharts:
         return self
 
     def _next_name(self):
-        return 'c{}'.format(len(self._charts))
+        return 'c{}'.format(len(self))
 
     # List-like feature
 
@@ -60,8 +60,8 @@ class NamedCharts:
         return merge_js_dependencies(*self)
 
     @classmethod
-    def from_charts(cls, *args):
+    def from_charts(cls, *charts):
         mc = cls()
-        for c in args:
-            mc.add_chart(c)
+        for chart in charts:
+            mc.add_chart(chart)
         return mc
