@@ -27,6 +27,7 @@ django-echarts 仅支持 Python3.5+ 的开发环境, Django 版本要求为 2.0+
    tutorial
    topics
    data_builder
+   datastructure
    fetch
    api
    development

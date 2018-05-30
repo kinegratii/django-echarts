@@ -1,2 +1,0 @@
-include django_echarts/templates/*.html
-include django_echarts/templates/tags/*.html
