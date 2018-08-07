@@ -6,9 +6,11 @@ branches:
 python:
   - "3.5"
   - "3.6"
+  - "3.7"
 env:
   - DJANGO_VERSION=1.11
   - DJANGO_VERSION=2.0
+  - DJANGO_VERSION=2.1
 install:
   - pip install -r requirements/dev.txt
   - pip install -q Django==$DJANGO_VERSION
