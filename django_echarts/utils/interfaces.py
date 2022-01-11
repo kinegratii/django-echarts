@@ -7,6 +7,8 @@ In the practice, pyecharts should not be explicitly imported.
 from datetime import datetime, date, time
 import json
 from functools import singledispatch
+from pyecharts.charts.base import default as json_encode_func
+from pyecharts.commons.utils import OrderedSet
 
 __all__ = ['to_css_length', 'merge_js_dependencies', 'JsDumper']
 
@@ -28,7 +30,7 @@ def to_css_length(l):
 
 def _flat(ele):
     if hasattr(ele, 'js_dependencies'):
-        return list(ele.js_dependencies)
+        return list(ele.js_dependencies.items)  # pyecharts.commons.utils.OrderedSet
     if isinstance(ele, (list, tuple, set)):
         return ele
     return ele,
@@ -57,7 +59,7 @@ def merge_js_dependencies(*chart_or_name_list):
 # ---------- Javascript Dump Tools ----------
 @singledispatch
 def json_encoder(obj):
-    raise TypeError(repr(obj) + " is not JSON serializable")
+    return json_encode_func(obj)
 
 
 @json_encoder.register(datetime)
@@ -65,6 +67,11 @@ def json_encoder(obj):
 @json_encoder.register(time)
 def encode_date_time(obj):
     return obj.isoformat()
+
+
+@json_encoder.register(OrderedSet)
+def encode_js_dependency(obj):
+    return obj.items
 
 
 class JsDumper:

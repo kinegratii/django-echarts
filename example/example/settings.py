@@ -88,5 +88,8 @@ STATICFILES_DIRS = (
 )
 
 DJANGO_ECHARTS = {
-    'local_host': '{STATIC_URL}echarts'
+    'local_host': '{STATIC_URL}echarts',
+    'echarts_version': '4.8.0'
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

@@ -4,15 +4,16 @@
 from django_echarts.plugins.hosts import LibHostStore, MapHostStore, JsUtils
 
 DEFAULT_SETTINGS = {
-    'echarts_version': '4.0.4',
-    'renderer': 'canvas',
+    'echarts_version': '4.8.0',
+    'renderer': 'svg',
     'lib_js_host': 'bootcdn',
-    'map_js_host': 'echarts',
-    'local_host': None
+    'map_js_host': 'pyecharts',
+    'local_host': None,
+    'js_map': {}  # {<name>:<url>, <name>:<hostname>}
 }
 
 
-class SettingsStore(object):
+class SettingsStore:
     def __init__(self, *, echarts_settings=None, extra_settings=None, **kwargs):
         # Pre check settings
 
@@ -23,8 +24,7 @@ class SettingsStore(object):
             self._extra_settings['map_js_host'] = echarts_settings['local_host']
 
         # Merge echarts settings
-        self._settings = {**DEFAULT_SETTINGS, **self._extra_settings}
-
+        self._settings = {**DEFAULT_SETTINGS, **echarts_settings}
         self.lib_host_store = None
         self.map_host_store = None
 
@@ -59,6 +59,11 @@ class SettingsStore(object):
     # #### Public API: Generate js link using current configure ########
 
     def generate_js_link(self, js_name, js_host=None, **kwargs):
+        # TODO All entry point
+        # Find in user settings first.
+        link = self.settings.get('js_map', {}).get(js_name)
+        if link:
+            return link
         if JsUtils.is_lib_js(js_name):
             hs = self.lib_host_store
         else:

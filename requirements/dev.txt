@@ -1,2 +1,3 @@
+borax~=3.5
 flake8~=3.9
 mccabe~=0.6

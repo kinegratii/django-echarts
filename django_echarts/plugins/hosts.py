@@ -12,14 +12,14 @@ ECHARTS_LIB_HOSTS = {
 }
 
 ECHARTS_MAP_HOSTS = {
-    'echarts': 'http://echarts.baidu.com/asset/map/js',
+    'pyecharts': 'https://assets.pyecharts.org/assets/maps/',
     'china-provinces': 'https://echarts-maps.github.io/echarts-china-provinces-js/',
     'china-cities': 'https://echarts-maps.github.io/echarts-china-cities-js/',
     'united-kingdom': 'https://echarts-maps.github.io/echarts-united-kingdom-js'
 }
 
 
-class JsUtils(object):
+class JsUtils:
     ECHARTS_LIB_NAMES = [
         'echarts.common', 'echarts.common.min',
         'echarts', 'echarts.min',
@@ -33,7 +33,7 @@ class JsUtils(object):
         return js_name in JsUtils.ECHARTS_LIB_NAMES
 
 
-class HostStore(object):
+class HostStore:
     HOST_DICT = {}
 
     def __init__(self, *, context=None, default_host=None):

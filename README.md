@@ -10,8 +10,9 @@ django-echarts 是一个 [Echarts](http://echarts.baidu.com/index.html) 整合�
 
 django-echarts 主要提供了以下的内容：
 
-- 基于前端或后端的数据渲染
-- javascript静态文件管理和加载
+- **“前端渲染”** / **后端渲染** 两种不同的渲染方式
+- 基于 Django Template Engine 的模板标签库
+- js/css静态文件托管
 - 数据构建工具函数库
 - 基于Django命令的CLI工具
 
@@ -21,19 +22,17 @@ django-echarts 主要提供了以下的内容：
 
 请根据你的 pyecharts 版本安装 django-echarts 。
 
-> django-echarts 暂未适配 pyecharts v0.5.x ，敬请期待。
-
-
 | django-echarts | pyecharts | 备注 |
 | ------ | ------ | ------ |
 | 0.3.x | 0.3.x - 0.4.x | |
+| 0.4.x | 1.9+ | |
 
 ### Python & Django
 
 django-echarts **只支持** ：
 
--  Python3.5+
-- Django 1.11 LTS 或 Django 2.0+
+-  Python3.7+
+- Django 2.x/3.x/4.x
 
 ### 安装方式
 
@@ -41,15 +40,6 @@ django-echarts **只支持** ：
 
 ```shell
 pip install django-echarts
-```
-
-
-或者使用源码构建
-
-```shell
-git clone https://github.com/kinegratii/django-echarts.git
-cd django-echarts
-python setup.py install
 ```
 
 ## 快速使用

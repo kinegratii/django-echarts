@@ -15,7 +15,7 @@ class Device(models.Model):
     longitude = models.FloatField(null=True, blank=True, verbose_name="纬度")
     address = models.CharField(max_length=50, null=True, blank=True, verbose_name="Install Address")
     battery_life = models.IntegerField(verbose_name='电量(%)', default=100)
-    online = models.NullBooleanField(default=None, verbose_name="在线状态")
+    online = models.BooleanField(default=None, verbose_name="在线状态", null=True)
     parent_gateway_mac = models.CharField(max_length=50, blank=True, null=True)
     parent_rtu_mac = models.CharField(max_length=50, blank=True, null=True)
 

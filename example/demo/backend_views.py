@@ -1,12 +1,13 @@
 # coding=utf8
 
 
-from borax.fetch import fetch
+from borax.datasets.fetch import fetch
 
 from django.db.models import Count
-from pyecharts import Line, Pie, Page, Bar
+from pyecharts.charts import Line, Pie, Page, Bar
+from pyecharts import options as opts
 from django_echarts.datasets.charts import NamedCharts
-from django_echarts.views.backend import EChartsBackendView
+from django_echarts.views import EChartsBackendView
 
 from demo import models
 from .demo_data import FACTORY
@@ -33,8 +34,12 @@ class TemperatureEChartsView(EChartsBackendView):
     def get_echarts_instance(self, **kwargs):
         t_data = models.TemperatureRecord.objects.all().order_by('create_time').values_list('high', 'create_time')
         hs, ds = zip(*t_data)
-        line = Line('High Temperature')
-        line.add('High', ds, hs)
+
+        line = Line().add_xaxis(
+            ds
+        ).add_yaxis("商家A", hs).add_yaxis(
+            "商家B", [15, 25, 16, 55, 48, 8]).set_global_opts(
+            title_opts=opts.TitleOpts(title="High Temperature", subtitle="我是副标题"))
         return line
 
 
@@ -44,31 +49,15 @@ class PageDemoView(EChartsBackendView):
 
     def get_echarts_instance(self, *args, **kwargs):
         device_data = models.Device.objects.values('device_type').annotate(count=Count('device_type'))
-        device_types, counters = fetch(device_data, 'device_type', 'count')
-        pie = Pie("设备分类", page_title='设备分类', width='100%')
-        pie.add("设备分类", device_types, counters, is_label_show=True)
+        # device_types, counters = fetch(device_data, 'device_type', 'count')
+        pie = Pie().add("设备分类", list(device_data))
 
         battery_lifes = models.Device.objects.values('name', 'battery_life')
         names, lifes = fetch(battery_lifes, 'name', 'battery_life')
-        bar = Bar('设备电量', page_title='设备电量', width='100%')
-        bar.add("设备电量", names, lifes)
-        page = Page.from_charts(pie, bar)
+        bar = Bar()
+        bar.add_xaxis(names)
+        bar.add_yaxis('设备电量', lifes)
+        page = Page()
+        page.add(pie, bar)
         return page
 
-
-class NamedChartsView(EChartsBackendView):
-    echarts_instance_name = 'charts'
-    template_name = 'multiple_charts.html'
-
-    def get_echarts_instance(self, *args, **kwargs):
-        device_data = models.Device.objects.values('device_type').annotate(count=Count('device_type'))
-        device_types, counters = fetch(device_data, 'device_type', 'count')
-        pie = Pie("设备分类", page_title='设备分类', width='100%')
-        pie.add("设备分类", device_types, counters, is_label_show=True)
-
-        battery_lifes = models.Device.objects.values('name', 'battery_life')
-        names, lifes = fetch(battery_lifes, 'name', 'battery_life')
-        bar = Bar('设备电量', page_title='设备电量', width='100%')
-        bar.add("设备电量", names, lifes)
-        charts = NamedCharts().add_chart(pie, name='pie').add_chart(bar, name='bar')
-        return charts
