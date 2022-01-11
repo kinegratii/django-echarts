@@ -1,1 +1,1 @@
-borax
+borax~=3.5

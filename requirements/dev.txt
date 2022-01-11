@@ -1,3 +1,2 @@
-borax
-flake8
-mccabe
+flake8~=3.9
+mccabe~=0.6
