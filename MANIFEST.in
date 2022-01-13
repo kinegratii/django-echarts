@@ -1,0 +1,1 @@
+include django_echarts/templates/*
