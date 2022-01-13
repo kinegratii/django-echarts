@@ -101,13 +101,13 @@ def create_simple_map():
 
 @FACTORY.collect('pie')
 def create_simple_pie():
+    data = [('政府补贴', 389520), ('商业收入', 311040), ('票务收入', 733159)]
     pie = (
         Pie()
-            .add("", [list(z) for z in zip(Faker.choose(), Faker.values())])
-            .set_global_opts(title_opts=opts.TitleOpts(title="Pie-基本示例"))
+            .add("车站收入", data)
+            .set_global_opts(title_opts=opts.TitleOpts(title="车站收入结构图",subtitle='单元：元/日'))
             .set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
     )
-    pie.renderer = 'svg'
     return pie
 
 

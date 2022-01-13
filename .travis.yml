@@ -8,16 +8,8 @@ python:
   - "3.8"
   - "3.9"
   - "3.10"
-env:
-  - DJANGO_VERSION=2.0
-  - DJANGO_VERSION=2.2
-  - DJANGO_VERSION=3.0
-  - DJANGO_VERSION=3.2
-  - DJANGO_VERSION=4.0
 install:
   - pip install -r requirements/dev.txt
-  - pip install -q Django==$DJANGO_VERSION
-  - pip install -q pyecharts~=1.9
   - python setup.py install
 script:
   - nosetests tests
