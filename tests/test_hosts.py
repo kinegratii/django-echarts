@@ -47,10 +47,6 @@ class HostStoreTestCase(unittest.TestCase):
             'https://amap.com/js/fujian.js',
             hs.generate_js_link('fujian', 'amap')
         )
-        self.assertEqual(
-            'http://echarts.baidu.com/asset/map/js/china.js',
-            hs.generate_js_link('china')
-        )
 
 
 class CustomHostTestCase(unittest.TestCase):

@@ -1,9 +1,10 @@
 # coding=utf8
-from dataclasses import dataclass, is_dataclass, field
 import warnings
-from typing import Dict
+from dataclasses import dataclass, is_dataclass, field
+from typing import Dict, Optional
 
-from django_echarts.plugins.hosts import LibHostStore, MapHostStore, JsUtils
+from django_echarts.plugins.hosts import DependencyManager
+from django_echarts.plugins.hosts import LibHostStore, MapHostStore
 
 
 @dataclass
@@ -12,7 +13,7 @@ class DJEOpts:
     renderer: str = 'svg'
     lib_repo: str = 'pyecharts'
     map_repo: str = 'pyecharts'
-    local_repo: str = ''
+    local_dir: str = ''
     file2map: Dict[str, str] = field(default_factory=dict)
 
     @staticmethod
@@ -26,7 +27,7 @@ class DJEOpts:
 
         _u('lib_js_host', 'lib_repo')
         _u('map_js_host', 'map_repo')
-        _u('local_host', 'local_repo')
+        _u('local_host', 'local_dir')
 
         return vals
 
@@ -44,10 +45,18 @@ class SettingsStore:
         # Merge echarts settings
         if isinstance(echarts_settings, dict):
             self._opts = DJEOpts(**DJEOpts.upgrade_dict(echarts_settings))
+        elif isinstance(echarts_settings, DJEOpts):
+            self._opts = echarts_settings
         elif is_dataclass(echarts_settings):
             self._opts = echarts_settings()
         else:
             self._opts = DJEOpts()
+
+        self._manager = DependencyManager.create_default(
+            context={'echarts_version': self._opts.echarts_version},
+            lib_repo=self._opts.lib_repo,
+            map_repo=self._opts.map_repo
+        )
 
         # self._settings = {**DEFAULT_SETTINGS, **echarts_settings}
 
@@ -58,7 +67,7 @@ class SettingsStore:
         self._setup()
 
     def _check(self):
-        local_host = self._settings.get('local_host')
+        local_host = self._opts.local_dir
         static_url = self._extra_settings.get('STATIC_URL')
         if local_host:
             if static_url:
@@ -84,43 +93,21 @@ class SettingsStore:
 
     # #### Public API: Generate js link using current configure ########
 
+    def resolve_url(self, dep_name: str, repo_name: Optional[str] = None):
+        return self._manager.resolve_url(dep_name, repo_name)
+
     def generate_js_link(self, js_name, js_host=None, **kwargs):
-        # TODO All entry point
-        # Find in user settings first.
-        link = self._opts.file2map.get(js_name)
-        if link:
-            return link
-        if JsUtils.is_lib_js(js_name):
-            hs = self.lib_host_store
-            if not js_host:
-                js_host = self._opts.lib_repo
-        else:
-            hs = self.map_host_store
-            if not js_host:
-                js_host = self._opts.map_repo
-        if js_name == 'echarts' and js_host == 'pyecharts':
-            js_name = 'echarts.min'
-        return hs.generate_js_link(js_name=js_name, js_host=js_host)
-
-    def generate_lib_js_link(self, js_name, js_host=None, **kwargs):
-        return self.lib_host_store.generate_js_link(js_name=js_name, js_host=js_host)
-
-    def generate_map_js_link(self, js_name, js_host=None, **kwargs):
-        return self.map_host_store.generate_js_link(js_name=js_name, js_host=js_host)
+        warnings.warn('The method SettingsStore.generate_js_link is deprecated, use SettingsStore.resolve_url instead.',
+                      DeprecationWarning, stacklevel=2)
+        return self._manager.resolve_url(dep_name=js_name, repo_name=js_host)
 
     def generate_local_url(self, js_name):
         """
         Generate the local url for a js file.
-        :param js_name:
-        :return:
         """
         # TODO Refactor
-        host = self._settings['local_host'].format(**self._host_context).rstrip('/')
+        host = self._opts.local_dir.format(**self._host_context).rstrip('/')
         return '{}/{}.js'.format(host, js_name)
-
-    @property
-    def settings(self):
-        return self._settings
 
     def get(self, key, default=None):
         return getattr(self._opts, key, default)
