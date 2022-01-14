@@ -7,14 +7,13 @@ Expose the settings objects.
 from django.conf import settings
 from django.utils.functional import SimpleLazyObject
 
-from django_echarts.plugins.store import SettingsStore, DEFAULT_SETTINGS
+from django_echarts.plugins.store import SettingsStore
 
 __all__ = ['DJANGO_ECHARTS_SETTINGS']
 
 
 def get_django_echarts_settings():
-    project_echarts_settings = {k: v for k, v in DEFAULT_SETTINGS.items()}
-    project_echarts_settings.update(getattr(settings, 'DJANGO_ECHARTS', {}))
+    project_echarts_settings = getattr(settings, 'DJANGO_ECHARTS', {})
     extra_settings = {
         'STATIC_URL': settings.STATIC_URL
     }

@@ -4,7 +4,7 @@ A Implement that you can use host name instead of its url.
 """
 
 ECHARTS_LIB_HOSTS = {
-    'pyecharts': 'https://pyecharts.github.io/jupyter-echarts/echarts',
+    'pyecharts': 'https://assets.pyecharts.org/assets/',  # TODO pycharts:echarts.js 404
     'cdnjs': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}',
     'npmcdn': 'https://unpkg.com/echarts@{echarts_version}/dist',
     'bootcdn': 'https://cdn.bootcss.com/echarts/{echarts_version}',
@@ -33,6 +33,13 @@ class JsUtils:
         return js_name in JsUtils.ECHARTS_LIB_NAMES
 
 
+def d2f(dep_name: str):
+    if dep_name.endswith('.css') or dep_name.endswith('.js'):
+        return dep_name
+    else:
+        return f'{dep_name}.js'
+
+
 class HostStore:
     HOST_DICT = {}
 
@@ -53,7 +60,8 @@ class HostStore:
             host_url = self._default_host
         if host_url is None:
             raise ValueError('No host is specified.')
-        return '{}/{}.js'.format(host_url, js_name)
+        filename = d2f(js_name)
+        return f'{host_url}/{filename}'
 
     def _ensure_host_url(self, name_or_url):
         host_url = self._host_dict.get(name_or_url, name_or_url)
