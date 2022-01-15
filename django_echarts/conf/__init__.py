@@ -7,7 +7,7 @@ Expose the settings objects.
 from django.conf import settings
 from django.utils.functional import SimpleLazyObject
 
-from django_echarts.plugins.store import SettingsStore
+from django_echarts.dms.core import SettingsStore
 
 __all__ = ['DJANGO_ECHARTS_SETTINGS']
 
