@@ -90,6 +90,7 @@ STATICFILES_DIRS = (
 DJANGO_ECHARTS = {
     'local_host': '{STATIC_URL}echarts',
     'echarts_version': '4.8.0',
+    'lib_repo': 'bootcdn',
     'map_js_host': 'pyecharts'
 }
 

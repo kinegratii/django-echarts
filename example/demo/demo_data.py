@@ -1,9 +1,8 @@
 # coding=utf8
 
 
-from pyecharts.charts import Bar, Kline, Map, Pie, WordCloud
 from pyecharts import options as opts
-from pyecharts.faker import Faker
+from pyecharts.charts import Bar, Kline, Map, Pie, WordCloud
 
 
 class ChartFactory:
@@ -90,10 +89,14 @@ def create_simple_kline():
 
 @FACTORY.collect('map')
 def create_simple_map():
+    data = [('广东', 12601), ('山东', 10152), ('河南', 9936), ('江苏', 8474), ('四川', 8367),
+            ('河北', 7461), ('湖南', 6644), ('浙江', 6456), ('安徽', 6102), ('湖北', 5775)]
+    max_v = int(max([v[1] for v in data]) * 1.1)
     map1 = (
         Map()
-            .add("商家A", [list(z) for z in zip(Faker.provinces, Faker.values())], "china")
-            .set_global_opts(title_opts=opts.TitleOpts(title="Map-基本示例"))
+            .add("人口", data, "china")
+            .set_global_opts(title_opts=opts.TitleOpts(title="全国第七次人口普查(前10名)", subtitle='单位：万人'),
+                             visualmap_opts=opts.VisualMapOpts(is_show=True, max_=max_v))
     )
     map1.renderer = 'svg'
     return map1
@@ -105,7 +108,7 @@ def create_simple_pie():
     pie = (
         Pie()
             .add("车站收入", data)
-            .set_global_opts(title_opts=opts.TitleOpts(title="车站收入结构图",subtitle='单元：元/日'))
+            .set_global_opts(title_opts=opts.TitleOpts(title="车站收入结构图", subtitle='单元：元/日'))
             .set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
     )
     return pie

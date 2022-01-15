@@ -5,6 +5,7 @@
 
 from django import template
 
+from borax.htmls import html_tag
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.utils.interfaces import to_css_length, JsDumper, merge_js_dependencies
 
@@ -44,9 +45,9 @@ def build_echarts_initial_fragment(*charts):
         renderer = getattr(chart, 'renderer', DJANGO_ECHARTS_SETTINGS.get('renderer'))
         div_v_name = "div_{0}".format(chart.chart_id)
         js_content = content_fmt.format(
-            init_params=JsDumper.as_parameters(div_v_name, None, {'renderer': renderer}, variables=[div_v_name]),
+            init_params=div_v_name,
             chart_id=chart.chart_id,
-            options=JsDumper.as_object(chart.options)
+            options=chart.dump_options_with_quotes()
         )
         contents.append(js_content)
     return '\n'.join(contents)
