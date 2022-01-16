@@ -5,11 +5,15 @@
 
 from django import template
 
-from borax.htmls import html_tag
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.utils.interfaces import to_css_length, JsDumper, merge_js_dependencies
+from django_echarts.utils.interfaces import to_css_length, merge_js_dependencies
 
 register = template.Library()
+
+
+@register.simple_tag(takes_context=True)
+def dep_url(context, dep_name: str, repo_name: str = None):
+    return DJANGO_ECHARTS_SETTINGS.resolve_url(dep_name, repo_name)
 
 
 @register.simple_tag(takes_context=True)

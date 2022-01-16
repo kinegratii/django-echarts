@@ -14,7 +14,6 @@ BUILTIN_LIB_REPOS = {
     'cdnjs': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}',
     'npmcdn': 'https://unpkg.com/echarts@{echarts_version}/dist',
     'bootcdn': 'https://cdn.bootcss.com/echarts/{echarts_version}',
-    'echarts': 'http://echarts.baidu.com/dist'
 }
 
 BUILTIN_MAP_REPOS = {
@@ -101,9 +100,35 @@ class DependencyManager:
         url_fmt = self._repo_dic[catalog].get(repo_name).rstrip('/')
         return '{}/{}'.format(url_fmt.format(**self._context), filename)
 
-    def resolve_available_url(self, dep_name: str, repo_name: str = None):
+    def resolve_all_urls(self, dep_name: str):
         """查找可下载的远程url"""
-        pass
+        all_urls = []
+        # Global Resolve
+        value = self._global_f2map.get(dep_name)
+        if value:
+            vdep, vurl = _parse_val(value)
+            if vurl:
+                all_urls.append(vurl)
+            dep_name = vdep
+        if _is_lib_dep(dep_name):
+            catalog = 'lib'
+        else:
+            catalog = 'map'
+
+        for _rname, _rurl in self._repo_dic[catalog].items():
+            name = dep_name
+            value = self._repo_f2map.get(_rname, {}).get(dep_name, '')
+            if value:
+                vdep, vurl = _parse_val(value)
+                if vurl:
+                    all_urls.append(vurl)
+                    continue
+                name = vdep
+            filename = d2f(name)
+            url_fmt = _rurl.rstrip('/')
+            url = '{}/{}'.format(url_fmt.format(**self._context), filename)
+            all_urls.append(url)
+        return all_urls
 
     @classmethod
     def create_default(cls, context: dict, lib_repo: str = None, map_repo: str = None) -> 'DependencyManager':
@@ -128,7 +153,13 @@ class DJEOpts:
     lib_repo: str = 'pyecharts'
     map_repo: str = 'pyecharts'
     local_dir: str = ''
+    lib_local_dir: str = ''
+    map_local_dir: str = ''
     file2map: Dict[str, str] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.map_local_dir = self.map_local_dir or self.local_dir
+        self.lib_local_dir = self.lib_local_dir or self.local_dir
 
     @staticmethod
     def upgrade_dict(vals: dict):
@@ -146,6 +177,7 @@ class DJEOpts:
         return vals
 
 
+# SettingsStore -> DependencyManage -> DJEOpts
 class SettingsStore:
     def __init__(self, *, echarts_settings=None, extra_settings=None, **kwargs):
         # Pre check settings
@@ -204,12 +236,19 @@ class SettingsStore:
                       DeprecationWarning, stacklevel=2)
         return self._manager.resolve_url(dep_name=js_name, repo_name=js_host)
 
+    def get_local_dir(self, dep_name):
+        if _is_lib_dep(dep_name):
+            return self._opts.lib_local_dir
+        else:
+            return self._opts.map_local_dir
+
     def generate_local_url(self, js_name):
         """
         Generate the local url for a js file.
         """
         # TODO Refactor
-        host = self._opts.local_dir.format(**self._host_context).rstrip('/')
+        dir_s = self.get_local_dir(js_name)
+        host = dir_s.format(**self._host_context).rstrip('/')
         return '{}/{}.js'.format(host, js_name)
 
     def get(self, key, default=None):

@@ -4,7 +4,7 @@
 
 
 
-django-echarts 是一个 [Echarts](http://echarts.baidu.com/index.html) 整合的  [Django](https://www.djangoproject.com) App，使用 [pyecharts](https://github.com/pyecharts/pyecharts) 的作为图表构建库。
+django-echarts 是一个 [pyecharts](https://github.com/pyecharts/pyecharts) +  [Django](https://www.djangoproject.com) 整合的 Django App。
 
 ## 概述
 
@@ -14,7 +14,7 @@ django-echarts 主要提供了以下的内容：
 - 基于 Django Template Engine 的模板标签库
 - js/css静态文件托管
 - 数据构建工具函数库
-- 基于Django命令的CLI工具
+- 项目级的CLI工具
 
 ## 安装
 
@@ -22,17 +22,10 @@ django-echarts 主要提供了以下的内容：
 
 请根据你的 pyecharts 版本安装 django-echarts 。
 
-| django-echarts | pyecharts | 备注 |
-| ------ | ------ | ------ |
-| 0.3.x | 0.3.x - 0.4.x | |
-| 0.4.x | 1.9+ | |
-
-### Python & Django
-
-django-echarts **只支持** ：
-
--  Python3.7+
-- Django 2.x/3.x/4.x
+| django-echarts版本系列 | pyecharts | django | python | 备注 |
+| ------ | ------ | ------ | ----- | ----- |
+| 0.3.x | 0.3.x - 0.4.x | 1.11/2.0 | 3.5 | 不再维护 |
+| 0.5.x | 1.9+ | 2.0+ | 3.7+ | 开发中 |
 
 ### 安装方式
 
@@ -69,15 +62,19 @@ DJANGO_ECHARTS = {
 
 ```python
 
-from pyecharts import Bar
-from django_echarts.views.backend import EChartsBackendView
+from pyecharts.charts import Bar
+from pyecharts import options as opts
+from django_echarts.views import EChartsBackendView
 
 class BackendEChartsTemplate(EChartsBackendView):
     template_name = 'backend_charts.html'
 
     def get_echarts_instance(self, *args, **kwargs):
-        bar = Bar("我的第一个图表", "这里是副标题")
-        bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
+        bar = Bar().add_xaxis(["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]).add_yaxis(
+        '面积', [5, 20, 36, 10, 75, 90]
+        ).set_global_opts(
+            title_opts=opts.TitleOpts(title="我的第一个图表", subtitle="单位：这里是副标题")
+        )
         return bar
 ```
 

@@ -24,4 +24,4 @@ def get_django_echarts_settings():
     return settings_store
 
 
-DJANGO_ECHARTS_SETTINGS = SimpleLazyObject(get_django_echarts_settings)
+DJANGO_ECHARTS_SETTINGS = SimpleLazyObject(get_django_echarts_settings)  # type: SettingsStore
