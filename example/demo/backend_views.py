@@ -2,14 +2,12 @@
 
 
 from borax.datasets.fetch import fetch
-
-from django.db.models import Count
-from pyecharts.charts import Line, Pie, Page, Bar
 from pyecharts import options as opts
-from django_echarts.datasets.charts import NamedCharts
-from django_echarts.views import EChartsBackendView
+from pyecharts.charts import Line, Bar
 
 from demo import models
+from django_echarts.datasets.charts import NamedCharts
+from django_echarts.views import EChartsBackendView, SimpleChartBDView, MultipleChartsBDView, SelectOneChartBDView
 from .demo_data import FACTORY
 
 
@@ -43,21 +41,37 @@ class TemperatureEChartsView(EChartsBackendView):
         return line
 
 
-class PageDemoView(EChartsBackendView):
-    echarts_instance_name = 'page'
-    template_name = 'page_demo.html'
+class MyFistBackendChartsTemplateView(SimpleChartBDView):
+    page_title = '图表示例'
 
     def get_echarts_instance(self, *args, **kwargs):
-        device_data = models.Device.objects.values('device_type').annotate(count=Count('device_type'))
-        # device_types, counters = fetch(device_data, 'device_type', 'count')
-        pie = Pie().add("设备分类", list(device_data))
+        return FACTORY.create('bar')
+
+
+class PageDemoView(MultipleChartsBDView):
+    template_name = 'page_demo.html'
+    echarts_instance_name = 'page'
+
+    def get_echarts_instance(self, *args, **kwargs):
+        bar0 = FACTORY.create('bar')
 
         battery_lifes = models.Device.objects.values('name', 'battery_life')
         names, lifes = fetch(battery_lifes, 'name', 'battery_life')
-        bar = Bar()
-        bar.add_xaxis(names)
-        bar.add_yaxis('设备电量', lifes)
-        page = Page()
-        page.add(pie, bar)
+        bar = Bar().add_xaxis(names).add_yaxis('设备电量', lifes)
+        page = NamedCharts().add([bar0, bar])
         return page
 
+
+class MySelectChartView(SelectOneChartBDView):
+    url_name = 'my_select_chart'
+    url_prefix = 'chart/<slug:name>/'
+    charts_config = [
+        ('c1', '柱形图'),
+        ('c2', '饼图')
+    ]
+
+    def dje_chart_c1(self, *args, **kwargs):
+        return FACTORY.create('bar')
+
+    def dje_chart_c2(self, *args, **kwargs):
+        return FACTORY.create('pie')

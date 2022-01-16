@@ -124,10 +124,18 @@ class BackendEChartsTemplate(EChartsBackendView):
 
 ## 示例
 
-示例项目请参考 example 文件夹。
+示例项目位于 example 文件夹。
+
+第一步，安装依赖
 
 ```shell
 cd example
+pip install -r requirements.txt
+```
+
+第二步，启动项目开发服务器
+
+```shell
 python manage.py runserver 127.0.0.1:8000
 ```
 

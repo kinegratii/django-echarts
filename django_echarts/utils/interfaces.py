@@ -3,7 +3,7 @@
 A interface module for pyecharts.
 In the practice, pyecharts should not be explicitly imported.
 """
-
+import os
 from datetime import datetime, date, time
 import json
 from functools import singledispatch
@@ -30,7 +30,11 @@ def to_css_length(l):
 
 def _flat(ele):
     if hasattr(ele, 'js_dependencies'):
-        return list(ele.js_dependencies.items)  # pyecharts.commons.utils.OrderedSet
+        if isinstance(ele.js_dependencies, list):
+            return ele.js_dependencies
+        if hasattr(ele.js_dependencies, 'items'):
+            return list(ele.js_dependencies.items)  # pyecharts.commons.utils.OrderedSet
+        raise ValueError('Can not parse js_dependencies.')
     if isinstance(ele, (list, tuple, set)):
         return ele
     return ele,
@@ -54,6 +58,13 @@ def merge_js_dependencies(*chart_or_name_list):
         for _d in _flat(d):
             _add(_d)
     return front_required_items + [x for x in front_optional_items if x in fist_items] + dependencies
+
+
+def get_pyecharts_template_dir() -> str:
+    import pyecharts
+    base_dir = os.path.join(os.path.dirname(str(pyecharts.__file__)), 'render', 'templates')
+    print(os.path.exists(base_dir))
+    return base_dir
 
 
 # ---------- Javascript Dump Tools ----------

@@ -3,9 +3,9 @@
 A Implement that you can use host name instead of its url.
 """
 import warnings
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from dataclasses import dataclass, is_dataclass, field
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, List
 
 __all__ = ['DependencyManager', 'DJEOpts', 'SettingsStore']
 
@@ -51,6 +51,9 @@ def _parse_val(value: str):
         return value[1:], ''
     else:
         return '', value
+
+
+RemoteResource = namedtuple('RemoteResource', 'catalog repo_name url')
 
 
 class DependencyManager:
@@ -100,15 +103,20 @@ class DependencyManager:
         url_fmt = self._repo_dic[catalog].get(repo_name).rstrip('/')
         return '{}/{}'.format(url_fmt.format(**self._context), filename)
 
-    def resolve_all_urls(self, dep_name: str):
-        """查找可下载的远程url"""
+    def resolve_all_urls(self, dep_name: str) -> List[RemoteResource]:
+        """列出所有Repo中某个dep_name的远程url."""
+
         all_urls = []
         # Global Resolve
+        if _is_lib_dep(dep_name):
+            catalog = 'lib'
+        else:
+            catalog = 'map'
         value = self._global_f2map.get(dep_name)
         if value:
             vdep, vurl = _parse_val(value)
             if vurl:
-                all_urls.append(vurl)
+                all_urls.append(RemoteResource(catalog=catalog, repo_name='-', url=vurl))
             dep_name = vdep
         if _is_lib_dep(dep_name):
             catalog = 'lib'
@@ -121,13 +129,13 @@ class DependencyManager:
             if value:
                 vdep, vurl = _parse_val(value)
                 if vurl:
-                    all_urls.append(vurl)
+                    all_urls.append(all_urls.append(RemoteResource(catalog=catalog, repo_name=_rname, url=vurl)))
                     continue
                 name = vdep
             filename = d2f(name)
             url_fmt = _rurl.rstrip('/')
             url = '{}/{}'.format(url_fmt.format(**self._context), filename)
-            all_urls.append(url)
+            all_urls.append(RemoteResource(catalog=catalog, repo_name=_rname, url=url))
         return all_urls
 
     @classmethod
