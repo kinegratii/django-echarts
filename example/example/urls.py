@@ -1,9 +1,10 @@
 # coding=utf8
 
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from demo import frontend_views, backend_views
+from demo import mysites
 
 urlpatterns = [
     url(r'^$', frontend_views.IndexView.as_view(), name='index'),
@@ -20,5 +21,6 @@ urlpatterns = [
     url(r'options/simpleMap/', frontend_views.SimpleMapView.as_view()),
     url(r'options/simplePie/', frontend_views.SimplePieView.as_view()),
     url(r'options/wordCloud/', frontend_views.WordCloudView.as_view()),
+    url(r'site_demo/', include(mysites.s.as_urls()))
 ]
 urlpatterns += backend_views.MySelectChartView.urls()

@@ -1,8 +1,9 @@
 import json
 from abc import abstractmethod
 
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse
 from django.urls import path
+from django.utils.text import slugify
 from django.views.generic.base import View, TemplateView
 
 
@@ -26,7 +27,7 @@ class EChartsBackendView(EChartsMixin, TemplateView):
         context['title'] = self.get_dje_page_title()
         return context
 
-    def get_dje_page_title(self):
+    def get_dje_page_title(self, *args, **kwargs):
         return self.page_title
 
 
@@ -36,7 +37,7 @@ class EChartsFrontView(EChartsMixin, View):
         return JsonResponse(data=json.loads(echarts_instance.dump_options_with_quotes()), safe=False)
 
 
-# -------------------------- scaffolds --------------------
+# -------------------------- scaffolds no theme --------------------
 
 class SimpleChartBDView(EChartsBackendView):
     template_name = 'dje_simple_chart.html'
@@ -52,13 +53,13 @@ class MultipleChartsBDView(EChartsBackendView):
 class SelectOneChartBDView(TemplateView):
     template_name = 'dje_selectone_chart.html'
     url_prefix = 'chart/<slug:name>'
-    url_name = ''
+    view_name = ''
     charts_config = []
     page_title = '{description}'
 
     def get(self, request, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['url_name'] = self.url_name
+        context['view_name'] = self.view_name
         context['title'] = 'My Charts'
         chart_name = self.kwargs.get('name')
         context['menu'] = []
@@ -71,7 +72,7 @@ class SelectOneChartBDView(TemplateView):
                 if func:
                     chart_obj = func()
                     context['chart_obj'] = chart_obj
-                context['title'] = self.page_title.format(name=name, description=description)
+                context['title'] = self.get_dje_page_title(name=name, description=description)
                 context['menu'].append((name, description, True))
             else:
                 context['menu'].append((name, description, False))
@@ -86,11 +87,27 @@ class SelectOneChartBDView(TemplateView):
             using=self.template_engine
         )
 
+    def get_dje_page_title(self, name, description, **kwargs):
+        return self.page_title.format(name=name, description=description)
+
+    @classmethod
+    def attach_view_name(cls):
+        if cls.view_name:
+            return cls.view_name
+        end_s = ['BDView', 'View']
+        s = cls.__name__
+        for es in end_s:
+            if s.endswith(es):
+                view_name = slugify(s[:-len(es)])
+                cls.view_name = view_name
+                return view_name
+
     @classmethod
     def urls(cls):
         kw = {}
-        if cls.url_name:
-            kw.update({'name': cls.url_name})
+        view_name = cls.attach_view_name()
+        if view_name:
+            kw.update({'name': cls.view_name})
         return [
             path(cls.url_prefix, cls.as_view(), **kw)
         ]

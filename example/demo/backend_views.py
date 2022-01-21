@@ -63,7 +63,6 @@ class PageDemoView(MultipleChartsBDView):
 
 
 class MySelectChartView(SelectOneChartBDView):
-    url_name = 'my_select_chart'
     url_prefix = 'chart/<slug:name>/'
     charts_config = [
         ('c1', '柱形图'),

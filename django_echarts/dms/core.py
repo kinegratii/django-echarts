@@ -191,12 +191,7 @@ class SettingsStore:
         # Pre check settings
 
         self._extra_settings = extra_settings or {}
-        # if self._extra_settings.get('lib_js_host') == 'local_host':
-        #     self._extra_settings['lib_js_host'] = echarts_settings['local_host']
-        # if self._extra_settings.get('map_js_host') == 'local_host':
-        #     self._extra_settings['map_js_host'] = echarts_settings['local_host']
 
-        # Merge echarts settings
         if isinstance(echarts_settings, dict):
             self._opts = DJEOpts(**DJEOpts.upgrade_dict(echarts_settings))
         elif isinstance(echarts_settings, DJEOpts):
@@ -212,9 +207,6 @@ class SettingsStore:
             map_repo=self._opts.map_repo
         )
 
-        # self._settings = {**DEFAULT_SETTINGS, **echarts_settings}
-
-        # self._check()
         self._setup()
 
     def _check(self):

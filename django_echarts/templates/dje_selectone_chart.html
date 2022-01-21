@@ -18,7 +18,7 @@
     {% endblock %}
 </head>
 <body>
-{% if url_name %}
+{% if view_name %}
 <div>
     <ul>
         {% for item in menu %}
@@ -26,7 +26,7 @@
             {% if item.2 %}
             {{ item.1 }}
             {% else %}
-            <a href="{% url url_name item.0 %}">{{ item.1 }}</a>
+            <a href="{% url view_name item.0 %}">{{ item.1 }}</a>
             {% endif %}
         </li>
         {% endfor %}
