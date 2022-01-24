@@ -13,7 +13,7 @@ BUILTIN_LIB_REPOS = {
     'pyecharts': 'https://assets.pyecharts.org/assets/',
     'cdnjs': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}',
     'npmcdn': 'https://unpkg.com/echarts@{echarts_version}/dist',
-    'bootcdn': 'https://cdn.bootcss.com/echarts/{echarts_version}',
+    'bootcdn': 'https://cdn.bootcdn.net/ajax/libs/echarts/{echarts_version}',
 }
 
 BUILTIN_MAP_REPOS = {
@@ -22,8 +22,8 @@ BUILTIN_MAP_REPOS = {
     'china-cities': 'https://echarts-maps.github.io/echarts-china-cities-js/',
     'united-kingdom': 'https://echarts-maps.github.io/echarts-united-kingdom-js'
 }
-CUSTOM_FILE_MAP = {
-    'pyecharts': {'echarts': '@echarts.min'}
+_CUSTOM_D2U_MAP = {
+    '#pyecharts': {'echarts': '@echarts.min'},
 }
 
 ECHARTS_LIB_NAMES = [
@@ -53,6 +53,12 @@ def _parse_val(value: str):
         return '', value
 
 
+def _format_static_url(url: str, context: dict) -> str:
+    if '{STATIC_URL}' in url and 'STATIC_URL' not in context:
+        raise ValueError(f'Can not parse {url} without STATIC_URL value.')
+    return url.format(**context)
+
+
 RemoteResource = namedtuple('RemoteResource', 'catalog repo_name url')
 
 
@@ -77,15 +83,34 @@ class DependencyManager:
             assert isinstance(value, dict)
             self._repo_f2map[repo_name].update(value)
         else:
+            # global
             assert isinstance(value, str)
             self._global_f2map[dep_name] = value
+
+    def load_from_d2u_dict(self, d2u_dic: dict):
+        for k, v in d2u_dic.items():  # TODO sorted
+            if k.startswith('#'):
+                if isinstance(v, dict):
+                    self._repo_f2map[k[1:]].update(v)
+                if isinstance(v, str):
+                    # new repo
+                    if k[-4:] == '.lib' or k[-4:] == '.map':
+                        repo_name = k[1:-4]
+                    else:
+                        repo_name = k[1:]
+                    if k[-4:] != '.map':
+                        self._repo_dic['lib'].update({repo_name: v})
+                    if k[-4:] != '.lib':
+                        self._repo_dic['map'].update({repo_name: v})
+            elif isinstance(v, str):
+                self._global_f2map[k] = v
 
     def resolve_url(self, dep_name: str, repo_name: str = None) -> str:
         value = self._global_f2map.get(dep_name)
         if value:
             vdep, vurl = _parse_val(value)
             if vurl:
-                return vurl
+                return _format_static_url(vurl, self._context)
             dep_name = vdep
         if _is_lib_dep(dep_name):
             catalog = 'lib'
@@ -97,7 +122,7 @@ class DependencyManager:
         if value:
             vdep, vurl = _parse_val(value)
             if vurl:
-                return vurl
+                return _format_static_url(vurl, self._context)
             dep_name = vdep
         filename = d2f(dep_name)
         url_fmt = self._repo_dic[catalog].get(repo_name).rstrip('/')
@@ -116,7 +141,7 @@ class DependencyManager:
         if value:
             vdep, vurl = _parse_val(value)
             if vurl:
-                all_urls.append(RemoteResource(catalog=catalog, repo_name='-', url=vurl))
+                all_urls.append(RemoteResource(catalog=catalog, repo_name='[Custom]', url=vurl))
             dep_name = vdep
         if _is_lib_dep(dep_name):
             catalog = 'lib'
@@ -138,6 +163,11 @@ class DependencyManager:
             all_urls.append(RemoteResource(catalog=catalog, repo_name=_rname, url=url))
         return all_urls
 
+    def iter_repos(self):
+        for catalog, repos in self._repo_dic.items():
+            for repo_name, repo_url in repos.items():
+                yield catalog, repo_name, repo_url.format(**self._context)
+
     @classmethod
     def create_default(cls, context: dict, lib_repo: str = None, map_repo: str = None) -> 'DependencyManager':
         manager = cls(context=context, lib_repo=lib_repo, map_repo=map_repo)
@@ -145,12 +175,7 @@ class DependencyManager:
             manager.add_repo(name, url, catalog='lib')
         for name, url in BUILTIN_MAP_REPOS.items():
             manager.add_repo(name, url, catalog='map')
-        for k, v in CUSTOM_FILE_MAP.items():
-            if isinstance(v, dict):
-                manager.add_f2item(repo_name=k, value=v)
-            else:
-                manager.add_f2item(dep_name=k, value=v)
-
+        manager.load_from_d2u_dict(_CUSTOM_D2U_MAP)
         return manager
 
 
@@ -201,13 +226,17 @@ class SettingsStore:
         else:
             self._opts = DJEOpts()
 
+        self._context = {'echarts_version': self._opts.echarts_version}
+        if 'STATIC_URL' in self._extra_settings:
+            self._context.update({'STATIC_URL': self._extra_settings['STATIC_URL']})
         self._manager = DependencyManager.create_default(
-            context={'echarts_version': self._opts.echarts_version},
+            context=self._context,
             lib_repo=self._opts.lib_repo,
             map_repo=self._opts.map_repo
         )
+        self._manager.load_from_d2u_dict(self._opts.file2map)
 
-        self._setup()
+        # self._setup()
 
     def _check(self):
         local_host = self._opts.local_dir
@@ -219,14 +248,11 @@ class SettingsStore:
             else:
                 raise ValueError("The local_host item requires a no-empty settings.STATIC_URL.")
 
-    def _setup(self):
-        self._host_context = {
-            'echarts_version': self._opts.echarts_version
-        }
-        if 'STATIC_URL' in self._extra_settings:
-            self._host_context.update({'STATIC_URL': self._extra_settings['STATIC_URL']})
-
     # #### Public API: Generate js link using current configure ########
+
+    @property
+    def dependency_manager(self) -> DependencyManager:
+        return self._manager
 
     def resolve_url(self, dep_name: str, repo_name: Optional[str] = None):
         return self._manager.resolve_url(dep_name, repo_name)
@@ -248,7 +274,7 @@ class SettingsStore:
         """
         # TODO Refactor
         dir_s = self.get_local_dir(js_name)
-        host = dir_s.format(**self._host_context).rstrip('/')
+        host = dir_s.format(**self._context).rstrip('/')
         return '{}/{}.js'.format(host, js_name)
 
     def get(self, key, default=None):

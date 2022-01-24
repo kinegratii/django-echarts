@@ -91,7 +91,10 @@ DJANGO_ECHARTS = {
     'local_host': '{STATIC_URL}echarts',
     'echarts_version': '4.8.0',
     'lib_repo': 'bootcdn',
-    'map_js_host': 'pyecharts'
+    'map_js_host': 'pyecharts',
+    'file2map': {
+        'echarts-wordcloud': '/static/echarts/echarts-wordcloud.min.js'
+    }
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

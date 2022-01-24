@@ -1,4 +1,8 @@
 {% extends 'bootstrap3/base.html' %}
 
 {% block main_content %}
+    <div class="page-header">
+        <h2>图表列表</h2>
+    </div>
+    {% include layout_tpl with chart_list=chart_list only %}
 {% endblock %}

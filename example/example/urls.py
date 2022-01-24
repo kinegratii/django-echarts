@@ -2,6 +2,7 @@
 
 
 from django.conf.urls import url, include
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from demo import frontend_views, backend_views
 from demo import mysites
@@ -21,6 +22,7 @@ urlpatterns = [
     url(r'options/simpleMap/', frontend_views.SimpleMapView.as_view()),
     url(r'options/simplePie/', frontend_views.SimplePieView.as_view()),
     url(r'options/wordCloud/', frontend_views.WordCloudView.as_view()),
-    url(r'site_demo/', include(mysites.s.as_urls()))
+    url(r'site_demo/', include(mysites.site_obj.urls))
 ]
 urlpatterns += backend_views.MySelectChartView.urls()
+# urlpatterns += staticfiles_urlpatterns('/static/')

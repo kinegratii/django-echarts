@@ -1,0 +1,14 @@
+<div class="row">
+    {% for chart in chart_list %}
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="{{ chart.url }}">{{ chart.title }}</a>
+                </div>
+                <div class="panel-body">
+                    <p>{{ chart.description|default:"暂无描述" }}</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

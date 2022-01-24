@@ -60,13 +60,6 @@ def merge_js_dependencies(*chart_or_name_list):
     return front_required_items + [x for x in front_optional_items if x in fist_items] + dependencies
 
 
-def get_pyecharts_template_dir() -> str:
-    import pyecharts
-    base_dir = os.path.join(os.path.dirname(str(pyecharts.__file__)), 'render', 'templates')
-    print(os.path.exists(base_dir))
-    return base_dir
-
-
 # ---------- Javascript Dump Tools ----------
 @singledispatch
 def json_encoder(obj):

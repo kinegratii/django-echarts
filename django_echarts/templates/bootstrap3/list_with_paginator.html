@@ -1,0 +1,52 @@
+{% extends 'bootstrap3/base.html' %}
+
+{% block main_content %}
+
+    <div class="page-header">
+        <h2>图表列表</h2>
+    </div>
+    {% include layout_tpl with chart_list=chart_list only %}
+
+
+    <nav aria-label="page">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li>
+                    <a href="?page=1" aria-label="Previous">
+                        <span aria-hidden="true">First</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&lt;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="disabled"><span><span aria-hidden="true">First</span></span></li>
+                <li class="disabled"><span><span aria-hidden="true">&lt;</span></span></li>
+            {% endif %}
+            <li class="active">
+                <a href="javascript:">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }} <span class="sr-only">(current)</span></a>
+            </li>
+            {% if page_obj.has_next %}
+                <li>
+                    <a href="?page={{ page_obj.next_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" aria-label="Previous">
+                        <span aria-hidden="true">Last</span>
+                    </a>
+                </li>
+            {% else %}
+
+                <li class="disabled"><span><span aria-hidden="true">&gt;</span></span></li>
+                <li class="disabled"><span><span aria-hidden="true">Last</span></span></li>
+
+            {% endif %}
+        </ul>
+    </nav>
+
+
+{% endblock %}

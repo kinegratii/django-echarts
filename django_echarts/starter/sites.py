@@ -1,19 +1,63 @@
 from functools import wraps
-from typing import Type
+from typing import Type, Union, Optional, List, Dict, Callable, Literal
 
+from django.core.paginator import Paginator
 from django.urls import reverse_lazy, path
 from django.views.generic.base import TemplateView
 
-from .html_widgets import Nav, LinkItem
+from .widgets import Nav, LinkItem, Jumbotron, Copyright
+from .themes import get_theme
 
-__all__ = ['DJESite', 'DJESiteHomeView', 'DJESiteDetailView', 'DJESiteListView']
+__all__ = ['DJESite', 'DJESiteHomeView', 'DJESiteDetailView', 'DJESiteListView', ]
+
+
+class DJEChartInfo:
+    __slots__ = ['name', 'title', 'description', 'url', 'selected', 'parent_name', 'top']
+
+    def __init__(self, name: str, title: str = None, description: str = None, url: str = None,
+                 selected: bool = False, parent_name: str = None, top: bool = False):
+        self.name = name
+        self.title = title or self.name
+        self.description = description or ''
+        self.url = url
+        self.selected = selected
+        self.top = top
+        self.parent_name = parent_name
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __str__(self):
+        return f'<ChartInfo {self.name}>'
 
 
 class DJESiteBaseView(TemplateView):
-    dje_theme = 'bootstrap3'
+    """The base view for Site.
+    """
 
-    def get_template_names(self):
-        return [self.template_name.format(theme=self.dje_theme)]
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        site = DJESiteBaseView.get_site_object()
+        template_name = self.dje_init_page_context(context=context, site=site)
+        return self._render_to_response(context, theme_name=context['theme_name'], template_name=template_name)
+
+    def _render_to_response(self, context, template_name=None, **kwargs):
+        template_name = self._resolve_template_name(template_name)
+        return self.response_class(
+            request=self.request,
+            template=template_name,
+            context=context,
+            using=self.template_engine
+        )
+
+    def _resolve_template_name(self, template_name: str = None):
+        if template_name and template_name[:7] != '{theme}':
+            template_name = '{theme}' + template_name
+        template_name = template_name or self.template_name
+        return template_name.format(theme=self.extra_context['theme_name'])
 
     @staticmethod
     def get_site_object(site: 'DJESite' = None):
@@ -24,73 +68,138 @@ class DJESiteBaseView(TemplateView):
         site = DJESiteBaseView.get_site_object()
         context['nav'] = site.nav
         context['site_title'] = site.site_title
+        context['copyright'] = site.widgets.get('copyright')
+        context['theme'] = site.theme
+        context['theme_name'] = site.theme.name
+        self.extra_context = {
+            'theme_name': site.theme.name
+        }
         return context
 
-    def get_dje_nav(self):
+    # Interfaces
+
+    def dje_get_template_name(self, theme_name, template_name: str = None):
+        template_name = template_name or self.template_name
+        return template_name.format(theme=theme_name)
+
+    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
+        """Update context and return its template name.
+        If no template name returned, use the value returned by self.dje_get_template_name
+        """
         pass
 
 
 class DJESiteHomeView(DJESiteBaseView):
     template_name = '{theme}/home.html'
 
+    def dje_init_page_context(self, context, site: 'DJESite'):
+        context['jumbotron'] = site.widgets.get('jumbotron')
+        context['top_chart_list'] = site.get_chart_info_list(with_top=True)
+        context['layout_tpl'] = self._resolve_template_name('{theme}/items_grid.html')
+
 
 class DJESiteListView(DJESiteBaseView):
     template_name = '{theme}/list.html'
+    paginate_by = None
+    list_layout = 'list'
+
+    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
+        chart_list = site.get_chart_info_list()
+        paginate_by = site.get_opt('paginate_by')
+        if self.list_layout == 'grid':
+            layout_tpl = '{theme}/items_grid.html'.format(theme=site.theme.name)
+        else:
+            layout_tpl = '{theme}/items_list.html'.format(theme=site.theme.name)
+        context['layout_tpl'] = layout_tpl
+        if paginate_by is None:
+            context['chart_list'] = chart_list
+            return '{theme}/list.html'
+        else:
+            paginator = Paginator(chart_list, paginate_by, allow_empty_first_page=True)
+            page_number = self.request.GET.get('page', 1)
+            page_obj = paginator.get_page(page_number)
+            # TODO support get_elided_page_range
+            context['page_obj'] = page_obj
+            return '{theme}/list_with_paginator.html'
 
 
 class DJESiteDetailView(DJESiteBaseView):
     template_name = '{theme}/detail.html'
 
     charts_config = []
-    page_title = '{description}'
+    page_title = '{title}'
 
-    def get(self, request, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         context['view_name'] = 'dje_detail'
-        context['title'] = 'My Charts'
         chart_name = self.kwargs.get('name')
-        context['menu'] = []
+        # context['menu'] = []
         found = False
-        for values in self.charts_config:
-            name, description, *_ = values
-            if chart_name == name and not found:
+        menu_text = None
+        info_list = site.get_chart_info_list()
+        for info in info_list:
+            if chart_name == info.name and not found:
                 found = True
-                func = getattr(self, f'dje_chart_{name}', None)
+                menu_text = info.parent_name
+                func = getattr(self, f'dje_chart_{chart_name}', None)
+                chart_obj = None
                 if func:
                     chart_obj = func()
+                else:
+                    func = site.get_chart_func(chart_name)
+                    if func:
+                        chart_obj = func()
+                if chart_obj:
                     context['chart_obj'] = chart_obj
-                context['title'] = self.get_dje_page_title(name=name, description=description)
-                context['menu'].append((name, description, True))
+                    context['title'] = self.get_dje_page_title(name=info.name, title=info.title)
+                selected = True
             else:
-                context['menu'].append((name, description, False))
+                selected = False
+            info.selected = selected
+        if menu_text:
+            context['menu'] = [info for info in info_list if info.parent_name == menu_text]
+        theme = context['theme']
         if found:
-            tpl = '{theme}/detail.html'.format(theme=self.dje_theme)
+            tpl = '{theme}/detail.html'
         else:
-            tpl = '{theme}/empty.html'.format(theme=self.dje_theme)
-        return self.response_class(
-            request=self.request,
-            template=tpl,
-            context=context,
-            using=self.template_engine
-        )
+            tpl = '{theme}/empty.html'
+        return tpl
 
-    def get_dje_page_title(self, name, description, **kwargs):
-        return self.page_title.format(name=name, description=description)
+    def get_dje_page_title(self, name, title, **kwargs):
+        return self.page_title.format(name=name, title=title)
+
+
+class DJESiteAboutView(DJESiteBaseView):
+    template_name = '{theme}/about.html'
 
 
 class DJESite:
-    def __init__(self, site_title: str = 'My Charts Demo', theme: str = 'bootstrap3', url_prefix: str = ''):
+    """A generator endpoint for visual chart site."""
+
+    def __init__(self, site_title: str = 'My Charts Demo', theme: str = 'bootstrap3', copyright_: Copyright = None,
+                 paginate_by: Optional[int] = None, list_layout: Literal['grid', 'list'] = 'list'):
         self.site_title = site_title
-        self.theme = theme
-        self.url_prefix = url_prefix
-        self.nav = Nav().add_menu(title='首页', slug='home', url=reverse_lazy('dje_home'))
+        self.theme = get_theme(theme.split('.')[0], theme)
+        self.nav = Nav()
+        self.nav.add_menu(text='首页', slug='home', url=reverse_lazy('dje_home'))
+        self.nav.add_menu(text='列表', slug='list', url=reverse_lazy('dje_list'))
+        self.widgets = {}
+        if copyright_:
+            self.widgets['copyright'] = copyright_
+        self._opts = {
+            'paginate_by': paginate_by,
+            'list_layout': list_layout
+        }
+
         self._view_dict = {
             'home': DJESiteHomeView,
             'detail': DJESiteDetailView,
-            'list': DJESiteListView
+            'list': DJESiteListView,
+            'about': DJESiteAboutView
         }
 
         DJESiteBaseView.get_site_object = self._inject(DJESiteBaseView.get_site_object)
+
+        self._charts = dict()  # type: Dict[DJEChartInfo,Optional[Callable]]
 
     def _inject(self, func):
         @wraps(func)
@@ -101,33 +210,85 @@ class DJESite:
 
         return decorated
 
+    # Init Widgets
+    def add_menu_item(self, item: LinkItem, menu_title: str = None):
+        self.nav.add_item(menu_text=menu_title, item=item)
+
     def add_link(self, item: LinkItem):
         self.nav.add_right_link(item)
         return self
 
+    def add_widgets(self, *widgets: Union[Jumbotron, Copyright]):
+        for widget in widgets:
+            self.widgets[widget.__class__.__name__.lower()] = widget
+        return self
+
+    # Register function and views class
+    def register_chart(self, function=None, name: str = None, title: str = None, description: str = None,
+                       top: bool = False, menu_text: str = None):
+        """Register chart function."""
+
+        def decorator(func):
+            cname = name or func.__name__
+            url = reverse_lazy('dje_detail', args=(cname,))
+            info = DJEChartInfo(name=cname, title=title or cname, description=description,
+                                url=url, top=top, parent_name=menu_text)
+            self._charts[info] = func  # TODO check method/function
+            if menu_text:
+                self.nav.add_menu(text=menu_text)
+                self.nav.add_item(
+                    menu_text=menu_text,
+                    item=LinkItem(text=title or cname, url=url, slug=cname)
+                )
+            return func
+
+        if function is None:
+            return decorator
+        else:
+            return decorator(function)
+
     def register_home_view(self, view_class: Type[DJESiteHomeView], ):
         self._view_dict['home'] = view_class
+        return self
 
     def register_list_view(self, view_class: Type[DJESiteListView]):
-        pass
+        self._view_dict['list'] = view_class
+        if view_class.paginate_by:
+            self._opts['paginate_by'] = view_class.paginate_by
+        return self
 
-    def register_detail_view(self, view_class: Type[DJESiteDetailView], name: str):
+    def register_detail_view(self, view_class: Type[DJESiteDetailView], menu_text: str = None):
         self._view_dict['detail'] = view_class
-        self.nav.add_menu(title=name)
-        for _name, _description in view_class.charts_config:
+        self.nav.add_menu(text=menu_text)
+        for _name, _title in view_class.charts_config:
+            url = reverse_lazy('dje_detail', args=(_name,))
             self.nav.add_item(
-                menu_title=name,
-                item=LinkItem(title=_description, url=reverse_lazy('dje_detail', args=(_name,)), slug=_name)
+                menu_text=menu_text,
+                item=LinkItem(text=_title, url=reverse_lazy('dje_detail', args=(_name,)), slug=_name)
             )
+            info = DJEChartInfo(name=_name, title=_title, url=url, parent_name=menu_text)
+            self._charts[info] = None
+        return self
 
-    def as_urls(self):
+    # The function api for accessing site data.
+
+    def get_opt(self, key: str, default=None):
+        return self._opts.get(key, default)
+
+    def get_chart_info_list(self, with_top: bool = False) -> List[DJEChartInfo]:
+        return [info for info in self._charts.keys() if not with_top or info.top]
+
+    def get_chart_func(self, name: str) -> Optional[Callable]:
+        for chart_info, func in self._charts.items():
+            if chart_info.name == name:
+                return func
+
+    @property
+    def urls(self):
+        """The URLPattern list for site entrypoint."""
         return [
             path('', self._view_dict['home'].as_view(), name='dje_home'),
             path('list/', self._view_dict['list'].as_view(), name='dje_list'),
-            path('detail/<slug:name>/', self._view_dict['detail'].as_view(), name='dje_detail')
+            path('detail/<slug:name>/', self._view_dict['detail'].as_view(), name='dje_detail'),
+            path('about/', self._view_dict['about'].as_view(), name='dje_about')
         ]
-
-
-class DJEModelSite:
-    def discover(self):
-        pass

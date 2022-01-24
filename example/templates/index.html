@@ -1,54 +1,53 @@
 {% extends 'base.html' %}
+{% block nav %}
+{% endblock %}
+
 {% block main_content %}
-    <div class="jumbotron">
-        <h1>django-echarts</h1>
-        <p>一个 <a href="http://echarts.baidu.com/index.html" target="_blank">Echarts</a> 整合的 <a
-                href="https://www.djangoproject.com" target="_blank">Django</a> App，使用
-            <a href="https://github.com/pyecharts/pyecharts" target="_blank">pyecharts</a>的作为图表构建库。</p>
-        <p class="small">最新版本：<img src="https://img.shields.io/pypi/v/django-echarts.svg" alt="version"/></p>
-    </div>
+    <hr/>
     <div class="page-header">
-        <h2>基础示例</h2>
+        <h1>基础示例</h1>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="panel panel-default">
-                <div class="panel-heading">前端渲染示例</div>
+                <div class="panel-heading"><a href="{% url 'dje_home' %}">网站可视化starter</a></div>
                 <div class="panel-body">
-                    <p><a href="{% url 'frontend_demo' %}">前端渲染示例</a></p>
+                    <p>django_echarts.starter
+                        提供了一个简单便捷的脚手架工具，她负责处理底层的视图逻辑、URL路由、模板、前端界面及其之间的连结，你只需编写构建图表的pyecharts代码。</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+    </div>
+    <div class="page-header">
+        <h1>基础示例</h1>
+    </div>
+    <div class="row">
+
+        <div class="col-md-4">
             <div class="panel panel-default">
-                <div class="panel-heading">后端渲染示例</div>
+                <div class="panel-heading"><a href="{% url 'backend_demo' %}">后端渲染示例</a></div>
                 <div class="panel-body">
-                    <p><a href="{% url 'backend_demo' %}">后端渲染示例</a></p>
+                    <p>后端渲染示例</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"><a href="{% url 'frontend_demo' %}">前端渲染示例</a></div>
+                <div class="panel-body">
+                    <p>前端渲染示例</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"><a href="{% url 'page_demo' %}">多图表(Page)</a></div>
+                <div class="panel-body">
+                    <p>多图表(Page)</p>
                 </div>
             </div>
         </div>
 
-    </div>
-    <div class="page-header">
-        <h2>其他示例</h2>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">多图表(NameDCharts)</div>
-                <div class="panel-body">
-                    <p>暂无内容</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">多图表(Page)</div>
-                <div class="panel-body">
-                    <p><a href="{% url 'page_demo' %}">多图表(Page)</a></p>
-                </div>
-            </div>
-        </div>
 
     </div>
 {% endblock %}
