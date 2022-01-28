@@ -1,0 +1,24 @@
+site_name: django-echarts
+theme:
+  icon:
+    logo: material/monitor-dashboard
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+nav:
+  - 快速开始: index.md
+  - 可视化构建:
+    - 网站构建: guides/starter.md
+    - 自定义主题: guides/customize_theme.md
+  - 高级话题:
+    - 配置: guides/configure.md
+    - 模板标签库: guides/tags.md
+    - 视图渲染: guides/views_renders.md
+    - 命令行工具: guides/commands.md
+  - API: api.md
+  - 项目开发:
+    - 更新日志: changelog.md
+    - 关于项目: about.md
+    - 发布日志:
+      - v0.5.0: release-note/v050.md
