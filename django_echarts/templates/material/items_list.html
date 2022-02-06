@@ -1,0 +1,15 @@
+<div class="row">
+    {% for chart in chart_list %}
+        <div class="col s12 m12">
+            <div class="card blue-grey">
+                <div class="card-content white-text">
+                    <span class="card-title">{{ chart.title }}</span>
+                    <p>{{ chart.description|default:"暂无描述" }}</p>
+                </div>
+                <div class="card-action">
+                    <a href="{{ chart.url }}">详情</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

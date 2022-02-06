@@ -1,0 +1,54 @@
+{% extends 'material/base.html' %}
+
+{% block main_content %}
+    <div class="container">
+        <h2 class="header">图表列表</h2>
+        {% include layout_tpl with chart_list=page_obj.object_list only %}
+
+        <div class="row">
+            <div class="col s6 offset-s3">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="waves-effect">
+                            <a href="?page=1" aria-label="Previous">
+                                <span aria-hidden="true">First</span>
+                            </a>
+                        </li>
+                        <li class="waves-effect">
+                            <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="disabled"><span><span aria-hidden="true">First</span></span></li>
+                        <li class="disabled"><span><span aria-hidden="true">&lt;</span></span></li>
+                    {% endif %}
+                    <li class="active">
+                        <a href="javascript:">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a>
+                    </li>
+                    {% if page_obj.has_next %}
+                        <li class="waves-effect">
+                            <a href="?page={{ page_obj.next_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <li class="waves-effect">
+                            <a href="?page={{ page_obj.paginator.num_pages }}" aria-label="Previous">
+                                <span aria-hidden="true">Last</span>
+                            </a>
+                        </li>
+                    {% else %}
+
+                        <li class="disabled"><span><span aria-hidden="true">&gt;</span></span></li>
+                        <li class="disabled"><span><span aria-hidden="true">Last</span></span></li>
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}

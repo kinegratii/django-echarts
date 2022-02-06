@@ -4,17 +4,20 @@
 
 
 
-django-echarts 是一个 [pyecharts](https://github.com/pyecharts/pyecharts) +  [Django](https://www.djangoproject.com) 整合的 Django App。
+> A site generator based on pyecharts and django.
+
+django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts) 和 [Django](https://www.djangoproject.com) 整合的可视化网站生成器。
 
 ## 概述
 
 django-echarts 主要提供了以下的内容：
 
-- **“前端渲染”** / **后端渲染** 两种不同的渲染方式
-- 基于 Django Template Engine 的模板标签库
-- js/css静态文件托管
-- 数据构建工具函数库
-- 项目级的CLI工具
+- 基于Django Template Engine 的后端渲染
+- js/css静态文件托管，支持在线/本地切换
+- 提供 主页/列表/详情/关于等页面
+- 支持 导航栏/热门板块/列表/关于面板 等界面组件
+- 支持UI框架切换和自定义
+- 生产力工具：代码生成器
 
 ## 安装
 

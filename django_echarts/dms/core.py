@@ -71,7 +71,7 @@ class DependencyManager:
         }
 
         self._repo_f2map = defaultdict(dict)
-        self._global_f2map = {}  # type:
+        self._global_f2map = {}
         self._selected_lib_repo = lib_repo
         self._selected_map_repo = map_repo
 

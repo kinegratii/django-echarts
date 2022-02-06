@@ -10,7 +10,7 @@ django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts
 - js/css静态文件托管，支持在线/本地切换
 - 提供 主页/列表/详情/关于等页面
 - 支持 导航栏/热门板块/列表/关于面板 等界面组件
-- 支持UI框架切换和自定义
+- 支持UI框架和调色主题切换与自定义
 - 生产力工具：代码生成器
 
 ## 安装
@@ -19,7 +19,7 @@ django-echarts包运行环境要求如下：：
 
 | django-echarts版本系列 | pyecharts | django | python | 备注 |
 | ------ | ------ | ------ | ----- | ----- |
-| 0.5.x | 1.9+ | 2.0+ | 3.7+ | 开发中 |
+| 0.5.x | 1.9+ | 2.0+ | 3.7+ | 开发维护中 |
 
 > 注意：django-echarts v0.3.x 不再维护。
 
@@ -29,7 +29,7 @@ django-echarts包运行环境要求如下：：
 pip install django-echarts
 ```
 
-## 快速使用
+## 3分钟上手
 
 1 创建Django项目。
 
@@ -61,9 +61,9 @@ INSTALL_APPS = (
 )
 ```
 
-3 进入项目目录，执行命令 ，生成对应的代码基本框架。
+3 进入项目目录，执行startsite命令 ，生成对应的代码基本框架。
 
-````shell
+````text
 python manage.py startsite MyDemo\site_views.py
 ````
 
@@ -133,9 +133,9 @@ urlpatterns = [
 ]
 ```
 
-5 启动开发服务器，打开浏览器预览结果。
+6 启动开发服务器，打开浏览器预览结果。
 
-```shell
+```text
 python manage.py runserver 0.0.0.0:8900
 ```
 
