@@ -85,16 +85,16 @@ site_obj.add_menu_item(item2)
 ©2017-2022, Powered By Django-Echarts
 ```
 
+## 参考
 
+### 模板变量
 
-## 模板变量
+ `DJESiteBaseView` 是所有视图类的基类 ，页面渲染时向模板传入下列数据。
 
-各个子页面均继承自 `DJESiteBaseView` ，页面渲染时向模板传入下列数据。
-
-| 特性     | 模板              | 变量名称   | 类型                        | 说明         |
-| -------- | ----------------- | ---------- | --------------------------- | ------------ |
-| 基础逻辑 | {theme}/base.html | site_title | `str`                       | 网站标题     |
-|          |                   | theme      | `str`                       | 主题名称     |
-|          |                   | nav        | `starter.widgets.Nav`       | 顶部导航栏   |
-|          |                   | copyright  | `starter.widgets.Copyright` | 底部版权信息 |
+| 模板              | 变量名称   | 类型                                       | 说明         |
+| ----------------- | ---------- | ------------------------------------------ | ------------ |
+| {theme}/base.html | site_title | `str`                                      | 网站标题     |
+|                   | theme      | `django_echarts.core.themes.Theme`         | 主题名称     |
+|                   | nav        | `django_echarts.starter.widgets.Nav`       | 顶部导航栏   |
+|                   | copyright  | `django_echarts.starter.widgets.Copyright` | 底部版权信息 |
 

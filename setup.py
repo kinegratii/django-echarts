@@ -43,5 +43,6 @@ setup(
     author_email='kinegratii@gmail.com',
     description='A django app for Echarts integration with pyecharts as chart builder. ',
     classifiers=lib_classifiers,
+    python_requires='>=3.7',
     install_requires=['borax~=3.5']
 )

@@ -18,7 +18,7 @@ DJANGO_ECHARTS = {
 
 # 或者
 
-from django_echarts.dms.core import DJEOpts
+from django_echarts.core.dms import DJEOpts
 
 DJANGO_ECHARTS = DJEOpts(
     echarts_version='4.8.0',

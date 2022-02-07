@@ -3,7 +3,7 @@
 
 import unittest
 
-from django_echarts.dms.core import DependencyManager
+from django_echarts.core.dms import DependencyManager
 
 
 class DependencyManagerTestCase(unittest.TestCase):

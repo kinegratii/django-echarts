@@ -1,5 +1,7 @@
 import os
 
+_pro_dir = os.path.dirname(str(__file__))
+
 
 def get_pyecharts_template_dir() -> str:
     import pyecharts
@@ -8,8 +10,8 @@ def get_pyecharts_template_dir() -> str:
 
 
 def get_django_echart_template_dir() -> str:
-    return os.path.join(os.path.dirname(str(__file__)), 'templates')
+    return os.path.join(_pro_dir, 'templates')
 
 
 def get_code_snippet_dir(*args: str) -> str:
-    return os.path.join(os.path.dirname(str(__file__)), 'templates', 'snippets', *args)
+    return os.path.join(_pro_dir, 'templates', 'snippets', *args)

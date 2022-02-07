@@ -6,6 +6,8 @@ from django.urls import path
 from django.utils.text import slugify
 from django.views.generic.base import View, TemplateView
 
+from django_echarts.core.charttools import DJEChartInfo
+
 
 class EChartsMixin:
     """
@@ -50,11 +52,22 @@ class MultipleChartsBDView(EChartsBackendView):
     page_title = 'My Charts'
 
 
+def as_chart(function=None, *, name=None, description=None):
+    def decorator(func):
+        cname = name or func.__name__
+        func.chart_info = DJEChartInfo(name=cname, description=description)
+        return func
+
+    if function is None:
+        return decorator
+    else:
+        return decorator(function)
+
+
 class SelectOneChartBDView(TemplateView):
     template_name = 'dje_selectone_chart.html'
     url_prefix = 'chart/<slug:name>'
     view_name = ''
-    charts_config = []
     page_title = '{description}'
 
     def get(self, request, *args, **kwargs):
@@ -64,18 +77,15 @@ class SelectOneChartBDView(TemplateView):
         chart_name = self.kwargs.get('name')
         context['menu'] = []
         found = False
-        for values in self.charts_config:
-            name, description, *_ = values
-            if chart_name == name and not found:
+        for info, func in self.get_chart_info():
+            if chart_name == info.name and not found:
                 found = True
-                func = getattr(self, f'dje_chart_{name}', None)
-                if func:
-                    chart_obj = func()
-                    context['chart_obj'] = chart_obj
-                context['title'] = self.get_dje_page_title(name=name, description=description)
-                context['menu'].append((name, description, True))
+                chart_obj = func(self)
+                context['chart_obj'] = chart_obj
+                context['title'] = self.get_dje_page_title(name=info.name, description=info.description)
+                context['menu'].append((info.name, info.description, True))
             else:
-                context['menu'].append((name, description, False))
+                context['menu'].append((info.name, info.description, False))
         if found:
             tpl = 'dje_selectone_chart.html'
         else:
@@ -89,6 +99,11 @@ class SelectOneChartBDView(TemplateView):
 
     def get_dje_page_title(self, name, description, **kwargs):
         return self.page_title.format(name=name, description=description)
+
+    def get_chart_info(self):
+        for name, value in self.__class__.__dict__.items():
+            if callable(value) and hasattr(value, 'chart_info') and isinstance(value.chart_info, DJEChartInfo):
+                yield value.chart_info, value
 
     @classmethod
     def attach_view_name(cls):

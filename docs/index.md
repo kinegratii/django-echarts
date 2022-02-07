@@ -1,21 +1,26 @@
 # django-echarts文档
 
+![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![PyPI - Status](https://img.shields.io/pypi/status/django-echarts.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-echarts.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-echarts.svg)
+
+
 > A visual site generator based on [pyecharts](https://github.com/pyecharts/pyecharts) and [Django](https://www.djangoproject.com). 
 
 ## 概述
 
 django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts) 和 [Django](https://www.djangoproject.com) 整合的可视化网站生成器。
 
+- 可显示页面：主页 / 列表 / 详情 / 关于
+- 可支持组件：导航栏 / 网站底部栏 / 热门板块 / 列表 / 关于面板 
+- 内置Bootstrap3 和 Material 两种主题
+- 支持更换主题的颜色模式
 - 基于Django Template Engine 的后端渲染
 - js/css静态文件托管，支持在线/本地切换
-- 提供 主页/列表/详情/关于等页面
-- 支持 导航栏/热门板块/列表/关于面板 等界面组件
-- 支持UI框架和调色主题切换与自定义
 - 生产力工具：代码生成器
+- 90%+ Python Typing Hints覆盖
 
 ## 安装
 
-django-echarts包运行环境要求如下：：
+django-echarts包运行环境要求如下：
 
 | django-echarts版本系列 | pyecharts | django | python | 备注 |
 | ------ | ------ | ------ | ----- | ----- |
@@ -102,15 +107,26 @@ def mychart():
 
 4在函数`mychart` 中编写pycharts代码，返回对应的图表对象。
 
+根据需要修改文字显示，添加组件等。
+
 ```python
 # ...
 
 from pyecharts import options as opts
 from pyecharts.charts import Bar, Kline, Map, Pie, WordCloud
 
-# .....
+site_obj = DJESite(
+    site_title='图表可视化',
+    copyright_=Copyright(start_year=2017, powered_by='Django-Echarts'),
+    theme='bootstrap3.cerulean'
+)
 
-@site_obj.register_chart
+site_obj.add_widgets(
+    Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
+)
+site_obj.add_link(LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True))
+
+@site_obj.register_chart(name='c1', title='福建省各地市面积', description='福建省各地市面积排行', catalog='福建统计')
 def mychart():
     bar = Bar().add_xaxis(["南平", "三明", "龙岩", "宁德", "漳州", "福州", "泉州", "莆田", "厦门"]).add_yaxis(
         '面积', [26300, 22900, 19050, 13450, 12600, 12150, 11020, 4119, 1576]
@@ -124,12 +140,13 @@ def mychart():
 
 ```python
 from django.conf.urls import url, include
+from django.urls import path
 
 from .site_views import site_obj
 
 urlpatterns = [
     # Your urls
-    url(r'site_demo/', include(site_obj.urls))
+    path('', include(site_obj.urls))
 ]
 ```
 
@@ -138,4 +155,11 @@ urlpatterns = [
 ```text
 python manage.py runserver 0.0.0.0:8900
 ```
+
+
+
+
+预览图
+
+![first_chart_demo](images/quickstart-0.png)
 

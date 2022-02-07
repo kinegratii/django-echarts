@@ -1,2 +1,4 @@
 include django_echarts/templates/*
+include django_echarts/templates/*/*
 include django_echarts/static/*
+include django_echarts/static/*/*

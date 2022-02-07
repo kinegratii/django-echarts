@@ -2,7 +2,7 @@
 
 import unittest
 
-from django_echarts.dms.core import SettingsStore
+from django_echarts.core.dms import SettingsStore
 
 
 class SettingsWithStaticUrlTestCase(unittest.TestCase):

@@ -28,7 +28,7 @@ class Command(BaseCommand):
             output += '.py'
         override = options.get('override', False)
         if not override and os.path.exists(output):
-            self.stdout.write(self.style.ERROR(f'The file {output} exists!'))
+            self.stdout.write(self.style.ERROR(f'The file {output} exists! Add -o to overwrite it.'))
             return
         view_type = options.get('view_type')
         site_title = options.get('site_title')
@@ -47,4 +47,4 @@ class Command(BaseCommand):
         s = render_to_string(get_code_snippet_dir('first_views.py.tpl'), context=context)
         with open(output, 'w') as f:
             f.write(s)
-        self.stdout.write(self.style.SUCCESS(f'file {output} generated success!'))
+        self.stdout.write(self.style.SUCCESS(f'File {output} generated success!'))

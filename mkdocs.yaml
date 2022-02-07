@@ -20,12 +20,14 @@ nav:
       - 关于页(About): starter/about.md
     - 高级设置:
       - UI框架和主题: guides/customize_theme.md
+      - 整合Django: guides/django_integration.md
   - 高级话题:
     - 配置: guides/configure.md
     - 模板标签库: guides/tags.md
     - 视图渲染: guides/views_renders.md
     - 命令行工具: guides/commands.md
   - API: api.md
+  - Q&A: qna.md
   - 项目开发:
     - 更新日志: changelog.md
     - 关于项目: about.md

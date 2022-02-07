@@ -4,10 +4,19 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <a href="{{ chart.url }}">{{ chart.title }}</a>
+                    {% if chart.tags %}
+                        <span class="pull-right">
+                                                {% for tag in chart.tags %}
+                                                    <span class="badge">{{ tag }}</span>
+                                                {% endfor %}
+                        </span>
+                    {% endif %}
+
                 </div>
                 <div class="panel-body">
                     <p>{{ chart.description|default:"暂无描述" }}</p>
                 </div>
+
             </div>
         </div>
     {% endfor %}

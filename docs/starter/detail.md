@@ -1,6 +1,6 @@
 # 详情页面（Detail）
 
-## 构建pyecharts图表-FBV
+## 新增图表
 
 `site_obj.register_chart` 装饰器用于注册返回图表的函数。
 
@@ -17,7 +17,7 @@ def mychart():
 当然也可以携带一些参数，这些参数通常和 `DJEChartInfo` 类参数意义相同。
 
 ```python
-@site_obj.register_chart(description='词云示例', menu_text='示例一')
+@site_obj.register_chart(description='词云示例', catalog='示例一')
 def mychart():
     bar = Bar()
     # ...
@@ -25,30 +25,6 @@ def mychart():
 ```
 
 
-
-## 构建pyecharts图表-CBV
-
-类方式（Clased-base view）通常是将具有紧密意义的图表组成一组，在代码上以类方式体现。
-
-```python
-class MyDemoDetailView(DJESiteDetailView):
-    charts_config = [('c1', '柱形图'), ('c2', '饼图')]
-
-    def dje_chart_c1(self, *args, **kwargs):
-        bar = Bar()
-        # ...
-        return bar
-
-    def dje_chart_c2(self, *args, **kwargs):
-        pie = Pie()
-        # ...
-        return pie
-
-
-site_obj.register_detail_view(MyDemoDetailView, menu_text='示例一')
-```
-
-函数名称必须符合 `"dje_chart_<chart_name>"` 的格式要求。
 
 ## 模板API
 

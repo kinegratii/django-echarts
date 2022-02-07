@@ -5,8 +5,9 @@ from .demo_data import FACTORY
 site_obj = DJESite(
     site_title='图表可视化',
     copyright_=Copyright(start_year=2017, powered_by='Django-Echarts'),
-    # theme='bootstrap3.cerulean',
-    theme='material'
+    theme='bootstrap3.cerulean',
+    # theme='material',
+    list_layout='grid'
 )
 
 site_obj.add_widgets(
@@ -16,7 +17,7 @@ site_obj.add_link(LinkItem(text='Github仓库', url='https://github.com/kinegrat
 site_obj.add_link(LinkItem(text='返回首页', url='/'))
 
 
-@site_obj.register_chart(description='词云示例', menu_text='示例一', top=1)
+@site_obj.register_chart(description='词云示例', catalog='图表示例', top=1)
 def my_cloud():
     return FACTORY.create('word_cloud')
 
@@ -26,11 +27,16 @@ def my_kline():
     return FACTORY.create('kline')
 
 
-@site_obj.register_chart(name='c1', title='柱形图', description='福建省各地市面积排行', menu_text='分组1')
+@site_obj.register_chart(name='c1', title='福建省各地市面积', description='福建省各地市面积排行', catalog='福建统计')
 def my_bar():
     return FACTORY.create('bar')
 
 
-@site_obj.register_chart(name='c2', title='饼图示例', description='车站收入分布图', menu_text='分组1')
+@site_obj.register_chart(name='c2', title='饼图示例', description='车站收入分布图', catalog='图表示例')
 def my_pie():
     return FACTORY.create('pie')
+
+
+@site_obj.register_chart(name='fj_family_types', title='福建历年家庭结构组成', description='福建历年家庭结构组成', catalog='福建统计')
+def fj_family_types():
+    return FACTORY.create('timeline_bar')

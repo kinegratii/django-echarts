@@ -19,6 +19,9 @@
             <div class="page-header">
                 <h2>{{ title }}</h2>
             </div>
+            {% if chart_info.description %}
+                <div class="well well-sm">{{ chart_info.description }}</div>
+            {% endif %}
             {% echarts_container chart_obj %}
 
         </div>

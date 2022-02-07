@@ -20,17 +20,34 @@ css文件由 [Bootswitch](https://bootswatch.com/3/) 构建。
 
 django-echarts还支持自定义UI框架的调色主题。
 
-以 bootstrap3为例，首先需要从 https://bootswatch.com/3/ 下载对应调色的css文件修改文件名称，放在static目录下，并将palette_css指向这个css文件。
+以 bootstrap3为例，首先需要从 https://bootswatch.com/3/ 下载darkly对应调色的css文件，修改文件名称，放在static目录下。
+
+```text
+|-- static
+    |-- bootstrap3.darkly.min.css
+```
+
+
+
+第二步，调用 `install_themes` 函数，字典键表示主题标识符，必须符合`<UI框架>` 或者 `<UI框架>.<调色>`的格式。
 
 ```python
-DJE_SITE = {
-    'theme': {
-        'bootstrap3':{
-            'palette_css': '/static/bootstrap3/bootstrap3.flatly.min.css'
-        }
+from django_echarts.core.themes import install_themes
+
+install_themes({
+    'bootstrap3.darkly': {
+        'palette_css': '/static/bootstrap3.darkly.min.css'
     }
-}
+})
+
+site_obj = DJESite(
+    site_title='图表可视化',
+    theme='bootstrap3.darkly',
+    list_layout='grid'
+)
 ```
+
+第三步，此时 `DJESite`的theme参数就可以指定你自定义的名称。
 
 ## 自定义UI框架
 

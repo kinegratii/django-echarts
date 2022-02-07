@@ -6,7 +6,7 @@
 
 ## 设置分页
 
-有两种方式设置，第一种在site创建时传入 `paginate_by` 参数，指定每页需要显示的数目，默认不启用分页特性。
+在site创建时传入 `paginate_by` 参数，指定每页需要显示的数目，默认不启用分页特性。
 
 ```python
 site_obj = DJESite(
@@ -14,18 +14,6 @@ site_obj = DJESite(
     paginate_by=10
 )
 ```
-
-第二种，如果需要替换默认的模板文件，继承 `DJESiteListView`，重新指定 paginator_template_name 即可。
-
-```python
-class MyListListView(DJESiteListView):
-    paginator_template_name = 'my_paginator_list.html'
-    paginate_by = 15
-
-site_obj.register_list_view(MyListListView)
-```
-
-需要注意的是，MyListListView中paginate_by值将覆盖site初始化传入的值，比如上述两个片段整合时paginate_by即为15。
 
 ## 模板API
 

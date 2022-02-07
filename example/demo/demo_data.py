@@ -2,7 +2,7 @@
 
 
 from pyecharts import options as opts
-from pyecharts.charts import Bar, Kline, Map, Pie, WordCloud
+from pyecharts.charts import Bar, Kline, Map, Pie, WordCloud, Timeline
 
 
 class ChartFactory:
@@ -166,3 +166,27 @@ def create_word_cloud():
         )
     )
     return wordcloud
+
+
+@FACTORY.collect('timeline_bar')
+def create_timeline_bar():
+    family_types = [
+        '一人户', '二人户', '三人户', '四人户', '五人户', '六人户', '七人户', '八人户', '九人户', '十人及其以上'
+    ]
+    data = [
+        [1982, 7.7, 8.2, 12.2, 17.1, 18.4, 14.7, 10.1, 11.6, 0, 0],
+        [1990, 5.8, 8.6, 16.8, 23.6, 21.4, 11.8, 5.9, 2.9, 1.4, 1.8],
+        [2000, 9.1, 15.5, 25.4, 24.7, 15.8, 5.9, 2.2, 0.8, 0.3, 0.3],
+        [2010, 12.1, 17.2, 24.3, 21.7, 13.7, 6.4, 2.6, 1.1, 0.5, 0.4],
+        [2020, 27.3, 26.3, 19.4, 14.2, 6.9, 4, 1.1, 0.4, 0.2, 0.2]
+    ]
+    tl = Timeline()
+    for item in data:
+        year = item[0]
+        bar = (
+            Bar()
+                .add_xaxis(family_types).add_yaxis('百分比(%)', item[1:])
+                .set_global_opts(title_opts=opts.TitleOpts("福建省历年家庭户类型构成-{}年".format(year)))
+        )
+        tl.add(bar, "{}年".format(year))
+    return tl

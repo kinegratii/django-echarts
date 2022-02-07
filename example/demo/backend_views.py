@@ -1,13 +1,11 @@
-# coding=utf8
-
-
 from borax.datasets.fetch import fetch
 from pyecharts import options as opts
 from pyecharts.charts import Line, Bar
 
 from demo import models
 from django_echarts.datasets.charts import NamedCharts
-from django_echarts.views import EChartsBackendView, SimpleChartBDView, MultipleChartsBDView, SelectOneChartBDView
+from django_echarts.views import EChartsBackendView, SimpleChartBDView, MultipleChartsBDView, SelectOneChartBDView, \
+    as_chart
 from .demo_data import FACTORY
 
 
@@ -64,13 +62,11 @@ class PageDemoView(MultipleChartsBDView):
 
 class MySelectChartView(SelectOneChartBDView):
     url_prefix = 'chart/<slug:name>/'
-    charts_config = [
-        ('c1', '柱形图'),
-        ('c2', '饼图')
-    ]
 
+    @as_chart(name='c1', description='柱形图')
     def dje_chart_c1(self, *args, **kwargs):
         return FACTORY.create('bar')
 
+    @as_chart(name='c2', description='饼图')
     def dje_chart_c2(self, *args, **kwargs):
         return FACTORY.create('pie')
