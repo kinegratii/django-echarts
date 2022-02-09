@@ -13,21 +13,17 @@ nav:
   - 快速开始: index.md
   - 可视化构建:
     - 基本设置:
-      - 布局和架构: starter/base.md
-      - 首页(Home): starter/home.md
-      - 列表页(List): starter/list.md
-      - 详情页(Detail): starter/detail.md
-      - 关于页(About): starter/about.md
-    - 高级设置:
+      - 功能设置: starter/base.md
       - UI框架和主题: guides/customize_theme.md
+    - 高级设置:
       - 整合Django: guides/django_integration.md
+      - API参考: starter/reference.md
   - 高级话题:
     - 配置: guides/configure.md
     - 模板标签库: guides/tags.md
     - 视图渲染: guides/views_renders.md
     - 命令行工具: guides/commands.md
-  - API: api.md
-  - Q&A: qna.md
+  - Gallery: gallery.md
   - 项目开发:
     - 更新日志: changelog.md
     - 关于项目: about.md

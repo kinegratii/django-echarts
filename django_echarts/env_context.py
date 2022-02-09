@@ -9,7 +9,7 @@ def get_pyecharts_template_dir() -> str:
     return base_dir
 
 
-def get_django_echart_template_dir() -> str:
+def get_django_echarts_template_dir() -> str:
     return os.path.join(_pro_dir, 'templates')
 
 

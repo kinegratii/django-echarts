@@ -1,23 +1,24 @@
 {% extends 'bootstrap3/base.html' %}
+{% load dje %}
 
 {% block main_content %}
 
     <div class="page-header">
-        <h2>图表列表</h2>
+        <h2>All Charts</h2>
     </div>
-    {% include layout_tpl with chart_list=page_obj.object_list only %}
+    {% include layout_tpl with chart_info_list=page_obj.object_list only %}
 
 
     <nav aria-label="page">
         <ul class="pagination">
             {% if page_obj.has_previous %}
                 <li>
-                    <a href="?page=1" aria-label="Previous">
+                    <a href="{% page_link 1 %}" aria-label="Previous">
                         <span aria-hidden="true">First</span>
                     </a>
                 </li>
                 <li>
-                    <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                    <a href="{% page_link page_obj.previous_page_number %}" aria-label="Previous">
                         <span aria-hidden="true">&lt;</span>
                     </a>
                 </li>
@@ -30,12 +31,12 @@
             </li>
             {% if page_obj.has_next %}
                 <li>
-                    <a href="?page={{ page_obj.next_page_number }}" aria-label="Previous">
+                    <a href="{% page_link page_obj.next_page_number %}" aria-label="Previous">
                         <span aria-hidden="true">&gt;</span>
                     </a>
                 </li>
                 <li>
-                    <a href="?page={{ page_obj.paginator.num_pages }}" aria-label="Previous">
+                    <a href="{% page_link page_obj.paginator.num_pages %}" aria-label="Previous">
                         <span aria-hidden="true">Last</span>
                     </a>
                 </li>

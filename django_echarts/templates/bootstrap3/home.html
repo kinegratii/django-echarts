@@ -7,10 +7,10 @@
             <p class="small">{{ jumbotron.small_text }}</p>
         </div>
     {% endif %}
-    {% if top_chart_list %}
+    {% if top_chart_info_list %}
         <div class="page-header">
             <h2>热门图表</h2>
         </div>
-        {% include layout_tpl with chart_list=top_chart_list only %}
+        {% include layout_tpl with chart_info_list=top_chart_info_list only %}
     {% endif %}
 {% endblock %}

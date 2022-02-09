@@ -4,7 +4,7 @@ Now you can add site urls to the entry urlpatterns in project urls.py.
 Example:
     urlpatterns = [
         # Other urlpatterns
-        path('site_demo/', site_obj.urls),
+        path('', site_obj.urls),
     ]
 
 """
@@ -18,21 +18,8 @@ site_obj = DJESite(
     copyright_=Copyright(start_year={{ start_year }}, powered_by='{{ powered_by }}')
 )
 
-{% if view_type == 'fbv' %}
 @site_obj.register_chart
 def mychart():
     # Write your pyecharts here.
     # This method must return an object of pycharts.charts.Chart
     pass
-{% else %}
-class MyDetailView(DJESiteDetailView):
-    charts_config = [('first_chart', 'FirstChart'),]
-
-    def dje_chart_first_chart(self, *args, **kwargs):
-        # Write your pyecharts here.
-        # This method must return an object of pycharts.charts.Chart
-        pass
-
-
-site_obj.register_detail_view(MyDetailView, menu_text='MyCharts')
-{% endif %}

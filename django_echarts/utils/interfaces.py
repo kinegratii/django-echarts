@@ -15,17 +15,17 @@ __all__ = ['to_css_length', 'merge_js_dependencies', 'JsDumper']
 
 # ---------- Adapter for Chart Attributes ----------
 
-def to_css_length(l):
+def to_css_length(val):
     """
     Return the standard length string of css.
     It's compatible with number values in old versions.
-    :param l: source css length.
+    :param val: source css length.
     :return: A string.
     """
-    if isinstance(l, (int, float)):
-        return '{}px'.format(l)
+    if isinstance(val, (int, float)):
+        return '{}px'.format(val)
     else:
-        return l
+        return val
 
 
 def _flat(ele):

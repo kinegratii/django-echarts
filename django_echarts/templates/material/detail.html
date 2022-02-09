@@ -16,7 +16,13 @@
                 <div class="section">
                     <h5>{{ title }}</h5>
                 </div>
-                <div class="divider"></div>
+
+                {% if chart_info.description %}
+                    <div>
+                    <p>{{ chart_info.description }}</p>
+                    </div>
+                {% endif %}
+            <div class="divider"></div>
                 {% echarts_container chart_obj %}
             </div>
         </div>

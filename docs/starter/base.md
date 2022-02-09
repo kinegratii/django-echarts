@@ -1,4 +1,4 @@
-# 布局和架构
+# 功能设置
 
 正如 *快速开始*  一节所提到的，django-echarts 提供了一个简单便捷的脚手架工具包，她负责处理底层的视图逻辑、URL路由、模板、前端界面及其之间的连结，你只需编写构建图表的pyecharts代码。
 
@@ -14,9 +14,9 @@
 | 详情页面 | 显示由echarts渲染的可交互图表                            | DJESiteDetailView |      |
 | 关于页面 | 显示基本信息                                             | DJESiteAboutView  |      |
 
+## 总体设置
 
-
-## 初始化站点
+### 初始化站点
 
 `DJESite` 是所有界面和逻辑的入口点，首先必须创建你自己的 site 对象。
 
@@ -37,15 +37,14 @@ site_obj = DJESite(
 | site_title      | str            | 网站标题                                             |
 | theme           | str            | 内置 bootstrap3/bootstrap3.cerulean/material三个主题 |
 | copyright_      | Copyright      | 底部版本信息                                         |
-| list_page_shown | bool           | 是否在导航栏显示“列表”菜单栏                         |
-| paginate_by     | Option[int]    | 列表页中每页包含的项数目，设置为None表示不分页       |
-| list_layout     | 'grid'/ 'list' | 列表页中按列表方式或者网格方式显示                   |
+| opts            | SiteOpts       | 选项类                                               |
+
 
 > 如果参数或变量和python内置函数的名称相同，将在最后加下划线以示区分。
 
 
 
-## 导航栏(Nav)
+### 导航栏(Nav)
 
 顶部导航栏是一个有二级菜单的导航功能，下列的菜单项默认已添加：
 
@@ -72,7 +71,7 @@ site_obj.add_menu_item(item2)
 
 
 
-## 底部版权栏(Copyright)
+### 底部版权栏(Copyright)
 
 `Copyright` 类用于初始化页面底部的版权文字。可以传入的参数有：
 
@@ -85,16 +84,118 @@ site_obj.add_menu_item(item2)
 ©2017-2022, Powered By Django-Echarts
 ```
 
-## 参考
+## 首页
 
-### 模板变量
+### 大标题组件(Jumbotron)
 
- `DJESiteBaseView` 是所有视图类的基类 ，页面渲染时向模板传入下列数据。
+`Jumbotron` 是大标题组件的数据类。
 
-| 模板              | 变量名称   | 类型                                       | 说明         |
-| ----------------- | ---------- | ------------------------------------------ | ------------ |
-| {theme}/base.html | site_title | `str`                                      | 网站标题     |
-|                   | theme      | `django_echarts.core.themes.Theme`         | 主题名称     |
-|                   | nav        | `django_echarts.starter.widgets.Nav`       | 顶部导航栏   |
-|                   | copyright  | `django_echarts.starter.widgets.Copyright` | 底部版权信息 |
+```python
+site_obj.add_widgets(
+    Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
+)
+```
 
+可设置下列参数
+
+- title: 主标题
+- main_text: 主要文字
+- small_text: 小文字
+
+### 热门图表
+
+按照网格方式显示标记为 top 的图表。向装饰器 `register_chart` 的 top 参数指定一个大于0的数字即可（数字越小，越靠前显示）。
+
+```python
+@site_obj.register_chart(description='词云示例', catalog='示例一', top=2)
+def mychart():
+    bar = Bar()
+    # ...
+    return bar
+```
+
+## 列表页
+
+### 显示方式
+
+> 定义: SiteOpts.list_layout: Literal['grid', 'list'] = 'list'
+
+支持 “列表”/“网格” 两种方式
+
+```python
+# 列表方式
+site_obj = DJESite(
+    site_title='图表可视化',
+    opts=SiteOpts(list_layout='list')
+)
+# 网格 3x4
+site_obj = DJESite(
+    site_title='图表可视化',
+    opts=SiteOpts(list_layout='grid')
+)
+```
+
+
+
+### 设置分页
+
+> 定义: SiteOpts.paginate_by:Optional[int] = None
+
+在site创建时传入 `paginate_by` 参数，指定每页需要显示的数目，默认不启用分页特性。
+
+```python
+site_obj = DJESite(
+    site_title='图表可视化',
+    opts=SiteOpts(paginate_by=10)
+)
+```
+
+## 图表详情页
+
+### 新增图表
+
+`site_obj.register_chart` 装饰器用于注册返回图表的函数。
+
+```python
+@site_obj.register_chart
+def mychart():
+    bar = Bar()
+    # ...
+    return bar
+```
+
+默认未携带任何参数情况下，函数名将作为图表标识符。
+
+当然也可以携带一些参数，这些参数通常和 `DJEChartInfo` 类参数意义相同。
+
+```python
+@site_obj.register_chart(description='词云示例', catalog='示例一')
+def mychart():
+    bar = Bar()
+    # ...
+    return bar
+```
+
+### register_chart
+
+`DJESite.register_chart` 用于注册新的图表函数，接受下列可选参数：
+
+| 参数名称    | 类型           | 说明                                           |
+| ----------- | -------------- | ---------------------------------------------- |
+| info        | `DJEChartInfo` | 如果有设置此项，忽略后面的单独参数             |
+| name        | str            | 图表标识符，如果不指定，将使用所装饰函数的名称 |
+| title       | str            | 图表标题                                       |
+| description | str            | 描述                                           |
+| top         | int            | 置顶标志，0表示不置顶，数值越小，越靠前。      |
+| catalog     | str            | 分类，如果设置，将在顶部导航栏使用下拉列表显示 |
+| tags        | List[str]      | 标签列表                                       |
+
+## SiteOpts选项类
+
+`SiteOpts` 是一个使用 `@dataclasses.dataclass` 装饰的数据类。
+
+| 参数            | 类型或可选值   | 描述                                                 |
+| --------------- | -------------- | ---------------------------------------------------- |
+| list_page_shown | bool           | 是否在导航栏显示“列表”菜单栏                         |
+| paginate_by     | Option[int]    | 列表页中每页包含的项数目，设置为None表示不分页       |
+| list_layout     | 'grid'/ 'list' | 列表页中按列表方式或者网格方式显示                   |

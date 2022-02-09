@@ -1,13 +1,13 @@
 <div class="row">
-    {% for chart in chart_list %}
+    {% for chart_info in chart_info_list %}
         <div class="col s12 m4">
             <div class="card blue-grey darken-1">
                 <div class="card-content white-text">
-                    <span class="card-title">{{ chart.title }}</span>
-                    <p>{{ chart.description|default:"暂无描述" }}</p>
+                    <span class="card-title">{{ chart_info.title }}</span>
+                    <p>{{ chart_info.description|default:"暂无描述" }}</p>
                 </div>
                 <div class="card-action">
-                    <a href="{{ chart.url }}">详情</a>
+                    <a href="{{ chart_info.url }}">详情</a>
                 </div>
             </div>
         </div>

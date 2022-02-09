@@ -1,13 +1,16 @@
-from django_echarts.starter.sites import DJESite
+from django_echarts.starter.sites import DJESite, SiteOpts
 from django_echarts.starter.widgets import Jumbotron, Copyright, LinkItem
 from .demo_data import FACTORY
 
 site_obj = DJESite(
     site_title='图表可视化',
     copyright_=Copyright(start_year=2017, powered_by='Django-Echarts'),
-    theme='bootstrap3.cerulean',
-    # theme='material',
-    list_layout='grid'
+    # theme='bootstrap3.cerulean',
+    theme='material',
+    opts=SiteOpts(
+        list_layout='grid',
+        paginate_by=2
+    )
 )
 
 site_obj.add_widgets(
@@ -27,7 +30,7 @@ def my_kline():
     return FACTORY.create('kline')
 
 
-@site_obj.register_chart(name='c1', title='福建省各地市面积', description='福建省各地市面积排行', catalog='福建统计')
+@site_obj.register_chart(name='c1', title='福建省各地市面积', description='福建省各地市面积排行', catalog='福建统计', tags=['年度'], top=True)
 def my_bar():
     return FACTORY.create('bar')
 

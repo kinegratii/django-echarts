@@ -1,21 +1,22 @@
 {% extends 'material/base.html' %}
+{% load dje %}
 
 {% block main_content %}
     <div class="container">
-        <h2 class="header">图表列表</h2>
-        {% include layout_tpl with chart_list=page_obj.object_list only %}
+        <h2 class="header">All Charts</h2>
+        {% include layout_tpl with chart_info_list=page_obj.object_list only %}
 
         <div class="row">
             <div class="col s6 offset-s3">
                 <ul class="pagination">
                     {% if page_obj.has_previous %}
                         <li class="waves-effect">
-                            <a href="?page=1" aria-label="Previous">
+                            <a href="{% page_link 1 %}" aria-label="Previous">
                                 <span aria-hidden="true">First</span>
                             </a>
                         </li>
                         <li class="waves-effect">
-                            <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <a href="{% page_link page_obj.previous_page_number %}" aria-label="Previous">
                                 <span aria-hidden="true">&lt;</span>
                             </a>
                         </li>
@@ -28,12 +29,12 @@
                     </li>
                     {% if page_obj.has_next %}
                         <li class="waves-effect">
-                            <a href="?page={{ page_obj.next_page_number }}" aria-label="Previous">
+                            <a href="{% page_link page_obj.next_page_number %}" aria-label="Previous">
                                 <span aria-hidden="true">&gt;</span>
                             </a>
                         </li>
                         <li class="waves-effect">
-                            <a href="?page={{ page_obj.paginator.num_pages }}" aria-label="Previous">
+                            <a href="{% page_link page_obj.paginator.num_pages %}" aria-label="Previous">
                                 <span aria-hidden="true">Last</span>
                             </a>
                         </li>

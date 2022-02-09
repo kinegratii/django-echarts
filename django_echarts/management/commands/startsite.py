@@ -13,8 +13,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('output', type=str, help='The output file.')
-        parser.add_argument('--view-type', '-i', type=str, choices=('cbv', 'fbv'), default='fbv',
-                            help='The type of views.')
         def_year = date.today().year
         parser.add_argument('--site-title', '-t', type=str, help='The title of site.', default='Echarts List')
         parser.add_argument('--start-year', '-y', type=int, help='The start year.', default=def_year)
@@ -30,19 +28,17 @@ class Command(BaseCommand):
         if not override and os.path.exists(output):
             self.stdout.write(self.style.ERROR(f'The file {output} exists! Add -o to overwrite it.'))
             return
-        view_type = options.get('view_type')
         site_title = options.get('site_title')
         start_year = options.get('start_year')
         powered_by = options.get('powered_by')
-        self.generate_code_spinet(output, view_type, site_title, start_year, powered_by)
+        self.generate_code_spinet(output, site_title, start_year, powered_by)
 
-    def generate_code_spinet(self, output, view_type, site_title, start_year, powered_by):
+    def generate_code_spinet(self, output, site_title, start_year, powered_by):
         context = {
             'site_title': site_title,
             'start_year': start_year,
             'powered_by': powered_by,
             'version': __version__,
-            'view_type': view_type
         }
         s = render_to_string(get_code_snippet_dir('first_views.py.tpl'), context=context)
         with open(output, 'w') as f:
