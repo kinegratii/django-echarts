@@ -1,0 +1,23 @@
+<div class="row">
+    {% for chart_info in chart_info_list %}
+        <div class="col s12 m12">
+            <div class="card blue-grey">
+                <div class="card-content white-text">
+                    <span class="card-title">{{ chart_info.title }}</span>
+                    <p>{{ chart_info.description|default:"暂无描述" }}</p>
+                    {% if chart_info.tags %}
+                        <hr/>
+                        {% for tag in chart_info.tags %}
+                            <span class="badge blue">{{ tag }}</span> &nbsp;
+                        {% endfor %}
+                    {% endif %}
+
+
+                </div>
+                <div class="card-action">
+                    <a href="{{ chart_info.url }}">详情</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

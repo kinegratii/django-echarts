@@ -9,8 +9,6 @@ from unittest.mock import MagicMock
 
 from django_echarts.datasets.charts import NamedCharts
 
-PY36 = sys.version_info[:2] >= (3, 6)
-
 
 class MChartsTestCase(unittest.TestCase):
     def test_create_with_kwargs(self):
@@ -33,7 +31,6 @@ class MChartsTestCase(unittest.TestCase):
         self.assertEqual('Bar-Chart', nc[1].page_title)
 
 
-@unittest.skipUnless(PY36, 'Order-retained dictionary is not supported')
 class MChartsPY36TestCase(unittest.TestCase):
     def test_create_with_kwargs(self):
         nc = NamedCharts(

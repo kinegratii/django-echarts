@@ -3,32 +3,38 @@
 A interface module for pyecharts.
 In the practice, pyecharts should not be explicitly imported.
 """
-
+import os
 from datetime import datetime, date, time
 import json
 from functools import singledispatch
+from pyecharts.charts.base import default as json_encode_func
+from pyecharts.commons.utils import OrderedSet
 
 __all__ = ['to_css_length', 'merge_js_dependencies', 'JsDumper']
 
 
 # ---------- Adapter for Chart Attributes ----------
 
-def to_css_length(l):
+def to_css_length(val):
     """
     Return the standard length string of css.
     It's compatible with number values in old versions.
-    :param l: source css length.
+    :param val: source css length.
     :return: A string.
     """
-    if isinstance(l, (int, float)):
-        return '{}px'.format(l)
+    if isinstance(val, (int, float)):
+        return '{}px'.format(val)
     else:
-        return l
+        return val
 
 
 def _flat(ele):
     if hasattr(ele, 'js_dependencies'):
-        return list(ele.js_dependencies)
+        if isinstance(ele.js_dependencies, list):
+            return ele.js_dependencies
+        if hasattr(ele.js_dependencies, 'items'):
+            return list(ele.js_dependencies.items)  # pyecharts.commons.utils.OrderedSet
+        raise ValueError('Can not parse js_dependencies.')
     if isinstance(ele, (list, tuple, set)):
         return ele
     return ele,
@@ -57,7 +63,7 @@ def merge_js_dependencies(*chart_or_name_list):
 # ---------- Javascript Dump Tools ----------
 @singledispatch
 def json_encoder(obj):
-    raise TypeError(repr(obj) + " is not JSON serializable")
+    return json_encode_func(obj)
 
 
 @json_encoder.register(datetime)
@@ -65,6 +71,11 @@ def json_encoder(obj):
 @json_encoder.register(time)
 def encode_date_time(obj):
     return obj.isoformat()
+
+
+@json_encoder.register(OrderedSet)
+def encode_js_dependency(obj):
+    return obj.items
 
 
 class JsDumper:

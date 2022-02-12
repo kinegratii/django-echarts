@@ -1,0 +1,36 @@
+{% extends 'material/base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    <div class="container">
+        <div class="row">
+            <div class="col s3">
+                <ul class="collection">
+                    {% for item in menu %}
+                        <a href="{% url view_name item.name %}"
+                           class="collection-item{% if item.selected %} active{% endif %}">{{ item.title }}</a>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col s9">
+                <div class="section">
+                    <h5>{{ title }}</h5>
+                </div>
+
+                {% if chart_info.description %}
+                    <div>
+                    <p>{{ chart_info.description }}</p>
+                    </div>
+                {% endif %}
+            <div class="divider"></div>
+                {% echarts_container chart_obj %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_script %}
+    {% echarts_js_dependencies chart_obj %}
+    {% echarts_js_content chart_obj %}
+{% endblock %}

@@ -19,7 +19,7 @@
             </p>
             <div class="alert alert-info" role="alert">前端渲染方式采用ajax方式从后台获取数据。切换左侧菜单，并不会改变页面URL。<br/>
             注意：在该示例中，所有配置均在前端 HTML 配置，不受 DJANGO_ECHAERTS 配置约束。<br/>
-            当前配置：ECharts 3.8.5 +  canvas渲染</div>
+            当前配置：ECharts 4.8.0 +  canvas渲染</div>
             <div id="id_echarts_container" style="height: 500px;"></div>
 
         </div>
@@ -31,8 +31,8 @@
 
 
 {% block extra_script %}
-    <script src="https://cdn.bootcss.com/echarts/3.8.5/echarts.min.js"></script>
-    <script src="http://echarts.baidu.com/asset/map/js/china.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/4.8.0/echarts.min.js"></script>
+    <script src="https://assets.pyecharts.org/assets/maps/china.js"></script>
     <script src="{{ STATIC_URL }}echarts/echarts-wordcloud.min.js"></script>
     <script type="text/javascript">
         var mChart;
@@ -51,7 +51,6 @@
             }).done(function (data) {
                 mChart.hideLoading();
                 mChart.setOption(data);
-                console.log(data);
             });
         }
         $(document).ready(function () {

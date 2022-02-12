@@ -2,7 +2,7 @@
 
 
 from django.views.generic.base import TemplateView
-from django_echarts.views.frontend import EChartsFrontView
+from django_echarts.views import EChartsFrontView
 
 from .demo_data import FACTORY
 

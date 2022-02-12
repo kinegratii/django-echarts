@@ -1,0 +1,23 @@
+<div class="row">
+    {% for chart_info in chart_info_list %}
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="{{ chart_info.url }}">{{ chart_info.title }}</a>
+                    {% if chart_info.tags %}
+                        <span class="pull-right">
+                                                {% for tag in chart_info.tags %}
+                                                    <span class="badge">{{ tag }}</span>
+                                                {% endfor %}
+                        </span>
+                    {% endif %}
+
+                </div>
+                <div class="panel-body">
+                    <p>{{ chart_info.description|default:"暂无描述" }}</p>
+                </div>
+
+            </div>
+        </div>
+    {% endfor %}
+</div>

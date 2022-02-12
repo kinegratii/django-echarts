@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ site_title }}</title>
+    {% block  include_css %}
+        {% for curl in theme.css_urls %}
+            <link href="{{ curl }}" rel="stylesheet">
+        {% endfor %}
+
+    {% endblock %}
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body>
+{% block nav %}
+    <nav class="light-blue lighten-1" role="navigation">
+        <div class="nav-wrapper container"><a id="logo-container" href="{% url 'dje_home' %}"
+                                              class="brand-logo center">{{ site_title }}</a>
+            {% for menu2 in nav.menus %}
+                {% if menu2.children %}
+                    <ul id="{{ menu2.slug }}" class="dropdown-content">
+                        {% for item in menu2.children %}
+                            {% if item.after_separator %}
+                                <li class="divider"></li>
+                            {% endif %}
+                            <li><a href="{{ item.url }}"{% if item.new_page %}
+                                   target="_blank"{% endif %}>{{ item.text }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+            <ul class="left hide-on-med-and-down">
+                {% for menu2 in nav.menus %}
+                    {% if menu2.children %}
+                        <li><a class="dropdown-trigger" href="javascript:"
+                               data-target="{{ menu2.slug }}">{{ menu2.text }}<i
+                                class="material-icons right"></i></a></li>
+                    {% else %}
+                        <li><a href="
+
+
+                            {% if menu2.url %}{{ menu2.url }}{% else %}javascript:;{% endif %}">{{ menu2.text }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+            </ul>
+
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                {% for item in nav.links %}
+                    <li>
+                        <a href="{{ item.url }}"{% if item.new_page %} target="_blank"{% endif %}>{{ item.text }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+{% endblock %}
+{% block main_content %}
+{% endblock %}
+
+<footer class="page-footer">
+
+    <div class="footer-copyright">
+        <div class="container">
+            &copy;{{ copyright.year_range }}, Powered By {{ copyright.powered_by }}
+        </div>
+    </div>
+</footer>
+
+{% block include_script %}
+    {% for jurl in theme.js_urls %}
+        <script src="{{ jurl }}"></script>
+    {% endfor %}
+{% endblock %}
+
+{% block extra_script %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".dropdown-trigger").dropdown();
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

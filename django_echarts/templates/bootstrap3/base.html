@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    {% block  include_css %}
+        {% for curl in theme.css_urls %}
+            <link href="{{ curl }}" rel="stylesheet">
+        {% endfor %}
+
+    {% endblock %}
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+<body>
+
+{% block nav %}
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'dje_home' %}">{{ site_title }}</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    {% for menu2 in nav.menus %}
+                        {% if menu2.children %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-haspopup="true"
+                                   aria-expanded="false">{{ menu2.text }} <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    {% for item in menu2.children %}
+                                        {% if item.after_separator %}
+                                            <li role="separator" class="divider"></li>
+                                        {% endif %}
+                                        <li><a href="{{ item.url }}"{% if item.new_page %}
+                                               target="_blank"{% endif %}>{{ item.text }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="
+
+
+                                        {% if menu2.url %}{{ menu2.url }}{% else %}javascript:;{% endif %}">{{ menu2.text }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% for item in nav.links %}
+                        <li>
+                            <a href="{{ item.url }}"{% if item.new_page %}
+                               target="_blank"{% endif %}>{{ item.text }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+{% endblock %}
+<div class="container">
+    {% block main_content %}
+
+    {% endblock %}
+
+    <hr>
+
+    <footer>
+        {% if copyright %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <p>&copy;{{ copyright.year_range }}, Powered By {{ copyright.powered_by }}</p>
+                </div>
+            </div>
+        {% endif %}
+    </footer>
+
+</div>
+<!--/.container-->
+{% block include_script %}
+    {% for jurl in theme.js_urls %}
+        <script src="{{ jurl }}"></script>
+    {% endfor %}
+{% endblock %}
+
+{% block extra_script %}
+{% endblock %}
+
+</body>
+</html>

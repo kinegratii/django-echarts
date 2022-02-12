@@ -1,18 +1,30 @@
 # coding=utf8
 
+import pathlib
+import re
+
 from setuptools import setup, find_packages
 
-from django_echarts import __version__, __author__
+here = pathlib.Path(__file__).parent
+txt = (here / 'django_echarts' / '__init__.py').read_text()
+__version__ = re.findall(r"^__version__ = '([^']+)'\r?$", txt, re.M)[0]
 
 lib_classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3 :: Only",
     "Framework :: Django",
-    "Framework :: Django :: 1.11",
     "Framework :: Django :: 2.0",
+    "Framework :: Django :: 2.1",
+    "Framework :: Django :: 2.2",
+    "Framework :: Django :: 3.0",
+    "Framework :: Django :: 3.1",
+    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4.0",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Topic :: Software Development :: Libraries",
@@ -27,9 +39,10 @@ setup(
     url='https://github.com/kinegratii/django-echarts',
     include_package_data=True,
     license='MIT',
-    author=__author__,
+    author='kinegratii',
     author_email='kinegratii@gmail.com',
     description='A django app for Echarts integration with pyecharts as chart builder. ',
     classifiers=lib_classifiers,
-    install_requires=['borax']
+    python_requires='>=3.7',
+    install_requires=['borax~=3.5']
 )

@@ -12,7 +12,7 @@ from collections import Counter
 MIN_LOWER = -100000  # The min value of range lower.
 
 
-class BIndex(object):
+class BIndex:
     def __contains__(self, item):
         return False
 
@@ -103,7 +103,7 @@ class BRangeIndex(BIndex):
         return self.lower if self._lower_specified else MIN_LOWER
 
 
-class BSectionCounter(object):
+class BSectionCounter:
     def __init__(self, *indexes):
         self.indexes = indexes
 

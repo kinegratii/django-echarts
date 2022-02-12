@@ -3,32 +3,29 @@
 
 import unittest
 
-from django_echarts.plugins.hosts import LibHostStore, MapHostStore
+from django_echarts.core.dms import DependencyManager
 
 
-class HostStoreTestCase(unittest.TestCase):
+class DependencyManagerTestCase(unittest.TestCase):
     def test_lib_host(self):
         # Basic tests
         m_context = {
             'STATIC_URL': '/static/',
             'echarts_version': '3.7.0'
         }
-        hs = LibHostStore(context=m_context, default_host='bootcdn')
+        manager = DependencyManager.create_default(
+            context=m_context,
+            lib_repo='bootcdn',
+        )
+
         self.assertEqual(
             'https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js',
-            hs.generate_js_link('echarts.min')
+            manager.resolve_url('echarts.min')
         )
 
         self.assertEqual(
             'https://cdnjs.cloudflare.com/ajax/libs/echarts/3.7.0/echarts.min.js',
-            hs.generate_js_link('echarts.min', js_host='cdnjs')
-        )
-        self.assertEqual(
-            'https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js',
-            hs.generate_js_link(
-                'echarts.min',
-                js_host='https://cdn.bootcss.com/echarts/{echarts_version}'
-            )
+            manager.resolve_url('echarts.min', repo_name='cdnjs')
         )
 
     def test_map_host(self):
@@ -36,20 +33,18 @@ class HostStoreTestCase(unittest.TestCase):
             'STATIC_URL': '/static/',
             'echarts_version': '3.7.0'
         }
-        hs = MapHostStore(context=m_context, default_host='echarts')
+        manager = DependencyManager.create_default(
+            context=m_context,
+        )
         self.assertEqual(
             'https://echarts-maps.github.io/echarts-china-provinces-js/china.js',
-            hs.generate_js_link('china', js_host='china-provinces')
+            manager.resolve_url('china', repo_name='china-provinces')
         )
         # Add
-        hs.add_host('https://amap.com/js', 'amap')
+        manager.add_repo('amap', 'https://amap.com/js', catalog='map')
         self.assertEqual(
             'https://amap.com/js/fujian.js',
-            hs.generate_js_link('fujian', 'amap')
-        )
-        self.assertEqual(
-            'http://echarts.baidu.com/asset/map/js/china.js',
-            hs.generate_js_link('china')
+            manager.resolve_url('fujian', 'amap')
         )
 
 
@@ -59,14 +54,17 @@ class CustomHostTestCase(unittest.TestCase):
             'echarts_version': '3.8.5'
         }
 
-        mhs = MapHostStore(context=m_context, default_host='pyecharts')
-        mhs.add_host('/demo/', 'demo')
-        mhs.add_host('/demo2/{echarts_version}', 'demo2')
+        manager = DependencyManager.create_default(
+            context=m_context,
+            map_repo='pyecharts'
+        )
+        manager.add_repo('demo', '/demo/', catalog='map')
+        manager.add_repo('demo2', '/demo2/{echarts_version}', catalog='map')
         self.assertEqual(
             '/demo/fujian.js',
-            mhs.generate_js_link('fujian', js_host='demo')
+            manager.resolve_url('fujian', repo_name='demo')
         )
         self.assertEqual(
             '/demo2/3.8.5/fujian.js',
-            mhs.generate_js_link('fujian', js_host='demo2')
+            manager.resolve_url('fujian', repo_name='demo2')
         )

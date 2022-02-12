@@ -1,0 +1,50 @@
+{% load echarts %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    {% block  include_css %}
+        <style rel="stylesheet">
+            li.dje-menu-item {
+                display: inline;
+                margin: 2px;
+            }
+        </style>
+    {% endblock %}
+    {% block extra_css %}
+    {% endblock %}
+</head>
+<body>
+{% if view_name %}
+<div>
+    <ul>
+        {% for item in menu %}
+        <li class="dje-menu-item">
+            {% if item.2 %}
+            {{ item.1 }}
+            {% else %}
+            <a href="{% url view_name item.0 %}">{{ item.1 }}</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<hr/>
+{% endif %}
+<div>
+    {% echarts_container chart_obj %}
+</div>
+
+{% block include_script %}
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+{% endblock %}
+{% block extra_script %}
+    {% echarts_js_dependencies chart_obj %}
+    {% echarts_js_content chart_obj %}
+{% endblock %}
+</body>
+
+</html>
