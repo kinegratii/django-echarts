@@ -14,7 +14,10 @@ from django_echarts.starter.sites import DJESite{% if view_type == 'cbv' %}, DJE
 __all__ = ['site_obj']
 
 site_obj = DJESite(
-    site_title='{{ site_title }}',
+    site_title='{{ site_title }}'
+)
+
+site_obj.add_widgets(
     copyright_=Copyright(start_year={{ start_year }}, powered_by='{{ powered_by }}')
 )
 

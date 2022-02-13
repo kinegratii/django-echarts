@@ -124,6 +124,7 @@ class DJESiteListView(DJESiteBaseView):
         qs = {}
         if query_string:
             qs.update({'keyword': query_string})
+            context['keyword'] = query_string
         chart_info_list = site.query_chart_info_list(**qs)
         paginate_by = site.opts.paginate_by
         if paginate_by is None:
@@ -194,6 +195,7 @@ class SiteOpts:
     list_nav_item_shown: bool = True
     list_layout: Literal['grid', 'list'] = 'list'
     paginate_by: Optional[int] = None
+    detail_tags_position: Literal['none', 'top', 'bottom'] = 'top'
 
 
 class DJESite:
@@ -202,7 +204,7 @@ class DJESite:
         site_obj = DJESite(site_title='MySite', opts=SiteOpts(paginate_by=10))
     """
 
-    def __init__(self, site_title: str = 'My Charts Demo', theme: str = 'bootstrap3', copyright_: Copyright = None,
+    def __init__(self, site_title: str = 'My Charts Demo', theme: str = 'bootstrap3',
                  opts: Optional[SiteOpts] = None):
         self.site_title = site_title
         self.theme = get_theme(theme)
@@ -215,9 +217,6 @@ class DJESite:
         if self._opts.list_nav_item_shown:
             self.nav.add_menu(text='All', slug='list', url=reverse_lazy('dje_list'))
         self.widgets = {}
-        if copyright_:
-            self.widgets['copyright'] = copyright_
-
         self._view_dict = {
             'home': DJESiteHomeView,
             'detail': DJESiteDetailView,
@@ -245,16 +244,19 @@ class DJESite:
     # Init Widgets
     def add_menu_item(self, item: LinkItem, menu_title: str = None):
         self.nav.add_item(menu_text=menu_title, item=item)
+        return self
 
     def add_link(self, item: LinkItem):
         """Add link on nav."""
         self.nav.add_right_link(item)
         return self
 
-    def add_widgets(self, *widgets: Union[Jumbotron, Copyright]):
-        """Add widgets for this site."""
-        for widget in widgets:
-            self.widgets[widget.__class__.__name__.lower()] = widget
+    def add_widgets(self, *, jumbotron: Jumbotron = None, copyright_: Copyright = None):
+        """Add widgets to the site."""
+        if jumbotron:
+            self.widgets['jumbotron'] = jumbotron
+        if copyright_:
+            self.widgets['copyright'] = copyright_
         return self
 
     # Register function and views class

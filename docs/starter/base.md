@@ -24,8 +24,9 @@
 from django_echarts.starter.widgets import Jumbotron, Copyright, LinkItem
 from django_echarts.starter.sites import DJESite, DJESiteDetailView
 
-site_obj = DJESite(
-    site_title='图表可视化',
+site_obj = DJESite(site_title='图表可视化')
+
+site_obj.add_widgets(
     copyright_=Copyright(start_year=2017, powered_by='Django-Echarts')
 )
 ```
@@ -36,7 +37,6 @@ site_obj = DJESite(
 | --------------- | -------------- | ---------------------------------------------------- |
 | site_title      | str            | 网站标题                                             |
 | theme           | str            | 内置 bootstrap3/bootstrap3.cerulean/material三个主题 |
-| copyright_      | Copyright      | 底部版本信息                                         |
 | opts            | SiteOpts       | 选项类                                               |
 
 
@@ -92,7 +92,7 @@ site_obj.add_menu_item(item2)
 
 ```python
 site_obj.add_widgets(
-    Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
+    jumbotron=Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
 )
 ```
 
@@ -196,6 +196,6 @@ def mychart():
 
 | 参数            | 类型或可选值   | 描述                                                 |
 | --------------- | -------------- | ---------------------------------------------------- |
-| list_page_shown | bool           | 是否在导航栏显示“列表”菜单栏                         |
+| list_nav_item_shown | bool           | 是否在导航栏显示“All”菜单栏                         |
 | paginate_by     | Option[int]    | 列表页中每页包含的项数目，设置为None表示不分页       |
 | list_layout     | 'grid'/ 'list' | 列表页中按列表方式或者网格方式显示                   |

@@ -22,6 +22,15 @@
             {% if chart_info.description %}
                 <div class="well well-sm">{{ chart_info.description }}</div>
             {% endif %}
+            {% if chart_info.tags %}
+                <div class="clearfix">
+                    {% for tag in chart_info.tags %}
+                        <span class="badge">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+
+            {% endif %}
+            <br/>
             {% echarts_container chart_obj %}
 
         </div>

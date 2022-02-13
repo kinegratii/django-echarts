@@ -10,6 +10,8 @@ django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts
 
 ## 概述
 
+> django-echarts v0.5.0b1已经发布。
+
 django-echarts 主要提供了以下的内容：
 
 - 可显示页面：主页/列表/详情/关于
@@ -33,7 +35,7 @@ django-echarts包运行环境要求如下：：
 可以使用 pip 命令安装。
 
 ```shell
-pip install django-echarts
+pip install django-echarts==0.5.0b1
 ```
 
 ## 3分钟上手
@@ -113,9 +115,10 @@ def mychart():
 
 ```python
 # ...
-
+from django_echarts.starter.sites import DJESite
+from django_echarts.starter.widgets import Copyright, Jumbotron, LinkItem 
 from pyecharts import options as opts
-from pyecharts.charts import Bar, Kline, Map, Pie, WordCloud
+from pyecharts.charts import Bar
 
 site_obj = DJESite(
     site_title='图表可视化',
@@ -124,7 +127,7 @@ site_obj = DJESite(
 )
 
 site_obj.add_widgets(
-    Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
+    jumbotron=Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
 )
 site_obj.add_link(LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True))
 
@@ -169,7 +172,9 @@ python manage.py runserver 0.0.0.0:8900
 
 ## 文档
 
-[在线文档](http://django-echarts.readthedocs.io/zh_CN/latest/index.html)
+[在线文档](https://django-echarts.readthedocs.io/)
+
+Build on [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/)
 
 ## 示例
 

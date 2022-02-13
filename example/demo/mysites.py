@@ -4,17 +4,17 @@ from .demo_data import FACTORY
 
 site_obj = DJESite(
     site_title='图表可视化',
-    copyright_=Copyright(start_year=2017, powered_by='Django-Echarts'),
-    # theme='bootstrap3.cerulean',
-    theme='material',
+    theme='bootstrap3.cerulean',
+    # theme='material',
     opts=SiteOpts(
         list_layout='grid',
-        paginate_by=2
+        # paginate_by=2
     )
 )
 
 site_obj.add_widgets(
-    Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
+    jumbotron=Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
+    copyright_=Copyright(start_year=2017, powered_by='Django-Echarts'),
 )
 site_obj.add_link(LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True))
 site_obj.add_link(LinkItem(text='返回首页', url='/'))
@@ -35,7 +35,7 @@ def my_bar():
     return FACTORY.create('bar')
 
 
-@site_obj.register_chart(name='c2', title='饼图示例', description='车站收入分布图', catalog='图表示例')
+@site_obj.register_chart(name='c2', title='饼图示例', description='车站收入分布图', catalog='图表示例', tags=['饼图', '收入'])
 def my_pie():
     return FACTORY.create('pie')
 

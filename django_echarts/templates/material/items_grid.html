@@ -5,6 +5,11 @@
                 <div class="card-content white-text">
                     <span class="card-title">{{ chart_info.title }}</span>
                     <p>{{ chart_info.description|default:"暂无描述" }}</p>
+                    {% if chart_info.tags %}
+                        {% for tag in chart_info.tags %}
+                            <span class="badge blue white-text">{{ tag }}</span> &nbsp;
+                        {% endfor %}
+                    {% endif %}
                 </div>
                 <div class="card-action">
                     <a href="{{ chart_info.url }}">详情</a>

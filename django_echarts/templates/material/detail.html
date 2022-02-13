@@ -18,11 +18,18 @@
                 </div>
 
                 {% if chart_info.description %}
-                    <div>
-                    <p>{{ chart_info.description }}</p>
+                    <div class="section">
+                        <p>{{ chart_info.description }}</p>
+                        {% if chart_info.tags %}
+                            <p>
+                            {% for tag in chart_info.tags %}
+                                <span class="badge blue white-text">{{ tag }}</span>
+                            {% endfor %}
+                            </p>
+                        {% endif %}
                     </div>
                 {% endif %}
-            <div class="divider"></div>
+                <div class="divider"></div>
                 {% echarts_container chart_obj %}
             </div>
         </div>
