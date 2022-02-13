@@ -8,7 +8,7 @@ site_obj = DJESite(
     # theme='material',
     opts=SiteOpts(
         list_layout='grid',
-        # paginate_by=2
+        # paginate_by=1
     )
 )
 

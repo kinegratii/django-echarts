@@ -10,6 +10,7 @@
 | ----------------- | ---------- | ------------------------------------------ | ------------ |
 | {theme}/base.html | site_title | `str`                                      | 网站标题     |
 |                   | theme      | `django_echarts.core.themes.Theme`         | 主题名称     |
+|                   | opts      | `django_echarts.starter.sites.SiteOpts`     | 选项对象     |
 |                   | nav        | `django_echarts.starter.widgets.Nav`       | 顶部导航栏   |
 |                   | copyright  | `django_echarts.starter.widgets.Copyright` | 底部版权信息 |
 
@@ -51,7 +52,7 @@ DJESite 内置包含下列路由：
 | 模板                             | 变量名称         | 类型                         | 说明                           |
 | -------------------------------- | ---------------- | ---------------------------- | ------------------------------ |
 | {theme}/list_with_paginator.html | page_obj         | `django.core.paginator.Page` | django构建的分页对象。         |
-|                                  | elided_page_nums | List[Union[int, str]]        | 页码列举。仅在Django3.2+有效。 |
+|                                  | elided_page_nums | List[Union[int, str]]        | 页码列举。                   |
 
 说明：
 

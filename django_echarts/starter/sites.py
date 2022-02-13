@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import wraps
-from typing import Union, Optional, List, Dict, Callable, Literal
+from typing import Optional, List, Dict, Callable, Literal
 
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy, path
@@ -8,9 +8,10 @@ from django.views.generic.base import TemplateView
 
 from django_echarts.core.charttools import DJEChartInfo
 from django_echarts.core.themes import get_theme
+from django_echarts.utils.compat import get_elided_page_range
 from .widgets import Nav, LinkItem, Jumbotron, Copyright
 
-__all__ = ['DJESite', 'SiteOpts', 'ttn']
+__all__ = ['DJESite', 'SiteOpts', 'ttn', 'DJESiteBaseView']
 
 
 def ttn(template_name: str, theme: str = None) -> str:
@@ -73,6 +74,7 @@ class DJESiteBaseView(TemplateView):
         # select a theme
         theme = site.get_current_theme(self.request)
         context['theme'] = theme
+        context['opts'] = site.opts
 
         # The data store in a view processing lifecycle.
         self.extra_context = {
@@ -138,9 +140,9 @@ class DJESiteListView(DJESiteBaseView):
             try:
                 # Django3.2+
                 elided_page_nums = paginator.get_elided_page_range(page_number)
-                context['elided_page_nums'] = list(elided_page_nums)
             except (AttributeError, TypeError, ValueError):
-                pass
+                elided_page_nums = get_elided_page_range(paginator, page_number)
+            context['elided_page_nums'] = list(elided_page_nums)
             return ttn('list_with_paginator.html')
 
 
