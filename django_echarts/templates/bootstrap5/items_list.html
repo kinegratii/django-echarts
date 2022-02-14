@@ -1,0 +1,9 @@
+<div class="list-group">
+    {% for chart_info in chart_info_list %}
+        <a href="{{ chart_info.url }}" class="list-group-item">
+            <h4 class="list-group-item-heading">{{ chart_info.title }}</h4>
+            <p class="list-group-item-text">{{ chart_info.description|default:"暂无描述" }}</p>
+        </a>
+    {% endfor %}
+
+</div>

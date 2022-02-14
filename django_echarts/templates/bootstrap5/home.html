@@ -1,0 +1,18 @@
+{% extends 'bootstrap5/base.html' %}
+{% block main_content %}
+    {% if jumbotron %}
+        <div class="card bg-secondary">
+            <div class="card-body">
+                <h1 class="card-title">{{ jumbotron.title }}</h1>
+                <h6 class="card-subtitle mb-2 text-muted">{{ jumbotron.small_text }}</h6>
+                <p class="card-text">{{ jumbotron.main_text }}</p>
+            </div>
+        </div>
+    {% endif %}
+    {% if top_chart_info_list %}
+        <div class="page-header">
+            <h2>热门图表</h2>
+        </div>
+        {% include layout_tpl with chart_info_list=top_chart_info_list only %}
+    {% endif %}
+{% endblock %}

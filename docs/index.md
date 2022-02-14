@@ -12,7 +12,7 @@ django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts
 - 支持 90%+的pyecharts图表类型
 - 可显示页面：主页 / 列表 / 详情 / 关于
 - 可支持组件：导航栏 / 网站底部栏 / 热门板块 / 列表 / 关于面板 
-- 内置Bootstrap3 和 Material 两种主题
+- UI主题：Bootstrap3 / Bootstrap5 / Material
 - 支持更换主题的颜色模式
 - 可灵活扩展: 支持整合 Django用户认证 / 数据库 / Session 
 - 基于Django Template Engine 的后端渲染

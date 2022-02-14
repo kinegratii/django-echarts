@@ -26,6 +26,11 @@ _BUILTIN_FILE_URLS = {
     'bootstrap3.cerulean': {
         'palette_css': '/static/bootstrap3/bootstrap3.cerulean.min.css'
     },
+    'bootstrap5': {
+        'palette_css': 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css',
+        'jquery_js': 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js',
+        'main_js': 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js'
+    },
     'material': {
         'base_css': 'https://fonts.font.im/icon?family=Material+Icons',
         'palette_css': 'https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css',

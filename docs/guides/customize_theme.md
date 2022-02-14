@@ -6,11 +6,12 @@
 
 django-echarts内置以下主题：
 
-| 标识符              | 文件                                   | 备注    |
-| ------------------- | -------------------------------------- | ------- |
-| bootstrap3          | /static/css/bootstrap3.min.js          | v0.5.0+ |
-| bootstrap3.cerulean | /static/css/bootstrap3.cerulean.min.js | v0.5.0+ |
-| material            | /static/css/materal.min.js             | v0.5.0+ |
+| 标识符              | 文件                                          | 备注    |
+| ------------------- | --------------------------------------------- | ------- |
+| bootstrap3          | 在线引用                                      | v0.5.0+ |
+| bootstrap3.cerulean | /static/bootstrap3/bootstrap3.cerulean.min.js | v0.5.0+ |
+| bootstrap5          | 在线引用                                      | v0.5.0+ |
+| material            | 在线引用                                      | v0.5.0+ |
 
 ## 自定义调色主题
 

@@ -33,11 +33,11 @@ site_obj.add_widgets(
 
 对象创建时，可以设置以下参数：
 
-| 参数            | 类型或可选值   | 描述                                                 |
-| --------------- | -------------- | ---------------------------------------------------- |
-| site_title      | str            | 网站标题                                             |
-| theme           | str            | 内置 bootstrap3/bootstrap3.cerulean/material三个主题 |
-| opts            | SiteOpts       | 选项类                                               |
+| 参数       | 类型或可选值 | 描述                                                         |
+| ---------- | ------------ | ------------------------------------------------------------ |
+| site_title | str          | 网站标题                                                     |
+| theme      | str          | 内置 bootstrap3/bootstrap3.cerulean/bootstrap5/material四个主题 |
+| opts       | SiteOpts     | 选项类                                                       |
 
 
 > 如果参数或变量和python内置函数的名称相同，将在最后加下划线以示区分。
