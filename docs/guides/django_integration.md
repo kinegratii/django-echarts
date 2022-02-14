@@ -25,6 +25,8 @@ urlpatterns =  site_obj.urls + [
 ]
 ```
 
+> Note: 方法 `dje_init_page_context` 如果有返回值，返回的应当是模板文件名称，而不是代表 context 的字典对象。
+
 **2. 定义模板**
 
 模板页面必须继承模板的 *base.html* 页面。在 *main_content* 部分编写模板代码。

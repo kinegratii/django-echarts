@@ -27,16 +27,20 @@ DJESite 内置包含下列路由：
 | path('detail/<slug:name>/') | DJESiteDetailView | dje_detail |
 | path('about/')              | DJESiteAboutView  | dje_about  |
 
+## 视图类
 
+可继承类重写的方法均以 *dje_* 开头。
 
-## 主页(Home)
+## 模板变量
+
+### 主页(Home)
 
 | 模板              | 变量名称            | 类型                        | 说明               |
 | ----------------- | ------------------- | --------------------------- | ------------------ |
 | {theme}/home.html | jumbotron           | `starter.widgets.Jumbotron` | 大标题             |
 |                   | top_chart_info_list | `List[DJEChartInfo]`        | 热门推荐的图表信息 |
 
-## 列表页(List)
+### 列表页(List)
 
 根据是否具有分页特性，使用不同的模板文件，并传入不同模板变量。
 
@@ -58,7 +62,7 @@ DJESite 内置包含下列路由：
 
 - 可以通过 `page_obj.object_list` 访问具体的条目数据，类型与无分页的 `chart_info_list`，其他属性可以参见 [《Django Paginator 》](https://docs.djangoproject.com/en/4.0/topics/pagination/)。
 
-## 详情页(Detail)
+### 详情页(Detail)
 
 根据是否存在对应的图表，显示不同的模板。
 
@@ -76,7 +80,7 @@ DJESite 内置包含下列路由：
 | ------------------ | -------- | ---- | ---- |
 | {theme}/empty.html | -        | -    | -    |
 
-## 关于页(About)
+### 关于页(About)
 
 
 
@@ -84,7 +88,7 @@ DJESite 内置包含下列路由：
 | ------------------ | -------- | ---- | ---- |
 | {theme}/about.html | -        | -    | -    |
 
-## 消息页(Message)
+### 消息页(Message)
 
 | 模板                 | 变量名称 | 类型 | 说明     |
 | -------------------- | -------- | ---- | -------- |

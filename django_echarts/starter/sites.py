@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from functools import wraps
-from typing import Optional, List, Dict, Callable, Literal
+from typing import Optional, List, Dict, Callable, Literal, Type
 
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy, path
 from django.views.generic.base import TemplateView
 
-from django_echarts.core.charttools import DJEChartInfo
-from django_echarts.core.themes import get_theme
+from django_echarts.core.charttools import DJEChartInfo, LocalChartManager, ChartManagerMixin
+from django_echarts.core.themes import get_theme, Theme
 from django_echarts.utils.compat import get_elided_page_range
 from .widgets import Nav, LinkItem, Jumbotron, Copyright
 
@@ -40,6 +40,9 @@ class DJESiteBaseView(TemplateView):
         context = self.get_context_data(site=site, **kwargs)
         try:
             template_name = self.dje_init_page_context(context=context, site=site)
+            if isinstance(template_name, dict):
+                raise TypeError(
+                    'The method dje_init_page_context should return a string for template name.Not a dict for context.')
         except DJEAbortException as e:
             context['message'] = e.message
             template_name = ttn('message.html')
@@ -72,7 +75,7 @@ class DJESiteBaseView(TemplateView):
         context['site_title'] = site.site_title
         context['copyright'] = site.widgets.get('copyright')
         # select a theme
-        theme = site.get_current_theme(self.request)
+        theme = site.dje_get_current_theme(self.request)
         context['theme'] = theme
         context['opts'] = site.opts
 
@@ -104,7 +107,7 @@ class DJESiteHomeView(DJESiteBaseView):
 
     def dje_init_page_context(self, context, site: 'DJESite'):
         context['jumbotron'] = site.widgets.get('jumbotron')
-        context['top_chart_info_list'] = site.query_chart_info_list(with_top=True)
+        context['top_chart_info_list'] = site.chart_manager.query_chart_info_list(with_top=True)
         context['layout_tpl'] = self._resolve_template_name('{theme}/items_grid.html')
 
 
@@ -127,7 +130,7 @@ class DJESiteListView(DJESiteBaseView):
         if query_string:
             qs.update({'keyword': query_string})
             context['keyword'] = query_string
-        chart_info_list = site.query_chart_info_list(**qs)
+        chart_info_list = site.chart_manager.query_chart_info_list(**qs)
         paginate_by = site.opts.paginate_by
         if paginate_by is None:
             context['chart_info_list'] = chart_info_list
@@ -148,7 +151,6 @@ class DJESiteListView(DJESiteBaseView):
 
 class DJESiteDetailView(DJESiteBaseView):
     template_name = ttn('detail.html')
-    empty_template_name = ttn('empty.html')
 
     charts_config = []
     page_title = '{title}'
@@ -158,7 +160,7 @@ class DJESiteDetailView(DJESiteBaseView):
         chart_name = self.kwargs.get('name')
         found = False
         menu_text = None
-        info_list = site.query_chart_info_list()
+        info_list = site.chart_manager.query_chart_info_list()
         for info in info_list:
             if chart_name == info.name and not found:
                 found = True
@@ -178,10 +180,9 @@ class DJESiteDetailView(DJESiteBaseView):
         if menu_text:
             context['menu'] = [info for info in info_list if info.parent_name == menu_text]
         if found:
-            tpl = self.template_name
+            return self.template_name
         else:
-            tpl = self.empty_template_name
-        return tpl
+            self.abort_request('The chart does not exist.')
 
     def get_dje_page_title(self, name, title, **kwargs):
         return self.page_title.format(name=name, title=title)
@@ -206,6 +207,8 @@ class DJESite:
         site_obj = DJESite(site_title='MySite', opts=SiteOpts(paginate_by=10))
     """
 
+    chart_manager_class = LocalChartManager  # type: Type[ChartManagerMixin]
+
     def __init__(self, site_title: str = 'My Charts Demo', theme: str = 'bootstrap3',
                  opts: Optional[SiteOpts] = None):
         self.site_title = site_title
@@ -228,7 +231,10 @@ class DJESite:
 
         DJESiteBaseView.get_site_object = self._inject(DJESiteBaseView.get_site_object)
 
-        self._charts = dict()  # type: Dict[DJEChartInfo,Optional[Callable]]
+        # Charts
+
+        self._chart_name2func = {}  # type: Dict[str,Callable]
+        self._chart_manager = self.chart_manager_class()  # type: ChartManagerMixin
 
     def _inject(self, func):
         @wraps(func)
@@ -242,6 +248,10 @@ class DJESite:
     @property
     def opts(self) -> SiteOpts:
         return self._opts
+
+    @property
+    def chart_manager(self) -> ChartManagerMixin:
+        return self._chart_manager
 
     # Init Widgets
     def add_menu_item(self, item: LinkItem, menu_title: str = None):
@@ -270,11 +280,12 @@ class DJESite:
             cname = name or func.__name__
             url = reverse_lazy('dje_detail', args=(cname,))
             if info:
-                self._charts[info] = func
+                cinfo = info
             else:
                 cinfo = DJEChartInfo(name=cname, title=title or cname, description=description,
                                      url=url, top=top, parent_name=catalog, tags=tags)
-                self._charts[cinfo] = func
+            self._chart_name2func[cinfo.name] = func
+            self._chart_manager.add_chart_info(cinfo)
             if catalog:
                 self.nav.add_menu(text=catalog)
                 self.nav.add_item(
@@ -290,21 +301,8 @@ class DJESite:
 
     # The function api for accessing site data.
 
-    def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[DJEChartInfo]:
-        chart_info_list = [info for info in self._charts.keys() if not with_top or info.top]
-        if keyword:
-            def _filter(_item):
-                return keyword in _item.title or keyword in _item.tags
-
-            chart_info_list = list(filter(_filter, chart_info_list))
-        if with_top:
-            chart_info_list.sort(key=lambda x: x.top)
-        return chart_info_list
-
     def get_chart_func(self, name: str) -> Optional[Callable]:
-        for chart_info, func in self._charts.items():
-            if chart_info.name == name:
-                return func
+        return self._chart_name2func.get(name)
 
     @property
     def urls(self):
@@ -318,7 +316,7 @@ class DJESite:
 
     # Public Interfaces
 
-    def get_current_theme(self, request, *args, **kwargs):
+    def dje_get_current_theme(self, request, *args, **kwargs) -> Theme:
         """Get the theme for this request."""
         return self.theme
 

@@ -15,7 +15,7 @@ nav:
     - 基本设置:
       - 功能设置: starter/base.md
       - UI框架和主题: guides/customize_theme.md
-    - 高级设置:
+    - 高级功能:
       - 整合Django: guides/django_integration.md
       - API参考: starter/reference.md
   - 高级话题:
