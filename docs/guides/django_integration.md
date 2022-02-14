@@ -19,10 +19,14 @@ class MyPageView(DJESiteBaseView):
     def dje_init_page_context(self, context, site: 'DJESite'):
         context['nickname'] = 'foo'
 
-# 必须定义一个名为 urlpatterns 的模块变量，把本模块变为 URLconf module
-urlpatterns =  site_obj.urls + [
-    path('mypage/', MyPageView.as_view(), name='dje_mypage')
-]
+        
+class MySite(DJESite):
+    def dje_get_urls(self):
+        return [
+            path('mypage/', MyPageView.as_view(), name='dje_mypage')
+        ]
+
+site_obj = MySite()
 ```
 
 > Note: 方法 `dje_init_page_context` 如果有返回值，返回的应当是模板文件名称，而不是代表 context 的字典对象。
@@ -46,9 +50,11 @@ urlpatterns =  site_obj.urls + [
 定义自己的路由规则。
 
 ```python
+from site_views import site_obj
+
 urlpatterns = [
     # ...
-    url(r'', include(site_views)),
+    url(r'', include(site_obj)),
 ]
 ```
 

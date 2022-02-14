@@ -41,7 +41,7 @@ setup(
     license='MIT',
     author='kinegratii',
     author_email='kinegratii@gmail.com',
-    description='A django app for Echarts integration with pyecharts as chart builder. ',
+    description='A site generator based on pyecharts and django.',
     classifiers=lib_classifiers,
     python_requires='>=3.7',
     install_requires=['borax~=3.5']

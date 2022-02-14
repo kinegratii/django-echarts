@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from functools import wraps
-from typing import Optional, List, Dict, Callable, Literal, Type
+from typing import Optional, List, Dict, Callable, Literal, Type, Any
 
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy, path
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
+from django.http.response import JsonResponse
 
 from django_echarts.core.charttools import DJEChartInfo, LocalChartManager, ChartManagerMixin
 from django_echarts.core.themes import get_theme, Theme
@@ -101,6 +102,42 @@ class DJESiteBaseView(TemplateView):
         """
         pass
 
+
+class DJESiteDetailBaseView(DJESiteBaseView):
+    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
+        chart_name = self.kwargs.get('name')
+        chart_info = site.chart_manager.get_or_none(chart_name)
+        context['chart_info'] = chart_info
+        if not chart_info:
+            self.abort_request('The chart does not exist.')
+        return self.template_name
+
+
+class DJESiteAjaxView(View):
+    """The helper view class for ajax request."""
+
+    def get(self, request, *args, **kwargs):
+        data = self.dje_get(request, *args, **kwargs)
+        if isinstance(data, JsonResponse):
+            return data
+        else:
+            return JsonResponse(data, safe=False)
+
+    def post(self, request, *args, **kwargs):
+        data = self.dje_post(request, *args, **kwargs)
+        if isinstance(data, JsonResponse):
+            return data
+        else:
+            return JsonResponse(data, safe=False)
+
+    def dje_get(self, request, *args, **kwargs) -> Any:
+        pass
+
+    def dje_post(self, request, *args, **kwargs) -> Any:
+        pass
+
+
+# The Page Views
 
 class DJESiteHomeView(DJESiteBaseView):
     template_name = ttn('home.html')
@@ -307,18 +344,26 @@ class DJESite:
     @property
     def urls(self):
         """Return the URLPattern list for site entrypoint."""
-        return [
+        urls = [
             path('', self._view_dict['home'].as_view(), name='dje_home'),
             path('list/', self._view_dict['list'].as_view(), name='dje_list'),
             path('detail/<slug:name>/', self._view_dict['detail'].as_view(), name='dje_detail'),
             path('about/', self._view_dict['about'].as_view(), name='dje_about')
         ]
+        custom_url = self.dje_get_urls()
+        if custom_url:
+            urls += custom_url
+        return urls
 
     # Public Interfaces
 
     def dje_get_current_theme(self, request, *args, **kwargs) -> Theme:
         """Get the theme for this request."""
         return self.theme
+
+    def dje_get_urls(self) -> List:
+        """Custom you url routes here."""
+        pass
 
 
 def default_site() -> DJESite:
