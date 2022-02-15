@@ -1,11 +1,12 @@
+import json
 from dataclasses import dataclass
 from functools import wraps
 from typing import Optional, List, Dict, Callable, Literal, Type, Any
 
 from django.core.paginator import Paginator
-from django.urls import reverse_lazy, path
-from django.views.generic.base import TemplateView, View
 from django.http.response import JsonResponse
+from django.urls import reverse_lazy, path
+from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 
 from django_echarts.core.charttools import DJEChartInfo, LocalChartManager, ChartManagerMixin
 from django_echarts.core.themes import get_theme, Theme
@@ -32,7 +33,7 @@ class DJEAbortException(BaseException):
         super().__init__(message)
 
 
-class DJESiteBaseView(TemplateView):
+class DJESiteBaseView(TemplateResponseMixin, ContextMixin, View):
     """The base view for Site.
     """
 
@@ -117,14 +118,16 @@ class DJESiteAjaxView(View):
     """The helper view class for ajax request."""
 
     def get(self, request, *args, **kwargs):
-        data = self.dje_get(request, *args, **kwargs)
+        site = DJESiteAjaxView.get_site_object()
+        data = self.dje_get(request, site=site, *args, **kwargs)
         if isinstance(data, JsonResponse):
             return data
         else:
             return JsonResponse(data, safe=False)
 
     def post(self, request, *args, **kwargs):
-        data = self.dje_post(request, *args, **kwargs)
+        site = DJESiteAjaxView.get_site_object()
+        data = self.dje_post(request, site=site, *args, **kwargs)
         if isinstance(data, JsonResponse):
             return data
         else:
@@ -135,6 +138,10 @@ class DJESiteAjaxView(View):
 
     def dje_post(self, request, *args, **kwargs) -> Any:
         pass
+
+    @staticmethod
+    def get_site_object(site: 'DJESite' = None):
+        return site
 
 
 # The Page Views
@@ -225,6 +232,18 @@ class DJESiteDetailView(DJESiteBaseView):
         return self.page_title.format(name=name, title=title)
 
 
+class DJSiteChartOptionsView(DJESiteAjaxView):
+    def dje_get(self, request, *args, **kwargs) -> Any:
+        chart_name = self.kwargs.get('name')
+        site = DJESiteAjaxView.get_site_object()
+        func = site.get_chart_func(chart_name)
+        if not func:
+            return {}
+        else:
+            chart_obj = func()
+            return json.loads(chart_obj.dump_options_with_quotes())
+
+
 class DJESiteAboutView(DJESiteBaseView):
     template_name = ttn('about.html')
 
@@ -262,11 +281,13 @@ class DJESite:
         self._view_dict = {
             'home': DJESiteHomeView,
             'detail': DJESiteDetailView,
+            'chart_options': DJSiteChartOptionsView,
             'list': DJESiteListView,
             'about': DJESiteAboutView
         }
-
+        # Inject site object to views.
         DJESiteBaseView.get_site_object = self._inject(DJESiteBaseView.get_site_object)
+        DJESiteAjaxView.get_site_object = self._inject(DJESiteAjaxView.get_site_object)
 
         # Charts
 
@@ -347,7 +368,8 @@ class DJESite:
         urls = [
             path('', self._view_dict['home'].as_view(), name='dje_home'),
             path('list/', self._view_dict['list'].as_view(), name='dje_list'),
-            path('detail/<slug:name>/', self._view_dict['detail'].as_view(), name='dje_detail'),
+            path('chart/<slug:name>/', self._view_dict['detail'].as_view(), name='dje_detail'),
+            path('chart/<slug:name>/options/', self._view_dict['chart_options'].as_view(), name='dje_chart_options'),
             path('about/', self._view_dict['about'].as_view(), name='dje_about')
         ]
         custom_url = self.dje_get_urls()

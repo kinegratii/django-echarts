@@ -22,7 +22,7 @@ from django_echarts.core.dms import DJEOpts
 
 DJANGO_ECHARTS = DJEOpts(
     echarts_version='4.8.0',
-    lib_repo='bootcdn',
+    lib_repo='cdnjs',
     map_repo='pyecharts',
 )
 ```
@@ -40,7 +40,7 @@ echarts的版本，需根据 pyecharts 项目确定。
 ### lib_repo
 
 ```python
-DJEOpts.lib_repo: str = 'bootcdn'
+DJEOpts.lib_repo: str = 'cdnjs'
 ```
 
 echarts库文件的远程CDN仓库。默认情况下，下列文件属于库文件，否则属于地图库文件。
@@ -62,7 +62,6 @@ echarts库文件的远程CDN仓库。默认情况下，下列文件属于库文�
 | pyecharts | https://assets.pyecharts.org/assets/ |
 | cdnjs | https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version} |
 | npmcdn | https://unpkg.com/echarts@{echarts_version}/dist |
-| bootcdn | https://cdn.bootcss.com/echarts/{echarts_version} |
 | local | 使用django静态文件托管 |
 
 repo_url中echarts_version变量的值由 `DJEOpts.echarts_version` 确定。

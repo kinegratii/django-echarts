@@ -18,7 +18,7 @@ django_echarts 提供两种方式的渲染视图，即：
 <script type="text/javascript">
     var mChart;
     function loadEcharts() {
-        var url = '/options/simpleBar/;
+        var url = '/options/simpleBar/';
         if (mChart != null) {
             mChart.clear();
         }

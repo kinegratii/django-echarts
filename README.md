@@ -97,10 +97,9 @@ from django_echarts.starter.sites import DJESite
 
 __all__ = ['site_obj']
 
-site_obj = DJESite(
-    site_title='图表可视化',
-    copyright_=Copyright(start_year=2022, powered_by='Django-Echarts')
-)
+site_obj = DJESite(site_title='图表可视化')
+
+site_obj.add_widgets(copyright_=Copyright(start_year=2022, powered_by='Django-Echarts'))
 
 
 @site_obj.register_chart
