@@ -1,10 +1,37 @@
 # API参考
 
-本节介绍了每个模板的变量。
+本节介绍了 django-echarts中主要的API信息，包括：
 
-## 基本架构(Base)
+- 网站配置
+- 视图
+- 模板文件和变量
+- 接口方法
 
- `DJESiteBaseView` 是所有视图类的基类 ，页面渲染时向模板传入下列数据。
+
+
+## 路由
+
+DJESite 内置包含下列路由：
+
+| 路由                           | 视图类型 | 视图类                 | 视图名称          |
+| ------------------------------ | -------- | ---------------------- | ----------------- |
+| `''`                           | 前端     | DJESiteHomeView        | dje_home          |
+| `'list/'`                      | 前端     | DJESiteListView        | dje_list          |
+| `'chart/<slug:name>/'`         | 前端     | DJESiteDetailView      | dje_detail        |
+| `'chart/<slug:name>/options/'` | 后端     | DJSiteChartOptionsView | dje_chart_options |
+| `'about/'`                     | 前端     | DJESiteAboutView       | dje_about         |
+
+注：后端视图类指的是返回 `TemplateResponse`的视图类，前端视图类指的是返回 `JsonResponse` 的视图类。
+
+## 视图类
+
+ `DJESiteBaseView` 和 `DJESiteAjaxView` 均直接继承自 `View`， 并共同实现了部分逻辑。
+
+- `get_site_object` 在处理响应请求时通过该方法获取绑定的 `DJESite` 对象。
+
+### 后端视图类
+
+ `DJESiteBaseView` 是所有后端视图类的基类 ，页面渲染时向模板传入下列数据。
 
 | 模板              | 变量名称   | 类型                                       | 说明         |
 | ----------------- | ---------- | ------------------------------------------ | ------------ |
@@ -16,21 +43,13 @@
 
 其他模板页面均继承 *{theme}/base.html* 。
 
-## 路由
+### 前端视图类
 
-DJESite 内置包含下列路由：
+`DJESiteAjaxView` 是所有前端视图类的基类。
 
-| 路由                         | 视图类                 | 视图名称          |
-| ---------------------------- | ---------------------- | ----------------- |
-| ''                           | DJESiteHomeView        | dje_home          |
-| 'list/'                      | DJESiteListView        | dje_list          |
-| 'chart/<slug:name>/'         | DJESiteDetailView      | dje_detail        |
-| 'chart/<slug:name>/options/' | DJSiteChartOptionsView | dje_chart_options |
-| 'about/'                     | DJESiteAboutView       | dje_about         |
+## 接口方法
 
-## 视图类与接口
-
-可继承类重写的方法均以 *dje_* 开头。
+所有接口方法均以 *dje_* 开头。
 
 ### DJESiteBaseView
 
@@ -59,7 +78,7 @@ class DJESiteAjaxView(View):
 
 **dje_post**
 
-处理Ajax请求的基础类。
+处理Ajax请求的基础类。可以通过 `kwargs.get('site')` 获取当前绑定的Site对象。 
 
 ### DJESite
 

@@ -2,7 +2,8 @@
 
 
 from pyecharts import options as opts
-from pyecharts.charts import Bar, Kline, Map, Pie, WordCloud, Timeline
+from pyecharts.charts import Bar, Line, Map, Pie, WordCloud, Timeline, Map3D
+from pyecharts.globals import ChartType
 
 
 class ChartFactory:
@@ -38,53 +39,22 @@ def create_simple_bar():
     return bar
 
 
-@FACTORY.collect('kline')
-def create_simple_kline():
+@FACTORY.collect('line')
+def create_line():
     data = [
-        [2320.26, 2320.26, 2287.3, 2362.94],
-        [2300, 2291.3, 2288.26, 2308.38],
-        [2295.35, 2346.5, 2295.35, 2345.92],
-        [2347.22, 2358.98, 2337.35, 2363.8],
-        [2360.75, 2382.48, 2347.89, 2383.76],
-        [2383.43, 2385.42, 2371.23, 2391.82],
-        [2377.41, 2419.02, 2369.57, 2421.15],
-        [2425.92, 2428.15, 2417.58, 2440.38],
-        [2411, 2433.13, 2403.3, 2437.42],
-        [2432.68, 2334.48, 2427.7, 2441.73],
-        [2430.69, 2418.53, 2394.22, 2433.89],
-        [2416.62, 2432.4, 2414.4, 2443.03],
-        [2441.91, 2421.56, 2418.43, 2444.8],
-        [2420.26, 2382.91, 2373.53, 2427.07],
-        [2383.49, 2397.18, 2370.61, 2397.94],
-        [2378.82, 2325.95, 2309.17, 2378.82],
-        [2322.94, 2314.16, 2308.76, 2330.88],
-        [2320.62, 2325.82, 2315.01, 2338.78],
-        [2313.74, 2293.34, 2289.89, 2340.71],
-        [2297.77, 2313.22, 2292.03, 2324.63],
-        [2322.32, 2365.59, 2308.92, 2366.16],
-        [2364.54, 2359.51, 2330.86, 2369.65],
-        [2332.08, 2273.4, 2259.25, 2333.54],
-        [2274.81, 2326.31, 2270.1, 2328.14],
-        [2333.61, 2347.18, 2321.6, 2351.44],
-        [2340.44, 2324.29, 2304.27, 2352.02],
-        [2326.42, 2318.61, 2314.59, 2333.67],
-        [2314.68, 2310.59, 2296.58, 2320.96],
-        [2309.16, 2286.6, 2264.83, 2333.29],
-        [2282.17, 2263.97, 2253.25, 2286.33],
-        [2255.77, 2270.28, 2253.31, 2276.22],
+        ['1992年\n阿尔贝维尔', 0, 3, 0], ['1994年\n利勒哈默', 0, 1, 2], ['1998年\n长野', 0, 6, 2], ['2002年\n盐湖城', 2, 2, 4],
+        ['2006年\n都灵', 2, 4, 5], ['2010年\n温哥华', 5, 2, 4], ['2014年\n索契', 3, 4, 2], ['2018年\n平昌', 1, 6, 2],
     ]
-
-    kline = (
-        Kline()
-            .add_xaxis(["2017/7/{}".format(i + 1) for i in range(31)])
-            .add_yaxis("kline", data)
-            .set_global_opts(
-            yaxis_opts=opts.AxisOpts(is_scale=True),
-            xaxis_opts=opts.AxisOpts(is_scale=True),
-            title_opts=opts.TitleOpts(title="Kline-基本示例"),
-        )
-    )
-    return kline
+    years, gnums, snums, cnums = [], [], [], []
+    for item in data:
+        years.append(item[0])
+        gnums.append(item[1])
+        snums.append(item[2])
+        cnums.append(item[3])
+    line = Line().add_xaxis(years).add_yaxis(
+        '金牌', gnums).add_yaxis('银牌', snums).add_yaxis('铜牌', cnums).set_global_opts(
+        title_opts=opts.TitleOpts(title="中国历年冬奥会奖牌榜"))
+    return line
 
 
 @FACTORY.collect('map')
@@ -190,3 +160,53 @@ def create_timeline_bar():
         )
         tl.add(bar, "{}年".format(year))
     return tl
+
+
+@FACTORY.collect('map_3d')
+def create_map_3d():
+    example_data = [
+        [[119.107078, 36.70925, 1000], [116.587245, 35.415393, 1000]],
+        [[117.000923, 36.675807], [120.355173, 36.082982]],
+        [[118.047648, 36.814939], [118.66471, 37.434564]],
+        [[121.391382, 37.539297], [119.107078, 36.70925]],
+        [[116.587245, 35.415393], [122.116394, 37.509691]],
+        [[119.461208, 35.428588], [118.326443, 35.065282]],
+        [[116.307428, 37.453968], [115.469381, 35.246531]],
+    ]
+    c = (
+        Map3D()
+            .add_schema(
+            maptype="山东",
+            itemstyle_opts=opts.ItemStyleOpts(
+                color="rgb(5,101,123)",
+                opacity=1,
+                border_width=0.8,
+                border_color="rgb(62,215,213)",
+            ),
+            light_opts=opts.Map3DLightOpts(
+                main_color="#fff",
+                main_intensity=1.2,
+                is_main_shadow=False,
+                main_alpha=55,
+                main_beta=10,
+                ambient_intensity=0.3,
+            ),
+            view_control_opts=opts.Map3DViewControlOpts(center=[-10, 0, 10]),
+            post_effect_opts=opts.Map3DPostEffectOpts(is_enable=False),
+        )
+            .add(
+            series_name="",
+            data_pair=example_data,
+            type_=ChartType.LINES3D,
+            effect=opts.Lines3DEffectOpts(
+                is_show=True,
+                period=4,
+                trail_width=3,
+                trail_length=0.5,
+                trail_color="#f00",
+                trail_opacity=1,
+            ),
+            linestyle_opts=opts.LineStyleOpts(is_show=False, color="#fff", opacity=0),
+        )
+            .set_global_opts(title_opts=opts.TitleOpts(title="Map3D-Lines3D")))
+    return c

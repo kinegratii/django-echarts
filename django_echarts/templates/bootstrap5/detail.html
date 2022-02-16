@@ -16,17 +16,23 @@
             <div class="page-header">
                 <h2>{{ title }}</h2>
             </div>
-            {% if chart_info.description %}
-                <div class="well well-sm">{{ chart_info.description }}</div>
-            {% endif %}
-            {% if chart_info.tags %}
-                <div class="clearfix">
-                    {% for tag in chart_info.tags %}
-                        <span class="badge">{{ tag }}</span>
-                    {% endfor %}
-                </div>
+        <hr/>
 
-            {% endif %}
+            <table class="table table-bordered">
+                <tr>
+                    <td>描述</td>
+                    <td>{{ chart_info.description }}</td>
+                </tr>
+                {% if chart_info.tags %}
+                    <tr>
+                        <td>标签</td>
+                        <td> {% for tag in chart_info.tags %}
+                            <span class="badge bg-secondary">{{ tag }}</span>
+                        {% endfor %}</td>
+                    </tr>
+                {% endif %}
+            </table>
+
             <br/>
             {% echarts_container chart_obj %}
 

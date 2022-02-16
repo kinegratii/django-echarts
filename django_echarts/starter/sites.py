@@ -9,6 +9,7 @@ from django.urls import reverse_lazy, path
 from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 
 from django_echarts.core.charttools import DJEChartInfo, LocalChartManager, ChartManagerMixin
+from django_echarts.core.exceptions import DJEAbortException
 from django_echarts.core.themes import get_theme, Theme
 from django_echarts.utils.compat import get_elided_page_range
 from .widgets import Nav, LinkItem, Jumbotron, Copyright
@@ -25,12 +26,6 @@ def ttn(template_name: str, theme: str = None) -> str:
         return theme_template_name
     else:
         return theme_template_name.format(theme=theme)
-
-
-class DJEAbortException(BaseException):
-    def __init__(self, message: str):
-        self.message = message
-        super().__init__(message)
 
 
 class DJESiteBaseView(TemplateResponseMixin, ContextMixin, View):
@@ -255,6 +250,7 @@ class SiteOpts:
     list_layout: Literal['grid', 'list'] = 'list'
     paginate_by: Optional[int] = None
     detail_tags_position: Literal['none', 'top', 'bottom'] = 'top'
+    detail_sidebar_shown: bool = True
 
 
 class DJESite:

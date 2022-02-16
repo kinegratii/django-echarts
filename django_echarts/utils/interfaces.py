@@ -1,12 +1,11 @@
 # coding=utf8
 """
 A interface module for pyecharts.
-In the practice, pyecharts should not be explicitly imported.
 """
-import os
-from datetime import datetime, date, time
 import json
+from datetime import datetime, date, time
 from functools import singledispatch
+
 from pyecharts.charts.base import default as json_encode_func
 from pyecharts.commons.utils import OrderedSet
 

@@ -33,7 +33,7 @@ TEMPLATES = [
 ]
 ```
 
-## 标签列表
+## 标签库-echarts
 
 ### echarts_container
 
@@ -52,14 +52,23 @@ django_echarts.templatetags.echarts.echarts_js_dependencies(*args)
 ### echarts_js_content
 
 ```python
-django_echarts.templates.echarts.echarts_js_content(*echarts_list)
+django_echarts.templatetags.echarts.echarts_js_content(*echarts_list)
 ```
 渲染图表初始js代码，支持多图表。包含首尾的 `<script></script>` 标签。
 
 ### echarts_js_content_wrap
 
 ```python
-django_echarts.templates.echarts.echarts_js_content_wrap(*echarts_list)
+django_echarts.templatetags.echarts.echarts_js_content_wrap(*echarts_list)
 ```
 
 渲染图表初始js代码，支持多图表。不包含首尾的 `<script></script>` 标签。
+
+## 标签库-dje
+
+### page_link
+
+```
+django_echarts.templatetags.dje.page_link(context, page_number)
+```
+

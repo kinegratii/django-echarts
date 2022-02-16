@@ -6,6 +6,8 @@
 - 优化列表页分页组件
 - 新增支持Bootstrap5框架
 - 新增查看echarts图表options功能
+- 新增支持pyecharts在线地图
+- 新增支持3D图表
 
 ## v0.5.0b1 - (20220212)
 

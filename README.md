@@ -199,4 +199,4 @@ python manage.py runserver 127.0.0.1:8000
 
 ## 开源协议
 
-项目基于 MIT开源协议，欢迎提交 Issue & Pull request 。
+MIT License

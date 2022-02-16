@@ -5,7 +5,9 @@ A Implement that you can use host name instead of its url.
 import warnings
 from collections import defaultdict, namedtuple
 from dataclasses import dataclass, is_dataclass, field
-from typing import Optional, Dict, Union, List
+from typing import Optional, Dict, Union, List, Callable
+
+from pyecharts.datasets import FILENAMES as MAP_FILENAME_DICT
 
 __all__ = ['DependencyManager', 'DJEOpts', 'SettingsStore']
 
@@ -17,18 +19,28 @@ BUILTIN_LIB_REPOS = {
 }
 
 BUILTIN_MAP_REPOS = {
-    'pyecharts': 'https://assets.pyecharts.org/assets/maps/',
+    'pyecharts': 'https://assets.pyecharts.org/assets/',
     'china-provinces': 'https://echarts-maps.github.io/echarts-china-provinces-js/',
     'china-cities': 'https://echarts-maps.github.io/echarts-china-cities-js/',
     'united-kingdom': 'https://echarts-maps.github.io/echarts-united-kingdom-js'
 }
+
+
+def _resolve_pyecharts_map_dep(dep_name: str):
+    if dep_name in MAP_FILENAME_DICT:
+        return MAP_FILENAME_DICT[dep_name][0]
+    else:
+        return dep_name
+
+
 _CUSTOM_D2U_MAP = {
-    '#pyecharts': {'echarts': '@echarts.min'},
+    '#pyecharts': {'echarts': '@echarts.min', 'echarts-gl': '@echarts-gl.min'},
+    'echarts-gl': 'https://assets.pyecharts.org/assets/echarts-gl.min.js'
 }
 
 ECHARTS_LIB_NAMES = [
     'echarts.common', 'echarts.common.min',
-    'echarts', 'echarts.min',
+    'echarts', 'echarts.min', 'echarts-gl', 'echarts-gl.min',
     'echarts.simple', 'echarts.simple.min',
     'extension/bmap', 'extension/bmap.min',
     'extension/dataTool', 'extension/dataTool.min'
@@ -74,6 +86,7 @@ class DependencyManager:
         self._global_f2map = {}
         self._selected_lib_repo = lib_repo
         self._selected_map_repo = map_repo
+        self._dep_call_dict = {}
 
     def add_repo(self, repo_name: str, repo_url: str, catalog: str):
         self._repo_dic[catalog].update({repo_name: repo_url})
@@ -86,6 +99,9 @@ class DependencyManager:
             # global
             assert isinstance(value, str)
             self._global_f2map[dep_name] = value
+
+    def add_dep_call(self, repo_name: str, call: Callable):
+        self._dep_call_dict[repo_name] = call
 
     def load_from_d2u_dict(self, d2u_dic: dict):
         for k, v in d2u_dic.items():  # TODO sorted
@@ -124,6 +140,10 @@ class DependencyManager:
             if vurl:
                 return _format_static_url(vurl, self._context)
             dep_name = vdep
+        else:
+            func_key = f'{repo_name}.{catalog}'
+            if func_key in self._dep_call_dict:
+                dep_name = self._dep_call_dict[func_key](dep_name)
         filename = d2f(dep_name)
         url_fmt = self._repo_dic[catalog].get(repo_name).rstrip('/')
         return '{}/{}'.format(url_fmt.format(**self._context), filename)
@@ -176,6 +196,7 @@ class DependencyManager:
         for name, url in BUILTIN_MAP_REPOS.items():
             manager.add_repo(name, url, catalog='map')
         manager.load_from_d2u_dict(_CUSTOM_D2U_MAP)
+        manager.add_dep_call('pyecharts.map', _resolve_pyecharts_map_dep)
         return manager
 
 

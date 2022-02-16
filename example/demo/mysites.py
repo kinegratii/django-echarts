@@ -4,7 +4,8 @@ from .demo_data import FACTORY
 
 site_obj = DJESite(
     site_title='图表可视化',
-    theme='bootstrap3.cerulean',
+    # theme='bootstrap3.cerulean',
+    theme='bootstrap5',
     # theme='material',
     opts=SiteOpts(
         list_layout='grid',
@@ -25,9 +26,9 @@ def my_cloud():
     return FACTORY.create('word_cloud')
 
 
-@site_obj.register_chart
-def my_kline():
-    return FACTORY.create('kline')
+@site_obj.register_chart(title='中国历年冬奥会奖牌榜', description='中国历年冬奥会奖牌榜')
+def line_demo():
+    return FACTORY.create('line')
 
 
 @site_obj.register_chart(name='c1', title='福建省各地市面积', description='福建省各地市面积排行', catalog='福建统计', tags=['年度'], top=True)
@@ -40,6 +41,11 @@ def my_pie():
     return FACTORY.create('pie')
 
 
-@site_obj.register_chart(name='fj_family_types', title='福建历年家庭结构组成', description='福建历年家庭结构组成', catalog='福建统计')
+@site_obj.register_chart(title='3D地图', description='山东省迁移地图', catalog='图表示例')
+def map_3d():
+    return FACTORY.create('map_3d')
+
+
+@site_obj.register_chart(name='fj_family_types', title='福建历年家庭结构组成', description='一人户到十人户各占比例', catalog='福建统计')
 def fj_family_types():
     return FACTORY.create('timeline_bar')
