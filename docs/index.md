@@ -12,12 +12,11 @@ django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts
 - 支持 90%+的pyecharts图表类型
 - 可显示页面：主页 / 列表 / 详情 / 关于
 - 可支持组件：导航栏 / 网站底部栏 / 热门板块 / 列表 / 关于面板 
-- UI主题：Bootstrap3 / Bootstrap5 / Material
-- 支持更换主题的颜色模式
+- UI主题：Bootstrap3 / Bootstrap5 / Material ，支持更换颜色模式
 - 可灵活扩展: 支持整合 Django用户认证 / 数据库 / Session 
 - 基于Django Template Engine 的后端渲染
 - js/css静态文件托管，支持在线/本地切换
-- 生产力工具：代码生成器
+- 生产力工具：代码生成器 / 静态文件下载器
 - 90%+ Python Typing Hints覆盖
 
 ## 安装
@@ -27,8 +26,6 @@ django-echarts包运行环境要求如下：
 | django-echarts版本系列 | pyecharts | django | python | 备注 |
 | ------ | ------ | ------ | ----- | ----- |
 | 0.5.x | 1.9+ | 2.0+ | 3.7+ | 开发维护中 |
-
-> 注意：django-echarts v0.3.x 不再维护。
 
 可以使用 pip 命令安装。
 

@@ -4,8 +4,6 @@
 
 django-echarts 实现了与 pyecharts 功能上相似的模板标签，均定义在 `django_echarts.templatetags.echarts` 包。
 
-> 模板基于DTE，而不是 jinja2。
-
 在使用之前需要先行导入，有两种方式。
 
 - 在每个模板文件使用 `{% laod echarts %}` 导入。

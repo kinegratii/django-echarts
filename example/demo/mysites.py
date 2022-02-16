@@ -1,11 +1,12 @@
+from django_echarts.core.charttools import NamedCharts
 from django_echarts.starter.sites import DJESite, SiteOpts
 from django_echarts.starter.widgets import Jumbotron, Copyright, LinkItem
 from .demo_data import FACTORY
 
 site_obj = DJESite(
     site_title='图表可视化',
-    # theme='bootstrap3.cerulean',
     theme='bootstrap5',
+    # theme='bootstrap3.paper',
     # theme='material',
     opts=SiteOpts(
         list_layout='grid',
@@ -48,4 +49,14 @@ def map_3d():
 
 @site_obj.register_chart(name='fj_family_types', title='福建历年家庭结构组成', description='一人户到十人户各占比例', catalog='福建统计')
 def fj_family_types():
+    print('===')
     return FACTORY.create('timeline_bar')
+
+
+@site_obj.register_chart(name='named_charts', title='NamedCharts示例', description='使用NamedCharts', catalog='图表示例')
+def named_charts():
+    page = NamedCharts(page_title='复合图表', col_num=2)
+    page.add_chart(FACTORY.create('pie'), 'pie')
+    page.add_chart(FACTORY.create('bar'), 'bar')
+    page.adapt_layout()
+    return page

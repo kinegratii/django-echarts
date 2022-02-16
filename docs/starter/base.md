@@ -39,11 +39,6 @@ site_obj.add_widgets(
 | theme      | str          | 内置 bootstrap3/bootstrap3.cerulean/bootstrap5/material四个主题 |
 | opts       | SiteOpts     | 选项类                                                       |
 
-
-> 如果参数或变量和python内置函数的名称相同，将在最后加下划线以示区分。
-
-
-
 ### 导航栏(Nav)
 
 顶部导航栏是一个有二级菜单的导航功能，下列的菜单项默认已添加：
@@ -176,19 +171,41 @@ def mychart():
     return bar
 ```
 
+### 缓存图表
+
+对于使用固定静态数据构建的图表，可以通过 `functools.lru_cache`  装饰器缓存 pyecharts 图表对象，以提高执行效率。
+
+```python
+from functools import lru_cache
+
+@site_obj.register_chart(description='词云示例', catalog='示例一')
+@lru_cache
+def mychart():
+    bar = Bar()
+    # ...
+    return bar
+```
+
+### 图表标签
+
+使用 `DJEChartInfo.tags` 可以传入若干个文字标签。列表搜索功能时，标签也是搜索范围。
+
 ### register_chart
 
-`DJESite.register_chart` 用于注册新的图表函数，接受下列可选参数：
+`DJESite.register_chart` 接受下列可选参数：
 
-| 参数名称    | 类型           | 说明                                           |
-| ----------- | -------------- | ---------------------------------------------- |
-| info        | `DJEChartInfo` | 如果有设置此项，忽略后面的单独参数             |
-| name        | str            | 图表标识符，如果不指定，将使用所装饰函数的名称 |
-| title       | str            | 图表标题                                       |
-| description | str            | 描述                                           |
-| top         | int            | 置顶标志，0表示不置顶，数值越小，越靠前。      |
-| catalog     | str            | 分类，如果设置，将在顶部导航栏使用下拉列表显示 |
-| tags        | List[str]      | 标签列表                                       |
+| 参数名称        | 类型           | 说明                                           |
+| --------------- | -------------- | ---------------------------------------------- |
+| **图表参数**    |                |                                                |
+| info            | `DJEChartInfo` | 如果有设置此项，忽略后面单独的图表参数         |
+| name            | str            | 图表标识符，如果不指定，将使用所装饰函数的名称 |
+| title           | str            | 图表标题                                       |
+| description     | str            | 描述                                           |
+| top             | int            | 置顶标志，0表示不置顶，数值越小，越靠前。      |
+| tags            | List[str]      | 标签列表                                       |
+| **菜单参数**    |                |                                                |
+| catalog         | str            | 分类，如果设置，将在顶部导航栏使用下拉列表显示 |
+| after_separator | bool           | 是否在菜单项前使用分隔符                       |
 
 ## SiteOpts选项类
 

@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 table.add_row([resource.repo_name, resource.url])
         self.stdout.write(f'DependencyName:{dep_name}')
         self.stdout.write(f'Catalog:{catalog}')
-        table.add_autoindex('Order')
+        table.add_autoindex('No.')
         self.stdout.write(str(table))
 
     def _list_all_repos(self):

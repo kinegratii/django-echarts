@@ -5,6 +5,7 @@
 - 列表页面支持关键字搜索
 - 优化列表页分页组件
 - 新增支持Bootstrap5框架
+- 新增内置支持 Bootstrap框架的16个调色主题
 - 新增查看echarts图表options功能
 - 新增支持pyecharts在线地图
 - 新增支持3D图表

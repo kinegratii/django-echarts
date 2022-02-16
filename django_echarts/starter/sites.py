@@ -70,6 +70,7 @@ class DJESiteBaseView(TemplateResponseMixin, ContextMixin, View):
         site = kwargs.get('site')  # type: DJESite
         context['nav'] = site.nav
         context['site_title'] = site.site_title
+        context['page_title'] = site.site_title
         context['copyright'] = site.widgets.get('copyright')
         # select a theme
         theme = site.dje_get_current_theme(self.request)
@@ -209,6 +210,7 @@ class DJESiteDetailView(DJESiteBaseView):
                 if func:
                     chart_obj = func()
                 if chart_obj:
+                    chart_obj.width = '100%'
                     context['chart_info'] = info
                     context['chart_obj'] = chart_obj
                     context['title'] = self.get_dje_page_title(name=info.name, title=info.title)
@@ -327,9 +329,11 @@ class DJESite:
 
     # Register function and views class
     def register_chart(self, function=None, *, info: DJEChartInfo = None, name: str = None, title: str = None,
-                       description: str = None, top: int = 0, catalog: str = None, tags: List = None):
+                       description: str = None, top: int = 0, catalog: str = None, tags: List = None,
+                       after_separator: bool = False):
         """Register chart function."""
 
+        # TODO Add support lru_cache
         def decorator(func):
             cname = name or func.__name__
             url = reverse_lazy('dje_detail', args=(cname,))
@@ -344,7 +348,8 @@ class DJESite:
                 self.nav.add_menu(text=catalog)
                 self.nav.add_item(
                     menu_text=catalog,
-                    item=LinkItem(text=title or cname, url=url, slug=cname)
+                    item=LinkItem(text=title or cname, url=url, slug=cname),
+                    after_separator=after_separator
                 )
             return func
 
@@ -382,8 +387,3 @@ class DJESite:
     def dje_get_urls(self) -> List:
         """Custom you url routes here."""
         pass
-
-
-def default_site() -> DJESite:
-    """Create site using project settings."""
-    pass

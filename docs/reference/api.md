@@ -1,4 +1,4 @@
-# API参考
+# 视图和模板
 
 本节介绍了 django-echarts中主要的API信息，包括：
 
@@ -35,7 +35,7 @@ DJESite 内置包含下列路由：
 
 | 模板              | 变量名称   | 类型                                       | 说明         |
 | ----------------- | ---------- | ------------------------------------------ | ------------ |
-| {theme}/base.html | site_title | `str`                                      | 网站标题     |
+| {theme}/base.html | page_title | `str`                                      | 网站标题     |
 |                   | theme      | `django_echarts.core.themes.Theme`         | 主题名称     |
 |                   | opts      | `django_echarts.starter.sites.SiteOpts`     | 选项对象     |
 |                   | nav        | `django_echarts.starter.widgets.Nav`       | 顶部导航栏   |
@@ -49,7 +49,7 @@ DJESite 内置包含下列路由：
 
 ## 接口方法
 
-所有接口方法均以 *dje_* 开头。
+所有可重写的接口方法均以 *dje_* 开头。
 
 ### DJESiteBaseView
 
@@ -78,7 +78,10 @@ class DJESiteAjaxView(View):
 
 **dje_post**
 
-处理Ajax请求的基础类。可以通过 `kwargs.get('site')` 获取当前绑定的Site对象。 
+处理Ajax请求的基础类，并实现以下特性：
+
+- 可以通过 `kwargs.get('site')` 获取当前绑定的DJESite对象。
+- 直接返回 list 或者 dict 对象即可，无需直接返回 `JSONResponse`。
 
 ### DJESite
 
@@ -126,7 +129,7 @@ class DJESite:
 | 模板                             | 变量名称         | 类型                         | 说明                           |
 | -------------------------------- | ---------------- | ---------------------------- | ------------------------------ |
 | {theme}/list_with_paginator.html | page_obj         | `django.core.paginator.Page` | django构建的分页对象。         |
-|                                  | elided_page_nums | List[Union[int, str]]        | 页码列举。                   |
+|                                  | elided_page_nums | List[Union[int, str]]        | 省略形式的页码列表。                   |
 
 说明：
 

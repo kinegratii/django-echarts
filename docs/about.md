@@ -1,4 +1,4 @@
-# 关于
+# 关于(About)
 
 ## 贡献者
 
@@ -6,29 +6,38 @@
 | ---- | ---- |
 | Samuel.Yan |  [https://github.com/kinegratii](https://github.com/kinegratii) |
 
+## 资源
+
+本项目参考或者引用了下列资源：
+
+- django: [https://www.djangoproject.com/](https://www.djangoproject.com/)
+- pyecharts: [https://pyecharts.org/](https://pyecharts.org/)
+- pyecharts-asserts [https://github.com/pyecharts/pyecharts-assets](https://github.com/pyecharts/pyecharts-assets)
+- echarts: [https://echarts.apache.org/zh/index.html](https://echarts.apache.org/zh/index.html)
+- PrettyTable: [https://github.com/jazzband/prettytable](https://github.com/jazzband/prettytable)
+- Bootstrap5: [https://v5.bootcss.com/](https://v5.bootcss.com/)
+- Bootstrap3调色css: [ https://bootswatch.com/3/]( https://bootswatch.com/3/)
+- Bootstrap5调色css: [ https://bootswatch.com/](https://bootswatch.com/)
+- materialcss: [https://materializecss.com/](https://materializecss.com/)
+- cdnjs: [https://cdnjs.com/](https://cdnjs.com/)
+
+## 参与开发
+
+在参与开发之前，您必须确保：
+
+- 掌握 Python Typing Hints 相关内容
+- 熟悉Django框架的有关内容，包括但不限于路由、模板系统、CBV等
+- 熟悉pyecharts库的功能，以及核心实现逻辑
+
+## 开发方向
+
+- 【图表类型】支持更多的图表类型，如组合图表、时序图表等。
+- 【模板引擎】目前仅使用DTE渲染HTML页面，希望兼容jinja2模板引擎，这样完全可以利用pyecharts的相关逻辑。
+- 【数据处理】基于 Django Model的数据预处理。
+- 【UI框架扩展标准】通过进一步抽象UI框架渲染逻辑，使得能够更好地支持现有的其他主流UI框架。
+- 【版本特性兼容】关注Django和pyecharts的重大版本更新，能够兼容更多的版本组合。
+
 ## 开源协议
 
-```text
 MIT License
 
-Copyright (c) 2017-2022
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-```

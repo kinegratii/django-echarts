@@ -4,7 +4,7 @@
 import unittest
 import random
 
-from django_echarts.datasets.section_counter import BValueIndex, BRangeIndex, BSectionIndex, BSectionCounter
+from django_echarts.datatools.section_counter import BValueIndex, BRangeIndex, BSectionIndex, BSectionCounter
 
 
 class BRangeIndexTestCase(unittest.TestCase):

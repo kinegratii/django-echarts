@@ -3,7 +3,7 @@
 
 {% block main_content %}
     <div class="row">
-        <div class="col-xs-6 col-sm-2" id="sidebar">
+        <div class="col-md-2 .hidden-sm">
             <div class="list-group">
                 {% for item in menu %}
                     <a href="{% url view_name item.name %}"
@@ -11,12 +11,11 @@
                 {% endfor %}
             </div>
         </div>
-        <!--/.sidebar-offcanvas-->
-        <div class="col-xs-12 col-sm-10">
+        <div class="col-md-10 col-sm-12">
             <div class="page-header">
                 <h2>{{ title }}</h2>
             </div>
-        <hr/>
+            <hr/>
 
             <table class="table table-bordered">
                 <tr>
@@ -34,7 +33,9 @@
             </table>
 
             <br/>
-            {% echarts_container chart_obj %}
+            <div>
+                {% echarts_container chart_obj %}
+            </div>
 
         </div>
         <!--/.col-xs-12.col-sm-9-->

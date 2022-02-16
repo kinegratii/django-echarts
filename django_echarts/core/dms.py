@@ -35,6 +35,7 @@ def _resolve_pyecharts_map_dep(dep_name: str):
 
 _CUSTOM_D2U_MAP = {
     '#pyecharts': {'echarts': '@echarts.min', 'echarts-gl': '@echarts-gl.min'},
+    'echarts': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/4.8.0/echarts.min.js',
     'echarts-gl': 'https://assets.pyecharts.org/assets/echarts-gl.min.js'
 }
 

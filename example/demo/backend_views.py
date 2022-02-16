@@ -3,7 +3,7 @@ from pyecharts import options as opts
 from pyecharts.charts import Line, Bar
 
 from demo import models
-from django_echarts.datasets.charts import NamedCharts
+from django_echarts.core.charttools import NamedCharts
 from django_echarts.views import EChartsBackendView, SimpleChartBDView, MultipleChartsBDView, SelectOneChartBDView, \
     as_chart
 from .demo_data import FACTORY

@@ -4,7 +4,7 @@
 from django.db import models
 from django.utils import timezone
 
-from django_echarts.zinc.managers import AxisValuesQuerySet
+from django_echarts.datatools.managers import AxisValuesQuerySet
 
 
 class Device(models.Model):

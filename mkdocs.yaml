@@ -12,21 +12,20 @@ markdown_extensions:
 nav:
   - 快速开始: index.md
   - 可视化构建:
-    - 基本设置:
+    - 基本功能:
       - 功能设置: starter/base.md
-      - UI框架和主题: guides/customize_theme.md
-    - 高级功能:
+      - UI框架和主题: starter/themes.md
       - 整合Django: guides/django_integration.md
-      - API参考: starter/reference.md
-  - 高级话题:
+    - 参考:
+      - 视图和模板: reference/api.md
+      - 模板标签库: reference/tags.md
+      - 命令行工具: reference/commands.md
+  - 图表构建:
+    - pyecharts图表开发: guides/charts.md
     - 配置: guides/configure.md
-    - 模板标签库: guides/tags.md
-    - 视图渲染: guides/views_renders.md
-    - 命令行工具: guides/commands.md
   - Gallery: gallery.md
   - 项目开发:
     - 更新日志: changelog.md
     - 关于项目: about.md
-    - 开发协作: development.md
     - 发布日志:
       - v0.5.0: release-note/v050.md

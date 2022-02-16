@@ -3,7 +3,7 @@
 
 from pyecharts import options as opts
 from pyecharts.charts import Bar, Line, Map, Pie, WordCloud, Timeline, Map3D
-from pyecharts.globals import ChartType
+from pyecharts.globals import ChartType,ThemeType
 
 
 class ChartFactory:

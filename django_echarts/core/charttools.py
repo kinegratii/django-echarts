@@ -1,12 +1,19 @@
+from collections import OrderedDict
 from typing import List, Optional
+
+from django_echarts.utils.interfaces import merge_js_dependencies
+
+
+class ChartsConstants:
+    AUTO_WIDTH = '100%'
 
 
 class DJEChartInfo:
     """The meta-data class for a chart."""
-    __slots__ = ['name', 'title', 'description', 'url', 'selected', 'parent_name', 'top', 'tags']
+    __slots__ = ['name', 'title', 'description', 'url', 'selected', 'parent_name', 'top', 'tags', 'extra']
 
     def __init__(self, name: str, title: str = None, description: str = None, url: str = None,
-                 selected: bool = False, parent_name: str = None, top: int = 0, tags=None):
+                 selected: bool = False, parent_name: str = None, top: int = 0, tags=None, extra=None):
         self.name = name
         self.title = title or self.name
         self.description = description or ''
@@ -15,6 +22,7 @@ class DJEChartInfo:
         self.top = top
         self.parent_name = parent_name
         self.tags = tags or []
+        self.extra = extra or {}
 
     def __hash__(self):
         return hash(self.name)
@@ -61,3 +69,75 @@ class LocalChartManager(ChartManagerMixin):
         for info in self._chart_info_list:
             if info.name == name:
                 return info
+
+
+class NamedCharts:
+    """
+    A data structure class containing multiple named charts.
+    """
+
+    def __init__(self, page_title: str = 'EChart', col_num: int = 1):
+        self.page_title = page_title
+        self._charts = OrderedDict()
+        self._col_num = col_num
+
+    @property
+    def col_num(self):
+        return self._col_num
+
+    def adapt_layout(self):
+        for _, chart in self._charts.items():
+            chart.width = '100%'
+
+    def add_chart(self, chart, name=None):
+        name = name or self._next_name()
+        self._charts[name] = chart
+        return self
+
+    def _next_name(self):
+        return 'c{}'.format(len(self))
+
+    # List-like feature
+
+    def __iter__(self):
+        for chart in self._charts.values():
+            yield chart
+
+    def __len__(self):
+        return len(self._charts)
+
+    # Dict-like feature
+
+    def __contains__(self, item):
+        return item in self._charts
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            # c[1], Just compatible with Page
+            return list(self._charts.values())[item]
+        return self._charts[item]
+
+    def __setitem__(self, key, value):
+        self._charts[key] = value
+
+    # Compatible
+
+    def add(self, achart_or_charts):
+        if not isinstance(achart_or_charts, (list, tuple, set)):
+            achart_or_charts = achart_or_charts,  # Make it a sequence
+        for c in achart_or_charts:
+            self.add_chart(chart=c)
+        return self
+
+    # Chart-like feature
+
+    @property
+    def js_dependencies(self):
+        return merge_js_dependencies(*self)
+
+    @classmethod
+    def from_charts(cls, *charts):
+        mc = cls()
+        for chart in charts:
+            mc.add_chart(chart)
+        return mc

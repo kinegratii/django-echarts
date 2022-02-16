@@ -1,6 +1,6 @@
 import os
 
-_pro_dir = os.path.dirname(str(__file__))
+_pro_dir = os.path.dirname(os.path.dirname(str(__file__)))
 
 
 def get_pyecharts_template_dir() -> str:
