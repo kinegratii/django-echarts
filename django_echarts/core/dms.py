@@ -5,9 +5,9 @@ A Implement that you can use host name instead of its url.
 import warnings
 from collections import defaultdict, namedtuple
 from dataclasses import dataclass, is_dataclass, field
-from typing import Optional, Dict, Union, List, Callable
+from typing import Optional, Dict, Union, List, Callable, Tuple
 
-from pyecharts.datasets import FILENAMES as MAP_FILENAME_DICT
+from pyecharts.datasets import FILENAMES, EXTRA
 
 __all__ = ['DependencyManager', 'DJEOpts', 'SettingsStore']
 
@@ -26,11 +26,18 @@ BUILTIN_MAP_REPOS = {
 }
 
 
-def _resolve_pyecharts_map_dep(dep_name: str):
-    if dep_name in MAP_FILENAME_DICT:
-        return MAP_FILENAME_DICT[dep_name][0]
-    else:
+def pyecharts_resolve_dep_name(dep_name):
+    if dep_name.startswith("https://api.map.baidu.com"):
         return dep_name
+    if dep_name in FILENAMES:
+        f, ext = FILENAMES[dep_name]
+        return "{}.{}".format(f, ext)
+    else:
+        for url, files in EXTRA.items():
+            if dep_name in files:
+                f, ext = files[dep_name]
+                return "{}.{}".format(f, ext)
+        return '{}.js'.format(dep_name)
 
 
 _CUSTOM_D2U_MAP = {
@@ -197,7 +204,7 @@ class DependencyManager:
         for name, url in BUILTIN_MAP_REPOS.items():
             manager.add_repo(name, url, catalog='map')
         manager.load_from_d2u_dict(_CUSTOM_D2U_MAP)
-        manager.add_dep_call('pyecharts.map', _resolve_pyecharts_map_dep)
+        manager.add_dep_call('pyecharts.map', pyecharts_resolve_dep_name)
         return manager
 
 
@@ -211,10 +218,23 @@ class DJEOpts:
     lib_local_dir: str = ''
     map_local_dir: str = ''
     file2map: Dict[str, str] = field(default_factory=dict)
+    enable_echarts_theme: bool = False
+
+    echarts_theme: Union[bool, str] = False
 
     def __post_init__(self):
         self.map_local_dir = self.map_local_dir or self.local_dir
         self.lib_local_dir = self.lib_local_dir or self.local_dir
+
+    def get_echarts_theme(self, echarts_theme) -> str:
+        if self.echarts_theme is False:
+            return ''
+        elif self.echarts_theme is True:
+            return echarts_theme
+        elif isinstance(self.echarts_theme, str):
+            return self.echarts_theme
+        else:
+            return ''
 
     @staticmethod
     def upgrade_dict(vals: dict):
@@ -271,6 +291,10 @@ class SettingsStore:
                 raise ValueError("The local_host item requires a no-empty settings.STATIC_URL.")
 
     # #### Public API: Generate js link using current configure ########
+
+    @property
+    def opts(self) -> DJEOpts:
+        return self._opts
 
     @property
     def dependency_manager(self) -> DependencyManager:

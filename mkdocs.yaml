@@ -22,6 +22,7 @@ nav:
       - 命令行工具: reference/commands.md
   - 图表构建:
     - pyecharts图表开发: guides/charts.md
+    - 依赖项和静态文件: guides/dms.md
     - 配置: guides/configure.md
   - Gallery: gallery.md
   - 项目开发:

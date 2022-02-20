@@ -49,3 +49,15 @@ def named_charts():
 - col_num 表示每行的图表个数，推荐设置1-3即可。在小屏幕上自动调整为一行一个。
 - adapt_layout 添加图表之后必须调用该方法以调整每个图表的宽度。
 
+## ECharts主题
+
+```
+DJEOpts.enable_echarts_theme:bool = False
+```
+
+django-echarts 支持 echarts 主题功能，为了减少主题资源加载，默认情况下不启用该功能。
+
+- 全局配置：enable_echarts_theme = False
+- 不会请求任何theme对应的javascript文件
+- echarts初始化不传入任何参数，即使 python代码`pycharts.options.InitOpts` 传入了主题参数
+

@@ -9,6 +9,7 @@
 - 新增查看echarts图表options功能
 - 新增支持pyecharts在线地图
 - 新增支持3D图表
+- 新增支持echarts主题
 
 ## v0.5.0b1 - (20220212)
 

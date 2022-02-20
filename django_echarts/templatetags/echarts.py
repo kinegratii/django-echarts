@@ -39,9 +39,13 @@ def _build_init_javascript(chart):
       var option_{chart_id} = {options};
       myChart_{chart_id}.setOption(option_{chart_id});
       '''
-    div_v_name = "div_{0}".format(chart.chart_id)
+    init_params = [
+        "div_{0}".format(chart.chart_id)
+    ]
+    if DJANGO_ECHARTS_SETTINGS.opts.enable_echarts_theme and chart.theme:
+        init_params.append(f'"{chart.theme}"')
     return content_fmt.format(
-        init_params=div_v_name,
+        init_params=','.join(init_params),
         chart_id=chart.chart_id,
         options=chart.dump_options_with_quotes()
     )
@@ -66,7 +70,7 @@ def echarts_container(context, *echarts):
 
 @register.simple_tag(takes_context=True)
 def echarts_js_dependencies(context, *args):
-    dependencies = merge_js_dependencies(*args)
+    dependencies = merge_js_dependencies(*args, enable_theme=DJANGO_ECHARTS_SETTINGS.opts.enable_echarts_theme)
     links = map(DJANGO_ECHARTS_SETTINGS.resolve_url, dependencies)
 
     return template.Template(

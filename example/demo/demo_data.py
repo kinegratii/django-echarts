@@ -5,6 +5,8 @@ from pyecharts import options as opts
 from pyecharts.charts import Bar, Line, Map, Pie, WordCloud, Timeline, Map3D
 from pyecharts.globals import ChartType,ThemeType
 
+from django_echarts.utils.interfaces import merge_js_dependencies
+
 
 class ChartFactory:
     def __init__(self):
@@ -31,7 +33,7 @@ FACTORY = ChartFactory()
 
 @FACTORY.collect('bar')
 def create_simple_bar():
-    bar = Bar().add_xaxis(["南平", "三明", "龙岩", "宁德", "漳州", "福州", "泉州", "莆田", "厦门"]).add_yaxis(
+    bar = Bar(init_opts=opts.InitOpts(theme=ThemeType.ROMANTIC)).add_xaxis(["南平", "三明", "龙岩", "宁德", "漳州", "福州", "泉州", "莆田", "厦门"]).add_yaxis(
         '面积', [26300, 22900, 19050, 13450, 12600, 12150, 11020, 4119, 1576]
     ).set_global_opts(
         title_opts=opts.TitleOpts(title="福建省各地市面积排行", subtitle="单位：平方公里"))
@@ -44,6 +46,7 @@ def create_line():
     data = [
         ['1992年\n阿尔贝维尔', 0, 3, 0], ['1994年\n利勒哈默', 0, 1, 2], ['1998年\n长野', 0, 6, 2], ['2002年\n盐湖城', 2, 2, 4],
         ['2006年\n都灵', 2, 4, 5], ['2010年\n温哥华', 5, 2, 4], ['2014年\n索契', 3, 4, 2], ['2018年\n平昌', 1, 6, 2],
+        ['2022年\n北京', 9, 4, 2],
     ]
     years, gnums, snums, cnums = [], [], [], []
     for item in data:

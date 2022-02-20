@@ -39,7 +39,7 @@ def _flat(ele):
     return ele,
 
 
-def merge_js_dependencies(*chart_or_name_list):
+def merge_js_dependencies(*chart_or_name_list, enable_theme=False):
     front_required_items = ['echarts']
     front_optional_items = ['echartsgl']
     dependencies = []
@@ -56,6 +56,8 @@ def merge_js_dependencies(*chart_or_name_list):
     for d in chart_or_name_list:
         for _d in _flat(d):
             _add(_d)
+        if enable_theme and hasattr(d, 'theme'):
+            _add(d.theme)
     return front_required_items + [x for x in front_optional_items if x in fist_items] + dependencies
 
 
