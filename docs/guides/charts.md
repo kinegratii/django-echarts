@@ -9,7 +9,7 @@ django-echarts 的底层定位于 pyecharts 和 django 的整合库，主要代�
 | 模块           | 改造方法                                      |
 | -------------- | --------------------------------------------- |
 | 图表构建       | 90%以上可直接引用，部分不支持                 |
-| 静态文件引用   | 重新实现                                      |
+| 静态文件引用   | 扩展实现                                      |
 | 模板引擎       | 使用DTS重新实现，便于与其他第三方库进行整合。 |
 | web主题框架    | django-echarts新增                            |
 | 静态文件下载器 | django-echarts新增                            |
@@ -46,7 +46,7 @@ def named_charts():
 
 说明：
 
-- col_num 表示每行的图表个数，推荐设置1-3即可。在小屏幕上自动调整为一行一个。
+- col_num 表示每行的图表个数，推荐设置1-3即可。在小屏幕上将自动调整为每行一个。
 - adapt_layout 添加图表之后必须调用该方法以调整每个图表的宽度。
 
 ## ECharts主题
@@ -57,7 +57,7 @@ DJEOpts.enable_echarts_theme:bool = False
 
 django-echarts 支持 echarts 主题功能，为了减少主题资源加载，默认情况下不启用该功能。
 
-- 全局配置：enable_echarts_theme = False
+- 全局配置：`enable_echarts_theme = False`
 - 不会请求任何theme对应的javascript文件
-- echarts初始化不传入任何参数，即使 python代码`pycharts.options.InitOpts` 传入了主题参数
+- 前端 `echarts.init` 函数不传入任何主题参数，即使 python代码`pycharts.options.InitOpts` 传入了主题参数
 

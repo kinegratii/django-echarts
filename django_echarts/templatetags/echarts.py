@@ -38,6 +38,7 @@ def _build_init_javascript(chart):
       var myChart_{chart_id} = echarts.init({init_params});
       var option_{chart_id} = {options};
       myChart_{chart_id}.setOption(option_{chart_id});
+      window.addEventListener('resize',function(){{ myChart_{chart_id}.resize();}});
       '''
     init_params = [
         "div_{0}".format(chart.chart_id)

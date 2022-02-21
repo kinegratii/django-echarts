@@ -40,7 +40,7 @@ BOOTSTRAP5_PALETTES = [
 1 通过命令行下载文件。
 
 ```shell
-$ python manage.py download_theme bootstrap5.cerulean
+$ python manage.py download --theme bootstrap5.cerulean
 Download file bootstrap.min.css start!
 Download file bootstrap-icons.min.css start!
 Download file jquery.min.js start!
@@ -77,11 +77,11 @@ site_obj = DJESite(
 
 django-echarts还支持自定义UI框架的调色主题。
 
-以 bootstrap3为例，首先需要从 https://bootswatch.com/3/ 下载darkly对应调色的css文件，修改文件名称，放在static目录下。
+准备你的css文件，修改文件名称，放在static目录下。
 
 ```text
 |-- static
-    |-- bootstrap3.darkly.min.css
+    |-- bootstrap3.foo.min.css
 ```
 
 
@@ -93,7 +93,7 @@ from django_echarts.core.themes import install_theme
 
 # 只覆盖palette_css对应文件，其他文件还是使用bootstrap3默认的文件
 
-install_theme('bootstrap3.foo', {'palette_css': '/static/bootstrap3.darkly.min.css'})
+install_theme('bootstrap3.foo', {'palette_css': '/static/bootstrap3.foo.min.css'})
 
 site_obj = DJESite(
     site_title='图表可视化',

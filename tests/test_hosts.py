@@ -15,7 +15,7 @@ class DependencyManagerTestCase(unittest.TestCase):
         }
         manager = DependencyManager.create_default(
             context=m_context,
-            lib_repo='bootcdn',
+            repo_name='bootcdn',
         )
 
         self.assertEqual(
@@ -56,7 +56,7 @@ class CustomHostTestCase(unittest.TestCase):
 
         manager = DependencyManager.create_default(
             context=m_context,
-            map_repo='pyecharts'
+            repo_name='pyecharts'
         )
         manager.add_repo('demo', '/demo/', catalog='map')
         manager.add_repo('demo2', '/demo2/{echarts_version}', catalog='map')

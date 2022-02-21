@@ -1,8 +1,12 @@
+import os
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 
 def download_file(remote_url: str, local_path: str):
+    parent = os.path.dirname(local_path)
+    if not os.path.exists(parent):
+        os.mkdir(parent)
     filename = local_path.split('/')[-1]
     print(f'Download file {filename} start!')
     rsp = urllib.request.Request(

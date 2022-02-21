@@ -5,8 +5,6 @@ from pyecharts import options as opts
 from pyecharts.charts import Bar, Line, Map, Pie, WordCloud, Timeline, Map3D
 from pyecharts.globals import ChartType,ThemeType
 
-from django_echarts.utils.interfaces import merge_js_dependencies
-
 
 class ChartFactory:
     def __init__(self):

@@ -14,6 +14,7 @@
 - pyecharts: [https://pyecharts.org/](https://pyecharts.org/)
 - pyecharts-asserts [https://github.com/pyecharts/pyecharts-assets](https://github.com/pyecharts/pyecharts-assets)
 - echarts: [https://echarts.apache.org/zh/index.html](https://echarts.apache.org/zh/index.html)
+- borax: [https://github.com/kinegratii/borax](https://github.com/kinegratii/borax)
 - PrettyTable: [https://github.com/jazzband/prettytable](https://github.com/jazzband/prettytable)
 - Bootstrap5: [https://v5.bootcss.com/](https://v5.bootcss.com/)
 - Bootstrap3调色css: [ https://bootswatch.com/3/]( https://bootswatch.com/3/)

@@ -8,30 +8,23 @@ django-echarts 提供了一个包含若干个命令的 CLI 工具，这些命令
 python manage.py <command> -h
 ```
 
-## download
+## info - 下载器-查看
 
-```shell
-python manage.py download -h
-```
+```text
+E:\projects\django-echarts\example>python manage.py info -h
+usage: manage.py info [-h] [--dep DEP [DEP ...]] [--theme THEME] [--repo REPO] [--version] [-v {0,1,2,3}]
+                      [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color]
+                      [--skip-checks]
 
-## listdeps
-
-```shell
-E:\projects\django-echarts\example>python manage.py listdeps -h
-usage: manage.py deps [-h] [--repo_name REPO_NAME] [--fake] [--version] [-v {0,1,2,3}] [--settings SETTINGS]
-                      [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
-                      dep_name [dep_name ...]
-
-The manage command for dependency.
-
-positional arguments:
-  dep_name              The name of dependency files.
+Show one or some dependency files.
 
 optional arguments:
   -h, --help            show this help message and exit
-  --repo_name REPO_NAME
-                        The name of a repository.
-  --fake, -f            Just print download meta info and do not download..
+  --dep DEP [DEP ...], -d DEP [DEP ...]
+                        The name of dependency files.
+  --theme THEME, -t THEME
+                        The name of theme.
+  --repo REPO, -r REPO  The name of dependency repo.
   --version             show program's version number and exit
   -v {0,1,2,3}, --verbosity {0,1,2,3}
                         Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
@@ -45,39 +38,35 @@ optional arguments:
   --skip-checks         Skip system checks.
 ```
 
-### 查看所有仓库
+## download - 下载器-下载
 
-```
-E:\projects\django-echarts\example>python manage.py listdep
-+---------+-----------------+------------------------------------------------------------+
-| Catalog |     RepoName    |                          RepoUrl                           |
-+---------+-----------------+------------------------------------------------------------+
-|   lib   |    pyecharts    |            https://assets.pyecharts.org/assets/            |
-|   lib   |      cdnjs      |    https://cdnjs.cloudflare.com/ajax/libs/echarts/4.8.0    |
-|   lib   |      npmcdn     |            https://unpkg.com/echarts@4.8.0/dist            |
-|   lib   |     bootcdn     |           https://cdn.bootcss.com/echarts/4.8.0            |
-|   map   |    pyecharts    |         https://assets.pyecharts.org/assets/maps/          |
-|   map   | china-provinces | https://echarts-maps.github.io/echarts-china-provinces-js/ |
-|   map   |   china-cities  |  https://echarts-maps.github.io/echarts-china-cities-js/   |
-|   map   |  united-kingdom |  https://echarts-maps.github.io/echarts-united-kingdom-js  |
-+---------+-----------------+------------------------------------------------------------+
-```
+```text
+E:\projects\django-echarts\example>python manage.py download -h
+usage: manage.py download [-h] [--dep DEP [DEP ...]] [--theme THEME] [--repo REPO] [--override] [--version]
+                          [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color]
+                          [--force-color] [--skip-checks]
 
-### 查看某个依赖项
+Download one or some dependency files from remote CDN to project staticfile dirs.
 
-
-```
-E:\projects\django-echarts\example>python manage.py listdep --dep_name echarts --status
-DependencyName:echarts
-Catalog:lib
-+-------+-----------+-----------------------------------------------------------------+---------+
-| Order |  RepoName |                              DepUrl                             |  Status |
-+-------+-----------+-----------------------------------------------------------------+---------+
-|   1   | pyecharts |        https://assets.pyecharts.org/assets/echarts.min.js       | Success |
-|   2   |   cdnjs   | https://cdnjs.cloudflare.com/ajax/libs/echarts/4.8.0/echarts.js | Success |
-|   3   |   npmcdn  |         https://unpkg.com/echarts@4.8.0/dist/echarts.js         | Success |
-|   4   |  bootcdn  |         https://cdn.bootcss.com/echarts/4.8.0/echarts.js        | Success |
-+-------+-----------+-----------------------------------------------------------------+---------+
+optional arguments:
+  -h, --help            show this help message and exit
+  --dep DEP [DEP ...], -d DEP [DEP ...]
+                        The name of dependency files.
+  --theme THEME, -t THEME
+                        The name of theme.
+  --repo REPO, -r REPO  The name of dependency repo.
+  --override, -o
+  --version             show program's version number and exit
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+  --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided,
+                        the DJANGO_SETTINGS_MODULE environment variable will be used.
+  --pythonpath PYTHONPATH
+                        A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+  --traceback           Raise on CommandError exceptions
+  --no-color            Don't colorize the command output.
+  --force-color         Force colorization of the command output.
+  --skip-checks         Skip system checks.
 ```
 
 ## startsite

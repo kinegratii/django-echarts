@@ -45,7 +45,7 @@ django_echarts.templatetags.echarts.echarts_container(echarts_instance)
 ```python
 django_echarts.templatetags.echarts.echarts_js_dependencies(*args)
 ```
-渲染包含图表所需要的js文件的script一个或多个节点。
+渲染包含图表所需要的js文件的script一个或多个节点。该函数会对args里面的图表依赖项进行汇总去重。
 
 ### echarts_js_content
 

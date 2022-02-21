@@ -12,8 +12,7 @@ django-echarts 遵循统一配置的原则，所有的配置均定义在项目�
 ```python
 DJANGO_ECHARTS = {
     'echarts_version': '4.8.0',
-    'lib_repo': 'bootcdn',
-    'map_repo': 'pyecharts'
+    'dms_repo': 'pyecharts'
 }
 
 # 或者
@@ -22,8 +21,7 @@ from django_echarts.core.dms import DJEOpts
 
 DJANGO_ECHARTS = DJEOpts(
     echarts_version='4.8.0',
-    lib_repo='cdnjs',
-    map_repo='pyecharts',
+    dms_repo='pyecharts',
 )
 ```
 
@@ -37,42 +35,22 @@ DJEOpts.echarts_version: str = '4.8.0'
 
 echarts的版本，需根据 pyecharts 项目确定。
 
-### lib_repo
+### dms_repo
 
 ```python
-DJEOpts.lib_repo: str = 'cdnjs'
+DJEOpts.dms_repo: str = 'pyecharts'
 ```
 
-echarts库文件的远程CDN仓库。默认情况下，下列文件属于库文件，否则属于地图库文件。
-
-```
-[
-    'echarts.common', 'echarts.common.min',
-    'echarts', 'echarts.min',
-    'echarts.simple', 'echarts.simple.min',
-    'extension/bmap', 'extension/bmap.min',
-    'extension/dataTool', 'extension/dataTool.min'
-]
-```
+依赖文件的远程仓库。
 
 可选值如下：
 
 | repo_name | repo_url |
 | ---- | ---- |
 | pyecharts | https://assets.pyecharts.org/assets/ |
-| cdnjs | https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version} |
-| npmcdn | https://unpkg.com/echarts@{echarts_version}/dist |
-| local | 使用django静态文件托管 |
+| local | 使用django静态文件托管，需要通过下载器先下载到项目目录之下 |
 
 repo_url中echarts_version变量的值由 `DJEOpts.echarts_version` 确定。
-
-### map_repo
-
-```python
-DJEOpts.map_repo: str = 'pyecharts'
-```
-
-地图库文件的远程CDN仓库。
 
 可选值如下：
 
@@ -85,14 +63,6 @@ DJEOpts.map_repo: str = 'pyecharts'
 | local | 使用django静态文件托管 |
 
 ### local_dir
-
-略
-
-### lib_local_dir
-
-略
-
-### map_local_dir
 
 略
 
@@ -109,16 +79,7 @@ DJEOpts.file2map: Dict[str, Union[dict, str]]
 
 ### 基本规则
 
-django-echarts 单独实现了自己的静态文件映射模块。对于每一个pycharts图表，根据lib_repo/map_repo 的设置，引用相应的javascript文件。
-
-默认规则如下：
-
-```python
-def resolve_url(repo_url, dep_name):
-    return repo_url.format(echarts_version=opts.echarts_version) + dep_name + '.js'
-```
-
-例子：当lib_repo=“npmcdn” 时，名称为 echarts 的js_dependency 对应的文件url是  https://unpkg.com/echarts@4.8.0/dist/echarts.min.js。
+django-echarts 在pyecharts基础上实现静态文件映射规则。。
 
 ### 自定义映射规则
 

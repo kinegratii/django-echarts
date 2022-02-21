@@ -21,6 +21,7 @@ site_obj.add_widgets(
     copyright_=Copyright(start_year={{ start_year }}, powered_by='{{ powered_by }}')
 )
 
+
 @site_obj.register_chart
 def mychart():
     # Write your pyecharts here.
