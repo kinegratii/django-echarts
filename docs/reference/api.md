@@ -31,17 +31,7 @@ DJESite 内置包含下列路由：
 
 ### 后端视图类
 
- `DJESiteBaseView` 是所有后端视图类的基类 ，页面渲染时向模板传入下列数据。
-
-| 模板              | 变量名称   | 类型                                       | 说明         |
-| ----------------- | ---------- | ------------------------------------------ | ------------ |
-| {theme}/base.html | page_title | `str`                                      | 网站标题     |
-|                   | theme      | `django_echarts.core.themes.Theme`         | 主题名称     |
-|                   | opts      | `django_echarts.starter.sites.SiteOpts`     | 选项对象     |
-|                   | nav        | `django_echarts.starter.widgets.Nav`       | 顶部导航栏   |
-|                   | copyright  | `django_echarts.starter.widgets.Copyright` | 底部版权信息 |
-
-其他模板页面均继承 *{theme}/base.html* 。
+ `DJESiteBaseView` 是所有后端视图类的基类 ，对应的模板页面为 *{theme}/base.html* ，具体的需要传入的变量字典参见下一节的“模板及其变量”。
 
 ### 前端视图类
 
@@ -104,7 +94,30 @@ class DJESite:
 
 返回自定义的视图路由配置。
 
-## 模板变量
+## 模板及其变量
+
+### 基础页(Base)
+
+| 模板              | 变量名称   | 类型                                       | 说明         |
+| ----------------- | ---------- | ------------------------------------------ | ------------ |
+| {theme}/base.html | page_title | `str`                                      | 网站标题     |
+|                   | theme      | `django_echarts.core.themes.Theme`         | 主题名称     |
+|                   | opts       | `django_echarts.starter.sites.SiteOpts`    | 选项对象     |
+|                   | nav        | `django_echarts.starter.widgets.Nav`       | 顶部导航栏   |
+|                   | copyright  | `django_echarts.starter.widgets.Copyright` | 底部版权信息 |
+
+其他模板页面均继承 *{theme}/base.html* 。
+
+### 基础页Block
+
+| Block名称      | 作用                  | 默认使用的变量或标签函数 |
+| -------------- | --------------------- | ------------------------ |
+| include_css    | css样式，             | theme / theme_css        |
+| extra_css      | 扩展css，由子页面重写 | 无                       |
+| nav            | 导航栏                | nav / opts               |
+| main_content   | 主界面                |                          |
+| include_script | 公共js                | theme / theme_js         |
+| extra_script   | 扩展js，由子页面重写  |                          |
 
 ### 主页(Home)
 

@@ -3,9 +3,8 @@ from datetime import date
 
 from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
-
 from django_echarts import __version__
-from django_echarts.core.env_context import get_code_snippet_dir
+from django_echarts.core.lib_context import get_code_snippet_dir
 
 
 class Command(BaseCommand):

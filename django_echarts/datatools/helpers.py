@@ -11,3 +11,18 @@ def adjust_max_min(values: list):
     nmax = int(ma + (ma - mi) / 2) + 1
     nmin = int(mi - (ma - mi) / 2)
     return nmax, nmin
+
+
+def ceil_n(val, n=3):
+    return (val // (10 ** n) + 1) * 10 ** n
+
+
+def floor_n(val, n=3):
+    return (val // (10 ** n)) * 10 ** n
+
+
+def concat_if(val: str, fix: str, o=None):
+    """
+    concat_if('xxx','+.html')
+    """
+    pass

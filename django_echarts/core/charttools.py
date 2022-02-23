@@ -1,11 +1,43 @@
 from collections import OrderedDict
 from typing import List, Optional
 
-from django_echarts.utils.interfaces import merge_js_dependencies
-
 
 class ChartsConstants:
     AUTO_WIDTH = '100%'
+
+
+def _flat(ele):
+    if hasattr(ele, 'js_dependencies'):
+        if isinstance(ele.js_dependencies, list):
+            return ele.js_dependencies
+        if hasattr(ele.js_dependencies, 'items'):
+            return list(ele.js_dependencies.items)  # pyecharts.commons.utils.OrderedSet
+        raise ValueError('Can not parse js_dependencies.')
+    if isinstance(ele, (list, tuple, set)):
+        return ele
+    return ele,
+
+
+def merge_js_dependencies(*chart_or_name_list, enable_theme=False):
+    front_required_items = ['echarts']
+    front_optional_items = ['echartsgl']
+    dependencies = []
+    fist_items = set()
+
+    def _add(_item):
+        if _item in front_required_items:
+            pass
+        elif _item in front_optional_items:
+            fist_items.add(_item)
+        elif _item not in dependencies:
+            dependencies.append(_item)
+
+    for d in chart_or_name_list:
+        for _d in _flat(d):
+            _add(_d)
+        if enable_theme and hasattr(d, 'theme'):
+            _add(d.theme)
+    return front_required_items + [x for x in front_optional_items if x in fist_items] + dependencies
 
 
 class DJEChartInfo:
@@ -76,21 +108,19 @@ class NamedCharts:
     A data structure class containing multiple named charts.
     """
 
-    def __init__(self, page_title: str = 'EChart', col_num: int = 1):
+    def __init__(self, page_title: str = 'EChart', col_chart_num: int = 1):
         self.page_title = page_title
         self._charts = OrderedDict()
-        self._col_num = col_num
+        self._col_chart_num = col_chart_num
 
     @property
-    def col_num(self):
-        return self._col_num
-
-    def adapt_layout(self):
-        for _, chart in self._charts.items():
-            chart.width = '100%'
+    def col_chart_num(self):
+        return self._col_chart_num
 
     def add_chart(self, chart, name=None):
         name = name or self._next_name()
+        if hasattr(chart, 'width'):
+            chart.width = '100%'
         self._charts[name] = chart
         return self
 
@@ -141,3 +171,56 @@ class NamedCharts:
         for chart in charts:
             mc.add_chart(chart)
         return mc
+
+
+class ChartPageContainer:
+    """A multiple charts container including DJEChartInfo data.Compatible with NamedCharts.
+    """
+
+    def __init__(self, col_chart_num: int = 1, chart_col_span: int = 6, info_col_span: int = 6):
+        self._chart_dic = OrderedDict()
+        self._info_dic = OrderedDict()
+        self._col_chart_num = col_chart_num
+
+        self._card_col_span = int(12 / col_chart_num)
+        if col_chart_num > 1:
+            self._chart_col_span = 8
+            self._info_col_span = 4
+        else:
+            self._chart_col_span = chart_col_span
+            self._info_col_span = info_col_span
+
+    @property
+    def col_chart_num(self):
+        """The total of every row."""
+        return self._col_chart_num
+
+    @property
+    def card_col_span(self):
+        return self._card_col_span
+
+    @property
+    def chart_col_span(self):
+        return self._chart_col_span
+
+    @property
+    def info_col_span(self):
+        return self._info_col_span
+
+    @property
+    def charts(self) -> List:
+        return list(self._chart_dic.values())
+
+    def add(self, chart_obj, info: DJEChartInfo):
+        if hasattr(chart_obj, 'width'):
+            chart_obj.width = '100%'
+        self._chart_dic[info.name] = chart_obj
+        self._info_dic[info.name] = info
+
+    def __iter__(self):
+        for chart_name, chart_obj in self._chart_dic.items():
+            yield chart_obj, self._info_dic.get(chart_name)
+
+    @property
+    def js_dependencies(self):
+        return merge_js_dependencies(*self._chart_dic.values())

@@ -1,0 +1,29 @@
+{% extends 'bootstrap5/base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    <div class="row">
+        {% for chart_obj, chart_info in chart_page_container %}
+
+            <div class="card mb-3 col-md-{{ chart_page_container.card_col_span }}">
+                <div class="row g-0">
+                    <div class="col-md-{{ chart_page_container.chart_col_span }}">
+                        {% echarts_container chart_obj width="100%" %}
+                    </div>
+                    <div class="col-md-{{ chart_page_container.info_col_span }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ chart_info.title }}</h5>
+                            <p class="card-text">{{ chart_info.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block extra_script %}
+    {% echarts_js_dependencies chart_page_container %}
+    {% echarts_js_content chart_page_container %}
+{% endblock %}

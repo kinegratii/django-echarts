@@ -1,20 +1,24 @@
 import json
 from dataclasses import dataclass
 from functools import wraps
-from typing import Optional, List, Dict, Callable, Literal, Type, Any
+from typing import Optional, List, Dict, Callable, Literal, Type, Any, Tuple
 
 from django.core.paginator import Paginator
 from django.http.response import JsonResponse
 from django.urls import reverse_lazy, path
 from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 
-from django_echarts.core.charttools import DJEChartInfo, LocalChartManager, ChartManagerMixin
+from django_echarts.core.charttools import DJEChartInfo, LocalChartManager, ChartManagerMixin, ChartPageContainer
 from django_echarts.core.exceptions import DJEAbortException
 from django_echarts.core.themes import get_theme, Theme
 from django_echarts.utils.compat import get_elided_page_range
-from .widgets import Nav, LinkItem, Jumbotron, Copyright
+from .widgets import Nav, LinkItem, Jumbotron, Copyright, Message
 
 __all__ = ['DJESite', 'SiteOpts', 'ttn', 'DJESiteBaseView']
+
+_VAR_CHART_ = 'chart_obj'
+_VAR_CHART_INFO_ = 'chart_info'
+_VAR_PAGE_CONTAINER_ = 'chart_page_container'
 
 
 def ttn(template_name: str, theme: str = None) -> str:
@@ -41,7 +45,7 @@ class DJESiteBaseView(TemplateResponseMixin, ContextMixin, View):
                 raise TypeError(
                     'The method dje_init_page_context should return a string for template name.Not a dict for context.')
         except DJEAbortException as e:
-            context['message'] = e.message
+            context['message'] = Message(e.message, catalog='warning')
             template_name = ttn('message.html')
         theme_name = context['theme'].name
         return self._render_to_response(context, theme_name=theme_name, template_name=template_name)
@@ -110,6 +114,16 @@ class DJESiteDetailBaseView(DJESiteBaseView):
         return self.template_name
 
 
+class DJESiteListDetailBaseView(DJESiteBaseView):
+    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
+        page_container = ChartPageContainer(col_chart_num=2)
+        for info in site.chart_manager.query_chart_info_list():
+            chart_obj, _, _ = site.resolve_chart_obj(info.name)
+            page_container.add(chart_obj, info)
+        context[_VAR_PAGE_CONTAINER_] = page_container
+        return ttn('list_with_detail.html')
+
+
 class DJESiteAjaxView(View):
     """The helper view class for ajax request."""
 
@@ -147,6 +161,11 @@ class DJESiteHomeView(DJESiteBaseView):
 
     def dje_init_page_context(self, context, site: 'DJESite'):
         context['jumbotron'] = site.widgets.get('jumbotron')
+        jumbotron_chart_name = site.widgets.get('jumbotron_chart')
+        chart_obj, _, info = site.resolve_chart_obj(jumbotron_chart_name)
+        if chart_obj:
+            context[_VAR_CHART_] = chart_obj
+            context[_VAR_CHART_INFO_] = info
         context['top_chart_info_list'] = site.chart_manager.query_chart_info_list(with_top=True)
         context['layout_tpl'] = self._resolve_template_name('{theme}/items_grid.html')
 
@@ -198,32 +217,19 @@ class DJESiteDetailView(DJESiteBaseView):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         context['view_name'] = 'dje_detail'
         chart_name = self.kwargs.get('name')
-        found = False
-        menu_text = None
-        info_list = site.chart_manager.query_chart_info_list()
-        for info in info_list:
-            if chart_name == info.name and not found:
-                found = True
-                menu_text = info.parent_name
-                func = site.get_chart_func(chart_name)
-                chart_obj = None
-                if func:
-                    chart_obj = func()
-                if chart_obj:
-                    chart_obj.width = '100%'
-                    context['chart_info'] = info
-                    context['chart_obj'] = chart_obj
-                    context['title'] = self.get_dje_page_title(name=info.name, title=info.title)
-                selected = True
-            else:
-                selected = False
-            info.selected = selected
-        if menu_text:
-            context['menu'] = [info for info in info_list if info.parent_name == menu_text]
-        if found:
-            return self.template_name
-        else:
+
+        func = site.get_chart_func(chart_name)
+        if not func:
             self.abort_request('The chart does not exist.')
+        chart_obj = func()
+        if not chart_obj:
+            self.abort_request(f'The chart function {func.__name__} returns nothing..')
+        chart_obj.width = '100%'
+        chart_info = site.chart_manager.get_or_none(chart_name)
+        context['chart_info'] = chart_info
+        context['chart_obj'] = chart_obj
+        context['title'] = self.get_dje_page_title(name=chart_info.name, title=chart_info.title)
+        return self.template_name
 
     def get_dje_page_title(self, name, title, **kwargs):
         return self.page_title.format(name=name, title=title)
@@ -281,6 +287,7 @@ class DJESite:
             'detail': DJESiteDetailView,
             'chart_options': DJSiteChartOptionsView,
             'list': DJESiteListView,
+            'list_detail': DJESiteListDetailBaseView,
             'about': DJESiteAboutView
         }
         # Inject site object to views.
@@ -319,12 +326,14 @@ class DJESite:
         self.nav.add_right_link(item)
         return self
 
-    def add_widgets(self, *, jumbotron: Jumbotron = None, copyright_: Copyright = None):
+    def add_widgets(self, *, jumbotron: Jumbotron = None, copyright_: Copyright = None, jumbotron_chart: str = None):
         """Add widgets to the site."""
         if jumbotron:
             self.widgets['jumbotron'] = jumbotron
         if copyright_:
             self.widgets['copyright'] = copyright_
+        if jumbotron_chart:
+            self.widgets['jumbotron_chart'] = jumbotron_chart
         return self
 
     # Register function and views class
@@ -333,7 +342,6 @@ class DJESite:
                        after_separator: bool = False):
         """Register chart function."""
 
-        # TODO Add support lru_cache
         def decorator(func):
             cname = name or func.__name__
             url = reverse_lazy('dje_detail', args=(cname,))
@@ -363,12 +371,24 @@ class DJESite:
     def get_chart_func(self, name: str) -> Optional[Callable]:
         return self._chart_name2func.get(name)
 
+    def resolve_chart_obj(self, name: str) -> Tuple[Optional[Any], bool, Optional[DJEChartInfo]]:
+        """Execute chart function and return pyecharts chart object.
+        """
+        if name in self._chart_name2func:
+            func_exists = True
+            chart_obj = self._chart_name2func[name]()
+            info = self._chart_manager.get_or_none(name)
+            return chart_obj, func_exists, info
+        else:
+            return None, False, None
+
     @property
     def urls(self):
         """Return the URLPattern list for site entrypoint."""
         urls = [
             path('', self._view_dict['home'].as_view(), name='dje_home'),
             path('list/', self._view_dict['list'].as_view(), name='dje_list'),
+            path('list/detail/', self._view_dict['list_detail'].as_view(), name='dje_list_detail'),
             path('chart/<slug:name>/', self._view_dict['detail'].as_view(), name='dje_detail'),
             path('chart/<slug:name>/options/', self._view_dict['chart_options'].as_view(), name='dje_chart_options'),
             path('about/', self._view_dict['about'].as_view(), name='dje_about')

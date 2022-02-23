@@ -5,7 +5,7 @@ from typing import List, Union
 
 from borax.datasets.fetch import fetch
 
-__all__ = ['LinkItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright']
+__all__ = ['LinkItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright', 'Message']
 
 
 def _new_slug() -> str:
@@ -80,3 +80,12 @@ class Copyright:
         this_year = date.today().year
         self.year_range = f'{start_year}-{this_year}'
         self.powered_by = powered_by
+
+
+class Message:
+    __slots__ = ['text', 'title', 'catalog']
+
+    def __init__(self, text, title: str = '提示', catalog: str = 'default'):
+        self.text = text
+        self.title = title
+        self.catalog = catalog

@@ -10,17 +10,20 @@
 
 本项目参考或者引用了下列资源：
 
-- django: [https://www.djangoproject.com/](https://www.djangoproject.com/)
-- pyecharts: [https://pyecharts.org/](https://pyecharts.org/)
-- pyecharts-asserts [https://github.com/pyecharts/pyecharts-assets](https://github.com/pyecharts/pyecharts-assets)
-- echarts: [https://echarts.apache.org/zh/index.html](https://echarts.apache.org/zh/index.html)
-- borax: [https://github.com/kinegratii/borax](https://github.com/kinegratii/borax)
-- PrettyTable: [https://github.com/jazzband/prettytable](https://github.com/jazzband/prettytable)
 - Bootstrap5: [https://v5.bootcss.com/](https://v5.bootcss.com/)
+- Bootstrap Icons: [https://icons.getbootstrap.com/](https://icons.getbootstrap.com/)
 - Bootstrap3调色css: [ https://bootswatch.com/3/]( https://bootswatch.com/3/)
 - Bootstrap5调色css: [ https://bootswatch.com/](https://bootswatch.com/)
-- materialcss: [https://materializecss.com/](https://materializecss.com/)
+- borax: [https://github.com/kinegratii/borax](https://github.com/kinegratii/borax)
 - cdnjs: [https://cdnjs.com/](https://cdnjs.com/)
+- django: [https://www.djangoproject.com/](https://www.djangoproject.com/)
+- echarts: [https://echarts.apache.org/zh/index.html](https://echarts.apache.org/zh/index.html)
+- Jinja2: [https://jinja2docs.readthedocs.io/en/stable/](https://jinja2docs.readthedocs.io/en/stable/)
+- Materialize: [https://materializecss.com/](https://materializecss.com/)
+- PrettyTable: [https://github.com/jazzband/prettytable](https://github.com/jazzband/prettytable)
+- pyecharts: [https://pyecharts.org/](https://pyecharts.org/)
+- pyecharts-asserts [https://github.com/pyecharts/pyecharts-assets](https://github.com/pyecharts/pyecharts-assets)
+
 
 ## 参与开发
 

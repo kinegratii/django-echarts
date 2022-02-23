@@ -1,6 +1,6 @@
-# 整合Django
+# 高级开发
 
-本文提供了一些整合Django其他核心模块功能的方法。其中有一些是非官方的方法，可能涉及到其他第三方库。如果在整合过程中有什么疑惑，欢迎issues反馈或PR提交代码。
+本文提供了一些在扩展开发过程所需要的功能。这些功能的实现可能需要整合Django核心模块功能或者其他第三方库。
 
 ## 新的页面功能
 
@@ -15,16 +15,17 @@ django-echarts支持增加新页面功能。一个基本的功能实现由视图
 ```python
 class MyPageView(DJESiteBaseView):
     template_name = ttn('mypage.html')
-    
+
     def dje_init_page_context(self, context, site: 'DJESite'):
         context['nickname'] = 'foo'
 
-        
+
 class MySite(DJESite):
     def dje_get_urls(self):
         return [
             path('mypage/', MyPageView.as_view(), name='dje_mypage')
         ]
+
 
 site_obj = MySite()
 ```
@@ -40,25 +41,10 @@ site_obj = MySite()
 {% load echarts %}
 
 {% block main_content %}
-    <p>This is my nickname: {{ nickname }}</p>
+<p>This is my nickname: {{ nickname }}</p>
 
 {% endblock %}
 ```
-
-**3. 编写路由**
-
-定义自己的路由规则。
-
-```python
-from site_views import site_obj
-
-urlpatterns = [
-    # ...
-    url(r'', include(site_obj)),
-]
-```
-
-
 
 ## 仅登录用户访问
 
@@ -77,7 +63,28 @@ from decorator_include import decorator_include
 from site_views import site_obj
 
 urlpatterns = [
-    path('site_demo/',decorator_include(login_required, site_obj.urls))
+    path('site_demo/', decorator_include(login_required, site_obj.urls))
 ]
 ```
 
+## 组件编写
+
+django-echarts 内置的UI框架与下列项目是一样的，因此可以在项目中使用其提供模板标签以提高编码效率。
+
+- Bootstrap3: [https://github.com/zostera/django-bootstrap3](https://github.com/zostera/django-bootstrap3)
+- Bootstrap5: [https://github.com/zostera/django-bootstrap5](https://github.com/zostera/django-bootstrap5)
+- Material: [https://github.com/viewflow/django-material](https://github.com/viewflow/django-material)
+
+## 修改布局和页面
+
+根据 Django 的模板文件寻找逻辑即可实现。
+
+第一，网站总体布局定义在 *{theme}/base.html* 文件之中，将该文件复制到你的项目模板文件目录之下。
+
+```shell
+python manage.py starttpl -t bootstrap5 -n base
+```
+
+第二，对新的文件进行修改，需要确保每个`block`都必须存在，否则其他页面无法继承。
+
+> 参考资料：[Django Best Practices: Template Structure](https://learndjango.com/tutorials/template-structure)

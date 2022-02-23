@@ -4,6 +4,10 @@
 
 ![home-top](images/home_top.png)
 
+**Home with Chart(Bootstrap5)**
+
+![home_with_chart_bootstrap5](images/home_with_chart_bootstrap5.png)
+
 **Word Cloud (Bootstrap.Darkly)**
 
 ![theme-darkly](images/theme_darkly.png)
@@ -19,5 +23,4 @@
 **Timeline Demo**
 
 ![timeline-demo](images/timeline_demo.png)
-
 

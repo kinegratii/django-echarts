@@ -2,8 +2,8 @@
 
 
 from pyecharts import options as opts
-from pyecharts.charts import Bar, Line, Map, Pie, WordCloud, Timeline, Map3D
-from pyecharts.globals import ChartType,ThemeType
+from pyecharts.charts import Bar, Map, Pie, WordCloud, Timeline, Map3D
+from pyecharts.globals import ChartType, ThemeType
 
 
 class ChartFactory:
@@ -31,7 +31,8 @@ FACTORY = ChartFactory()
 
 @FACTORY.collect('bar')
 def create_simple_bar():
-    bar = Bar(init_opts=opts.InitOpts(theme=ThemeType.ROMANTIC)).add_xaxis(["南平", "三明", "龙岩", "宁德", "漳州", "福州", "泉州", "莆田", "厦门"]).add_yaxis(
+    bar = Bar(init_opts=opts.InitOpts(theme=ThemeType.ROMANTIC)).add_xaxis(
+        ["南平", "三明", "龙岩", "宁德", "漳州", "福州", "泉州", "莆田", "厦门"]).add_yaxis(
         '面积', [26300, 22900, 19050, 13450, 12600, 12150, 11020, 4119, 1576]
     ).set_global_opts(
         title_opts=opts.TitleOpts(title="福建省各地市面积排行", subtitle="单位：平方公里"))
@@ -52,10 +53,16 @@ def create_line():
         gnums.append(item[1])
         snums.append(item[2])
         cnums.append(item[3])
-    line = Line().add_xaxis(years).add_yaxis(
-        '金牌', gnums).add_yaxis('银牌', snums).add_yaxis('铜牌', cnums).set_global_opts(
-        title_opts=opts.TitleOpts(title="中国历年冬奥会奖牌榜"))
-    return line
+    bar = (
+        Bar()
+            .add_xaxis(years)
+            .add_yaxis("金牌", gnums, stack="stack1")
+            .add_yaxis("银牌", snums, stack="stack1")
+            .add_yaxis("铜牌", cnums, stack="stack1")
+            .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(title_opts=opts.TitleOpts(title="中国历年冬奥会奖牌榜"))
+    )
+    return bar
 
 
 @FACTORY.collect('map')

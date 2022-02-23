@@ -55,8 +55,7 @@ def fj_family_types():
 
 @site_obj.register_chart(name='named_charts', title='NamedCharts示例', description='使用NamedCharts', catalog='图表示例')
 def named_charts():
-    page = NamedCharts(page_title='复合图表', col_num=2)
+    page = NamedCharts(page_title='复合图表', col_chart_num=2)
     page.add_chart(FACTORY.create('pie'), 'pie')
     page.add_chart(FACTORY.create('bar'), 'bar')
-    page.adapt_layout()
     return page

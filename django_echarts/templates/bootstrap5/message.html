@@ -2,12 +2,10 @@
 {% load echarts %}
 
 {% block main_content %}
-    <div class="panel panel-default">
-        <div class="panel-heading">消息
+    <div class="card mb-3">
+        <div class="card-header text-white bg-{{ message.catalog }} ">{{ message.title }}</div>
+        <div class="card-body">
+            <p class="card-text">{{ message.text }}</p>
         </div>
-        <div class="panel-body">
-            <p>{{ message }}</p>
-        </div>
-
     </div>
 {% endblock %}

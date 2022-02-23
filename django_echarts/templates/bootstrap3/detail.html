@@ -2,20 +2,9 @@
 {% load echarts %}
 
 {% block main_content %}
-    <div class="row row-offcanvas row-offcanvas-right">
-        <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
-            <div class="list-group">
-                {% for item in menu %}
-                    <a href="{% url view_name item.name %}"
-                       class="list-group-item{% if item.selected %} active{% endif %}">{{ item.title }}</a>
-                {% endfor %}
-            </div>
-        </div>
+    <div class="row ">
         <!--/.sidebar-offcanvas-->
-        <div class="col-xs-12 col-sm-10">
-            <p class="pull-right visible-xs">
-                <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
-            </p>
+        <div class="col-md-12">
             <div class="page-header">
                 <h2>{{ title }}</h2>
             </div>

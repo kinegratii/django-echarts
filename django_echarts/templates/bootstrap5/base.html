@@ -1,3 +1,4 @@
+{% load echarts %}
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -6,17 +7,17 @@
 
     <title>{{ page_title }}</title>
     {% block  include_css %}
-        {% for curl in theme.css_urls %}
-            <link href="{{ curl }}" rel="stylesheet">
-        {% endfor %}
-
+        {% theme_css %}
     {% endblock %}
+    <style rel="stylesheet">
+        #main_content{padding-top: 60px;}
+    </style>
     {% block extra_css %}
     {% endblock %}
 </head>
 <body>
 {% block nav %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div class="container">
             <a class="navbar-brand" href="{% url 'dje_home' %}">{{ site_title }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -67,7 +68,7 @@
     <br/>
 {% endblock %}
 
-<div class="container">
+<div id="main_content" class="container">
     {% block main_content %}
 
     {% endblock %}
@@ -87,9 +88,7 @@
 </div>
 <!--/.container-->
 {% block include_script %}
-    {% for jurl in theme.js_urls %}
-        <script src="{{ jurl }}"></script>
-    {% endfor %}
+    {% theme_js %}
 {% endblock %}
 
 {% block extra_script %}

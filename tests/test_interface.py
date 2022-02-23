@@ -4,7 +4,7 @@ import unittest
 
 from unittest.mock import MagicMock
 
-from django_echarts.utils.interfaces import merge_js_dependencies
+from django_echarts.core.charttools import merge_js_dependencies
 
 
 class MockCharts(object):

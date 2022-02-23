@@ -40,14 +40,13 @@ def named_charts():
     
     bar = Bar()
     page.add_chart(bar, 'bar')
-    page.adapt_layout()
     return page
 ```
 
 说明：
 
 - col_num 表示每行的图表个数，推荐设置1-3即可。在小屏幕上将自动调整为每行一个。
-- adapt_layout 添加图表之后必须调用该方法以调整每个图表的宽度。
+- add_chart 函数将宽度设置为 100%。
 
 ## ECharts主题
 
@@ -59,5 +58,5 @@ django-echarts 支持 echarts 主题功能，为了减少主题资源加载，�
 
 - 全局配置：`enable_echarts_theme = False`
 - 不会请求任何theme对应的javascript文件
-- 前端 `echarts.init` 函数不传入任何主题参数，即使 python代码`pycharts.options.InitOpts` 传入了主题参数
+- 前端 `echarts.init` 函数不传入任何主题参数，即使 python代码`pycharts.options.InitOpts` 传入了 `theme` 参数
 

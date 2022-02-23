@@ -6,6 +6,7 @@ import warnings
 from dataclasses import dataclass, is_dataclass, field
 from typing import Optional, Dict, Union, Tuple
 
+from borax.system import load_class
 from pyecharts.datasets import FILENAMES, EXTRA
 
 __all__ = ['DependencyManager', 'DJEOpts', 'SettingsStore']
@@ -135,6 +136,7 @@ class DJEOpts:
     enable_echarts_theme: bool = False
 
     echarts_theme: Union[bool, str] = False
+    site_class: Optional[str] = None
 
     def get_echarts_theme(self, echarts_theme) -> str:
         if self.echarts_theme is False:
@@ -182,26 +184,14 @@ class SettingsStore:
         else:
             self._opts = DJEOpts()
 
-        self._context = {'echarts_version': self._opts.echarts_version}
+        context = {'echarts_version': self._opts.echarts_version}
         if 'STATIC_URL' in self._extra_settings:
-            self._context.update({'STATIC_URL': self._extra_settings['STATIC_URL']})
+            context.update({'STATIC_URL': self._extra_settings['STATIC_URL']})
         self._manager = DependencyManager.create_default(
-            context=self._context,
+            context=context,
             repo_name=self._opts.dms_repo
         )
         self._manager.load_from_dep2url_dict(self._opts.dep2url)
-
-        # self._setup()
-
-    def _check(self):
-        local_host = self._opts.local_dir
-        static_url = self._extra_settings.get('STATIC_URL')
-        if local_host:
-            if static_url:
-                if not local_host.startswith('{STATIC_URL}') and not local_host.startswith(static_url):
-                    raise ValueError('The local_host must start with the value of "settings.STATIC_URL"')
-            else:
-                raise ValueError("The local_host item requires a no-empty settings.STATIC_URL.")
 
     # #### Public API: Generate js link using current configure ########
 
@@ -223,3 +213,8 @@ class SettingsStore:
 
     def get(self, key, default=None):
         return getattr(self._opts, key, default)
+
+    def get_site_obj(self):
+        if not self._opts.site_class:
+            raise TypeError('The settings DJANGO_ECHARTS.site_class is required for this feature.')
+        return load_class(self._opts.site_class)

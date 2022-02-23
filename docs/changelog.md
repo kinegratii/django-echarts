@@ -4,12 +4,16 @@
 
 - 列表页面支持关键字搜索
 - 优化列表页分页组件
+- 首页jumbotron组件支持使用图表显示
 - 新增支持Bootstrap5框架
 - 新增内置支持 Bootstrap框架的16个调色主题
 - 新增查看echarts图表options功能
 - 新增支持pyecharts在线地图
 - 新增支持3D图表
+- 新增 ChartPageContainer 多图表聚合渲染
 - 新增支持echarts主题
+- 新增 info/download 命令行工具
+- 新增 starttpl 命令工具
 - 图表支持自动调整大小功能
 - 移除 `listdep` 命令
 

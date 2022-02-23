@@ -15,7 +15,7 @@ nav:
     - 基本功能:
       - 功能设置: starter/base.md
       - UI框架和主题: starter/themes.md
-      - 整合Django: guides/django_integration.md
+      - 高级开发: guides/advance_development.md
     - 参考:
       - 视图和模板: reference/api.md
       - 模板标签库: reference/tags.md

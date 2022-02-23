@@ -1,13 +1,11 @@
+{% load echarts %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>{{ page_title }}</title>
     {% block  include_css %}
-        {% for curl in theme.css_urls %}
-            <link href="{{ curl }}" rel="stylesheet">
-        {% endfor %}
-
+        {% theme_css %}
     {% endblock %}
     {% block extra_css %}
     {% endblock %}
@@ -71,9 +69,7 @@
 </footer>
 
 {% block include_script %}
-    {% for jurl in theme.js_urls %}
-        <script src="{{ jurl }}"></script>
-    {% endfor %}
+    {% theme_js %}
 {% endblock %}
 
 {% block extra_script %}

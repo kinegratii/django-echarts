@@ -5,7 +5,9 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.core.themes import get_theme
+from django_echarts.core.charttools import merge_js_dependencies
 from django_echarts.utils.downloader import download_files
+from django_echarts.starter.sites import DJESite
 
 
 class DownloaderResource:
@@ -20,20 +22,17 @@ class DownloaderResource:
 
 class DownloadBaseCommand(BaseCommand):
 
-    def handle(self, *args, **options):
-        dep_names = options.get('dep', [])
-        theme_name = options.get('theme')
-        repo_name = options.get('repo')
-        fake = options.get('fake')
-        self.do_action(dep_names, theme_name, repo_name, fake)
-
-    def do_action(self, dep_names: List, theme_name: str, repo_name: str, fake: bool):
+    def do_action(self, chart_names: List, dep_names: List, theme_name: str, repo_name: str, fake: bool):
 
         all_resources = []  # type: List[DownloaderResource]
         if theme_name:
             all_resources += self.resolve_theme(theme_name)
-        if dep_names:
-            all_resources += self.resolve_dep(dep_names, repo_name)
+        all_dep_names = dep_names or []
+        if chart_names:
+            for cname in chart_names:
+                all_dep_names += self.resolve_chart(cname)
+        if all_dep_names:
+            all_resources += self.resolve_dep(all_dep_names, repo_name)
         if fake:
             for i, res in enumerate(all_resources):
                 if os.path.exists(res.local_path):
@@ -69,5 +68,12 @@ class DownloadBaseCommand(BaseCommand):
             resources.append(DownloaderResource(url, ref_url, local_path, label='', catalog='Theme'))
         return resources
 
-    def resolve_chart(self, chart_name, repo_name) -> List[DownloaderResource]:
-        pass
+    def resolve_chart(self, chart_name) -> List[str]:
+        site_obj = DJANGO_ECHARTS_SETTINGS.get_site_obj()  # type: DJESite
+        func = site_obj.get_chart_func(chart_name)
+        if not func:
+            self.stdout.write(self.style.WARNING('The chart with name does not exits.'))
+            return []
+        chart_obj = func()
+        dep_names = merge_js_dependencies(chart_obj)
+        return dep_names

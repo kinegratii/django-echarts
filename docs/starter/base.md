@@ -97,6 +97,10 @@ site_obj.add_widgets(
 - main_text: 主要文字
 - small_text: 小文字
 
+### 大标题图表(JumbotronChart)
+
+
+
 ### 热门图表
 
 按照网格方式显示标记为 top 的图表。向装饰器 `register_chart` 的 top 参数指定一个大于0的数字即可（数字越小，越靠前显示）。

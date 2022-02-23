@@ -1,3 +1,7 @@
+"""
+The functions for accessing information of pyecharts & django-echarts library installed in python site-packages.
+"""
+
 import os
 
 _pro_dir = os.path.dirname(os.path.dirname(str(__file__)))
@@ -9,8 +13,8 @@ def get_pyecharts_template_dir() -> str:
     return base_dir
 
 
-def get_django_echarts_template_dir() -> str:
-    return os.path.join(_pro_dir, 'templates')
+def get_django_echarts_template_dir(*args: str) -> str:
+    return os.path.join(_pro_dir, 'templates', *args)
 
 
 def get_code_snippet_dir(*args: str) -> str:

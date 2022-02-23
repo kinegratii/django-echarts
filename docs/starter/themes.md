@@ -6,15 +6,15 @@
 
 django-echarts内置以下主题：
 
-| 标识符                      | 文件                                           |
-| --------------------------- | ---------------------------------------------- |
-| bootstrap3                  | 在线引用                                       |
-| bootstrap3.{PALETTES}       | 在线引用                                       |
-| bootstrap3.{PALETTES}#local | 本地引用，需先通过download_theme命令下载到本地 |
-| bootstrap5                  | 在线引用                                       |
-| bootstrap5.{PALETTES}       | 在线引用                                       |
-| bootstrap5.{PALETTES}#local | 本地引用，需先通过download_theme命令下载到本地 |
-| material                    | 在线引用                                       |
+| 标识符                      | 文件                                                   |
+| --------------------------- | ------------------------------------------------------ |
+| bootstrap3                  | 在线引用                                               |
+| bootstrap3.{PALETTES}       | 在线引用                                               |
+| bootstrap3.{PALETTES}#local | 本地引用，需先通过 `download -t THEME` 命令下载到本地  |
+| bootstrap5                  | 在线引用                                               |
+| bootstrap5.{PALETTES}       | 在线引用                                               |
+| bootstrap5.{PALETTES}#local | 本地引用，需先通过  `download -t THEME` 命令下载到本地 |
+| material                    | 在线引用                                               |
 
 其中  PALETTES 可以是下列调色主题之一：
 

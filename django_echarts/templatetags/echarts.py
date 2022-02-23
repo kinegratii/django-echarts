@@ -2,34 +2,52 @@
 """Template tags for django-echarts.
 
 """
-
 from django import template
+from django.template.loader import render_to_string
+from django.utils.html import SafeString
 
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.utils.interfaces import to_css_length, merge_js_dependencies
-from django_echarts.core.charttools import NamedCharts
+from django_echarts.core.charttools import NamedCharts, merge_js_dependencies, ChartPageContainer
 
 register = template.Library()
 
 
-def _build_init_div_container(chart):
+def _to_css_length(val):
+    if isinstance(val, (int, float)):
+        return '{}px'.format(val)
+    else:
+        return val
+
+
+def _build_init_div_container(chart, width=None, height=None):
+    width = width or chart.width
+    height = height or chart.height
     return '<div id="{chart_id}" style="width:{width};height:{height};"></div>'.format(
         chart_id=chart.chart_id,
-        width=to_css_length(chart.width),
-        height=to_css_length(chart.height)
+        width=_to_css_length(width),
+        height=_to_css_length(height)
     )
 
 
-def __build_init_div_container_for_page(page, cns=None):
-    col_num = page.col_num
+def __build_init_div_container_for_page(page, cns=None, width=None, height=None):
+    col_num = page.col_chart_num
     cns = cns or {}
     row_cn = cns.get('row', 'row')
     col_cn = cns.get('col', 'col-md-{n}').format(n=int(12 / col_num))
     html_list = ['<div class="{}">'.format(row_cn)]
     for chart in page:
-        html_list.append('<div class="{}">{}</div>'.format(col_cn, _build_init_div_container(chart)))
+        html_list.append(
+            '<div class="{}">{}</div>'.format(col_cn, _build_init_div_container(chart, width=width, height=height)))
     html_list.append('</div>')
     return ''.join(html_list)
+
+
+def _build_init_script(chart):
+    if hasattr(chart, '_is_geo_chart'):
+        chart.is_geo_chart = chart._is_geo_chart
+    context = {'c': chart}
+    return SafeString(render_to_string('snippets/echarts_init_script.tpl', context))
+    # return _ECHARTS_INIT_TPL_.render(context)
 
 
 def _build_init_javascript(chart):
@@ -58,14 +76,14 @@ def dep_url(context, dep_name: str, repo_name: str = None):
 
 
 @register.simple_tag(takes_context=True)
-def echarts_container(context, *echarts):
+def echarts_container(context, *echarts, width=None, height=None):
     theme = context['theme']
     div_list = []
     for chart in echarts:
         if isinstance(chart, NamedCharts):
-            div_list.append(__build_init_div_container_for_page(chart, cns=theme.cns))
+            div_list.append(__build_init_div_container_for_page(chart, cns=theme.cns, width=width, height=height))
         else:
-            div_list.append(_build_init_div_container(chart))
+            div_list.append(_build_init_div_container(chart, width=width, height=height))
     return template.Template('<br/>'.join(div_list)).render(context)
 
 
@@ -84,10 +102,14 @@ def build_echarts_initial_fragment(*charts):
     for chart in charts:
         if isinstance(chart, NamedCharts):
             for schart in chart:
-                js_content = _build_init_javascript(schart)
+                js_content = _build_init_script(schart)
+                contents.append(js_content)
+        elif isinstance(chart, ChartPageContainer):
+            for schart in chart.charts:
+                js_content = _build_init_script(schart)
                 contents.append(js_content)
         else:
-            js_content = _build_init_javascript(chart)
+            js_content = _build_init_script(chart)
             contents.append(js_content)
     return '\n'.join(contents)
 
@@ -105,3 +127,24 @@ def echarts_js_content_wrap(context, *charts):
     return template.Template(
         build_echarts_initial_fragment(*charts)
     ).render(context)
+
+
+# ----- The following tags takes data object from the context, not the user's parameters. -----
+
+
+@register.simple_tag(takes_context=True)
+def theme_js(context):
+    theme = context['theme']
+    html = []
+    for link in theme.js_urls:
+        html.append(f'<script type="text/javascript" src="{link}"></script>')
+    return SafeString(''.join(html))
+
+
+@register.simple_tag(takes_context=True)
+def theme_css(context):
+    theme = context['theme']
+    html = []
+    for link in theme.css_urls:
+        html.append(f'<link href="{link}" rel="stylesheet">')
+    return SafeString(''.join(html))
