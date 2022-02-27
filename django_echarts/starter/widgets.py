@@ -89,3 +89,7 @@ class Message:
         self.text = text
         self.title = title
         self.catalog = catalog
+
+
+class NumberCard:
+    pass

@@ -1,5 +1,6 @@
+import re
 from collections import OrderedDict
-from typing import List, Optional
+from typing import List, Optional, Union
 
 
 class ChartsConstants:
@@ -108,10 +109,11 @@ class NamedCharts:
     A data structure class containing multiple named charts.
     """
 
-    def __init__(self, page_title: str = 'EChart', col_chart_num: int = 1):
+    def __init__(self, page_title: str = 'EChart', col_chart_num: int = 1, is_combine: bool = False):
         self.page_title = page_title
         self._charts = OrderedDict()
         self._col_chart_num = col_chart_num
+        self.is_combine = is_combine
 
     @property
     def col_chart_num(self):
@@ -173,54 +175,135 @@ class NamedCharts:
         return mc
 
 
-class ChartPageContainer:
+# l1-l12 r1-r12 t1-t12 b1-b12 f1-f12 a s1-s12
+class ChartPosition:
+    LEFT = 'l'  # left
+    RIGHT = 'r'  # right
+    TOP = 't'  # top
+    BOTTOM = 'b'  # bottom
+    FULL = 'f'  # full
+    # The following opts are only used in collection, not row.
+    AUTO = 'a'  # auto
+    STRIPPED = 's'  # stripped
+
+
+class LayoutOpts:
+    """
+    Recommend layout: l8 l9 r8 r9 t6 t12 b6 b12 f4 f6 f12 a s8 s9
+    """
+    TOTAL_COLS = 12
+    __slots__ = ['chart_pos', 'chart_span', 'info_span', 'start', 'end']
+
+    _defaults = {'l': 8, 'r': 8, 's': 8, 't': 6, 'b': 6, 'f': 12}
+
+    _rm = re.compile(r'([lrtbfsa])(([1-9]|(1[12]))?)')
+
+    def __init__(self, chart_pos: str = ChartPosition.LEFT, chart_span: int = 8, info_span: int = 4):
+        if len(chart_pos) > 1:
+            chart_pos = chart_pos[0]
+        self.chart_pos = chart_pos
+        self.chart_span = chart_span
+        if chart_pos in 'lras':
+            if chart_span + info_span != LayoutOpts.TOTAL_COLS:
+                info_span = LayoutOpts.TOTAL_COLS - chart_span
+        self.info_span = info_span
+        # start/end for info
+        self.start = chart_pos in (ChartPosition.RIGHT, ChartPosition.BOTTOM)
+        self.end = chart_pos in (ChartPosition.LEFT, ChartPosition.TOP)
+
+    @classmethod
+    def from_label(cls, label: str):
+        m = LayoutOpts._rm.match(label)
+        if m:
+            pos, cols = m.group(1), m.group(2)
+            if cols is None:
+                cols = LayoutOpts._defaults.get(pos, 8)
+            else:
+                cols = int(cols)
+            return cls(pos, cols)
+        else:
+            raise ValueError(f'This layout can not be parsed: {label}')
+
+    def __str__(self):
+        return f'<LOptions:{self.chart_pos},{self.chart_span}, {self.info_span}>'
+
+
+class ChartCollection:
     """A multiple charts container including DJEChartInfo data.Compatible with NamedCharts.
     """
 
-    def __init__(self, col_chart_num: int = 1, chart_col_span: int = 6, info_col_span: int = 6):
-        self._chart_dic = OrderedDict()
-        self._info_dic = OrderedDict()
-        self._col_chart_num = col_chart_num
-
-        self._card_col_span = int(12 / col_chart_num)
-        if col_chart_num > 1:
-            self._chart_col_span = 8
-            self._info_col_span = 4
+    def __init__(self, name: str = None, layout: Union[str, LayoutOpts] = None):
+        self.name = name
+        self._name_list = []  # type: List[str]
+        self._chart_dic = []
+        self._info_dic = []  # type: List[DJEChartInfo]
+        # expose the following for render
+        self._row_layout_opts_list = []  # type: List[LayoutOpts]
+        self.card_span = LayoutOpts.TOTAL_COLS
+        # Handle user input
+        if isinstance(layout, str):
+            self._user_layout = LayoutOpts.from_label(layout)  # type: LayoutOpts
         else:
-            self._chart_col_span = chart_col_span
-            self._info_col_span = info_col_span
+            self._user_layout = layout or LayoutOpts(ChartPosition.LEFT, 8, 4)  # type: LayoutOpts
 
-    @property
-    def col_chart_num(self):
-        """The total of every row."""
-        return self._col_chart_num
+    def adjust_layout(self):
+        c_opts = self._user_layout
+        if c_opts.chart_pos == ChartPosition.AUTO:
+            pass
+        elif c_opts.chart_pos in (ChartPosition.STRIPPED, ChartPosition.LEFT, ChartPosition.RIGHT):
+            self._row_layout_opts_list = []
+            for i, name in enumerate(self._name_list):
+                c_span, i_span = c_opts.chart_span, LayoutOpts.TOTAL_COLS - c_opts.chart_span
+                if c_opts.chart_pos == ChartPosition.STRIPPED:
+                    if i % 2 == 0:
+                        pos = ChartPosition.LEFT
+                    else:
+                        pos = ChartPosition.RIGHT
+                else:
+                    pos = c_opts.chart_pos
+                self._row_layout_opts_list.append(LayoutOpts(pos, c_span, i_span))
+        elif c_opts.chart_pos == ChartPosition.FULL:
+            self._row_layout_opts_list = [LayoutOpts(ChartPosition.FULL, c_opts.chart_span)] * len(self._name_list)
+            self.card_span = c_opts.chart_span
+        elif c_opts.chart_pos in (ChartPosition.TOP, ChartPosition.BOTTOM):
+            self._row_layout_opts_list = [LayoutOpts(ChartPosition.FULL, LayoutOpts.TOTAL_COLS)] * len(self._name_list)
+        else:
+            pass
+        return self
 
-    @property
-    def card_col_span(self):
-        return self._card_col_span
-
-    @property
-    def chart_col_span(self):
-        return self._chart_col_span
-
-    @property
-    def info_col_span(self):
-        return self._info_col_span
+    # @property
+    # def _collection_layout_opts(self):
+    #     return self._collection_layout_opts
 
     @property
     def charts(self) -> List:
-        return list(self._chart_dic.values())
+        return self._chart_dic
 
-    def add(self, chart_obj, info: DJEChartInfo):
+    def add(self, chart_obj, info: DJEChartInfo, ignore_chart_type: bool = False):
+        if isinstance(chart_obj, NamedCharts) and chart_obj.is_combine:
+            if ignore_chart_type:
+                return self
+            else:
+                raise TypeError(f'{info.name} :ChartCollection can not add a NamedCharts with is_combine=True')
         if hasattr(chart_obj, 'width'):
             chart_obj.width = '100%'
-        self._chart_dic[info.name] = chart_obj
-        self._info_dic[info.name] = info
+
+        self._name_list.append(info.name)
+        self._chart_dic.append(chart_obj)
+        self._info_dic.append(info)
+        return self
+
+    def auto_layout(self):
+        pass
+
+    def iter_for_layout(self):
+        for chart_obj, chart_info, row_layout_ops in zip(self._chart_dic, self._info_dic, self._row_layout_opts_list):
+            yield chart_obj, chart_info, row_layout_ops
 
     def __iter__(self):
-        for chart_name, chart_obj in self._chart_dic.items():
-            yield chart_obj, self._info_dic.get(chart_name)
+        for chart_obj, chart_info in zip(self._chart_dic, self._info_dic):
+            yield chart_obj, chart_info
 
     @property
     def js_dependencies(self):
-        return merge_js_dependencies(*self._chart_dic.values())
+        return merge_js_dependencies(*self._chart_dic)

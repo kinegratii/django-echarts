@@ -22,7 +22,7 @@
 
 ```python
 from django_echarts.starter.widgets import Jumbotron, Copyright, LinkItem
-from django_echarts.starter.sites import DJESite, DJESiteDetailView
+from django_echarts.starter.sites import DJESite, DJESiteChartSingleView
 
 site_obj = DJESite(site_title='图表可视化')
 

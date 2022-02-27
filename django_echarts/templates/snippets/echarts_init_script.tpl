@@ -3,7 +3,7 @@
     {% for js in c.js_functions.items %}
         {{ js|safe }}
     {% endfor %}
-    var option_{{ c.chart_id }} = {{ c.dump_options|safe }};
+    var option_{{ c.chart_id }} = {{ c.dump_options|default:'{}'|safe }};
     chart_{{ c.chart_id }}.setOption(option_{{ c.chart_id }});
     {% if c.is_geo_chart %}
         var bmap = chart_{{ c.chart_id }}.getModel().getComponent('bmap').getBMap();
@@ -16,4 +16,4 @@
 
     window.addEventListener('resize', function(){
         chart_{{ c.chart_id }}.resize();
-    })
+    });

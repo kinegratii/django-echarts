@@ -1,0 +1,35 @@
+{% extends 'bootstrap5/base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    {% for chart_obj, chart_info, layout_opts in chart_page_container.iter_for_layout %}
+        <div class="card mb-3">
+            <div class="row g-0">
+                {% if layout_opts.start %}
+                    <div class="col-md-{{ layout_opts.info_span }} col-sm-12">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ chart_info.title }}</h5>
+                            <p class="card-text">{{ chart_info.description }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="col-md-{{ layout_opts.chart_span }} col-sm-12">
+                    {% echarts_container chart_obj width="100%" %}
+                </div>
+                {% if layout_opts.end %}
+                    <div class="col-md-{{ layout_opts.info_span }} col-sm-12">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ chart_info.title }}</h5>
+                            <p class="card-text">{{ chart_info.description }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block extra_script %}
+    {% echarts_js_dependencies chart_page_container %}
+    {% echarts_js_content chart_page_container %}
+{% endblock %}

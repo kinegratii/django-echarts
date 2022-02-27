@@ -8,7 +8,9 @@ from django.http.response import JsonResponse
 from django.urls import reverse_lazy, path
 from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 
-from django_echarts.core.charttools import DJEChartInfo, LocalChartManager, ChartManagerMixin, ChartPageContainer
+from django_echarts.core.charttools import (
+    DJEChartInfo, LocalChartManager, ChartManagerMixin, ChartCollection, LayoutOpts
+)
 from django_echarts.core.exceptions import DJEAbortException
 from django_echarts.core.themes import get_theme, Theme
 from django_echarts.utils.compat import get_elided_page_range
@@ -114,14 +116,26 @@ class DJESiteDetailBaseView(DJESiteBaseView):
         return self.template_name
 
 
-class DJESiteListDetailBaseView(DJESiteBaseView):
+class DJESiteChartCollectionView(DJESiteBaseView):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
-        page_container = ChartPageContainer(col_chart_num=2)
+        chart_collection = ChartCollection('all', layout='s8')
         for info in site.chart_manager.query_chart_info_list():
             chart_obj, _, _ = site.resolve_chart_obj(info.name)
-            page_container.add(chart_obj, info)
-        context[_VAR_PAGE_CONTAINER_] = page_container
-        return ttn('list_with_detail.html')
+            chart_collection.add(chart_obj, info, ignore_chart_type=True)
+        chart_collection.adjust_layout()
+        context[_VAR_PAGE_CONTAINER_] = chart_collection
+        return ttn('chart_collection.html')
+
+
+class DJESiteCollectionDemoVIew(DJESiteBaseView):
+    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
+        chart_collection = ChartCollection('all', layout='s8')
+        for info in site.chart_manager.query_chart_info_list():
+            chart_obj, _, _ = site.resolve_chart_obj(info.name)
+            chart_collection.add(chart_obj, info, ignore_chart_type=True)
+        chart_collection.adjust_layout()
+        context[_VAR_PAGE_CONTAINER_] = chart_collection
+        return ttn('chart_collection.html')
 
 
 class DJESiteAjaxView(View):
@@ -208,14 +222,14 @@ class DJESiteListView(DJESiteBaseView):
             return ttn('list_with_paginator.html')
 
 
-class DJESiteDetailView(DJESiteBaseView):
-    template_name = ttn('detail.html')
+class DJESiteChartSingleView(DJESiteBaseView):
+    template_name = ttn('chart_single.html')
 
     charts_config = []
     page_title = '{title}'
 
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
-        context['view_name'] = 'dje_detail'
+        context['view_name'] = 'dje_chart_single'
         chart_name = self.kwargs.get('name')
 
         func = site.get_chart_func(chart_name)
@@ -284,10 +298,10 @@ class DJESite:
         self.widgets = {}
         self._view_dict = {
             'home': DJESiteHomeView,
-            'detail': DJESiteDetailView,
-            'chart_options': DJSiteChartOptionsView,
             'list': DJESiteListView,
-            'list_detail': DJESiteListDetailBaseView,
+            'chart_single': DJESiteChartSingleView,
+            'chart_options': DJSiteChartOptionsView,
+            'chart_collection': DJESiteChartCollectionView,
             'about': DJESiteAboutView
         }
         # Inject site object to views.
@@ -298,6 +312,7 @@ class DJESite:
 
         self._chart_name2func = {}  # type: Dict[str,Callable]
         self._chart_manager = self.chart_manager_class()  # type: ChartManagerMixin
+        self._chart_collection_list = []  # type: List[ChartCollection]
 
     def _inject(self, func):
         @wraps(func)
@@ -344,7 +359,7 @@ class DJESite:
 
         def decorator(func):
             cname = name or func.__name__
-            url = reverse_lazy('dje_detail', args=(cname,))
+            url = reverse_lazy('dje_chart_single', args=(cname,))
             if info:
                 cinfo = info
             else:
@@ -366,6 +381,9 @@ class DJESite:
         else:
             return decorator(function)
 
+    def add_chart_collection(self, collection_name: str, chart_names: List[str]):
+        pass
+
     # The function api for accessing site data.
 
     def get_chart_func(self, name: str) -> Optional[Callable]:
@@ -382,15 +400,24 @@ class DJESite:
         else:
             return None, False, None
 
+    def get_chart_collection(self, name: str) -> ChartCollection:
+        for collection in self._chart_collection_list:
+            if collection.name == name:
+                return collection
+
+    def build_collection(self, name: str, chart_names: List[str] = None, layout: str = 'l8'):
+        pass
+
     @property
     def urls(self):
         """Return the URLPattern list for site entrypoint."""
         urls = [
             path('', self._view_dict['home'].as_view(), name='dje_home'),
             path('list/', self._view_dict['list'].as_view(), name='dje_list'),
-            path('list/detail/', self._view_dict['list_detail'].as_view(), name='dje_list_detail'),
-            path('chart/<slug:name>/', self._view_dict['detail'].as_view(), name='dje_detail'),
+            path('chart/<slug:name>/', self._view_dict['chart_single'].as_view(), name='dje_chart_single'),
             path('chart/<slug:name>/options/', self._view_dict['chart_options'].as_view(), name='dje_chart_options'),
+            path('collection/', self._view_dict['chart_collection'].as_view(), name='dje_chart_collection_all'),
+            path('collection/<slug:name>/', self._view_dict['chart_collection'].as_view(), name='dje_chart_collection'),
             path('about/', self._view_dict['about'].as_view(), name='dje_about')
         ]
         custom_url = self.dje_get_urls()

@@ -49,13 +49,12 @@ def map_3d():
 
 @site_obj.register_chart(name='fj_family_types', title='福建历年家庭结构组成', description='一人户到十人户各占比例', catalog='福建统计')
 def fj_family_types():
-    print('===')
     return FACTORY.create('timeline_bar')
 
 
 @site_obj.register_chart(name='named_charts', title='NamedCharts示例', description='使用NamedCharts', catalog='图表示例')
 def named_charts():
-    page = NamedCharts(page_title='复合图表', col_chart_num=2)
+    page = NamedCharts(page_title='复合图表', col_chart_num=2, is_combine=True)
     page.add_chart(FACTORY.create('pie'), 'pie')
     page.add_chart(FACTORY.create('bar'), 'bar')
     return page

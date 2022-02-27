@@ -14,6 +14,7 @@ nav:
   - 可视化构建:
     - 基本功能:
       - 功能设置: starter/base.md
+      - 图表合辑及其布局: starter/layout.md
       - UI框架和主题: starter/themes.md
       - 高级开发: guides/advance_development.md
     - 参考:

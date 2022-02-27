@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.utils.html import SafeString
 
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.core.charttools import NamedCharts, merge_js_dependencies, ChartPageContainer
+from django_echarts.core.charttools import NamedCharts, merge_js_dependencies, ChartCollection
 
 register = template.Library()
 
@@ -47,27 +47,6 @@ def _build_init_script(chart):
         chart.is_geo_chart = chart._is_geo_chart
     context = {'c': chart}
     return SafeString(render_to_string('snippets/echarts_init_script.tpl', context))
-    # return _ECHARTS_INIT_TPL_.render(context)
-
-
-def _build_init_javascript(chart):
-    content_fmt = '''
-      var div_{chart_id} = document.getElementById('{chart_id}');
-      var myChart_{chart_id} = echarts.init({init_params});
-      var option_{chart_id} = {options};
-      myChart_{chart_id}.setOption(option_{chart_id});
-      window.addEventListener('resize',function(){{ myChart_{chart_id}.resize();}});
-      '''
-    init_params = [
-        "div_{0}".format(chart.chart_id)
-    ]
-    if DJANGO_ECHARTS_SETTINGS.opts.enable_echarts_theme and chart.theme:
-        init_params.append(f'"{chart.theme}"')
-    return content_fmt.format(
-        init_params=','.join(init_params),
-        chart_id=chart.chart_id,
-        options=chart.dump_options_with_quotes()
-    )
 
 
 @register.simple_tag(takes_context=True)
@@ -97,20 +76,35 @@ def echarts_js_dependencies(context, *args):
     ).render(context)
 
 
-def build_echarts_initial_fragment(*charts):
-    contents = []
-    for chart in charts:
-        if isinstance(chart, NamedCharts):
-            for schart in chart:
-                js_content = _build_init_script(schart)
-                contents.append(js_content)
-        elif isinstance(chart, ChartPageContainer):
-            for schart in chart.charts:
-                js_content = _build_init_script(schart)
-                contents.append(js_content)
+def _flat_to_chart_list(obj):
+    """
+    ChartCollection - Chart
+    ChartCollection - NamedCharts - chart
+    """
+    chart_obj_list = []
+
+    def _add(_obj):
+        if isinstance(_obj, (NamedCharts, tuple)):
+            for _c in _obj:
+                _add(_c)
+        elif isinstance(_obj, ChartCollection):
+            for _c in _obj.charts:
+                _add(_c)
+        elif hasattr(_obj, 'dump_options'):  # Mock like pyecharts chart
+            chart_obj_list.append(_obj)
         else:
-            js_content = _build_init_script(chart)
-            contents.append(js_content)
+            raise TypeError(f'Unsupported chat type:{_obj.__class__.__name__}')
+
+    _add(obj)
+    return chart_obj_list
+
+
+def build_echarts_initial_fragment(*args):
+    contents = []
+    chart_obj_list = _flat_to_chart_list(args)
+    for chart in chart_obj_list:
+        js_content = _build_init_script(chart)
+        contents.append(js_content)
     return '\n'.join(contents)
 
 
@@ -127,6 +121,15 @@ def echarts_js_content_wrap(context, *charts):
     return template.Template(
         build_echarts_initial_fragment(*charts)
     ).render(context)
+
+
+@register.inclusion_tag('info_card.html', takes_context=True)
+def dje_info_cart(context, info, layout_opts):
+    theme = context['theme']
+    return {
+        'chart_info': info,
+        'layout_opts': layout_opts
+    }
 
 
 # ----- The following tags takes data object from the context, not the user's parameters. -----
