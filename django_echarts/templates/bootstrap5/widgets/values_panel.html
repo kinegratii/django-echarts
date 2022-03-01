@@ -1,0 +1,10 @@
+<div class="card text-white bg-{{ panel.catalog }} bg-gradient text-center mb-3">
+    <div class="card-body">
+        <p class="card-text"><span class="fs-1">{{ panel.value }}</span>&nbsp;<small>{{ panel.unit }}</small>
+            {% if panel.arrow %}<i class="bi bi-arrow-{{ panel.arrow }}" style="font-size: 2rem;"></i>{% endif %}
+        </p>
+    </div>
+    <div class="card-footer text-white">
+        {{ panel.description }}
+    </div>
+</div>

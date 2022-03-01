@@ -114,7 +114,7 @@ The update text and add Components to the `site_obj`.
 # ...
 
 from django_echarts.starter.sites import DJESite
-from django_echarts.starter.widgets import Copyright, Jumbotron, LinkItem 
+from django_echarts.starter.widgets import Copyright, Jumbotron, LinkItem
 from pyecharts import options as opts
 from pyecharts.charts import Bar
 
@@ -127,7 +127,8 @@ site_obj = DJESite(
 site_obj.add_widgets(
     jumbotron=Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
 )
-site_obj.add_link(LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True))
+site_obj.add_right_link(LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True))
+
 
 @site_obj.register_chart(name='c1', title='福建省各地市面积', description='福建省各地市面积排行', catalog='福建统计')
 def mychart():

@@ -2,9 +2,29 @@
 
 本文提供了一些在扩展开发过程所需要的功能。这些功能的实现可能需要整合Django核心模块功能或者其他第三方库。
 
+> 在Django中，一个基本的功能实现由视图、模板、路由三部分组成。
+
+## 修改内置页面的逻辑和模板
+
+如果不想首页的默认布局和组件（大标题组件、热门图表等），也可以实现自己的视图和模板，只要路由保持不变即可。
+
+使用步骤：
+
+1. 视图类必须继承 `DJESiteBaseView`，并重写 `dje_init_page_context` 方法，修改传给模板的变量字典 `context` 。
+2. 定义模板，模板必须继承 *base.html* ，放置在对应的模板路径下，如首页 *{TEMPLATE_DIR}{THEME}/home.html* 。
+
+```python
+class MyHomeView(DJESiteAboutView):
+    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
+        pass
+
+
+site_obj.set_views(view_name='dje_home', view_class=MyAboutView)
+```
+
 ## 新的页面功能
 
-django-echarts支持增加新页面功能。一个基本的功能实现由视图、模板、路由三部分组成。
+django-echarts支持增加新页面功能。
 
 **1. 定义视图类**
 

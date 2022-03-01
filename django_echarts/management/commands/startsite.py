@@ -14,6 +14,7 @@ class Command(BaseCommand):
         parser.add_argument('output', type=str, help='The output file.')
         def_year = date.today().year
         parser.add_argument('--site-title', '-t', type=str, help='The title of site.', default='Echarts List')
+        parser.add_argument('--empty', '-e', action='store_true')
         parser.add_argument('--start-year', '-y', type=int, help='The start year.', default=def_year)
         parser.add_argument('--powered-by', '-p', type=str, help='The principal of copyright.',
                             default='Django-Echarts')
@@ -30,13 +31,15 @@ class Command(BaseCommand):
         site_title = options.get('site_title')
         start_year = options.get('start_year')
         powered_by = options.get('powered_by')
-        self.generate_code_spinet(output, site_title, start_year, powered_by)
+        empty_chart = options.get('empty', False)
+        self.generate_code_spinet(output, site_title, start_year, powered_by, empty_chart)
 
-    def generate_code_spinet(self, output, site_title, start_year, powered_by):
+    def generate_code_spinet(self, output, site_title, start_year, powered_by, empty_chart):
         context = {
             'site_title': site_title,
             'start_year': start_year,
             'powered_by': powered_by,
+            'use_chart': not empty_chart,
             'version': __version__,
         }
         s = render_to_string(get_code_snippet_dir('first_views.py.tpl'), context=context)

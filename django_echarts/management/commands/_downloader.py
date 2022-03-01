@@ -70,10 +70,9 @@ class DownloadBaseCommand(BaseCommand):
 
     def resolve_chart(self, chart_name) -> List[str]:
         site_obj = DJANGO_ECHARTS_SETTINGS.get_site_obj()  # type: DJESite
-        func = site_obj.get_chart_func(chart_name)
-        if not func:
+        chart_obj, func_exists, _ = site_obj.resolve_chart(chart_name)
+        if not func_exists:
             self.stdout.write(self.style.WARNING('The chart with name does not exits.'))
             return []
-        chart_obj = func()
         dep_names = merge_js_dependencies(chart_obj)
         return dep_names

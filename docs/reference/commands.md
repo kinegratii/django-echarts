@@ -131,6 +131,7 @@ optional arguments:
                         The start year.
   --powered-by POWERED_BY, -p POWERED_BY
                         The principal of copyright.
+  --empty, -e
   --override, -o
 ```
 

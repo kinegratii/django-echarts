@@ -3,11 +3,11 @@
 
 """
 from django import template
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, get_template
 from django.utils.html import SafeString
-
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.core.charttools import NamedCharts, merge_js_dependencies, ChartCollection
+from django_echarts.utils.burl import burl_kwargs
 
 register = template.Library()
 
@@ -19,6 +19,31 @@ def _to_css_length(val):
         return val
 
 
+def _is_table(obj):
+    return hasattr(obj, 'get_html_string') or hasattr(obj, 'html_content')
+
+
+def _table2html(table_obj, **kwargs):
+    if hasattr(table_obj, 'html_content'):
+        html_content = table_obj.html_content
+    else:
+        html_content = table_obj.get_html_string(**kwargs)
+    html_content = f'<div class="table-responsive">{html_content}</div>'
+    return SafeString(html_content)
+
+
+def wrap_with_grid(html_list, col_item_num: int = 1, cns: dict = None):
+    cns = cns or {}
+    row_cn = cns.get('row', 'row')
+    col_cn = cns.get('col', 'col-md-{n}').format(n=int(12 / col_item_num))
+    print([row_cn, col_cn])
+    output_list = ['<div class="{}">'.format(row_cn)]
+    for item_html in html_list:
+        output_list.append('<div class="{}">{}</div>'.format(col_cn, item_html))
+    output_list.append('</div>')
+    return ''.join(output_list)
+
+
 def _build_init_div_container(chart, width=None, height=None):
     width = width or chart.width
     height = height or chart.height
@@ -27,19 +52,6 @@ def _build_init_div_container(chart, width=None, height=None):
         width=_to_css_length(width),
         height=_to_css_length(height)
     )
-
-
-def __build_init_div_container_for_page(page, cns=None, width=None, height=None):
-    col_num = page.col_chart_num
-    cns = cns or {}
-    row_cn = cns.get('row', 'row')
-    col_cn = cns.get('col', 'col-md-{n}').format(n=int(12 / col_num))
-    html_list = ['<div class="{}">'.format(row_cn)]
-    for chart in page:
-        html_list.append(
-            '<div class="{}">{}</div>'.format(col_cn, _build_init_div_container(chart, width=width, height=height)))
-    html_list.append('</div>')
-    return ''.join(html_list)
 
 
 def _build_init_script(chart):
@@ -60,7 +72,10 @@ def echarts_container(context, *echarts, width=None, height=None):
     div_list = []
     for chart in echarts:
         if isinstance(chart, NamedCharts):
-            div_list.append(__build_init_div_container_for_page(chart, cns=theme.cns, width=width, height=height))
+            html_list = [_build_init_div_container(schart, width=width, height=height) for schart in chart]
+            div_list.append(wrap_with_grid(html_list, chart.col_chart_num, cns=theme.cns))
+        elif _is_table(chart):
+            div_list.append(_table2html(chart))
         else:
             div_list.append(_build_init_div_container(chart, width=width, height=height))
     return template.Template('<br/>'.join(div_list)).render(context)
@@ -92,6 +107,8 @@ def _flat_to_chart_list(obj):
                 _add(_c)
         elif hasattr(_obj, 'dump_options'):  # Mock like pyecharts chart
             chart_obj_list.append(_obj)
+        elif _is_table(_obj):
+            pass
         else:
             raise TypeError(f'Unsupported chat type:{_obj.__class__.__name__}')
 
@@ -123,13 +140,21 @@ def echarts_js_content_wrap(context, *charts):
     ).render(context)
 
 
-@register.inclusion_tag('info_card.html', takes_context=True)
-def dje_info_cart(context, info, layout_opts):
+@register.simple_tag(takes_context=False)
+def dje_table(table_obj, **kwargs):
+    if hasattr(table_obj, 'html_content'):
+        html_content = table_obj.html_content
+    else:
+        html_content = table_obj.get_html_string(**kwargs)
+    return SafeString(html_content)
+
+
+@register.simple_tag(takes_context=True)
+def dje_values_panel(context, panel):
     theme = context['theme']
-    return {
-        'chart_info': info,
-        'layout_opts': layout_opts
-    }
+    tpl = get_template(f'{theme.name}/widgets/values_panel.html')
+    html_list = [tpl.render({'panel': item}) for item in panel]
+    return SafeString(wrap_with_grid(html_list, panel.col_item_num, theme.cns))
 
 
 # ----- The following tags takes data object from the context, not the user's parameters. -----
@@ -151,3 +176,9 @@ def theme_css(context):
     for link in theme.css_urls:
         html.append(f'<link href="{link}" rel="stylesheet">')
     return SafeString(''.join(html))
+
+
+@register.simple_tag(takes_context=True)
+def page_link(context, page_number: int):
+    url = context['request'].get_full_path()
+    return burl_kwargs(url, page=page_number)

@@ -1,3 +1,4 @@
+import warnings
 import json
 from abc import abstractmethod
 
@@ -6,7 +7,9 @@ from django.urls import path
 from django.utils.text import slugify
 from django.views.generic.base import View, TemplateView
 
-from django_echarts.core.charttools import DJEChartInfo
+from django_echarts.core.charttools import ChartInfo
+
+warnings.warn('This module has been deprecated and will be removed in future version.', DeprecationWarning)
 
 
 class EChartsMixin:
@@ -55,7 +58,7 @@ class MultipleChartsBDView(EChartsBackendView):
 def as_chart(function=None, *, name=None, description=None):
     def decorator(func):
         cname = name or func.__name__
-        func.chart_info = DJEChartInfo(name=cname, description=description)
+        func.chart_info = ChartInfo(name=cname, description=description)
         return func
 
     if function is None:
@@ -102,7 +105,7 @@ class SelectOneChartBDView(TemplateView):
 
     def get_chart_info(self):
         for name, value in self.__class__.__dict__.items():
-            if callable(value) and hasattr(value, 'chart_info') and isinstance(value.chart_info, DJEChartInfo):
+            if callable(value) and hasattr(value, 'chart_info') and isinstance(value.chart_info, ChartInfo):
                 yield value.chart_info, value
 
     @classmethod

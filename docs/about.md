@@ -24,6 +24,19 @@
 - pyecharts: [https://pyecharts.org/](https://pyecharts.org/)
 - pyecharts-asserts [https://github.com/pyecharts/pyecharts-assets](https://github.com/pyecharts/pyecharts-assets)
 
+## 与pycharts
+
+django-echarts 的底层定位于 pyecharts 和 django 的整合库，主要代码位于 `django_echarts.core` 包。
+
+在具体实现上对 pyecharts 的一些部分进行改造以适配 web 或 Django 环境。
+
+| 模块           | 改造方法                                      |
+| -------------- | --------------------------------------------- |
+| 图表构建       | 90%以上可直接引用，部分不支持                 |
+| 静态文件引用   | 扩展实现                                      |
+| 模板引擎       | 使用DTS重新实现，便于与其他第三方库进行整合。 |
+| web主题框架    | django-echarts新增                            |
+| 静态文件下载器 | django-echarts新增                            |
 
 ## 参与开发
 

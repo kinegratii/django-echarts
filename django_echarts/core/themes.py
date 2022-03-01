@@ -81,6 +81,9 @@ class Theme:
         yield from self.css_urls
         yield from self.js_urls
 
+    def resolve_template_name(self, template_name) -> str:
+        pass
+
     @classmethod
     def create_empty(cls, theme, theme_palette):
         return cls(theme, theme_palette)
@@ -117,15 +120,15 @@ class BuiltinRepoUtils:
         "readable", "sandstone", "simplex", "slate", "spacelab", "superhero", "united", "yeti",
     ]
     BOOTSTRAP5_PALETTES = [
-        "cerulea", "cosm", "cybor", "darkl", "flatl", "journa", "liter", "lume", "lu", "materi",
-        "mint", "morp", "puls", "quart", "sandston", "simple", "sketch", "slat", "sola", "spacela",
-        "superher", "unite", "vapo", "yet", "zephy",
+        "cerulea", "cosm", "cybor", "darkl", "flatl", "journa", "liter", "lume", "lu", "materia",
+        "mint", "morph", "puls", "quart", "sandston", "simple", "sketch", "slat", "sola", "spacela",
+        "superher", "unite", "vapor", "yeti", "zephy",
     ]
 
     @staticmethod
     def is_bootstrap_palette(theme, palette):
         return (theme == 'bootstrap3' and palette in BuiltinRepoUtils.BOOTSTRAP3_PALETTES) or (
-                    theme == 'bootstrap5' and palette in BuiltinRepoUtils.BOOTSTRAP5_PALETTES)
+                theme == 'bootstrap5' and palette in BuiltinRepoUtils.BOOTSTRAP5_PALETTES)
 
     @staticmethod
     def bootstrap_palette_css_url(theme, palette):

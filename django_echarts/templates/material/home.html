@@ -1,4 +1,5 @@
 {% extends 'material/base.html' %}
+{% load echarts %}
 {% block main_content %}
 
     <div class="section no-pad-bot" id="index-banner">
@@ -14,10 +15,14 @@
                 </div>
                 <br><br>
             {% endif %}
+            {% if values_panel %}
+                {% dje_values_panel values_panel %}
+            {% endif %}
             {% if top_chart_info_list %}
                 {% include layout_tpl with chart_info_list=top_chart_info_list only %}
             {% endif %}
         </div>
+
     </div>
 
 

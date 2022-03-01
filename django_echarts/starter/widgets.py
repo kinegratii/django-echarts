@@ -1,7 +1,7 @@
 import uuid
 from datetime import date
 
-from typing import List, Union
+from typing import List, Union, Literal, Any
 
 from borax.datasets.fetch import fetch
 
@@ -37,7 +37,6 @@ class Menu:
 
 class Nav:
     def __init__(self):
-        # TODO Support right menu
         self.menus = []  # type: List[Menu]
         self.links = []  # type: List[LinkItem]
 
@@ -82,6 +81,18 @@ class Copyright:
         self.powered_by = powered_by
 
 
+class ThemeColor:
+    DEFAULT = 'default'
+    PRIMARY = 'primary'
+    SECONDARY = 'secondary'
+    SUCCESS = 'success'
+    DANGER = 'danger'
+    WARNING = 'warning'
+    INFO = 'info'
+    LIGHT = 'light'
+    DARK = 'dark'
+
+
 class Message:
     __slots__ = ['text', 'title', 'catalog']
 
@@ -91,5 +102,45 @@ class Message:
         self.catalog = catalog
 
 
-class NumberCard:
-    pass
+def table_css(border=False, borderless=False, striped=False, size=None):
+    class_list = ['table', 'table-responsive']
+    if border:
+        class_list.append('table-bordered')
+    if borderless:
+        class_list.append('table-borderless')
+    if striped:
+        class_list.append('table-striped')
+    if size:
+        class_list.append(f'table-{size}')
+    return ' '.join(class_list)
+
+
+class ValueItem:
+    __slots__ = ['value', 'description', 'unit', 'catalog', 'arrow']
+
+    def __init__(self, value: Any, description: str, unit: str = None, catalog: str = 'primary',
+                 arrow: Literal['up', 'down', ''] = ''):
+        self.value = str(value)
+        self.description = description
+        self.unit = unit or ''
+        self.catalog = catalog
+        self.arrow = arrow
+
+
+class Widget:
+    dynamic = True
+    chart_managed = True
+
+
+class ValuesPanel:
+    def __init__(self, data: List = None, col_item_num: int = 1):
+        data = data or []
+        self._data = [ValueItem(*arg) for arg in data]
+        self.col_item_num = col_item_num
+
+    def add(self, item: ValueItem):
+        self._data.append(item)
+        return self
+
+    def __iter__(self):
+        yield from self._data

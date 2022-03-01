@@ -7,35 +7,43 @@
 - 模板文件和变量
 - 接口方法
 
+## 网站架构
 
+网站可视化提供了一种用户友好的前台界面（和django-admin后台管理界面相对应）。主要由以下几个页面组成：
+
+| 功能页面 | 功能特性                                                 | 默认实现视图类         |      |
+| -------- | -------------------------------------------------------- | ---------------------- | ---- |
+| 基础页面 | 负责网站的整体布局、风格，组件包括头部导航栏、底部版权栏 | -                      |      |
+| 首页     | 大标题、热门/推荐图表组件                                | DJESiteHomeView        |      |
+| 列表页面 | 显示所有图表的基本信息，支持分页                         | DJESiteListView        |      |
+| 图表页面 | 显示由echarts渲染的可交互图表                            | DJESiteChartSingleView |      |
+| 关于页面 | 显示基本信息                                             | DJESiteAboutView       |      |
 
 ## 路由
 
 DJESite 内置包含下列路由：
 
-| 路由                           | 视图类型 | 视图类                 | 视图名称          |
-| ------------------------------ | -------- | ---------------------- | ----------------- |
-| `''`                           | 前端     | DJESiteHomeView        | dje_home          |
-| `'list/'`                      | 前端     | DJESiteListView        | dje_list          |
-| `'chart/<slug:name>/'`         | 前端     | DJESiteDetailView      | dje_detail        |
-| `'chart/<slug:name>/options/'` | 后端     | DJSiteChartOptionsView | dje_chart_options |
-| `'about/'`                     | 前端     | DJESiteAboutView       | dje_about         |
+| 功能页面 | 路由                           | 视图类型 | 视图类                 | 视图名称          |
+| -------- | ------------------------------ | -------- | ---------------------- | ----------------- |
+| 首页     | `''`                           | 前端     | DJESiteHomeView        | dje_home          |
+| 列表页面 | `'list/'`                      | 前端     | DJESiteListView        | dje_list          |
+| 图表页面 | `'chart/<slug:name>/'`         | 前端     | DJESiteDetailView      | dje_detail        |
+| 图表页面 | `'chart/<slug:name>/options/'` | 后端     | DJSiteChartOptionsView | dje_chart_options |
+| 关于页面 | `'about/'`                     | 前端     | DJESiteAboutView       | dje_about         |
 
 注：后端视图类指的是返回 `TemplateResponse`的视图类，前端视图类指的是返回 `JsonResponse` 的视图类。
 
 ## 视图类
 
- `DJESiteBaseView` 和 `DJESiteAjaxView` 均直接继承自 `View`， 并共同实现了部分逻辑。
-
-- `get_site_object` 在处理响应请求时通过该方法获取绑定的 `DJESite` 对象。
+ `DJESiteBaseView` 和 `DJESiteAjaxView` 均直接继承自 `View`， 并共同实现了站点对象注入。
 
 ### 后端视图类
 
- `DJESiteBaseView` 是所有后端视图类的基类 ，对应的模板页面为 *{theme}/base.html* ，具体的需要传入的变量字典参见下一节的“模板及其变量”。
+ `DJESiteBackendView` 是所有后端视图类的基类 ，对应的模板页面为 *{theme}/base.html* ，具体的需要传入的变量字典参见下一节的“模板及其变量”。
 
 ### 前端视图类
 
-`DJESiteAjaxView` 是所有前端视图类的基类。
+`DJESiteFrontendxView` 是所有前端视图类的基类。
 
 ## 接口方法
 
@@ -124,7 +132,7 @@ class DJESite:
 | 模板              | 变量名称            | 类型                        | 说明               |
 | ----------------- | ------------------- | --------------------------- | ------------------ |
 | {theme}/home.html | jumbotron           | `starter.widgets.Jumbotron` | 大标题             |
-|                   | top_chart_info_list | `List[DJEChartInfo]`        | 热门推荐的图表信息 |
+|                   | top_chart_info_list | `List[ChartInfo]`        | 热门推荐的图表信息 |
 
 ### 列表页(List)
 
@@ -134,7 +142,7 @@ class DJESite:
 
 | 模板              | 变量名称        | 类型                 | 说明                                     |
 | ----------------- | --------------- | -------------------- | ---------------------------------------- |
-| {theme}/list.html | chart_info_list | `List[DJEChartInfo]` | 图表的基本信息，包括标题、标识、介绍文本 |
+| {theme}/list.html | chart_info_list | `List[ChartInfo]` | 图表的基本信息，包括标题、标识、介绍文本 |
 
 
 **有分页**
@@ -156,8 +164,8 @@ class DJESite:
 
 | 模板                | 变量名称   | 类型                                          | 说明                                     |
 | ------------------- | ---------- | --------------------------------------------- | ---------------------------------------- |
-| {theme}/detail.html | menu       | `List[DJEChartInfo]`                          | 图表的基本信息，包括标题、标识、介绍文本 |
-|                     | chart_info | `django_echarts.core.charttools.DJEChartInfo` | 图表基本信息                             |
+| {theme}/detail.html | menu       | `List[ChartInfo]`                          | 图表的基本信息，包括标题、标识、介绍文本 |
+|                     | chart_info | `django_echarts.core.charttools.ChartInfo` | 图表基本信息                             |
 |                     | chart_obj  | `pycharts.charts.Base`                        | 图表对象。                               |
 
 **无图表**

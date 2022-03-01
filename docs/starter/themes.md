@@ -129,7 +129,9 @@ class MySite(DJESite):
 
 ## 自定义UI框架
 
-（此功能暂未实现.）
+（此功能暂无研发计划）
+
+django-echarts最终的目标是 实现可插拔的UI扩展。
 
 ## 参考资料
 

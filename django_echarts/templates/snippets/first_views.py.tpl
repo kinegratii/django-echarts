@@ -9,7 +9,11 @@ Example:
 
 """
 from django_echarts.starter.widgets import Copyright
-from django_echarts.starter.sites import DJESite{% if view_type == 'cbv' %}, DJESiteDetailView{% endif %}
+from django_echarts.starter.sites import DJESite
+{% if use_chart %}
+from pyecharts import options as opts
+from pyecharts.charts import Bar
+{% endif %}
 
 __all__ = ['site_obj']
 
@@ -24,6 +28,15 @@ site_obj.add_widgets(
 
 @site_obj.register_chart
 def mychart():
+    {% if use_chart %}
+    bar = Bar().add_xaxis(
+        ["Nanping", "Sanming", "Longyan", "Ningde", "Zhangzhou", "Fuzhou", "Quanzhou", "Putian", "Xiamen"]).add_yaxis(
+        'Area', [26300, 22900, 19050, 13450, 12600, 12150, 11020, 4119, 1576]
+    ).set_global_opts(
+        title_opts=opts.TitleOpts(title="The Area of cities In Fujian Province", subtitle="Unit: km3"))
+    return bar
+    {% else %}
     # Write your pyecharts here.
     # This method must return an object of pycharts.charts.Chart
     pass
+    {% endif %}

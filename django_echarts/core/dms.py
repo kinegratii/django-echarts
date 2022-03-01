@@ -4,7 +4,7 @@ A Implement that you can use host name instead of its url.
 """
 import warnings
 from dataclasses import dataclass, is_dataclass, field
-from typing import Optional, Dict, Union, Tuple
+from typing import Optional, Dict, Union, Tuple, Literal
 
 from borax.system import load_class
 from pyecharts.datasets import FILENAMES, EXTRA
@@ -129,13 +129,14 @@ class DependencyManager:
 @dataclass
 class DJEOpts:
     echarts_version: str = '4.8.0'
-    renderer: str = 'svg'
     dms_repo: str = 'pyecharts'
-    local_dir: str = ''
     dep2url: Dict[str, str] = field(default_factory=dict)
-    enable_echarts_theme: bool = False
+    local_dir: str = ''
 
+    renderer: Literal['', 'svg', 'canvas'] = ''
+    enable_echarts_theme: bool = False
     echarts_theme: Union[bool, str] = False
+
     site_class: Optional[str] = None
 
     def get_echarts_theme(self, echarts_theme) -> str:

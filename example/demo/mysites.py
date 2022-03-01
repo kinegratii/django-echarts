@@ -1,6 +1,10 @@
+from typing import Optional
+
 from django_echarts.core.charttools import NamedCharts
-from django_echarts.starter.sites import DJESite, SiteOpts
-from django_echarts.starter.widgets import Jumbotron, Copyright, LinkItem
+from django_echarts.starter.sites import DJESite, SiteOpts, DJESiteAboutView
+from django_echarts.starter.widgets import Jumbotron, Copyright, LinkItem, table_css
+from pyecharts.components import Table
+
 from .demo_data import FACTORY
 
 site_obj = DJESite(
@@ -10,16 +14,18 @@ site_obj = DJESite(
     # theme='material',
     opts=SiteOpts(
         list_layout='grid',
-        # paginate_by=1
+        nav_shown_pages=['home', 'collection'],
+        paginate_by=10
     )
 )
 
 site_obj.add_widgets(
-    jumbotron=Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
     copyright_=Copyright(start_year=2017, powered_by='Django-Echarts'),
+    jumbotron=Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0')
 )
-site_obj.add_link(LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True))
-site_obj.add_link(LinkItem(text='返回首页', url='/'))
+site_obj.add_right_link(LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True))
+site_obj.add_right_link(LinkItem(text='返回首页', url='/'))
+site_obj.add_collection('myc1', chart_names=['line_demo', 'c1'], layout='s8', catalog='图表示例', title='合辑1')
 
 
 @site_obj.register_chart(description='词云示例', catalog='图表示例', top=1)
@@ -58,3 +64,20 @@ def named_charts():
     page.add_chart(FACTORY.create('pie'), 'pie')
     page.add_chart(FACTORY.create('bar'), 'bar')
     return page
+
+
+class MyAboutView(DJESiteAboutView):
+    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
+        data = [
+            ['Join', 34, 'f'],
+            ['Bob', 23, 'm'],
+            ['yks', 23, 'f']
+        ]
+        table = Table()
+        table.add(['Name', 'Age', 'Sex'], data, attributes={'class': table_css(border=True, striped=True)})
+        context['table'] = table
+        print(context)
+        return
+
+
+site_obj.set_views(view_name='dje_about', view_class=MyAboutView)

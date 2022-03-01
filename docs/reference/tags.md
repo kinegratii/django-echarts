@@ -62,8 +62,6 @@ django_echarts.templatetags.echarts.echarts_js_content_wrap(*echarts_list)
 
 渲染图表初始js代码，支持多图表。不包含首尾的 `<script></script>` 标签。
 
-## 标签库-dje
-
 ### page_link
 
 ```

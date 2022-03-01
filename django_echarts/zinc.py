@@ -5,7 +5,7 @@ A integration module with models admin
 from django.db import models
 
 from django_echarts.starter.sites import DJESite
-from django_echarts.core.charttools import ChartManagerMixin
+from django_echarts.core.charttools import ChartInfoManagerMixin
 
 
 class MChartInfo(models.Model):
@@ -16,7 +16,7 @@ class MChartInfo(models.Model):
         abstract = True
 
 
-class ChartModelManager(ChartManagerMixin):
+class ChartModelManager(ChartInfoManagerMixin):
     pass
 
 

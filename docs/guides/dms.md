@@ -2,6 +2,15 @@
 
 ## 概述
 
+django-echarts 本身不携带任何静态文件，默认引用在线资源，可以通过提供的命令下载到本地。
+
+这些资源包括：
+
+- echarts库文件
+- echarts地图文件
+- echarts主题文件
+- UI主题文件
+
 django-echarts的依赖项模块对 pyecharts 作了进一步扩展：
 
 - 完全兼容 pyecharts 仓库引用逻辑。
@@ -9,8 +18,6 @@ django-echarts的依赖项模块对 pyecharts 作了进一步扩展：
 - 提供下载命令以支持本地化。
 
 django-echarts 和 pyecharts 共用底层静态文件存储字典 ，具体可参见 `pyecharts.datasets` 包。
-
-
 
 ## 仓库源
 

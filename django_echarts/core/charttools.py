@@ -1,6 +1,6 @@
 import re
 from collections import OrderedDict
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 
 
 class ChartsConstants:
@@ -41,20 +41,23 @@ def merge_js_dependencies(*chart_or_name_list, enable_theme=False):
     return front_required_items + [x for x in front_optional_items if x in fist_items] + dependencies
 
 
-class DJEChartInfo:
+class ChartInfo:
     """The meta-data class for a chart."""
-    __slots__ = ['name', 'title', 'description', 'url', 'selected', 'parent_name', 'top', 'tags', 'extra']
+    __slots__ = ['name', 'title', 'description', 'url', 'selected', 'catalog', 'top', 'tags', 'layout',
+                 'extra']
 
     def __init__(self, name: str, title: str = None, description: str = None, url: str = None,
-                 selected: bool = False, parent_name: str = None, top: int = 0, tags=None, extra=None):
+                 selected: bool = False, catalog: str = None, top: int = 0, tags: List = None, layout: str = None,
+                 extra: Dict = None):
         self.name = name
         self.title = title or self.name
         self.description = description or ''
         self.url = url
         self.selected = selected
         self.top = top
-        self.parent_name = parent_name
+        self.catalog = catalog
         self.tags = tags or []
+        self.layout = layout
         self.extra = extra or {}
 
     def __hash__(self):
@@ -67,27 +70,30 @@ class DJEChartInfo:
         return f'<ChartInfo {self.name}>'
 
 
-class ChartManagerMixin:
+class ChartInfoManagerMixin:
     """The backend for the store of chart info."""
 
-    def add_chart_info(self, info: DJEChartInfo):
+    def add_chart_info(self, info: ChartInfo):
         pass
 
-    def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[DJEChartInfo]:
+    def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[ChartInfo]:
         pass
 
-    def get_or_none(self, name: str) -> Optional[DJEChartInfo]:
+    def get_or_none(self, name: str) -> Optional[ChartInfo]:
+        pass
+
+    def count(self) -> int:
         pass
 
 
-class LocalChartManager(ChartManagerMixin):
+class LocalChartInfoManager(ChartInfoManagerMixin):
     def __init__(self):
-        self._chart_info_list = []  # type: List[DJEChartInfo]
+        self._chart_info_list = []  # type: List[ChartInfo]
 
-    def add_chart_info(self, info: DJEChartInfo):
+    def add_chart_info(self, info: ChartInfo):
         self._chart_info_list.append(info)
 
-    def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[DJEChartInfo]:
+    def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[ChartInfo]:
         chart_info_list = [info for info in self._chart_info_list if not with_top or info.top]
         if keyword:
             def _filter(_item):
@@ -98,15 +104,19 @@ class LocalChartManager(ChartManagerMixin):
             chart_info_list.sort(key=lambda x: x.top)
         return chart_info_list
 
-    def get_or_none(self, name: str) -> Optional[DJEChartInfo]:
+    def get_or_none(self, name: str) -> Optional[ChartInfo]:
         for info in self._chart_info_list:
             if info.name == name:
                 return info
+
+    def count(self) -> int:
+        return len(self._chart_info_list)
 
 
 class NamedCharts:
     """
     A data structure class containing multiple named charts.
+    is_combine: if True, the collection <all> will not contains this chart.
     """
 
     def __init__(self, page_title: str = 'EChart', col_chart_num: int = 1, is_combine: bool = False):
@@ -235,8 +245,10 @@ class ChartCollection:
     def __init__(self, name: str = None, layout: Union[str, LayoutOpts] = None):
         self.name = name
         self._name_list = []  # type: List[str]
-        self._chart_dic = []
-        self._info_dic = []  # type: List[DJEChartInfo]
+        self._flags = {}  # type:Dict[str,bool]
+        self._chart_obj_dict = {}
+        self._info_dic = {}  # type: Dict[str,ChartInfo]
+        self._user_layouts = {}
         # expose the following for render
         self._row_layout_opts_list = []  # type: List[LayoutOpts]
         self.card_span = LayoutOpts.TOTAL_COLS
@@ -249,7 +261,9 @@ class ChartCollection:
     def adjust_layout(self):
         c_opts = self._user_layout
         if c_opts.chart_pos == ChartPosition.AUTO:
-            pass
+            self._row_layout_opts_list = [
+                LayoutOpts.from_label(self._user_layouts.get(name, 'l8')) for name in self._name_list
+            ]
         elif c_opts.chart_pos in (ChartPosition.STRIPPED, ChartPosition.LEFT, ChartPosition.RIGHT):
             self._row_layout_opts_list = []
             for i, name in enumerate(self._name_list):
@@ -271,15 +285,11 @@ class ChartCollection:
             pass
         return self
 
-    # @property
-    # def _collection_layout_opts(self):
-    #     return self._collection_layout_opts
-
     @property
     def charts(self) -> List:
-        return self._chart_dic
+        return [self._chart_obj_dict.get(name) for name in self._name_list]
 
-    def add(self, chart_obj, info: DJEChartInfo, ignore_chart_type: bool = False):
+    def add(self, chart_obj, info: ChartInfo, ignore_chart_type: bool = False):
         if isinstance(chart_obj, NamedCharts) and chart_obj.is_combine:
             if ignore_chart_type:
                 return self
@@ -289,21 +299,36 @@ class ChartCollection:
             chart_obj.width = '100%'
 
         self._name_list.append(info.name)
-        self._chart_dic.append(chart_obj)
-        self._info_dic.append(info)
+        self._flags[info.name] = False
+        self._chart_obj_dict[info.name] = chart_obj
+        self._info_dic[info.name] = info
+        self._user_layouts[info.name] = info.layout
+        return self
+
+    def add_chart_ref(self, chart_name: str):
+        self._name_list.append(chart_name)
+        self._flags[chart_name] = True
+
+    def get_ref_names(self):
+        return [name for name in self._name_list if self._flags.get(name)]
+
+    def resolve(self, chart_obj, info: ChartInfo):
+        self._chart_obj_dict[info.name] = chart_obj
+        self._info_dic[info.name] = info
+        self._user_layouts[info.name] = info.layout
         return self
 
     def auto_layout(self):
         pass
 
     def iter_for_layout(self):
-        for chart_obj, chart_info, row_layout_ops in zip(self._chart_dic, self._info_dic, self._row_layout_opts_list):
-            yield chart_obj, chart_info, row_layout_ops
+        for i, name in enumerate(self._name_list):
+            yield self._chart_obj_dict[name], self._info_dic[name], self._row_layout_opts_list[i]
 
     def __iter__(self):
-        for chart_obj, chart_info in zip(self._chart_dic, self._info_dic):
-            yield chart_obj, chart_info
+        for name in self._name_list:
+            yield self._chart_obj_dict[name], self._info_dic[name]
 
     @property
     def js_dependencies(self):
-        return merge_js_dependencies(*self._chart_dic)
+        return merge_js_dependencies(*self._chart_obj_dict.values())
