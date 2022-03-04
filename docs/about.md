@@ -24,7 +24,7 @@
 - pyecharts: [https://pyecharts.org/](https://pyecharts.org/)
 - pyecharts-asserts [https://github.com/pyecharts/pyecharts-assets](https://github.com/pyecharts/pyecharts-assets)
 
-## 与pycharts
+## 与pyecharts
 
 django-echarts 的底层定位于 pyecharts 和 django 的整合库，主要代码位于 `django_echarts.core` 包。
 

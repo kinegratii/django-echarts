@@ -68,8 +68,7 @@ Task Completed! You can use "bootstrap5.cerulean#local" to the site config.
 ```python
 site_obj = DJESite(
     site_title='图表可视化',
-    theme='bootstrap5.cerulean#local',
-    list_layout='grid'
+    theme='bootstrap5.cerulean#local'
 )
 ```
 
@@ -97,8 +96,7 @@ install_theme('bootstrap3.foo', {'palette_css': '/static/bootstrap3.foo.min.css'
 
 site_obj = DJESite(
     site_title='图表可视化',
-    theme='bootstrap3.foo',
-    list_layout='grid'
+    theme='bootstrap3.foo'
 )
 ```
 
@@ -132,8 +130,3 @@ class MySite(DJESite):
 （此功能暂无研发计划）
 
 django-echarts最终的目标是 实现可插拔的UI扩展。
-
-## 参考资料
-
-- bootstrap3调色css: [ https://bootswatch.com/3/]( https://bootswatch.com/3/)
-- materialcss: [https://materializecss.com/](https://materializecss.com/)

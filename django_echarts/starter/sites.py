@@ -172,7 +172,7 @@ class DJESiteHomeView(DJESiteBackendView):
         if chart_obj:
             context[_VAR_CHART_] = chart_obj
             context[_VAR_CHART_INFO_] = info
-        context['number_panel'] = site.widgets.get(WidgetRefs.home_values_panel)
+        context[WidgetRefs.home_values_panel] = site.widgets.get(WidgetRefs.home_values_panel)
         context['top_chart_info_list'] = site.chart_info_manager.query_chart_info_list(with_top=True)
         context['layout_tpl'] = self._resolve_template_name('{theme}/items_grid.html')
 
@@ -375,7 +375,7 @@ class DJESite:
 
     # Register function and views class
     def register_chart(self, function=None, *, info: ChartInfo = None, name: str = None, title: str = None,
-                       description: str = None, layout: str = None, top: int = 0, catalog: str = None,
+                       description: str = None, body: str = None, layout: str = None, top: int = 0, catalog: str = None,
                        tags: List = None, nav_parent_name: str = None, nav_after_separator: bool = False):
         """Register chart function."""
 
@@ -387,7 +387,7 @@ class DJESite:
             if info:
                 c_info = info
             else:
-                c_info = ChartInfo(name=cname, title=title or cname, description=description,
+                c_info = ChartInfo(name=cname, title=title or cname, description=description, body=body,
                                    url=url, top=top, catalog=catalog, tags=tags, layout=layout)
             self._chart_obj_dic.func_register(func, c_info.name)
             self._chart_info_manager.add_chart_info(c_info)

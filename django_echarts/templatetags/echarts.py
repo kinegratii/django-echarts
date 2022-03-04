@@ -72,7 +72,12 @@ def echarts_container(context, *echarts, width=None, height=None):
     div_list = []
     for chart in echarts:
         if isinstance(chart, NamedCharts):
-            html_list = [_build_init_div_container(schart, width=width, height=height) for schart in chart]
+            html_list = []
+            for schart in chart:
+                if _is_table(schart):
+                    html_list.append(_table2html(schart))
+                else:
+                    html_list.append(_build_init_div_container(schart, width=width, height=height))
             div_list.append(wrap_with_grid(html_list, chart.col_chart_num, cns=theme.cns))
         elif _is_table(chart):
             div_list.append(_table2html(chart))
@@ -141,16 +146,12 @@ def echarts_js_content_wrap(context, *charts):
 
 
 @register.simple_tag(takes_context=False)
-def dje_table(table_obj, **kwargs):
-    if hasattr(table_obj, 'html_content'):
-        html_content = table_obj.html_content
-    else:
-        html_content = table_obj.get_html_string(**kwargs)
-    return SafeString(html_content)
+def dw_table(table_obj, **kwargs):
+    return _table2html(table_obj, **kwargs)
 
 
 @register.simple_tag(takes_context=True)
-def dje_values_panel(context, panel):
+def dw_values_panel(context, panel):
     theme = context['theme']
     tpl = get_template(f'{theme.name}/widgets/values_panel.html')
     html_list = [tpl.render({'panel': item}) for item in panel]

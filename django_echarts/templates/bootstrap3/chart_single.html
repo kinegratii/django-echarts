@@ -5,11 +5,11 @@
     <div class="row ">
         <!--/.sidebar-offcanvas-->
         <div class="col-md-12">
-            <div class="page-header">
-                <h2>{{ title }}</h2>
+            <div class="page-header text-center">
+                <h3>{{ title }}</h3>
             </div>
             {% if chart_info.description %}
-                <div class="well well-sm">{{ chart_info.description }}</div>
+                <div class="well well-sm" style="text-indent: 2rem;">{{ chart_info.description }}</div>
             {% endif %}
             {% if chart_info.tags %}
                 <div class="clearfix">
@@ -21,6 +21,10 @@
             {% endif %}
             <br/>
             {% echarts_container chart_obj %}
+            {% if chart_info.body %}
+                <br/>
+                <div style="text-indent: 2rem;">{{ chart_info.body }}</div>
+            {% endif %}
 
         </div>
         <!--/.col-xs-12.col-sm-9-->

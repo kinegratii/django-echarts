@@ -3,9 +3,18 @@ theme:
   icon:
     logo: material/monitor-dashboard
   name: material
+  palette:
+    primary: teal
   features:
     - navigation.tabs
     - navigation.sections
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/kinegratii/django-echarts
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/django-echarts
+copyright: Copyright &copy; 2017 - 2022 Samuel.Yan
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences

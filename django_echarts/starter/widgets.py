@@ -5,7 +5,9 @@ from typing import List, Union, Literal, Any
 
 from borax.datasets.fetch import fetch
 
-__all__ = ['LinkItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright', 'Message']
+# TODO Move out of starter module.
+
+__all__ = ['LinkItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright', 'Message', 'ValuesPanel']
 
 
 def _new_slug() -> str:
@@ -127,20 +129,16 @@ class ValueItem:
         self.arrow = arrow
 
 
-class Widget:
-    dynamic = True
-    chart_managed = True
-
-
 class ValuesPanel:
-    def __init__(self, data: List = None, col_item_num: int = 1):
-        data = data or []
-        self._data = [ValueItem(*arg) for arg in data]
+    def __init__(self, col_item_num: int = 1):
+        self._items = []  # type: List[ValueItem]
         self.col_item_num = col_item_num
 
-    def add(self, item: ValueItem):
-        self._data.append(item)
+    def add(self, value: Any, description: str, unit: str = None, catalog: str = 'primary',
+            arrow: Literal['up', 'down', ''] = ''):
+        item = ValueItem(value=value, description=description, unit=unit, catalog=catalog, arrow=arrow)
+        self._items.append(item)
         return self
 
     def __iter__(self):
-        yield from self._data
+        yield from self._items

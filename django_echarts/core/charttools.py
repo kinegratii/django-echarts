@@ -43,15 +43,16 @@ def merge_js_dependencies(*chart_or_name_list, enable_theme=False):
 
 class ChartInfo:
     """The meta-data class for a chart."""
-    __slots__ = ['name', 'title', 'description', 'url', 'selected', 'catalog', 'top', 'tags', 'layout',
+    __slots__ = ['name', 'title', 'description', 'body', 'url', 'selected', 'catalog', 'top', 'tags', 'layout',
                  'extra']
 
-    def __init__(self, name: str, title: str = None, description: str = None, url: str = None,
+    def __init__(self, name: str, title: str = None, description: str = None, body: str = None, url: str = None,
                  selected: bool = False, catalog: str = None, top: int = 0, tags: List = None, layout: str = None,
                  extra: Dict = None):
         self.name = name
         self.title = title or self.name
         self.description = description or ''
+        self.body = body
         self.url = url
         self.selected = selected
         self.top = top
