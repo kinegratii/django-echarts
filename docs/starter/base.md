@@ -50,7 +50,7 @@ DJANGO_ECHARTS = {
 `DJESite` 是所有界面和逻辑的入口点，首先必须创建你自己的 site 对象。
 
 ```python
-from django_echarts.starter.widgets import Jumbotron, Copyright, LinkItem
+from django_echarts.entities.widgets import Jumbotron, Copyright, LinkItem
 from django_echarts.starter.sites import DJESite, SiteOpts
 
 site_obj = DJESite(
@@ -135,23 +135,6 @@ def mychart():
     return bar
 ```
 
-### 关联导航栏
-
-下面是演示如何添加到导航菜单栏的。以 `chart.title = 'Chart1'` 为例子：
-
-| chart.catalog | nav_parent_name | 说明                              |
-| ------------- | --------------- | --------------------------------- |
-| None(未设置)  | None(未设置)    | 不显示在菜单栏上                  |
-| 'BarCharts'   | None(未设置)    | 显示，“BarCharts- Chart1”         |
-| None(未设置)  | 'Menu1'         | 显示，“Menu - Chart1”             |
-| 'BarCharts'   | 'Menu1'         | 显示 "Menu - Chart1" <sup>1</sup> |
-| 任意          | 'self'          | 显示一级菜单<sup>2</sup>          |
-| 任意          | 'none'          | 不显示<sup>3</sup>                |
-
-1. 只要 catalog 和 nav_parent_name 至少一个有设置，均显示为二级菜单
-2. 使用特殊标识 'self' 表示显示为一级菜单
-2. 使用特殊标识 'none' 表示不显示
-
 ### 其他配置
 
 `DJESite.register_chart` 接受下列可选参数：
@@ -167,9 +150,28 @@ def mychart():
 | top                 | int            | 置顶标志，0表示不置顶，数值越小，越靠前。      |
 | tags                | List[str]      | 标签列表，列表搜索功能时，标签也是搜索范围。   |
 | layout              | str            | 布局参数，参见 “组件和布局” 一章               |
-| **菜单参数**        |                |                                                |
+| **菜单参数** |                |                                                |
 | nav_parent_name     | str            | 上级菜单名称，默认为 catalog                   |
 | nav_after_separator | bool           | 是否在菜单项前使用分隔符                       |
+
+### 关联导航栏
+
+下面是演示如何添加到导航菜单栏的。以 `chart.title = 'Chart1'` 为例子：
+
+| chart.catalog | nav_parent_name | 说明                              |
+| ------------- | --------------- | --------------------------------- |
+| None(未设置)  | None(未设置)    | 不显示在菜单栏上                  |
+| 'BarCharts'   | None(未设置)    | 显示，“BarCharts- Chart1”         |
+| None(未设置)  | 'Menu1'         | 显示，“Menu - Chart1”             |
+| 'BarCharts'   | 'Menu1'         | 显示 "Menu - Chart1" <sup>1</sup> |
+| 任意          | 'self'          | 显示一级菜单<sup>2</sup>          |
+| 任意          | 'none'          | 不显示<sup>3</sup>                |
+
+1. 只要 catalog 和 nav_parent_name 至少一个有设置，均显示为二级菜单
+2. 使用特殊标识 'self' 表示显示为一级菜单
+3. 使用特殊标识 'none' 表示不显示
+
+
 
 ## 注册HTML组件
 
@@ -185,53 +187,72 @@ def mychart():
 以注册ValuesPanel为例子。
 
 ```python
-@site_obj.register_widget
+from datetime import date
+from django_echarts.entities import ValuesPanel
+from myapp import models
+
+@site_obj.register_html_widget
 def this_month_panel():
     today = date.today()
     number_p = ValuesPanel(col_item_num=4)
     access_total = models.Record.objects.filter(
         create_time__year=today.year, create_time__month=today.month
     ).count()
-    number_p.add(ValueItem(access_total, f'{today.year}年{today.month}月访问量', '人次'))
+    number_p.add(access_total, f'{today.year}年{today.month}月访问量', '人次')
     return number_p
 ```
 
 ### 获取组件
 
-> DJESite.widgets.get(name:str)
+> DJESite.html_widgets.get(name:str)
 
 在注册组件后，可以通过标识获取到这个组件，如果是装饰器方式注册，每次将重新生成新的组件对象。
 
 ```python
-number_p = site_obj.widgets.get('this_month_panel') # 每次重新生成新的 ValuesPanel 对象。
-print(number_p.col_item_num) # 4
-print(number_p[0].description) # '2022年1月访问量'
+number_p = site_obj.html_widgets.get('this_month_panel')  # 每次重新生成新的 ValuesPanel 对象。
+print(number_p.col_item_num)  # 4
+print(number_p[0].description)  # '2022年1月访问量'
 ```
 
-
-
-## 配置网站组件
+## 添加网站公共组件
 
 ### 导航栏(Nav)
 
-导航栏位于页面顶部，由 左侧二级菜单 和 右侧 一级菜单 两部分组成，可以通过调用 DJESite 的方法添加连接。
+导航栏位于页面顶部，由 *左侧二级菜单* 和 *右侧一级菜单* 两部分组成，根据目标链接的类型有不同的添加方式。
+
+**第一种：内置页面**
+
+内置页面通常位于左侧二级菜单栏的最前面，使用 `SiteOpts.nav_shown_pages` 定义。
+
+```python
+SiteOpts(nav_shown_pages=['home', 'collection'])
+```
+
+包括：
+
+| 标识       | 页面功能                                                     |
+| ---------- | ------------------------------------------------------------ |
+| home       | 首页。默认已添加。                                           |
+| list       | 包含所有图表的信息页。不显示图表，显示描述、标签等。默认已添加。 |
+| collection | 包含所有图表的合辑，显示图表和简短的文字描述信息。           |
+
+**第二种：图表和合辑**
+
+将图表或者合辑添加到左侧二级菜单，由 `DJESite.register_chart` / `DJESite.register_collection` 中参数控制 。详细参见 注册图表 一节。
+
+**第三种：自定义链接**
 
 | 函数                                                     | 说明                         |      |
 | -------------------------------------------------------- | ---------------------------- | ---- |
-| `DJESite.add_left_link(item: LinkItem, menu_title: str)` | 在左侧添加一级菜单           |      |
+| `DJESite.add_left_link(item: LinkItem)`                  | 在左侧添加一级菜单           |      |
 | `DJESite.add_left_link(item: LinkItem, menu_title: str)` | 在menu_title之下添加二级菜单 |      |
 | `DJESite.add_right_link(item: LinkItem)`                 | 在右侧添加链接               |      |
 
-下列的菜单项默认已添加到左侧菜单栏，可以通过设置 SiteOpts.nav_shown_pages 参数控制是否显示这些项目：
-
-- 首页 `Menu(text='首页', slug='home', url=reverse_lazy('dje_home'))`
-- 所有图表`Menu(text='所有图表', slug='list', url=reverse_lazy('dje_list'))` ，可以通过 list_page_shown 参数控制此项不显示
-
-也可以通过 `DJESite` 提供的方法添加自定义链接。
+例子：
 
 ```python
 from django.urls import reverse_lazy
-from django_echarts.starter.widgets import LinkItem
+from django_echarts.entities.widgets import LinkItem
 
 # 在右侧添加项目仓库链接，以新标签页方式打开
 item = LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True)
@@ -272,6 +293,7 @@ DJESite.add_widgets(*, jumbotron: Jumbotron = None, copyright_: Copyright = None
 
 | 参数/组件标识/模板变量名称 | 实际组件类型   | 引用方式              |
 | -------------------------- | -------------- | --------------------- |
+| copyright_                 | Copyright      | 静态                  |
 | home_jumbotron             | Jumbotron      | 静态<sup>1</sup>      |
 | home_jumbotron_chart       | JumbotronChart | 静态/动态<sup>2</sup> |
 | home_values_panel          | ValuesPanel    | 静态/动态             |

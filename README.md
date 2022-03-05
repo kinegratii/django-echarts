@@ -79,7 +79,7 @@ INSTALL_APPS = (
 python manage.py startsite MyDemo\site_views.py
 ````
 
-*site_views.py* 文件代码如下： 
+*site_views.py* 文件代码如下：
 
 ```python
 """
@@ -92,7 +92,7 @@ Example:
     ]
 
 """
-from django_echarts.starter.widgets import Copyright
+from django_echarts.entities.widgets import Copyright
 from django_echarts.starter.sites import DJESite
 
 __all__ = ['site_obj']
@@ -118,7 +118,7 @@ def mychart():
 ```python
 # ...
 from django_echarts.starter.sites import DJESite
-from django_echarts.starter.widgets import Copyright, Jumbotron, LinkItem
+from django_echarts.entities.widgets import Copyright, Jumbotron, LinkItem
 from pyecharts import options as opts
 from pyecharts.charts import Bar
 

@@ -2,31 +2,25 @@
 {% load echarts %}
 
 {% block main_content %}
-    {% for chart_obj, chart_info, layout_opts in chart_page_container.iter_for_layout %}
-        <div class="card mb-3">
-            <div class="row g-0">
-                {% if layout_opts.start %}
-                    <div class="col-md-{{ layout_opts.info_span }} col-sm-12">
+    {% for row_data in chart_page_container.packed_matrix %}
+        <div class="row">
+            {% for widget, col_span in row_data %}
+                <div class="col-md-{{ col_span }} col-sm-12">
+                    {% if widget.widget_type == 'InfoCard' %}
                         <div class="card-body">
-                            <h5 class="card-title">{{ chart_info.title }}</h5>
-                            <p class="card-text">{{ chart_info.description }}</p>
+                            <h5 class="card-title">{{ widget.title }}</h5>
+                            <p class="card-text">{{ widget.description }}</p>
                         </div>
-                    </div>
-                {% endif %}
-                <div class="col-md-{{ layout_opts.chart_span }} col-sm-12">
-                    {% echarts_container chart_obj width="100%" %}
+                    {% elif widget.widget_type == 'ValuesPanel' %}
+                        {% dw_values_panel widget %}
+                    {% else %}
+                        {% echarts_container widget %}
+                    {% endif %}
                 </div>
-                {% if layout_opts.end %}
-                    <div class="col-md-{{ layout_opts.info_span }} col-sm-12">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ chart_info.title }}</h5>
-                            <p class="card-text">{{ chart_info.description }}</p>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
+            {% endfor %}
         </div>
     {% endfor %}
+
 {% endblock %}
 
 {% block extra_script %}

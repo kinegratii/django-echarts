@@ -6,7 +6,7 @@ from django import template
 from django.template.loader import render_to_string, get_template
 from django.utils.html import SafeString
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.core.charttools import NamedCharts, merge_js_dependencies, ChartCollection
+from django_echarts.entities.charttools import NamedCharts, merge_js_dependencies, WidgetCollection
 from django_echarts.utils.burl import burl_kwargs
 
 register = template.Library()
@@ -98,8 +98,8 @@ def echarts_js_dependencies(context, *args):
 
 def _flat_to_chart_list(obj):
     """
-    ChartCollection - Chart
-    ChartCollection - NamedCharts - chart
+    WidgetCollection - Chart
+    WidgetCollection - NamedCharts - chart
     """
     chart_obj_list = []
 
@@ -107,7 +107,7 @@ def _flat_to_chart_list(obj):
         if isinstance(_obj, (NamedCharts, tuple)):
             for _c in _obj:
                 _add(_c)
-        elif isinstance(_obj, ChartCollection):
+        elif isinstance(_obj, WidgetCollection):
             for _c in _obj.charts:
                 _add(_c)
         elif hasattr(_obj, 'dump_options'):  # Mock like pyecharts chart
@@ -156,6 +156,19 @@ def dw_values_panel(context, panel):
     tpl = get_template(f'{theme.name}/widgets/values_panel.html')
     html_list = [tpl.render({'panel': item}) for item in panel]
     return SafeString(wrap_with_grid(html_list, panel.col_item_num, theme.cns))
+
+
+# TODO dw_widget
+@register.simple_tag(takes_context=True)
+def dw_widget(context):
+    pass
+
+
+@register.simple_tag(takes_context=True)
+def dw_collection(context, collection):
+    theme = context['theme']
+    tpl = get_template(f'{theme.name}/widgets/collection.html')
+    return SafeString(tpl.render({'collection': collection}))
 
 
 # ----- The following tags takes data object from the context, not the user's parameters. -----

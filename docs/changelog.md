@@ -11,7 +11,7 @@
 - 新增支持pyecharts在线地图
 - 新增支持3D图表
 - 新增支持 pyecharts Table 表
-- 新增 ChartCollection图文合辑页面渲染
+- 新增 WidgetCollection图文合辑页面渲染
 - 新增支持echarts主题
 - 新增 info/download 命令行工具
 - 新增 starttpl 命令工具

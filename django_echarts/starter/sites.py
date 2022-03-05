@@ -1,4 +1,5 @@
 import json
+import pprint
 import re
 from dataclasses import dataclass, field
 from functools import wraps
@@ -8,15 +9,13 @@ from django.core.paginator import Paginator
 from django.http.response import JsonResponse
 from django.urls import reverse_lazy, path
 from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
-from django_echarts.core.charttools import (
-    ChartInfo, LocalChartInfoManager, ChartInfoManagerMixin, ChartCollection
-)
 from django_echarts.core.exceptions import DJEAbortException
 from django_echarts.core.themes import get_theme, Theme
+from django_echarts.entities.articles import ChartInfo, LocalChartInfoManager, ChartInfoManagerMixin
+from django_echarts.entities.charttools import WidgetGetterMixin, WidgetCollection
+from django_echarts.entities.widgets import Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
 from django_echarts.utils.compat import get_elided_page_range
 from django_echarts.utils.lazy_dict import LazyDict
-
-from .widgets import Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
 
 __all__ = ['DJESite', 'SiteOpts', 'ttn', 'DJESiteBackendView']
 
@@ -88,7 +87,7 @@ class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, V
         context['nav'] = site.nav
         context['site_title'] = site.site_title
         context['page_title'] = site.site_title
-        context['copyright'] = site.widgets.get('copyright')
+        context['copyright'] = site.html_widgets.get('copyright')
         # select a theme
         theme = site.dje_get_current_theme(self.request)
         context['theme'] = theme
@@ -127,11 +126,13 @@ class DJESiteDetailBaseView(DJESiteBackendView):
         return self.template_name
 
 
-class DJESiteChartCollectionView(DJESiteBackendView):
+class DJESiteCollectionView(DJESiteBackendView):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         collection_name = self.kwargs.get('name', 'all')
-        chart_collection = site.build_collection(collection_name)
-        context[_VAR_PAGE_CONTAINER_] = chart_collection
+        # TODO entry
+        widget_collection = site.build_collection(collection_name)
+        pprint.pprint(widget_collection.packed_matrix)
+        context[_VAR_PAGE_CONTAINER_] = widget_collection
         return ttn('chart_collection.html')
 
 
@@ -167,12 +168,12 @@ class DJESiteHomeView(DJESiteBackendView):
     template_name = ttn('home.html')
 
     def dje_init_page_context(self, context, site: 'DJESite'):
-        context['jumbotron'] = site.widgets.get(WidgetRefs.home_jumbotron)
+        context['jumbotron'] = site.html_widgets.get(WidgetRefs.home_jumbotron)
         chart_obj, _, info = site.resolve_chart(WidgetRefs.home_jumbotron_chart)
         if chart_obj:
             context[_VAR_CHART_] = chart_obj
             context[_VAR_CHART_INFO_] = info
-        context[WidgetRefs.home_values_panel] = site.widgets.get(WidgetRefs.home_values_panel)
+        context[WidgetRefs.home_values_panel] = site.html_widgets.get(WidgetRefs.home_values_panel)
         context['top_chart_info_list'] = site.chart_info_manager.query_chart_info_list(with_top=True)
         context['layout_tpl'] = self._resolve_template_name('{theme}/items_grid.html')
 
@@ -272,7 +273,7 @@ class NavMenuPosition:
 _SLUG_RE = re.compile(r'[-a-zA-Z0-9_]+')
 
 
-class DJESite:
+class DJESite(WidgetGetterMixin):
     """A generator endpoint for visual chart site.
     Example:
         site_obj = DJESite(site_title='MySite', opts=SiteOpts(paginate_by=10))
@@ -300,19 +301,18 @@ class DJESite:
             'dje_list': DJESiteListView,
             'dje_chart_single': DJESiteChartSingleView,
             'dje_chart_options': DJSiteChartOptionsView,
-            'dje_chart_collection': DJESiteChartCollectionView,
+            'dje_chart_collection': DJESiteCollectionView,
             'dje_about': DJESiteAboutView
         }
         # Inject site object to views.
-        # DJESiteBaseView.get_site_object = self._inject(DJESiteBaseView.get_site_object)
-        # DJESiteAjaxView.get_site_object = self._inject(DJESiteAjaxView.get_site_object)
         SiteInjectMixin.get_site_object = self._inject(SiteInjectMixin.get_site_object)
 
         # Charts & Widgets & Collections
-        self._widget_dic = LazyDict()
-        self._chart_obj_dic = LazyDict()
+        self._html_widgets = LazyDict()  # html_widgets
+        self._chart_obj_dic = LazyDict()  # chart_widgets
+        # chart_card_widgets
         self._chart_info_manager = self.chart_info_manager_class()  # type: ChartInfoManagerMixin
-        self._collection_dic = {}  # type: Dict[str,ChartCollection]
+        self._collection_dic = {}  # type: Dict[str,WidgetCollection]
 
     def _inject(self, func):
         @wraps(func)
@@ -328,12 +328,31 @@ class DJESite:
         return self._opts
 
     @property
-    def widgets(self) -> LazyDict:
-        return self._widget_dic
+    def html_widgets(self) -> LazyDict:
+        return self._html_widgets
 
     @property
     def chart_info_manager(self) -> ChartInfoManagerMixin:
         return self._chart_info_manager
+
+    @property
+    def urls(self):
+        """Return the URLPattern list for site entrypoint."""
+        urls = [
+            path('', self._view_dict['dje_home'].as_view(), name='dje_home'),
+            path('list/', self._view_dict['dje_list'].as_view(), name='dje_list'),
+            path('chart/<slug:name>/', self._view_dict['dje_chart_single'].as_view(), name='dje_chart_single'),
+            path('chart/<slug:name>/options/', self._view_dict['dje_chart_options'].as_view(),
+                 name='dje_chart_options'),
+            path('collection/', self._view_dict['dje_chart_collection'].as_view(), name='dje_chart_collection_all'),
+            path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
+                 name='dje_chart_collection'),
+            path('about/', self._view_dict['dje_about'].as_view(), name='dje_about')
+        ]
+        custom_url = self.dje_get_urls()
+        if custom_url:
+            urls += custom_url
+        return urls
 
     def set_views(self, view_name: str, view_class: Type[DJESiteBackendView]):
         self._view_dict[view_name] = view_class
@@ -360,17 +379,17 @@ class DJESite:
                     jumbotron_chart: Union[str, Any] = None, values_panel: Union[str, ValuesPanel] = None):
         """Place widgets to pages."""
         if copyright_:
-            self._widget_dic.func_register(copyright_, 'copyright')
+            self._html_widgets.func_register(copyright_, 'copyright')
         if jumbotron:
-            self._widget_dic.func_register(jumbotron, WidgetRefs.home_jumbotron)
+            self._html_widgets.func_register(jumbotron, WidgetRefs.home_jumbotron)
         if isinstance(jumbotron_chart, str):
             self._chart_obj_dic.set_ref(WidgetRefs.home_jumbotron_chart, jumbotron_chart)
         elif jumbotron_chart:
             self._chart_obj_dic.func_register(jumbotron_chart, WidgetRefs.home_jumbotron_chart)
         if isinstance(values_panel, str):
-            self._widget_dic.set_ref(WidgetRefs.home_values_panel, values_panel)
+            self._html_widgets.set_ref(WidgetRefs.home_values_panel, values_panel)
         elif isinstance(values_panel, ValuesPanel):
-            self._widget_dic.func_register(values_panel, WidgetRefs.home_values_panel)
+            self._html_widgets.func_register(values_panel, WidgetRefs.home_values_panel)
         return self
 
     # Register function and views class
@@ -418,14 +437,14 @@ class DJESite:
         else:
             return None, False, None
 
-    def register_widget(self, function=None, *, name: str = None):
-        """A short method for @DJESite.widgets.register"""
+    def register_html_widget(self, function=None, *, name: str = None):
+        """A short method for @DJESite.html_widgets.register"""
 
         def decorator(func):
             cname = name or func.__name__
             if not _SLUG_RE.match(cname):
                 raise ValueError(f'Invalid widget slug:{cname}')
-            self._widget_dic.func_register(func, cname)
+            self._html_widgets.func_register(func, cname)
             return func
 
         if function is None:
@@ -437,9 +456,9 @@ class DJESite:
                        catalog: str = None, nav_parent_name: str = None, nav_after_separator: bool = False):
         if not _SLUG_RE.match(name):
             raise ValueError(f'Invalid collection slug:{name}')
-        collection = ChartCollection(name=name, layout=layout)
+        collection = WidgetCollection(name=name, layout=layout)
         for chart_name in chart_names:
-            collection.add_chart_ref(chart_name)
+            collection.add_chart(chart_name)
         self._collection_dic[name] = collection
         c_nav_parent_name = nav_parent_name or catalog
         if c_nav_parent_name:
@@ -453,44 +472,24 @@ class DJESite:
             )
         return self
 
-    def build_collection(self, name: str) -> ChartCollection:
+    def build_collection(self, name: str) -> WidgetCollection:
         if name == 'all':
             return self.build_collection_named_all()
         collection = self._collection_dic.get(name)
-        names = collection.get_ref_names()
-        for name in names:
-            chart_obj, _, info = self.resolve_chart(name)
-            if chart_obj:
-                collection.resolve(chart_obj, info)
-        collection.adjust_layout()
-        return collection
+        collection.auto_mount(self)
 
-    def build_collection_named_all(self) -> ChartCollection:
-        chart_collection = ChartCollection('all', layout='l8')
+    def build_collection_named_all(self) -> WidgetCollection:
+        w_collection = WidgetCollection(name='all')
         for info in self.chart_info_manager.query_chart_info_list():
             chart_obj, _, _ = self.resolve_chart(info.name)
-            chart_collection.add(chart_obj, info, ignore_chart_type=True)
-        chart_collection.adjust_layout()
-        return chart_collection
+            w_collection.pack_chart_widget(chart_obj, info)
+        return w_collection
 
-    @property
-    def urls(self):
-        """Return the URLPattern list for site entrypoint."""
-        urls = [
-            path('', self._view_dict['dje_home'].as_view(), name='dje_home'),
-            path('list/', self._view_dict['dje_list'].as_view(), name='dje_list'),
-            path('chart/<slug:name>/', self._view_dict['dje_chart_single'].as_view(), name='dje_chart_single'),
-            path('chart/<slug:name>/options/', self._view_dict['dje_chart_options'].as_view(),
-                 name='dje_chart_options'),
-            path('collection/', self._view_dict['dje_chart_collection'].as_view(), name='dje_chart_collection_all'),
-            path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
-                 name='dje_chart_collection'),
-            path('about/', self._view_dict['dje_about'].as_view(), name='dje_about')
-        ]
-        custom_url = self.dje_get_urls()
-        if custom_url:
-            urls += custom_url
-        return urls
+    def resolve_chart_widget(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
+        return self.resolve_chart(name)
+
+    def resolve_html_widget(self, name: str) -> Any:
+        return self._html_widgets.get(name)
 
     # Public Interfaces
 

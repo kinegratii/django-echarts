@@ -73,7 +73,7 @@ INSTALL_APPS = (
 python manage.py startsite MyDemo\site_views.py
 ````
 
-The code in *site_views.py* is shown as the following: 
+The code in *site_views.py* is shown as the following:
 
 ```python
 """
@@ -86,7 +86,7 @@ Example:
     ]
 
 """
-from django_echarts.starter.widgets import Copyright
+from django_echarts.entities.widgets import Copyright
 from django_echarts.starter.sites import DJESite
 
 __all__ = ['site_obj']
@@ -94,7 +94,6 @@ __all__ = ['site_obj']
 site_obj = DJESite(site_title='图表可视化')
 
 site_obj.add_widgets(copyright_=Copyright(start_year=2022, powered_by='Django-Echarts'))
-
 
 
 @site_obj.register_chart
@@ -114,7 +113,7 @@ The update text and add Components to the `site_obj`.
 # ...
 
 from django_echarts.starter.sites import DJESite
-from django_echarts.starter.widgets import Copyright, Jumbotron, LinkItem
+from django_echarts.entities.widgets import Copyright, Jumbotron, LinkItem
 from pyecharts import options as opts
 from pyecharts.charts import Bar
 

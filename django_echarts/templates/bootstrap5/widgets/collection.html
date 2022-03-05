@@ -1,0 +1,19 @@
+{% load echarts %}
+{% for row_data in collection.packed_matrix %}
+    <div class="row">
+        {% for widget, col_span in row_data %}
+            <div class="col-md-{{ col_span }} col-sm-12">
+                {% if widget.widget_type == 'InfoCard' %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ widget.title }}</h5>
+                        <p class="card-text">{{ widget.description }}</p>
+                    </div>
+                {% elif widget.widget_type == 'ValuesPanel' %}
+                    {% dw_values_panel widget %}
+                {% else %}
+                    {% echarts_container widget %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}

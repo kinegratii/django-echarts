@@ -1,8 +1,8 @@
 from typing import Optional
 
-from django_echarts.core.charttools import NamedCharts
+from django_echarts.entities.charttools import NamedCharts
 from django_echarts.starter.sites import DJESite, SiteOpts, DJESiteAboutView
-from django_echarts.starter.widgets import Jumbotron, Copyright, LinkItem, table_css
+from django_echarts.entities.widgets import Jumbotron, Copyright, LinkItem, table_css
 from pyecharts.components import Table
 
 from .demo_data import FACTORY

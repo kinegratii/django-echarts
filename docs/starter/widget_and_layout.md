@@ -6,17 +6,18 @@
 
 django-echarts可以在同一个页面上显示多个图表和其他数据组件，并支持定制不同的布局方式。该功能涉及到的类如下表：
 
-| 分组 | 组件                                      | 描述                        | 注册函数            | 数据容器          |
-| ---- | ----------------------------------------- | --------------------------- | ------------------- | ----------------- |
-| 容器 |                                           |                             |                     |                   |
-|      | 合辑 ChartCollection                      | 可包含各种组件              | register_collection | collections       |
-| 组件 |                                           |                             |                     |                   |
-|      | 文章组件 ChartInfo                        | 图表信息数据实体类          | register_chart      | chart_info_manger |
-|      | 单图表组件<sup>1</sup> pyecharts.charts.* | 可关联一个ChartInfo         | register_chart      | charts            |
-|      | 多图表组件 NamedCharts                    | 多个图表关联同一个ChartInfo | register_chart      | charts            |
-|      | HTML组件 ValuesPanel、Copyright           | 无法关联ChartInfo           | register_widget     | widgets           |
-| 布局 | 布局配置 LayoutOpts                       | 布局配置实体                |                     |                   |
+| 分组<sup>1</sup> | 组件                                      | 描述                        | 注册函数            | 数据容器          |
+| ---------------- | ----------------------------------------- | --------------------------- | ------------------- | ----------------- |
+| 容器             |                                           |                             |                     |                   |
+|                  | 合辑 WidgetCollection                      | 可包含各种组件              | register_collection | collections       |
+| 组件             |                                           |                             |                     |                   |
+|                  | 文章组件 ChartInfo                        | 图表信息数据实体类          | register_chart      | chart_info_manger |
+|                  | 单图表组件<sup>2</sup> pyecharts.charts.* | 可关联一个ChartInfo         | register_chart      | charts            |
+|                  | 多图表组件 NamedCharts                    | 多个图表关联同一个ChartInfo | register_chart      | charts            |
+|                  | HTML组件 ValuesPanel、Copyright           | 无法关联ChartInfo           | register_widget     | widgets           |
+| 布局             | 布局配置 LayoutOpts                       | 布局配置实体                |                     |                   |
 
+1. 除pyecharts图表外，所有类均可以从 `django_echarts.entities` 包导入。
 1. 目前 django-echarts不支持 Tab / BMap / Page 类型图表，Page 可以使用 `NamedCharts` 代替。
 
 ### 注册和使用组件
@@ -59,7 +60,7 @@ ValuesPanel(data: List[ValueItem] = None, col_item_num: int = 1)
 | value           | Any                       | 数值型数据       |
 | description     | str                       | 描述性文字       |
 | unit            | str                       | 单位文字         |
-| catalog         | primary                   | 决定背景颜色     |
+| catalog         | str                       | 决定背景颜色     |
 | arrow           | Literal['up', 'down', ''] | 数字后的箭头符号 |
 | **ValuesPanel** |                           |                  |
 | data            | List[ValueItem]           | 数字项列表       |
@@ -68,7 +69,7 @@ ValuesPanel(data: List[ValueItem] = None, col_item_num: int = 1)
 例子：
 
 ```python
-@site_obj.register_widget
+@site_obj.register_html_widget
 def home1_panel():
     number_p = ValuesPanel(col_item_num=4)
     # 显示图表总个数
@@ -100,6 +101,33 @@ def named_charts():
 
 ## 图表合辑
 
+### 定义合辑
+
+一个合辑由 组件 和 布局 两个部分组成。布局参数由定义时传入，组件使用 `add_widget` 函数。
+
+```python
+collection = WidgetCollection(name='first_collection', title='第一个合辑', layout='s8' )
+
+collection.add_html_widget(widget_names=['my_values_panel'])
+```
+
+参数列表
+
+| 参数   | 类型 | 描述                      |
+| ------ | ---- | ------------------------- |
+| name   | str  | 合辑标识，作为url的一部分 |
+| title  | str  | 标题                      |
+| layout | str  | 布局参数                  |
+
+添加组件
+
+```python
+collection.pack_chart_widget(widget_name='chart', with_info)
+collection.pack_html_widget(names=['w1', 'w2'], [8, 4])
+```
+
+
+
 ### 图表布局
 
 布局分为网格布局和行内布局两种。布局方式使用一个字母和一个数字组成的字符串。第1个字母表示图表的所在位置，第2个字母表示图表所占用的列数（总列数为12）。可使用的位置标识（使用首字母即可）如下：
@@ -117,19 +145,19 @@ def named_charts():
 
 下面是常见使用场景的布局定义：
 
-| ChartCollection.layout | 描述                                                    |
-| ---------------------- | ------------------------------------------------------- |
-| l8                     | 每行显示1个图表，图表全部靠左显示                       |
-| r8                     | 每行显示1个图表，图表全部靠右显示                       |
-| s8                     | 每行显示1个图表，左右信息卡交叉显示                     |
-| f6                     | 每行显示2个图表，不显示信息卡                           |
-| f12                    | 每行显示1个图表，不显示信息卡                           |
-| t6                     | 每行显示2个图表，信息卡显示在顶部。(信息卡包含少量文字) |
-| b6                     | 每行显示2个图表，信息卡显示在低部。(信息卡包含大量文字) |
+| WidgetWidgetCollection.layout | 描述                                                    |
+| ---------------------------- | ------------------------------------------------------- |
+| l8                           | 每行显示1个图表，图表全部靠左显示                       |
+| r8                           | 每行显示1个图表，图表全部靠右显示                       |
+| s8                           | 每行显示1个图表，左右信息卡交叉显示                     |
+| f6                           | 每行显示2个图表，不显示信息卡                           |
+| f12                          | 每行显示1个图表，不显示信息卡                           |
+| t6                           | 每行显示2个图表，信息卡显示在顶部。(信息卡包含少量文字) |
+| b6                           | 每行显示2个图表，信息卡显示在低部。(信息卡包含大量文字) |
 
 ### 注册合辑
 
-`ChartCollection`类表示一个图表合辑对象，可以通过 `add_collection` 方法构建一个图表合辑页面。
+可以通过 `rDJESite.register_collection` 方法构建一个图表合辑页面。
 
 ```python
 site_obj = DJESite(site_title='DJE Demo')

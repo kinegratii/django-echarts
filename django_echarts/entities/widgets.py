@@ -5,8 +5,6 @@ from typing import List, Union, Literal, Any
 
 from borax.datasets.fetch import fetch
 
-# TODO Move out of starter module.
-
 __all__ = ['LinkItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright', 'Message', 'ValuesPanel']
 
 
@@ -64,6 +62,7 @@ class Nav:
 
 
 class Jumbotron:
+    widget_type = 'Jumbotron'
     """The main panel in home page."""
     __slots__ = ['title', 'main_text', 'small_text']
 
@@ -74,6 +73,7 @@ class Jumbotron:
 
 
 class Copyright:
+    widget_type = 'Copyright'
     """The copyright text on the footer in every page."""
     __slots__ = ['year_range', 'powered_by']
 
@@ -96,6 +96,7 @@ class ThemeColor:
 
 
 class Message:
+    widget_type = 'Message'
     __slots__ = ['text', 'title', 'catalog']
 
     def __init__(self, text, title: str = '提示', catalog: str = 'default'):
@@ -130,6 +131,8 @@ class ValueItem:
 
 
 class ValuesPanel:
+    widget_type = 'ValuesPanel'
+
     def __init__(self, col_item_num: int = 1):
         self._items = []  # type: List[ValueItem]
         self.col_item_num = col_item_num

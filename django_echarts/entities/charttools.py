@@ -1,6 +1,8 @@
 import re
 from collections import OrderedDict
-from typing import List, Optional, Union, Dict
+from typing import List, Union, Dict, Optional, Any, Tuple
+
+from .articles import ChartInfo
 
 
 class ChartsConstants:
@@ -41,100 +43,33 @@ def merge_js_dependencies(*chart_or_name_list, enable_theme=False):
     return front_required_items + [x for x in front_optional_items if x in fist_items] + dependencies
 
 
-class ChartInfo:
-    """The meta-data class for a chart."""
-    __slots__ = ['name', 'title', 'description', 'body', 'url', 'selected', 'catalog', 'top', 'tags', 'layout',
-                 'extra']
-
-    def __init__(self, name: str, title: str = None, description: str = None, body: str = None, url: str = None,
-                 selected: bool = False, catalog: str = None, top: int = 0, tags: List = None, layout: str = None,
-                 extra: Dict = None):
-        self.name = name
-        self.title = title or self.name
-        self.description = description or ''
-        self.body = body
-        self.url = url
-        self.selected = selected
-        self.top = top
-        self.catalog = catalog
-        self.tags = tags or []
-        self.layout = layout
-        self.extra = extra or {}
-
-    def __hash__(self):
-        return hash(self.name)
-
-    def __eq__(self, other):
-        return self.name == other.name
-
-    def __str__(self):
-        return f'<ChartInfo {self.name}>'
-
-
-class ChartInfoManagerMixin:
-    """The backend for the store of chart info."""
-
-    def add_chart_info(self, info: ChartInfo):
-        pass
-
-    def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[ChartInfo]:
-        pass
-
-    def get_or_none(self, name: str) -> Optional[ChartInfo]:
-        pass
-
-    def count(self) -> int:
-        pass
-
-
-class LocalChartInfoManager(ChartInfoManagerMixin):
-    def __init__(self):
-        self._chart_info_list = []  # type: List[ChartInfo]
-
-    def add_chart_info(self, info: ChartInfo):
-        self._chart_info_list.append(info)
-
-    def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[ChartInfo]:
-        chart_info_list = [info for info in self._chart_info_list if not with_top or info.top]
-        if keyword:
-            def _filter(_item):
-                return keyword in _item.title or keyword in _item.tags
-
-            chart_info_list = list(filter(_filter, chart_info_list))
-        if with_top:
-            chart_info_list.sort(key=lambda x: x.top)
-        return chart_info_list
-
-    def get_or_none(self, name: str) -> Optional[ChartInfo]:
-        for info in self._chart_info_list:
-            if info.name == name:
-                return info
-
-    def count(self) -> int:
-        return len(self._chart_info_list)
-
-
 class NamedCharts:
     """
     A data structure class containing multiple named charts.
     is_combine: if True, the collection <all> will not contains this chart.
+    TODO use pyecharts.charts.mixins.CompositeMixin ?
+    ChartCreator ==> site.chart_obj_dic
+
+
     """
+    widget_type = 'NamedCharts'
 
     def __init__(self, page_title: str = 'EChart', col_chart_num: int = 1, is_combine: bool = False):
         self.page_title = page_title
         self._charts = OrderedDict()
         self._col_chart_num = col_chart_num
         self.is_combine = is_combine
+        self.has_ref = is_combine
 
     @property
     def col_chart_num(self):
         return self._col_chart_num
 
-    def add_chart(self, chart, name=None):
+    def add_chart(self, chart_obj, name=None):
         name = name or self._next_name()
-        if hasattr(chart, 'width'):
-            chart.width = '100%'
-        self._charts[name] = chart
+        if hasattr(chart_obj, 'width'):
+            chart_obj.width = '100%'
+        self._charts[name] = chart_obj
         return self
 
     def _next_name(self):
@@ -169,7 +104,7 @@ class NamedCharts:
         if not isinstance(achart_or_charts, (list, tuple, set)):
             achart_or_charts = achart_or_charts,  # Make it a sequence
         for c in achart_or_charts:
-            self.add_chart(chart=c)
+            self.add_chart(chart_obj=c)
         return self
 
     # Chart-like feature
@@ -209,14 +144,17 @@ class LayoutOpts:
 
     _rm = re.compile(r'([lrtbfsa])(([1-9]|(1[12]))?)')
 
-    def __init__(self, chart_pos: str = ChartPosition.LEFT, chart_span: int = 8, info_span: int = 4):
+    def __init__(self, chart_pos: str = ChartPosition.LEFT, chart_span: int = 8, info_span: int = 4,
+                 chart_num: int = 1):
         if len(chart_pos) > 1:
             chart_pos = chart_pos[0]
         self.chart_pos = chart_pos
         self.chart_span = chart_span
         if chart_pos in 'lras':
-            if chart_span + info_span != LayoutOpts.TOTAL_COLS:
+            if chart_num == 1 and chart_span + info_span < LayoutOpts.TOTAL_COLS:
                 info_span = LayoutOpts.TOTAL_COLS - chart_span
+            elif chart_num > 1:
+                info_span = 12
         self.info_span = info_span
         # start/end for info
         self.start = chart_pos in (ChartPosition.RIGHT, ChartPosition.BOTTOM)
@@ -227,7 +165,7 @@ class LayoutOpts:
         m = LayoutOpts._rm.match(label)
         if m:
             pos, cols = m.group(1), m.group(2)
-            if cols is None:
+            if cols is None or cols == '':
                 cols = LayoutOpts._defaults.get(pos, 8)
             else:
                 cols = int(cols)
@@ -237,6 +175,89 @@ class LayoutOpts:
 
     def __str__(self):
         return f'<LOptions:{self.chart_pos},{self.chart_span}, {self.info_span}>'
+
+
+class WidgetGetterMixin:
+    def resolve_chart_widget(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
+        """Return a pycharts chart object."""
+        pass
+
+    def resolve_html_widget(self, name: str) -> Any:
+        """Return a html widget object."""
+        pass
+
+
+class WidgetCollection:
+    """
+    wc = WidgetCollection()
+    wc.add_widget_ref(chart_name, widget_names=)
+
+    """
+
+    widget_type = 'Collection'
+
+    def __init__(self, name: str, title: str = None, layout: Union[str, LayoutOpts] = 'a'):
+        self.name = name
+        self.title = title
+        self._user_defined_layout = LayoutOpts.from_label(layout)
+        # [[is_chart, layout, name1, name2, name3,...]]
+        self._ref_config_list = []  # type: List
+
+        self._packed_matrix = []  # type: List[List]
+        self._charts = []
+
+    def add_chart(self, chart_name: str, layout: str = 'l8'):
+        self._ref_config_list.append([True, layout, chart_name])
+        return self
+
+    def add_html_widget(self, widget_names: List, layout: str = 'f'):
+        self._ref_config_list.append([False, layout, *widget_names])
+
+    def auto_mount(self, widget_container: WidgetGetterMixin):
+        for is_chart, layout_str, *names in self._ref_config_list:
+            if is_chart:
+                chart_name = names[0]
+                chart_obj, _, info = widget_container.resolve_chart_widget(chart_name)
+                self.pack_chart_widget(chart_obj, info)
+            else:
+                widget_list = [widget_container.resolve_html_widget(name) for name in names]
+                self.pack_html_widget(widget_list)
+
+    def pack_chart_widget(self, chart_obj, info: ChartInfo, ignore_ref: bool = True, layout: str = 'l8'):
+        self._charts.append(chart_obj)
+        if isinstance(chart_obj, NamedCharts):
+            if chart_obj.has_ref and ignore_ref:
+                return
+                # raise TypeError(f'{info.name} :ChartCollection can not add a NamedCharts with is_combine=True')
+            chart_widget = list(chart_obj)
+        else:
+            chart_widget = [chart_obj]
+        row_data = []
+        r_layout = LayoutOpts.from_label(layout)
+        if r_layout.start:
+            row_data.append((info, r_layout.info_span))
+        for widget in chart_widget:
+            row_data.append((widget, r_layout.chart_span))
+        if r_layout.end:
+            row_data.append((info, r_layout.info_span))
+        self._packed_matrix.append(row_data)
+
+    def pack_html_widget(self, widget_list: List, layout: str = 'f'):
+        span = int(12 / len(widget_list))
+        row_data = [(widget, span) for widget in widget_list]
+        self._packed_matrix.append(row_data)
+
+    @property
+    def packed_matrix(self):
+        return self._packed_matrix
+
+    @property
+    def charts(self):
+        return self._charts
+
+    @property
+    def js_dependencies(self):
+        return merge_js_dependencies(*self.charts)
 
 
 class ChartCollection:
@@ -291,6 +312,7 @@ class ChartCollection:
         return [self._chart_obj_dict.get(name) for name in self._name_list]
 
     def add(self, chart_obj, info: ChartInfo, ignore_chart_type: bool = False):
+        # TODO Remove add chart_obj directly.
         if isinstance(chart_obj, NamedCharts) and chart_obj.is_combine:
             if ignore_chart_type:
                 return self

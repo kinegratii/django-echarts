@@ -5,9 +5,9 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.core.themes import get_theme
-from django_echarts.core.charttools import merge_js_dependencies
-from django_echarts.utils.downloader import download_files
+from django_echarts.entities.charttools import merge_js_dependencies
 from django_echarts.starter.sites import DJESite
+from django_echarts.utils.downloader import download_files
 
 
 class DownloaderResource:
