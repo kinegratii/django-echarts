@@ -1,0 +1,8 @@
+<div class="list-group">
+    {% for chart_info in chart_info_list %}
+        <a href="{{ chart_info.url }}" class="list-group-item">
+            {{ chart_info.title }}
+        </a>
+    {% endfor %}
+
+</div>

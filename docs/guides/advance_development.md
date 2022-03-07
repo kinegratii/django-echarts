@@ -4,14 +4,35 @@
 
 > 在Django中，一个基本的功能实现由视图、模板、路由三部分组成。
 
-## 修改内置页面的逻辑和模板
+## 自定义内置页面功能
 
 如果不想首页的默认布局和组件（大标题组件、热门图表等），也可以实现自己的视图和模板，只要路由保持不变即可。
 
 使用步骤：
 
-1. 视图类必须继承 `DJESiteBaseView`，并重写 `dje_init_page_context` 方法，修改传给模板的变量字典 `context` 。
-2. 定义模板，模板必须继承 *base.html* ，放置在对应的模板路径下，如首页 *{TEMPLATE_DIR}{THEME}/home.html* 。
+**1. 定义视图**
+
+视图类必须继承 `DJESiteBackendView`，并重写 `dje_init_page_context` 方法，修改传给模板的变量字典 `context` 。
+
+> Note: 方法 `dje_init_page_context` 如果有返回值，返回的应当是模板文件名称，而不是代表 context 的字典对象。
+
+**2. 编写模板代码**
+
+模板页面必须继承模板的 *base.html* 页面。在 *main_content* 部分编写模板代码。
+
+```html
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+<p>This is my nickname: {{ nickname }}</p>
+
+{% endblock %}
+```
+
+**3. 关联路由**
+
+使用 `DJESite.register_view()` 关联路由。
 
 ```python
 class MyHomeView(DJESiteAboutView):
@@ -19,22 +40,22 @@ class MyHomeView(DJESiteAboutView):
         pass
 
 
-site_obj.set_views(view_name='dje_home', view_class=MyAboutView)
+site_obj.register_view(view_name='dje_home', view_class=MyAboutView)
 ```
 
 ## 新的页面功能
 
 django-echarts支持增加新页面功能。
 
-**1. 定义视图类**
+**1. 定义视图和路由**
 
-视图类必须继承 `DJESiteBaseView`，并重写 `dje_init_page_context` 方法，修改传给模板的变量字典 `context` 。
+视图类必须继承 `DJESiteBackendView`，并重写 `dje_init_page_context` 方法，修改传给模板的变量字典 `context` 。
 
 *site_views.py*
 
 ```python
-class MyPageView(DJESiteBaseView):
-    template_name = ttn('mypage.html')
+class MyPageView(DJESiteBackendView):
+    template_name = 'mypage.html'
 
     def dje_init_page_context(self, context, site: 'DJESite'):
         context['nickname'] = 'foo'
@@ -50,21 +71,9 @@ class MySite(DJESite):
 site_obj = MySite()
 ```
 
-> Note: 方法 `dje_init_page_context` 如果有返回值，返回的应当是模板文件名称，而不是代表 context 的字典对象。
-
 **2. 定义模板**
 
-模板页面必须继承模板的 *base.html* 页面。在 *main_content* 部分编写模板代码。
-
-```html
-{% extends 'bootstrap3/base.html' %}
-{% load echarts %}
-
-{% block main_content %}
-<p>This is my nickname: {{ nickname }}</p>
-
-{% endblock %}
-```
+模板页面必须继承模板的 *base.html* 页面。在 *main_content* 部分编写模板代码。方法同 *自定义内置页面功能* 一节。
 
 ## 仅登录用户访问
 
@@ -99,10 +108,10 @@ django-echarts 内置的UI框架与下列项目是一样的，因此可以在项
 
 根据 Django 的模板文件寻找逻辑即可实现。
 
-第一，网站总体布局定义在 *{theme}/base.html* 文件之中，将该文件复制到你的项目模板文件目录之下。
+第一，网站总体布局定义在 *base.html* 文件之中，将该文件复制到你的项目模板文件目录之下。
 
 ```shell
-python manage.py starttpl -t bootstrap5 -n base
+python manage.py starttpl -n base
 ```
 
 第二，对新的文件进行修改，需要确保每个`block`都必须存在，否则其他页面无法继承。

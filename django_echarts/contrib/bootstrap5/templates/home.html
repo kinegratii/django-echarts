@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load echarts %}
+{% block main_content %}
+    {% if jumbotron %}
+        <div class="container-fluid bg-secondary text-light p-5">
+            <div class="container bg-secondary p-5">
+                <h1 class="display-4">{{ jumbotron.title }}</h1>
+                <hr>
+                <p>{{ jumbotron.main_text }}</p>
+                <p><small>{{ jumbotron.small_text }}</small></p>
+            </div>
+        </div>
+
+    {% endif %}
+    {% if chart_obj %}
+        <div class="container">
+            <div class="row">
+
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-6">
+                            {% echarts_container chart_obj width="100%" height="320px" %}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ chart_info.title }}</h5>
+                                <p class="card-text">{{ chart_info.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    {% endif %}
+    {% if home_values_panel %}
+        {% dw_values_panel home_values_panel %}
+    {% endif %}
+    {% if top_chart_info_list %}
+        <div class="page-header" style="margin: 5px;">
+            <h2> 热门图表</h2>
+            <hr/>
+        </div>
+        {% include layout_tpl with chart_info_list=top_chart_info_list only %}
+    {% endif %}
+{% endblock %}
+{% block extra_script %}
+    {% if chart_obj %}
+        {% echarts_js_dependencies chart_obj %}
+        {% echarts_js_content chart_obj %}
+    {% endif %}
+{% endblock %}

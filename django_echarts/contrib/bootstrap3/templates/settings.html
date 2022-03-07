@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block main_content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }} {{ field }}
+            </div>
+        {% endfor %}
+        <input class="btn btn-primary" type="submit" value="提交">
+    </form>
+{% endblock %}

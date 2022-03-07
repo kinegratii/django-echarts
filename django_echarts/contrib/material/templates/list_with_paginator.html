@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    <div class="container">
+        <h2 class="header">All Charts</h2>
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <input type="text" placeholder="Search for..." name="query"
+                           {% if keyword %}value="{{ keyword }}"{% endif %}>
+                </div>
+
+            </form>
+        </div>
+
+        <br/>
+        {% include layout_tpl with chart_info_list=page_obj.object_list only %}
+
+        <div class="row">
+            <div class="col s6 offset-s3">
+                <ul class="pagination">
+                    {% for page in elided_page_nums %}
+                        {% if page == '...' %}
+                            <li class="waves-effect"><span aria-hidden="true">...</span></li>
+                        {% else %}
+                            {% if page == page_obj.number %}
+                                <li class="active">
+                                    <a href="javascript:">{{ page_obj.number }}</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="{% page_link page %}" aria-label="Previous">
+                                        <span aria-hidden="true">{{ page }}</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}

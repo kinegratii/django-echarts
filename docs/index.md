@@ -3,7 +3,7 @@
 ![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![PyPI - Status](https://img.shields.io/pypi/status/django-echarts.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-echarts.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-echarts.svg)
 
 
-> A visual site generator based on [pyecharts](https://github.com/pyecharts/pyecharts) and [Django](https://www.djangoproject.com). 
+> A visual site scaffold based on [pyecharts](https://github.com/pyecharts/pyecharts) and [Django](https://www.djangoproject.com). 
 
 
 
@@ -11,7 +11,7 @@
 
 ## 概述
 
-django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts) 和 [Django](https://www.djangoproject.com) 整合的可视化网站生成器。
+django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts) 和 [Django](https://www.djangoproject.com) 整合的可视化网站脚手架。
 
 - 支持 90%+的pyecharts图表类型
 - 可显示页面：主页 / 列表 / 详情 / 关于
@@ -59,12 +59,13 @@ MyDemo
   |-- manage.py
 ```
 
-2 添加 django_echarts包到项目配置模块的 `INSTALL_APPS`列表。
+2 添加 django_echarts包和对应的主题包到项目配置模块的 `INSTALL_APPS`列表。
 
 ```python
 INSTALL_APPS = (
     # Your apps
     'django_echarts',
+    'django_echarts.contrib.bootstrap5'
     # Your apps
 )
 ```
@@ -88,7 +89,7 @@ Example:
     ]
 
 """
-from django_echarts.entities.widgets import Copyright
+from django_echarts.entities import Copyright
 from django_echarts.starter.sites import DJESite
 
 __all__ = ['site_obj']
@@ -99,7 +100,7 @@ site_obj.add_widgets(copyright_=Copyright(start_year=2022, powered_by='Django-Ec
 
 
 @site_obj.register_chart
-def mychart():
+def my_first_chart():
     # Write your pyecharts here.
     # This method must return an object of pycharts.charts.Chart
     pass
@@ -118,7 +119,6 @@ from pyecharts.charts import Bar, Kline, Map, Pie, WordCloud
 site_obj = DJESite(
     site_title='图表可视化',
     copyright_=Copyright(start_year=2017, powered_by='Django-Echarts'),
-    theme='bootstrap3.cerulean'
 )
 
 site_obj.add_widgets(
@@ -127,8 +127,8 @@ site_obj.add_widgets(
 site_obj.add_right_link(LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True))
 
 
-@site_obj.register_chart(name='c1', title='福建省各地市面积', description='福建省各地市面积排行', catalog='福建统计')
-def mychart():
+@site_obj.register_chart(name='my_first_chart', title='福建省各地市面积', description='福建省各地市面积排行', catalog='福建统计')
+def my_first_chart():
     bar = Bar().add_xaxis(["南平", "三明", "龙岩", "宁德", "漳州", "福州", "泉州", "莆田", "厦门"]).add_yaxis(
         '面积', [26300, 22900, 19050, 13450, 12600, 12150, 11020, 4119, 1576]
     ).set_global_opts(

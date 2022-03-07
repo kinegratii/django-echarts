@@ -3,9 +3,9 @@ from typing import List
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.core.themes import get_theme
-from django_echarts.entities.charttools import merge_js_dependencies
+from django_echarts.entities.chart_widgets import merge_js_dependencies
 from django_echarts.starter.sites import DJESite
 from django_echarts.utils.downloader import download_files
 
@@ -41,7 +41,7 @@ class DownloadBaseCommand(BaseCommand):
                 else:
                     res.exists = False
                     msg = self.style.WARNING('        Local Path: {}'.format(res.local_path))
-                self.stdout.write('[File #{:02d}] {}; Catalog: {}'.format(i + 1, res.label, res.catalog))
+                self.stdout.write('[File #{:02d}] {}: Catalog: {}'.format(i + 1, res.label, res.catalog))
                 self.stdout.write('        Remote Url: {}'.format(res.remote_url))
                 self.stdout.write('        Static Url: {}'.format(res.ref_url))
                 self.stdout.write(msg)
@@ -61,11 +61,15 @@ class DownloadBaseCommand(BaseCommand):
         return resources
 
     def resolve_theme(self, theme_name) -> List[DownloaderResource]:
-        theme = get_theme(theme_name)
+        if theme_name:
+            theme = DJANGO_ECHARTS_SETTINGS.create_theme(theme_name)
+        else:
+            theme = DJANGO_ECHARTS_SETTINGS.theme
         resources = []
-        for url, ref_url in theme.iter_local_paths():
+        for f_name, url, ref_url in theme.iter_local_paths():
             local_path = os.path.join(settings.BASE_DIR, 'static', ref_url)
-            resources.append(DownloaderResource(url, ref_url, local_path, label='', catalog='Theme'))
+            ref_url = '/static/' + ref_url
+            resources.append(DownloaderResource(url, ref_url, local_path, label='', catalog=f_name))
         return resources
 
     def resolve_chart(self, chart_name) -> List[str]:

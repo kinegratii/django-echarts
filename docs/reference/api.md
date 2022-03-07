@@ -18,6 +18,7 @@
 | 列表页面 | 显示所有图表的基本信息，支持分页                         | DJESiteListView        |      |
 | 图表页面 | 显示由echarts渲染的可交互图表                            | DJESiteChartSingleView |      |
 | 关于页面 | 显示基本信息                                             | DJESiteAboutView       |      |
+| 设置页面 | 编辑部分设置项                                           | DJESiteSettingsView    |      |
 
 ## 路由
 
@@ -30,16 +31,28 @@ DJESite 内置包含下列路由：
 | 图表页面 | `'chart/<slug:name>/'`         | 前端     | DJESiteDetailView      | dje_detail        |
 | 图表页面 | `'chart/<slug:name>/options/'` | 后端     | DJSiteChartOptionsView | dje_chart_options |
 | 关于页面 | `'about/'`                     | 前端     | DJESiteAboutView       | dje_about         |
+| 设置页面 | `settings/`                    | 后端     | DJESiteSettingsView    | dje_settings      |
 
 注：后端视图类指的是返回 `TemplateResponse`的视图类，前端视图类指的是返回 `JsonResponse` 的视图类。
 
 ## 视图类
 
- `DJESiteBaseView` 和 `DJESiteAjaxView` 均直接继承自 `View`， 并共同实现了站点对象注入。
+ `DJESiteBackendView` 和 `DJESiteFrontendView` 均直接继承自 `View`， 并共同实现了站点对象注入。
+
+在视图方法中可以使用下列方式获取绑定的站点对象。
+
+```python
+class MyView(DJESiteBackendView):
+    def get(self, request, *args, **kwargs):
+        site = SiteInjectMixin.get_site_object()
+        # ...
+```
+
+
 
 ### 后端视图类
 
- `DJESiteBackendView` 是所有后端视图类的基类 ，对应的模板页面为 *{theme}/base.html* ，具体的需要传入的变量字典参见下一节的“模板及其变量”。
+ `DJESiteBackendView` 是所有后端视图类的基类 ，对应的模板页面为 *base.html* ，具体的需要传入的变量字典参见下一节的“模板及其变量”。
 
 ### 前端视图类
 
@@ -49,10 +62,10 @@ DJESite 内置包含下列路由：
 
 所有可重写的接口方法均以 *dje_* 开头。
 
-### DJESiteBaseView
+### DJESiteBackendView
 
 ```python
-class DJESiteBaseView:
+class DJESiteBackendView:
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         pass
 ```
@@ -94,10 +107,6 @@ class DJESite:
         pass
 ```
 
-**dje_get_current_theme**
-
-返回基于当前用户请求的主题对象。
-
 **dje_get_urls**
 
 返回自定义的视图路由配置。
@@ -108,13 +117,12 @@ class DJESite:
 
 | 模板              | 变量名称   | 类型                                       | 说明         |
 | ----------------- | ---------- | ------------------------------------------ | ------------ |
-| {theme}/base.html | page_title | `str`                                      | 网站标题     |
-|                   | theme      | `django_echarts.core.themes.Theme`         | 主题名称     |
+| base.html | page_title | `str`                                      | 网站标题     |
 |                   | opts       | `django_echarts.starter.sites.SiteOpts`    | 选项对象     |
 |                   | nav        | `django_echarts.starter.widgets.Nav`       | 顶部导航栏   |
 |                   | copyright  | `django_echarts.starter.widgets.Copyright` | 底部版权信息 |
 
-其他模板页面均继承 *{theme}/base.html* 。
+其他模板页面均继承 *base.html* 。
 
 ### 基础页Block
 
@@ -131,7 +139,7 @@ class DJESite:
 
 | 模板              | 变量名称            | 类型                        | 说明               |
 | ----------------- | ------------------- | --------------------------- | ------------------ |
-| {theme}/home.html | jumbotron           | `starter.widgets.Jumbotron` | 大标题             |
+| home.html | jumbotron           | `starter.widgets.Jumbotron` | 大标题             |
 |                   | top_chart_info_list | `List[ChartInfo]`        | 热门推荐的图表信息 |
 
 ### 列表页(List)
@@ -142,14 +150,14 @@ class DJESite:
 
 | 模板              | 变量名称        | 类型                 | 说明                                     |
 | ----------------- | --------------- | -------------------- | ---------------------------------------- |
-| {theme}/list.html | chart_info_list | `List[ChartInfo]` | 图表的基本信息，包括标题、标识、介绍文本 |
+| list.html | chart_info_list | `List[ChartInfo]` | 图表的基本信息，包括标题、标识、介绍文本 |
 
 
 **有分页**
 
 | 模板                             | 变量名称         | 类型                         | 说明                           |
 | -------------------------------- | ---------------- | ---------------------------- | ------------------------------ |
-| {theme}/list_with_paginator.html | page_obj         | `django.core.paginator.Page` | django构建的分页对象。         |
+| list_with_paginator.html | page_obj         | `django.core.paginator.Page` | django构建的分页对象。         |
 |                                  | elided_page_nums | List[Union[int, str]]        | 省略形式的页码列表。                   |
 
 说明：
@@ -164,7 +172,7 @@ class DJESite:
 
 | 模板                | 变量名称   | 类型                                          | 说明                                     |
 | ------------------- | ---------- | --------------------------------------------- | ---------------------------------------- |
-| {theme}/detail.html | menu       | `List[ChartInfo]`                          | 图表的基本信息，包括标题、标识、介绍文本 |
+| detail.html | menu       | `List[ChartInfo]`                          | 图表的基本信息，包括标题、标识、介绍文本 |
 |                     | chart_info | `django_echarts.core.charttools.ChartInfo` | 图表基本信息                             |
 |                     | chart_obj  | `pycharts.charts.Base`                        | 图表对象。                               |
 
@@ -172,7 +180,7 @@ class DJESite:
 
 | 模板               | 变量名称 | 类型 | 说明 |
 | ------------------ | -------- | ---- | ---- |
-| {theme}/empty.html | -        | -    | -    |
+| empty.html | -        | -    | -    |
 
 ### 关于页(About)
 
@@ -180,10 +188,16 @@ class DJESite:
 
 | 模板               | 变量名称 | 类型 | 说明 |
 | ------------------ | -------- | ---- | ---- |
-| {theme}/about.html | -        | -    | -    |
+| about.html | -        | -    | -    |
 
 ### 消息页(Message)
 
 | 模板                 | 变量名称 | 类型 | 说明     |
 | -------------------- | -------- | ---- | -------- |
-| {theme}/message.html | message  | str  | 消息文字 |
+| message.html | message  | str  | 消息文字 |
+
+### 设置页(Settings)
+
+| 模板          | 变量名称 | 类型         | 说明         |
+| ------------- | -------- | ------------ | ------------ |
+| settings.html | form     | SiteOptsForm | 配置表单对象 |

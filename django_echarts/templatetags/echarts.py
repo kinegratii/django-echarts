@@ -5,8 +5,9 @@
 from django import template
 from django.template.loader import render_to_string, get_template
 from django.utils.html import SafeString
+
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.entities.charttools import NamedCharts, merge_js_dependencies, WidgetCollection
+from django_echarts.entities.chart_widgets import NamedCharts, merge_js_dependencies, WidgetCollection
 from django_echarts.utils.burl import burl_kwargs
 
 register = template.Library()
@@ -36,7 +37,6 @@ def wrap_with_grid(html_list, col_item_num: int = 1, cns: dict = None):
     cns = cns or {}
     row_cn = cns.get('row', 'row')
     col_cn = cns.get('col', 'col-md-{n}').format(n=int(12 / col_item_num))
-    print([row_cn, col_cn])
     output_list = ['<div class="{}">'.format(row_cn)]
     for item_html in html_list:
         output_list.append('<div class="{}">{}</div>'.format(col_cn, item_html))
@@ -58,6 +58,7 @@ def _build_init_script(chart):
     if hasattr(chart, '_is_geo_chart'):
         chart.is_geo_chart = chart._is_geo_chart
     context = {'c': chart}
+
     return SafeString(render_to_string('snippets/echarts_init_script.tpl', context))
 
 
@@ -68,7 +69,7 @@ def dep_url(context, dep_name: str, repo_name: str = None):
 
 @register.simple_tag(takes_context=True)
 def echarts_container(context, *echarts, width=None, height=None):
-    theme = context['theme']
+    theme = DJANGO_ECHARTS_SETTINGS.theme
     div_list = []
     for chart in echarts:
         if isinstance(chart, NamedCharts):
@@ -145,15 +146,15 @@ def echarts_js_content_wrap(context, *charts):
     ).render(context)
 
 
-@register.simple_tag(takes_context=False)
+@register.simple_tag
 def dw_table(table_obj, **kwargs):
     return _table2html(table_obj, **kwargs)
 
 
-@register.simple_tag(takes_context=True)
-def dw_values_panel(context, panel):
-    theme = context['theme']
-    tpl = get_template(f'{theme.name}/widgets/values_panel.html')
+@register.simple_tag
+def dw_values_panel(panel):
+    theme = DJANGO_ECHARTS_SETTINGS.theme
+    tpl = get_template('widgets/values_panel.html')
     html_list = [tpl.render({'panel': item}) for item in panel]
     return SafeString(wrap_with_grid(html_list, panel.col_item_num, theme.cns))
 
@@ -164,28 +165,27 @@ def dw_widget(context):
     pass
 
 
-@register.simple_tag(takes_context=True)
-def dw_collection(context, collection):
-    theme = context['theme']
-    tpl = get_template(f'{theme.name}/widgets/collection.html')
+@register.simple_tag
+def dw_collection(collection):
+    tpl = get_template('widgets/collection.html')
     return SafeString(tpl.render({'collection': collection}))
 
 
 # ----- The following tags takes data object from the context, not the user's parameters. -----
 
 
-@register.simple_tag(takes_context=True)
-def theme_js(context):
-    theme = context['theme']
+@register.simple_tag
+def theme_js():
+    theme = DJANGO_ECHARTS_SETTINGS.theme
     html = []
     for link in theme.js_urls:
         html.append(f'<script type="text/javascript" src="{link}"></script>')
     return SafeString(''.join(html))
 
 
-@register.simple_tag(takes_context=True)
-def theme_css(context):
-    theme = context['theme']
+@register.simple_tag
+def theme_css():
+    theme = DJANGO_ECHARTS_SETTINGS.theme
     html = []
     for link in theme.css_urls:
         html.append(f'<link href="{link}" rel="stylesheet">')

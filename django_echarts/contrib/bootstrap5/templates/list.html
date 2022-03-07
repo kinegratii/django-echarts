@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+    <div class="page-header">
+        <h2>All Charts</h2>
+    </div>
+    <form class="form-inline">
+        <div class="input-group input-group-sm">
+            <input type="text" class="form-control" placeholder="Search for..." name="query"
+                   {% if keyword %}value="{{ keyword }}"{% endif %}>
+            <span class="input-group-btn">
+        <button class="btn btn-default btn-sm" type="submit">搜索</button>
+      </span>
+        </div><!-- /input-group -->
+    </form><br/>
+    {% include layout_tpl with chart_info_list=chart_info_list only %}
+{% endblock %}

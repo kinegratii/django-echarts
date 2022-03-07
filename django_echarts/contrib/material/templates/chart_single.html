@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    <div class="container">
+        <div class="row">
+            <div class="col m12">
+                <div class="section">
+                    <h5>{{ title }}</h5>
+                </div>
+
+                {% if chart_info.description %}
+                    <div class="section">
+                        <p>{{ chart_info.description }}</p>
+                        {% if chart_info.tags %}
+                            <p>
+                                {% for tag in chart_info.tags %}
+                                    <span class="badge blue white-text">{{ tag }}</span>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <div class="divider"></div>
+                {% echarts_container chart_obj %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_script %}
+    {% echarts_js_dependencies chart_obj %}
+    {% echarts_js_content chart_obj %}
+{% endblock %}

@@ -17,6 +17,7 @@
 - borax: [https://github.com/kinegratii/borax](https://github.com/kinegratii/borax)
 - cdnjs: [https://cdnjs.com/](https://cdnjs.com/)
 - django: [https://www.djangoproject.com/](https://www.djangoproject.com/)
+- Django Best Practices: [https://django-best-practices.readthedocs.io/en/latest/index.html](https://django-best-practices.readthedocs.io/en/latest/index.html)
 - echarts: [https://echarts.apache.org/zh/index.html](https://echarts.apache.org/zh/index.html)
 - Jinja2: [https://jinja2docs.readthedocs.io/en/stable/](https://jinja2docs.readthedocs.io/en/stable/)
 - Materialize: [https://materializecss.com/](https://materializecss.com/)

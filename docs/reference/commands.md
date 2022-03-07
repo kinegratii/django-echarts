@@ -15,40 +15,45 @@ python manage.py <command> -h
 命令说明。
 
 ```text
-E:\projects\django-echarts\example>python manage.py info -h
-usage: manage.py info [-h] [--dep DEP [DEP ...]] [--theme THEME] [--repo REPO]
+PS E:\projects\zinc> python .\manage.py info -h
+usage: manage.py info [-h] [--chart CHART [CHART ...]] [--dep DEP [DEP ...]] [--theme THEME] [--repo REPO] 
 
 Show one or some dependency files.
 
 optional arguments:
   -h, --help            show this help message and exit
+  --chart CHART [CHART ...], -c CHART [CHART ...]
+                        The name of chart.
   --dep DEP [DEP ...], -d DEP [DEP ...]
                         The name of dependency files.
   --theme THEME, -t THEME
                         The name of theme.
   --repo REPO, -r REPO  The name of dependency repo.
-E:\projects\django-echarts\example>python manage.py download -h
-usage: manage.py download [-h] [--dep DEP [DEP ...]] [--theme THEME] [--repo REPO] [--override]
+
+PS E:\projects\zinc> python .\manage.py download -h
+usage: manage.py download [-h] [--chart CHART [CHART ...]] [--dep DEP [DEP ...]] [--theme THEME] [--repo REPO] [--force]
 
 Download one or some dependency files from remote CDN to project staticfile dirs.
 
 optional arguments:
   -h, --help            show this help message and exit
+  --chart CHART [CHART ...], -c CHART [CHART ...]
+                        The name of chart.
   --dep DEP [DEP ...], -d DEP [DEP ...]
                         The name of dependency files.
   --theme THEME, -t THEME
                         The name of theme.
   --repo REPO, -r REPO  The name of dependency repo.
-  --override, -o
+  --force, -f
 ```
 
 备注
 
-| 选项参数 | 说明                                        |
-| -------- | ------------------------------------------- |
-| dep      | 可多次添加。依赖项名称。                    |
-| chart    | 可多次添加。图表标识，即 `ChartInfo.name`。 |
-| theme    | 主题名称。                                  |
+| 选项参数 | 说明                                              |
+| -------- | ------------------------------------------------- |
+| dep      | 可多次添加。依赖项名称。                          |
+| chart    | 可多次添加。图表标识，即 `ChartInfo.name`。       |
+| theme    | 主题名称，默认为 `INSTALLED_APPS` 指定的主题APP。 |
 
 
 
@@ -95,7 +100,7 @@ DJANGO_ECHARTS = {'site_class':'ccs.site_views.site_obj'}
 查看某个图表的依赖项文件信息。
 
 ```text
-PS E:\projects\zinc> python .\manage.py info -c fj-map
+E:\projects\zinc> python .\manage.py info -c fj-map
 [File #01] echarts; Catalog: Dependency
         Remote Url: https://assets.pyecharts.org/assets/echarts.min.js
         Static Url: /static/echarts.min.js
@@ -141,66 +146,65 @@ optional arguments:
 
 ```text
 E:\projects\zinc> python .\manage.py starttpl -h
-usage: manage.py starttpl [-h] [--tpl_name TPL_NAME [TPL_NAME ...]] [--all] [--override] 
-                          {bootstrap3,bootstrap5,material}
+usage: manage.py starttpl [-h] [--theme {bootstrap3,bootstrap5,material}] [--tpl_name TPL_NAME [TPL_NAME ...]] [--output OUTPUT] [--force] 
 
-Copy the builtin template files to your project template dir.
-
-positional arguments:
-  {bootstrap3,bootstrap5,material}
-                        The name of theme.
+Copy the builtin template files to your project templates.
 
 optional arguments:
   -h, --help            show this help message and exit
+  --theme {bootstrap3,bootstrap5,material}
+                        The name of theme.
   --tpl_name TPL_NAME [TPL_NAME ...], -n TPL_NAME [TPL_NAME ...]
-                        The name list of template files.
-  --all, -a             Whether copy files for this theme.
-  --override, -o        Whether to copy if the file exists.
+                        The name of template file.
+  --output OUTPUT, -o OUTPUT
+                        The output filename
+  --force, -f           Whether to copy if the file exists.
 ```
 
 ### 查看主题所有文件
 
-查看bootstrap5主题的所有模板文件。
+查看当前主题的所有模板文件。
 
 ```text
-E:\projects\zinc> python .\manage.py starttpl bootstrap5
-The template names of Theme [bootstrap5]:
+E:\projects\zinc> python .\manage.py starttpl
+The template names of Theme [bootstrap3]:
         about.html
         base.html
-        detail.html
-        detail_frontend.html
+        blank.html
+        chart_collection.html
+        chart_single.html
         home.html
+        info_card.html
         items_grid.html
         items_list.html
         list.html
         list_with_paginator.html
         message.html
+        widgets\values_panel.html
+
+ Start to custom a template: python manage.py starttpl -n blank -o my_page
+
 ```
 
 ### 复制模板文件
 
-使用 `-n` 复制一个或多个文件，如果项目模板目录已经存在该文件，则需要添加 `-o` 覆盖，否则跳过复制。`-n` 的参数可以不添加后缀格式的 .html 。
+使用 `-n` 复制一个文件，如果项目模板目录已经存在该文件，则需要添加 `-o` 覆盖，否则跳过复制。`-n` 的参数可以不添加后缀格式的 .html 。
+
+复制内置的 message.html 文件
 
 ```text
-PS E:\projects\zinc> python .\manage.py starttpl bootstrap5 -n message
-[Item #1] message.html, Success!
-```
-
-### 复制主题下所有文件
-
-使用 `-a` 复制bootstrap5主题的所有模板文件。
-
-```text
-E:\projects\zinc> python .\manage.py starttpl bootstrap5 -a
-about.html, Success!
-base.html, Success!
-detail.html, Success!
-detail_frontend.html, Success!
-home.html, Success!
-items_grid.html, Success!
-items_list.html, Success!
-list.html, Success!
-list_with_paginator.html, Success!
+E:\projects\zinc> python .\manage.py starttpl -n message
 message.html, Success!
 ```
+
+创建新的空白模板
+
+```text
+E:\projects\zinc> python .\manage.py starttpl -n blank -o my_page
+my_page.html, Success!
+```
+
+
+
+
 

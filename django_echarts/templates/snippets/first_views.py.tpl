@@ -8,7 +8,7 @@ Example:
     ]
 
 """
-from django_echarts.starter.widgets import Copyright
+from django_echarts.entities import Copyright
 from django_echarts.starter.sites import DJESite
 {% if use_chart %}
 from pyecharts import options as opts
@@ -27,7 +27,7 @@ site_obj.add_widgets(
 
 
 @site_obj.register_chart
-def mychart():
+def my_first_chart():
     {% if use_chart %}
     bar = Bar().add_xaxis(
         ["Nanping", "Sanming", "Longyan", "Ningde", "Zhangzhou", "Fuzhou", "Quanzhou", "Putian", "Xiamen"]).add_yaxis(

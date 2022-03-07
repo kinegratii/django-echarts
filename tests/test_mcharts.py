@@ -7,7 +7,7 @@ import sys
 import unittest
 from unittest.mock import MagicMock
 
-from django_echarts.core.charttools import NamedCharts
+from django_echarts.entities import NamedCharts
 
 
 class MChartsTestCase(unittest.TestCase):

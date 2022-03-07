@@ -5,7 +5,7 @@
 django-echarts 遵循统一配置的原则，所有的配置均定义在项目配置模块一个名为 `settings.DJANGO_ECHARTS` 变量中，该变量可以指向
 
 - 一个`dict`对象
-- `django_echarts.core.dms.DJEOpts` 对象
+- `django_echarts.core.settings_store.DJEOpts` 对象
 
 例子( *settings.py*)
 
@@ -58,6 +58,34 @@ django-echarts 支持 echarts 主题功能，为了减少主题资源加载，�
 - 前端 `echarts.init` 函数不传入任何主题参数，即使 python代码`pycharts.options.InitOpts` 传入了 `theme` 参数
 
 ## 脚手架
+
+### 主题名称
+
+```
+DJEOpts.theme_name:Optional[str] = '<?INSTALLED_APP>'
+```
+
+必填选项。默认为 `INSTALLED_APP` 对应主题的默认调色。
+
+可以选择下列格式：
+
+```python
+theme_names = [
+    'bootstrap3',
+    'bootstrap3.flaty',
+    'bootstrap5.simple#local'
+]
+```
+
+参见 *UI框架和主题* 一节。
+
+### 主题模块
+
+```
+DJEOpts.theme_app:Optional[str] = '?'
+```
+
+必填选项。主题APP包导入全路径，默认从 `INSTALLED_APPS` 中读取。
 
 ### 设置站点引用
 

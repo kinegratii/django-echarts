@@ -1,7 +1,6 @@
 import json
 import pprint
 import re
-from dataclasses import dataclass, field
 from functools import wraps
 from typing import Optional, List, Dict, Literal, Type, Any, Tuple, Union
 
@@ -9,19 +8,22 @@ from django.core.paginator import Paginator
 from django.http.response import JsonResponse
 from django.urls import reverse_lazy, path
 from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
+from django.views.generic.edit import FormMixin
+from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.core.exceptions import DJEAbortException
-from django_echarts.core.themes import get_theme, Theme
 from django_echarts.entities.articles import ChartInfo, LocalChartInfoManager, ChartInfoManagerMixin
-from django_echarts.entities.charttools import WidgetGetterMixin, WidgetCollection
-from django_echarts.entities.widgets import Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
+from django_echarts.entities.chart_widgets import WidgetGetterMixin, WidgetCollection
+from django_echarts.entities.html_widgets import Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
 from django_echarts.utils.compat import get_elided_page_range
 from django_echarts.utils.lazy_dict import LazyDict
 
-__all__ = ['DJESite', 'SiteOpts', 'ttn', 'DJESiteBackendView']
+from .optstools import SiteOptsForm, SiteOpts
+
+__all__ = ['DJESite', 'DJESiteBackendView', 'DJESiteFrontendView']
 
 _VAR_CHART_ = 'chart_obj'
 _VAR_CHART_INFO_ = 'chart_info'
-_VAR_PAGE_CONTAINER_ = 'chart_page_container'
+_VAR_PAGE_CONTAINER_ = 'widget_collection'
 
 
 class WidgetRefs:
@@ -29,17 +31,6 @@ class WidgetRefs:
     home_jumbotron = 'home_jumbotron'
     home_jumbotron_chart = 'home_jumbotron_chart'
     home_values_panel = 'home_values_panel'
-
-
-def ttn(template_name: str, theme_name: str = None) -> str:
-    """Resolve for theme template name."""
-    theme_template_name = template_name
-    if template_name and template_name[:7] != '{theme}':
-        theme_template_name = '{theme}/' + template_name
-    if not theme_name:
-        return theme_template_name
-    else:
-        return theme_template_name.format(theme=theme_name)
 
 
 class SiteInjectMixin:
@@ -62,12 +53,11 @@ class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, V
                     'The method dje_init_page_context should return a string for template name.Not a dict for context.')
         except DJEAbortException as e:
             context['message'] = Message(e.message, catalog='warning')
-            template_name = ttn('message.html')
-        theme_name = context['theme'].name
-        return self._render_to_response(context, theme_name=theme_name, template_name=template_name)
+            template_name = 'message.html'
+        return self._render_to_response(context, template_name=template_name)
 
     def _render_to_response(self, context, template_name=None, **kwargs):
-        template_name = self._resolve_template_name(template_name)
+        template_name = template_name or self.template_name
         return self.response_class(
             request=self.request,
             template=template_name,
@@ -75,28 +65,20 @@ class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, V
             using=self.template_engine
         )
 
-    def _resolve_template_name(self, template_name: str = None):
-        if template_name and template_name[:7] != '{theme}':
-            template_name = '{theme}' + template_name
-        template_name = template_name or self.template_name
-        return template_name.format(theme=self.extra_context['theme'].name)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         site = kwargs.get('site')  # type: DJESite
+        if site is None:
+            # the get_context_data is called by other ContextMixin class in django.
+            site = SiteInjectMixin.get_site_object()
         context['nav'] = site.nav
         context['site_title'] = site.site_title
         context['page_title'] = site.site_title
         context['copyright'] = site.html_widgets.get('copyright')
-        # select a theme
-        theme = site.dje_get_current_theme(self.request)
-        context['theme'] = theme
         context['opts'] = site.opts
 
         # The data store in a view processing lifecycle.
-        self.extra_context = {
-            'theme': theme
-        }
+        self.extra_context = {}
         return context
 
     # Interfaces
@@ -104,10 +86,6 @@ class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, V
     def abort_request(self, message: str):
         """Abort current request and show the message page."""
         raise DJEAbortException(message)
-
-    def dje_get_template_name(self, theme_name, template_name: str = None):
-        template_name = template_name or self.template_name
-        return template_name.format(theme=theme_name)
 
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         """Update context and return its template name.
@@ -129,11 +107,10 @@ class DJESiteDetailBaseView(DJESiteBackendView):
 class DJESiteCollectionView(DJESiteBackendView):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         collection_name = self.kwargs.get('name', 'all')
-        # TODO entry
         widget_collection = site.build_collection(collection_name)
         pprint.pprint(widget_collection.packed_matrix)
         context[_VAR_PAGE_CONTAINER_] = widget_collection
-        return ttn('chart_collection.html')
+        return 'chart_collection.html'
 
 
 class DJESiteFrontendView(SiteInjectMixin, View):
@@ -165,7 +142,7 @@ class DJESiteFrontendView(SiteInjectMixin, View):
 # The Page Views
 
 class DJESiteHomeView(DJESiteBackendView):
-    template_name = ttn('home.html')
+    template_name = 'home.html'
 
     def dje_init_page_context(self, context, site: 'DJESite'):
         context['jumbotron'] = site.html_widgets.get(WidgetRefs.home_jumbotron)
@@ -175,23 +152,21 @@ class DJESiteHomeView(DJESiteBackendView):
             context[_VAR_CHART_INFO_] = info
         context[WidgetRefs.home_values_panel] = site.html_widgets.get(WidgetRefs.home_values_panel)
         context['top_chart_info_list'] = site.chart_info_manager.query_chart_info_list(with_top=True)
-        context['layout_tpl'] = self._resolve_template_name('{theme}/items_grid.html')
+        context['layout_tpl'] = 'items_grid.html'
 
 
 class DJESiteListView(DJESiteBackendView):
-    template_name = ttn('list.html')
+    template_name = 'list.html'
     paginate_by = None
     list_layout = 'list'
     page_kwarg = 'page'
     query_kwarg = 'query'
 
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
-        theme = context['theme']
-        if site.opts.list_layout == 'grid':
-            layout_tpl = ttn('items_grid.html', theme.name)
-        else:
-            layout_tpl = ttn('items_list.html', theme.name)
-        context['layout_tpl'] = layout_tpl
+        layout_str = self.request.GET.get('layout', site.opts.list_layout)
+        if layout_str not in ('grid', 'list'):
+            layout_str = 'grid'
+        context['layout_tpl'] = f'items_{layout_str}.html'
         query_string = self.request.GET.get(self.query_kwarg)
         qs = {}
         if query_string:
@@ -199,10 +174,7 @@ class DJESiteListView(DJESiteBackendView):
             context['keyword'] = query_string
         chart_info_list = site.chart_info_manager.query_chart_info_list(**qs)
         paginate_by = site.opts.paginate_by
-        if paginate_by is None:
-            context['chart_info_list'] = chart_info_list
-            return ttn('list.html')
-        else:
+        if paginate_by:
             paginator = Paginator(chart_info_list, paginate_by, allow_empty_first_page=True)
             page_number = self.request.GET.get(self.page_kwarg, 1)
             page_obj = paginator.get_page(page_number)
@@ -213,11 +185,14 @@ class DJESiteListView(DJESiteBackendView):
             except (AttributeError, TypeError, ValueError):
                 elided_page_nums = get_elided_page_range(paginator, page_number)
             context['elided_page_nums'] = list(elided_page_nums)
-            return ttn('list_with_paginator.html')
+            return 'list_with_paginator.html'
+        else:
+            context['chart_info_list'] = chart_info_list
+            return 'list.html'
 
 
 class DJESiteChartSingleView(DJESiteBackendView):
-    template_name = ttn('chart_single.html')
+    template_name = 'chart_single.html'
 
     charts_config = []
     page_title = '{title}'
@@ -252,17 +227,47 @@ class DJSiteChartOptionsView(DJESiteFrontendView):
 
 
 class DJESiteAboutView(DJESiteBackendView):
-    template_name = ttn('about.html')
+    template_name = 'about.html'
 
 
-@dataclass
-class SiteOpts:
-    """The opts for DJESite."""
-    list_layout: Literal['grid', 'list'] = 'grid'
-    paginate_by: Optional[int] = None
-    detail_tags_position: Literal['none', 'top', 'bottom'] = 'top'
-    detail_sidebar_shown: bool = True
-    nav_shown_pages: List = field(default_factory=lambda: ['home'])
+class DJESiteSettingsView(FormMixin, DJESiteBackendView):
+    form_class = SiteOptsForm
+    template_name = 'settings.html'
+    success_url = reverse_lazy('dje_settings')  # self page
+
+    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
+        form_obj = self.get_form()
+        context['form'] = form_obj
+        return
+
+    def get_form(self, form_class=None):
+        form_obj = super().get_form(form_class)
+        choices = [(k, k) for k in DJANGO_ECHARTS_SETTINGS.theme_manger.available_palettes]
+        form_obj.fields['theme_palette_name'].choices = choices
+        return form_obj
+
+    def get_initial(self):
+        opts = SiteInjectMixin.get_site_object().opts
+        return {
+            'list_layout': opts.list_layout,
+            'paginate_by': opts.paginate_by or 0,
+            'theme_palette_name': DJANGO_ECHARTS_SETTINGS.theme.theme_palette
+        }
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        print(form.errors)
+        opts = SiteInjectMixin.get_site_object().opts
+        opts.list_layout = form.cleaned_data['list_layout']
+        opts.paginate_by = form.cleaned_data['paginate_by']
+        DJANGO_ECHARTS_SETTINGS.switch_palette(form.cleaned_data['theme_palette_name'])
+        return super().form_valid(form)
 
 
 class NavMenuPosition:
@@ -281,9 +286,8 @@ class DJESite(WidgetGetterMixin):
 
     chart_info_manager_class = LocalChartInfoManager  # type: Type[ChartInfoManagerMixin]
 
-    def __init__(self, site_title: str, theme: str = 'bootstrap5', opts: Optional[SiteOpts] = None):
+    def __init__(self, site_title: str, opts: Optional[SiteOpts] = None):
         self.site_title = site_title
-        self.theme = get_theme(theme)
         if opts is None:
             self._opts = SiteOpts()
         else:
@@ -292,9 +296,11 @@ class DJESite(WidgetGetterMixin):
         if 'home' in self.opts.nav_shown_pages:
             self.nav.add_menu(text='首页', slug='home', url=reverse_lazy('dje_home'))
         if 'list' in self.opts.nav_shown_pages:
-            self.nav.add_menu(text='All', slug='list', url=reverse_lazy('dje_list'))
+            self.nav.add_menu(text='所有', slug='list', url=reverse_lazy('dje_list'))
         if 'collection' in self.opts.nav_shown_pages:
-            self.nav.add_menu(text='Collection', slug='collection-all', url=reverse_lazy('dje_chart_collection_all'))
+            self.nav.add_menu(text='合辑', slug='collection-all', url=reverse_lazy('dje_chart_collection_all'))
+        if 'settings' in self.opts.nav_shown_pages:
+            self.nav.add_right_link(LinkItem(text='设置', slug='settings', url=reverse_lazy('dje_settings')))
 
         self._view_dict = {
             'dje_home': DJESiteHomeView,
@@ -302,7 +308,8 @@ class DJESite(WidgetGetterMixin):
             'dje_chart_single': DJESiteChartSingleView,
             'dje_chart_options': DJSiteChartOptionsView,
             'dje_chart_collection': DJESiteCollectionView,
-            'dje_about': DJESiteAboutView
+            'dje_about': DJESiteAboutView,
+            'dje_settings': DJESiteSettingsView
         }
         # Inject site object to views.
         SiteInjectMixin.get_site_object = self._inject(SiteInjectMixin.get_site_object)
@@ -347,14 +354,20 @@ class DJESite(WidgetGetterMixin):
             path('collection/', self._view_dict['dje_chart_collection'].as_view(), name='dje_chart_collection_all'),
             path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
                  name='dje_chart_collection'),
-            path('about/', self._view_dict['dje_about'].as_view(), name='dje_about')
+            path('about/', self._view_dict['dje_about'].as_view(), name='dje_about'),
+            path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings')
         ]
         custom_url = self.dje_get_urls()
         if custom_url:
             urls += custom_url
         return urls
 
-    def set_views(self, view_name: str, view_class: Type[DJESiteBackendView]):
+    def register_view(
+            self,
+            view_name: Literal[
+                'dje_home', 'dje_list', 'dje_chart_single', 'dje_chart_collection', 'dje_about', 'dje_settings'],
+            view_class: Type[DJESiteBackendView]
+    ):
         self._view_dict[view_name] = view_class
 
     # Init Widgets
@@ -373,6 +386,10 @@ class DJESite(WidgetGetterMixin):
 
     def add_menu_item(self, item: LinkItem, menu_title: str = None):
         self.add_left_link(item, menu_title)
+        return self
+
+    def add_footer_link(self, item: LinkItem):
+        self.nav.footer_links.append(item)
         return self
 
     def add_widgets(self, *, copyright_: Copyright = None, jumbotron: Jumbotron = None,
@@ -410,14 +427,20 @@ class DJESite(WidgetGetterMixin):
                                    url=url, top=top, catalog=catalog, tags=tags, layout=layout)
             self._chart_obj_dic.func_register(func, c_info.name)
             self._chart_info_manager.add_chart_info(c_info)
-            c_nav_parent_name = nav_parent_name or catalog
-            if c_nav_parent_name:
-                self.nav.add_menu(text=c_nav_parent_name)
-                self.nav.add_item(
-                    menu_text=c_nav_parent_name,
-                    item=LinkItem(text=title or cname, url=url, slug=cname),
-                    after_separator=nav_after_separator
-                )
+
+            if nav_parent_name == 'self':
+                self.nav.add_menu(text=title or cname, slug=cname, url=url)
+            elif nav_parent_name == 'none':
+                pass
+            else:
+                c_nav_parent_name = nav_parent_name or catalog
+                if c_nav_parent_name:
+                    self.nav.add_menu(text=c_nav_parent_name)
+                    self.nav.add_item(
+                        menu_text=c_nav_parent_name,
+                        item=LinkItem(text=title or cname, url=url, slug=cname),
+                        after_separator=nav_after_separator
+                    )
             return func
 
         if function is None:
@@ -492,10 +515,6 @@ class DJESite(WidgetGetterMixin):
         return self._html_widgets.get(name)
 
     # Public Interfaces
-
-    def dje_get_current_theme(self, request, *args, **kwargs) -> Theme:
-        """Get the theme for this request."""
-        return self.theme
 
     def dje_get_urls(self) -> List:
         """Custom you url routes here."""

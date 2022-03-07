@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    <div class="panel panel-{{ message.catalog }}">
+        <div class="panel-heading">{{ message.title }}</div>
+        <div class="panel-body">
+            <p>{{ message.text }}</p>
+        </div>
+
+    </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    <p>The about Info</p>
+    <div>
+        {% include 'widgets/collection.html' %}
+    </div>
+
+{% endblock %}
+{% block extra_script %}
+    {% echarts_js_dependencies collection %}
+    {% echarts_js_content collection %}
+{% endblock %}

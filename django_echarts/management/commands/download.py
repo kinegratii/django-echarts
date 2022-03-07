@@ -9,7 +9,7 @@ class Command(DownloadBaseCommand):
         parser.add_argument('--dep', '-d', nargs='+', type=str, help='The name of dependency files.')
         parser.add_argument('--theme', '-t', help='The name of theme.')
         parser.add_argument('--repo', '-r', help='The name of dependency repo.', default='pyecharts')
-        parser.add_argument('--override', '-o', action='store_true')
+        parser.add_argument('--force', '-f', action='store_true')
 
     def handle(self, *args, **options):
         chart_names = options.get('chart', [])

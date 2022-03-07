@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header text-center">
+                <h2>{{ title }}</h2>
+            </div>
+            <hr/>
+
+            {% if chart_info.description %}
+                <div class="card bg-light text-first-indent"><div class="card-body" style="padding: 5px;">{{ chart_info.description }}</div></div>
+            {% endif %}
+            {% if chart_info.tags %}
+                <div class="clearfix">
+                    {% for tag in chart_info.tags %}
+                        <span class="badge bg-secondary">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+
+            {% endif %}
+
+            <br/>
+            <div>
+                {% echarts_container chart_obj %}
+            </div>
+            {% if chart_info.body %}
+                <br/>
+                <div style="text-indent: 2rem;">{{ chart_info.body }}</div>
+            {% endif %}
+
+        </div>
+        <!--/.col-xs-12.col-sm-9-->
+
+
+    </div>
+
+{% endblock %}
+
+{% block extra_script %}
+    {% echarts_js_dependencies chart_obj %}
+    {% echarts_js_content chart_obj %}
+{% endblock %}

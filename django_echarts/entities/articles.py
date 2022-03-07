@@ -1,4 +1,5 @@
-from typing import Dict, Optional, List
+from collections import defaultdict
+from typing import Dict, Optional, List, Tuple
 
 __all__ = ['ChartInfo', 'ChartInfoManagerMixin', 'LocalChartInfoManager']
 
@@ -43,6 +44,9 @@ class ChartInfoManagerMixin:
     def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[ChartInfo]:
         pass
 
+    def query_group_list(self) -> List[Tuple[str, List[ChartInfo]]]:
+        pass
+
     def get_or_none(self, name: str) -> Optional[ChartInfo]:
         pass
 
@@ -67,6 +71,22 @@ class LocalChartInfoManager(ChartInfoManagerMixin):
         if with_top:
             chart_info_list.sort(key=lambda x: x.top)
         return chart_info_list
+
+    def query_group_list(self) -> List[Tuple[str, List[ChartInfo]]]:
+        catalog2info = defaultdict(list)
+        group_names = []
+        for info in self._chart_info_list:
+            catalog = info.catalog or 'Others'
+            catalog2info[catalog].append(info)
+            if info.catalog and info.catalog not in group_names:
+                group_names.append(info.catalog)
+        grouped_data = []
+        for g_name in group_names:
+            grouped_data.append(
+                (g_name, catalog2info[g_name])
+            )
+        grouped_data.append(('Others', catalog2info['Others']))
+        return grouped_data
 
     def get_or_none(self, name: str) -> Optional[ChartInfo]:
         for info in self._chart_info_list:

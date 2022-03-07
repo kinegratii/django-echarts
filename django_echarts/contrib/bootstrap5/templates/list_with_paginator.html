@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+
+    <div class="page-header">
+        <h2>All Charts</h2>
+    </div>
+    <form class="form-inline">
+        <div class="input-group input-group-sm">
+            <input type="text" class="form-control" placeholder="Search for..." name="query"
+                   {% if keyword %}value="{{ keyword }}"{% endif %}>
+            <span class="input-group-btn">
+        <button class="btn btn-outline-secondary" type="submit">搜索</button>
+      </span>
+        </div><!-- /input-group -->
+    </form><br/>
+    {% include layout_tpl with chart_info_list=page_obj.object_list only %}
+
+
+    <nav aria-label="page">
+        <ul class="pagination">
+            {% for page in elided_page_nums %}
+                {% if page == '...' %}
+                    <li class="page-item"><span aria-hidden="true">...</span></li>
+                {% else %}
+                    {% if page == page_obj.number %}
+                        <li class="page-item active">
+                            <a class="page-link" href="javascript:">{{ page_obj.number }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{% page_link page %}" aria-label="Previous">
+                                <span aria-hidden="true">{{ page }}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+
+
+{% endblock %}

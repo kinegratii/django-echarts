@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load echarts %}
+{% block main_content %}
+
+    <div class="section no-pad-bot" id="index-banner">
+        <div class="container">
+            {% if jumbotron %}
+                <br><br>
+                <h1 class="header center orange-text">{{ jumbotron.title }}</h1>
+                <div class="row center">
+                    <h5 class="header col s12 light">{{ jumbotron.main_text }}</h5>
+                </div>
+                <div class="row center">
+                    {{ jumbotron.small_text }}
+                </div>
+                <br><br>
+            {% endif %}
+            {% if home_values_panel %}
+                {% dw_values_panel home_values_panel %}
+            {% endif %}
+            {% if top_chart_info_list %}
+                {% include layout_tpl with chart_info_list=top_chart_info_list only %}
+            {% endif %}
+        </div>
+
+    </div>
+
+
+{% endblock %}

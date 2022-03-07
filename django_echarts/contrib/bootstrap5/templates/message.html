@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    <div class="card mb-3">
+        <div class="card-header text-white bg-{{ message.catalog }} ">{{ message.title }}</div>
+        <div class="card-body">
+            <p class="card-text">{{ message.text }}</p>
+        </div>
+    </div>
+{% endblock %}

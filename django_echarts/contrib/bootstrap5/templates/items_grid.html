@@ -1,0 +1,23 @@
+<div class="row">
+    {% for chart_info in chart_info_list %}
+        <div class="col-md-4">
+
+            <div class="card">
+                <div class="card-header">
+                    {{ chart_info.title }}
+                    {% if chart_info.tags %}&nbsp;
+                        {% for tag in chart_info.tags %}
+                            <span class="badge bg-primary">{{ tag }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ chart_info.description|default:"暂无描述" }}</p>
+                    <a href="{{ chart_info.url }}" role="button" class="btn btn-secondary btn-sm">详情</a>
+                </div>
+            </div>
+            <br/>
+
+        </div>
+    {% endfor %}
+</div>

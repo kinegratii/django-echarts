@@ -86,7 +86,7 @@ Example:
     ]
 
 """
-from django_echarts.entities.widgets import Copyright
+from django_echarts.entities.html_widgets import Copyright
 from django_echarts.starter.sites import DJESite
 
 __all__ = ['site_obj']
@@ -113,7 +113,7 @@ The update text and add Components to the `site_obj`.
 # ...
 
 from django_echarts.starter.sites import DJESite
-from django_echarts.entities.widgets import Copyright, Jumbotron, LinkItem
+from django_echarts.entities.html_widgets import Copyright, Jumbotron, LinkItem
 from pyecharts import options as opts
 from pyecharts.charts import Bar
 

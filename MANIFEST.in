@@ -1,4 +1,2 @@
-include django_echarts/templates/*
-include django_echarts/templates/*/*
-include django_echarts/static/*
-include django_echarts/static/*/*
+recursive-include django_echarts/templates/ *.tpl *.py *.html
+recursive-include django_echarts/contrib/  *.html

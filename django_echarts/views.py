@@ -7,7 +7,7 @@ from django.urls import path
 from django.utils.text import slugify
 from django.views.generic.base import View, TemplateView
 
-from django_echarts.entities.charttools import ChartInfo
+from django_echarts.entities.chart_widgets import ChartInfo
 
 warnings.warn('This module has been deprecated and will be removed in future version.', DeprecationWarning)
 

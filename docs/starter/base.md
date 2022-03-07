@@ -12,16 +12,15 @@ django-echarts 不会将 django 和 pyecharts 作为显式依赖库（虽然在�
 
 ### 项目配置
 
-Django项目的配置模块位于 *project.settings* 。
-
-1. django-echarts 携带了模板标签函数，因此需要将 `django_echarts` 添加到 `INSTALLED_APPS` 列表。
-2. django-echarts包含了模板文html件，因此需要开启 `APP_DIRS` 功能。
+在 Django 项目中，配置模块位于 *project.settings* 。和 django-echarts 有关的配置如下：
 
 ```python
 INSTALLED_APPS = [
     #...
     'django_echarts',
+    'django_echarts.contrib.bootstrap5'
 ]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -36,21 +35,30 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static').replace('\\', '/'),)
 DJANGO_ECHARTS = {
     # ...
+    'theme_name': 'bootstrap5.yeti'
 }
 ```
 
+配置项说明表
 
+| 配置项           | 说明                                                         |
+| ---------------- | ------------------------------------------------------------ |
+| INSTALLED_APPS   | 项目所包含的APP。必须包含 `django_echarts`和对应的主题APP。  |
+| TEMPLATES        | 模板引擎、文件目录。采用django引擎渲染，且必须开启 `APP_DIRS` 选项 |
+| STATIC_URL       | 静态文件URL。                                                |
+| STATICFILES_DIRS | 静态文件目录。如无重写模板文件，可不配置。                   |
+| DJANGO_ECHARTS   | django-echarts项目配置，字典类型。参数参见 `DJEOpts` 类。    |
 
 ## 创建站点
 
 ### 初始化DJESite对象
 
-> DJESite(site_title: str, theme: str = 'bootstrap5', opts: Optional[SiteOpts] = None):
+> DJESite(site_title: str,  opts: Optional[SiteOpts] = None):
 
 `DJESite` 是所有界面和逻辑的入口点，首先必须创建你自己的 site 对象。
 
 ```python
-from django_echarts.entities.widgets import Jumbotron, Copyright, LinkItem
+from django_echarts.entities.html_widgets import Jumbotron, Copyright, LinkItem
 from django_echarts.starter.sites import DJESite, SiteOpts
 
 site_obj = DJESite(
@@ -72,13 +80,11 @@ site_obj.add_widgets(
 | 参数                 | 类型或可选值 | 描述                                                         |
 | -------------------- | ------------ | ------------------------------------------------------------ |
 | site_title           | str          | 网站标题                                                     |
-| theme                | str          | 可设置bootstrap3 / bootstrap5 / material 及其调色主题<sup>1</sup> |
-| opts                 | SiteOpts     | 选项类<sup>2</sup>                                           |
-| opts.nav_shown_pages | List         | 导航栏显示的菜单项，可选为 home / list /collection。默认为 ['home'] <sup>3</sup> |
+| opts                 | SiteOpts     | 选项类<sup>1</sup>                                           |
+| opts.nav_shown_pages | List         | 导航栏显示的菜单项，可选为 home / list /collection。默认为 ['home'] <sup>2</sup> |
 
-1. 详见 “UI框架和主题” 一章
-2. `SiteOpts` 是一个使用 `@dataclasses.dataclass` 装饰的数据类，详细配置参见各页面相关功能配置。
-3. 此项设置必须在 `DJESite` 初始化时传入，以便将这些菜单项先插入导航栏靠前的位置
+1. `SiteOpts` 是一个使用 `@dataclasses.dataclass` 装饰的数据类，详细配置参见各页面相关功能配置。
+2. 此项设置必须在 `DJESite` 初始化时传入，以便将这些菜单项先插入导航栏靠前的位置
 
 ### 连接到路由模块
 
@@ -252,7 +258,7 @@ SiteOpts(nav_shown_pages=['home', 'collection'])
 
 ```python
 from django.urls import reverse_lazy
-from django_echarts.entities.widgets import LinkItem
+from django_echarts.entities.html_widgets import LinkItem
 
 # 在右侧添加项目仓库链接，以新标签页方式打开
 item = LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True)

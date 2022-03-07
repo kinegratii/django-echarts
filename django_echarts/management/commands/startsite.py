@@ -4,7 +4,6 @@ from datetime import date
 from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
 from django_echarts import __version__
-from django_echarts.core.lib_context import get_code_snippet_dir
 
 
 class Command(BaseCommand):
@@ -18,15 +17,15 @@ class Command(BaseCommand):
         parser.add_argument('--start-year', '-y', type=int, help='The start year.', default=def_year)
         parser.add_argument('--powered-by', '-p', type=str, help='The principal of copyright.',
                             default='Django-Echarts')
-        parser.add_argument('--override', '-o', action='store_true')
+        parser.add_argument('--force', '-f', action='store_true')
 
     def handle(self, *args, **options):
         output = options.get('output')
         if output[-3:] != '.py':
             output += '.py'
-        override = options.get('override', False)
-        if not override and os.path.exists(output):
-            self.stdout.write(self.style.ERROR(f'The file {output} exists! Add -o to overwrite it.'))
+        force = options.get('force', False)
+        if not force and os.path.exists(output):
+            self.stdout.write(self.style.ERROR(f'The file {output} exists! Add -f to overwrite it.'))
             return
         site_title = options.get('site_title')
         start_year = options.get('start_year')
@@ -42,7 +41,7 @@ class Command(BaseCommand):
             'use_chart': not empty_chart,
             'version': __version__,
         }
-        s = render_to_string(get_code_snippet_dir('first_views.py.tpl'), context=context)
+        s = render_to_string('snippets/first_views.py.tpl', context=context)
         with open(output, 'w') as f:
             f.write(s)
         self.stdout.write(self.style.SUCCESS(f'File {output} generated success!'))

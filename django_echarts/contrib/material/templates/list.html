@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+    <div class="container">
+        <h2 class="header">图表列表</h2>
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                        <input type="text" placeholder="Search for..." name="query"
+                               {% if keyword %}value="{{ keyword }}"{% endif %}>
+                </div>
+
+            </form>
+        </div>
+
+        <br/>
+
+        {% include layout_tpl with chart_info_list=chart_info_list only %}
+    </div>
+
+{% endblock %}

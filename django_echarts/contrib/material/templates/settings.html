@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block main_content %}
+    <div class="row">
+        <form class="col m12" action="" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="row">
+                    <div class="input-field col m12">
+                        {{ field }} {{ field.label_tag }}
+                    </div>
+                </div>
+            {% endfor %}
+            <input class="btn btn-primary" type="submit" value="提交">
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block extra_script %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".dropdown-trigger").dropdown();
+            $('select').formSelect();
+        });
+    </script>
+{% endblock %}
