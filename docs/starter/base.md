@@ -43,11 +43,14 @@ DJANGO_ECHARTS = {
 
 | 配置项           | 说明                                                         |
 | ---------------- | ------------------------------------------------------------ |
-| INSTALLED_APPS   | 项目所包含的APP。必须包含 `django_echarts`和对应的主题APP。  |
-| TEMPLATES        | 模板引擎、文件目录。采用django引擎渲染，且必须开启 `APP_DIRS` 选项 |
+| INSTALLED_APPS   | 项目所包含的APP。必须包含 `django_echarts`和对应的主题APP <sup>1</sup>。 |
+| TEMPLATES        | 模板引擎、文件目录。采用django引擎渲染，且必须开启 `APP_DIRS` 选项。 |
 | STATIC_URL       | 静态文件URL。                                                |
 | STATICFILES_DIRS | 静态文件目录。如无重写模板文件，可不配置。                   |
-| DJANGO_ECHARTS   | django-echarts项目配置，字典类型。参数参见 `DJEOpts` 类。    |
+| DJANGO_ECHARTS   | django-echarts项目配置 <sup>2</sup>，字典类型。参数参见 `DJEOpts` 类。 |
+
+1. 主题APP内置包括： django_echarts.contrib.bootstrap3 / django_echarts.contrib.bootstrap5 / django_echarts.contrib.material。
+2. 默认配置已经能够支持最小化运行，可不配置此项。
 
 ## 创建站点
 
@@ -55,10 +58,10 @@ DJANGO_ECHARTS = {
 
 > DJESite(site_title: str,  opts: Optional[SiteOpts] = None):
 
-`DJESite` 是所有界面和逻辑的入口点，首先必须创建你自己的 site 对象。
+`DJESite` 是所有界面和逻辑的入口点，首先必须创建你自己的站点对象 `site_obj`。
 
 ```python
-from django_echarts.entities.html_widgets import Jumbotron, Copyright, LinkItem
+from django_echarts.entities import Jumbotron, Copyright, LinkItem
 from django_echarts.starter.sites import DJESite, SiteOpts
 
 site_obj = DJESite(
@@ -80,11 +83,10 @@ site_obj.add_widgets(
 | 参数                 | 类型或可选值 | 描述                                                         |
 | -------------------- | ------------ | ------------------------------------------------------------ |
 | site_title           | str          | 网站标题                                                     |
-| opts                 | SiteOpts     | 选项类<sup>1</sup>                                           |
-| opts.nav_shown_pages | List         | 导航栏显示的菜单项，可选为 home / list /collection。默认为 ['home'] <sup>2</sup> |
+| opts                 | SiteOpts     | 选项类                                                       |
+| opts.nav_shown_pages | List         | 导航栏显示的菜单项，可选为 home / list /collection / settings。默认为 ['home'] <sup>1</sup> |
 
-1. `SiteOpts` 是一个使用 `@dataclasses.dataclass` 装饰的数据类，详细配置参见各页面相关功能配置。
-2. 此项设置必须在 `DJESite` 初始化时传入，以便将这些菜单项先插入导航栏靠前的位置
+1. 此项设置必须在 `DJESite` 初始化时传入，以便将这些菜单项先插入导航栏靠前的位置
 
 ### 连接到路由模块
 
@@ -108,7 +110,7 @@ urlpatterns = [
 
 ### 新增图表
 
-`site_obj.register_chart` 装饰器用于注册返回图表的函数。默认未携带任何参数情况下，函数名将作为图表标识符。
+`site_obj.register_chart` 装饰器用于注册图表的创建函数。默认未携带任何参数情况下，函数名将作为图表标识符。
 
 ```python
 @site_obj.register_chart
@@ -149,16 +151,18 @@ def mychart():
 | ------------------- | -------------- | ---------------------------------------------- |
 | **图文参数**       |                |                                                |
 | info                | `ChartInfo` | 如果有设置此项，忽略后面单独的图表参数         |
-| name                | str            | 图表标识符，如果不指定，将使用所装饰函数的名称 |
+| name                | Slug <sup>1</sup>            | 图表标识符，如果不指定，将使用所装饰函数的名称 |
 | title               | str            | 图表标题                                       |
 | description         | str            | 描述                                           |
-| catalog             | str            | 分类，如果设置，将在顶部导航栏使用下拉列表显示 |
+| catalog             | str            | 分类，如果设置 |
 | top                 | int            | 置顶标志，0表示不置顶，数值越小，越靠前。      |
 | tags                | List[str]      | 标签列表，列表搜索功能时，标签也是搜索范围。   |
 | layout              | str            | 布局参数，参见 “组件和布局” 一章               |
 | **菜单参数** |                |                                                |
 | nav_parent_name     | str            | 上级菜单名称，默认为 catalog                   |
 | nav_after_separator | bool           | 是否在菜单项前使用分隔符                       |
+
+1. `Slug`类型指的是Django内置Converter，为符合正则表达式 `[-a-zA-Z0-9_]+` 的字符串，作为url的一部分。
 
 ### 关联导航栏
 
@@ -183,9 +187,9 @@ def mychart():
 
 ### 注册组件
 
-> DJESite.register_widget(function=None, *, name: str = None)
+> DJESite.register_html_widget(function=None, *, name: str = None)
 
-装饰器 register_widget 用于注册HTML组件。可支持的组件类型：
+装饰器 register_html_widget 用于注册HTML组件。可支持的组件类型：
 
 - Copyright / Jumbotron / Message
 - ValuesPanel
@@ -201,7 +205,7 @@ from myapp import models
 def this_month_panel():
     today = date.today()
     number_p = ValuesPanel(col_item_num=4)
-    access_total = models.Record.objects.filter(
+    access_total = models.AccessRecord.objects.filter(
         create_time__year=today.year, create_time__month=today.month
     ).count()
     number_p.add(access_total, f'{today.year}年{today.month}月访问量', '人次')
@@ -220,11 +224,11 @@ print(number_p.col_item_num)  # 4
 print(number_p[0].description)  # '2022年1月访问量'
 ```
 
-## 添加网站公共组件
+## 网站公共组件
 
 ### 导航栏(Nav)
 
-导航栏位于页面顶部，由 *左侧二级菜单* 和 *右侧一级菜单* 两部分组成，根据目标链接的类型有不同的添加方式。
+导航栏位于页面顶部，由 *左侧二级菜单* 、 *右侧一级菜单* 和 *底部链接* 三部分组成，根据目标链接的类型有不同的添加方式。
 
 **第一种：内置页面**
 
@@ -248,11 +252,28 @@ SiteOpts(nav_shown_pages=['home', 'collection'])
 
 **第三种：自定义链接**
 
+> class LinkItem(text: str, url: str = None, slug: str = None, new_page: bool = False, after_separator: bool = False)
+
+链接使用 `LinkItem` 类表示。
+
+| 参数            | 类型 | 描述                                       |
+| --------------- | ---- | ------------------------------------------ |
+| text            | str  | 链接文字                                   |
+| url             | str  | 链接地址                                   |
+| slug            | str  | 标识符，可自动生成                         |
+| new_page        | bool | target属性是否设置为 _blank                |
+| after_separator | bool | 在菜单前是否添加分隔符，仅适用于顶部导航栏 |
+
+**注意**：使用django视图反向解析时必须使用 `reverse_lazy`，而不是 `reverse`，否则出现无法解析的异常。因为此时 site_obj 还未挂载到项目全局的 url 路由规则之中。
+
+`DJESite`提供了 `add_*_link` 函数用于向站点添加链接。
+
 | 函数                                                     | 说明                         |      |
 | -------------------------------------------------------- | ---------------------------- | ---- |
 | `DJESite.add_left_link(item: LinkItem)`                  | 在左侧添加一级菜单           |      |
 | `DJESite.add_left_link(item: LinkItem, menu_title: str)` | 在menu_title之下添加二级菜单 |      |
 | `DJESite.add_right_link(item: LinkItem)`                 | 在右侧添加链接               |      |
+| `DJESite.add_footer_link(item: LinkItem)`                 | 在底部添加链接               |      |
 
 例子：
 
@@ -267,10 +288,6 @@ site_obj.add_right_link(item)
 item2 = LinkItem(text='关于', url=reverse_lazy('about'))
 site_obj.add_right_link(item2)
 ```
-
-类 `LinkItem` 表示一个超链接，url可以设置链接文本，也可以使用视图名称反向解析。
-
-> 注意：使用django视图反向解析时必须使用 `reverse_lazy`，而不是 `reverse`，否则出现无法解析的异常。因为此时 site_obj 还未挂载到项目全局的 url 路由规则之中。
 
 ### 底部版权栏(Copyright)
 
@@ -287,7 +304,7 @@ site_obj.add_right_link(item2)
 ©2017-2022, Powered By Django-Echarts
 ```
 
-## 页面：首页
+## 首页
 
 在首页可以通过 `add_widgets` 函数定制部分组件。
 
@@ -297,12 +314,12 @@ DJESite.add_widgets(*, jumbotron: Jumbotron = None, copyright_: Copyright = None
 
 可支持的组件有：
 
-| 参数/组件标识/模板变量名称 | 实际组件类型   | 引用方式              |
-| -------------------------- | -------------- | --------------------- |
-| copyright_                 | Copyright      | 静态                  |
-| home_jumbotron             | Jumbotron      | 静态<sup>1</sup>      |
-| home_jumbotron_chart       | JumbotronChart | 静态/动态<sup>2</sup> |
-| home_values_panel          | ValuesPanel    | 静态/动态             |
+| 参数/组件标识/模板变量名称 | 参数类型                 | 实际组件类型   |
+| -------------------------- | ------------------------ | -------------- |
+| copyright_                 | Copyright                | Copyright      |
+| home_jumbotron             | Jumbotron  <sup>1</sup>  | Jumbotron      |
+| home_jumbotron_chart       | Chart / str <sup>2</sup> | JumbotronChart |
+| home_values_panel          | ValuesPanel / str        | ValuesPanel    |
 
 1. 静态方式：home_jumbotron_chart 直接指定一个图表对象（如Bar）。
 2. 动态方式：home_jumbotron_chart 仅指定一个图表字符串标识，这些图表或组件通过 `register_chart` / `register_widget` 的方式注册。
@@ -351,7 +368,7 @@ def mychart():
     return bar
 ```
 
-## 页面：列表页
+## 列表页
 
 ### 搜索
 

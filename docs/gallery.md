@@ -16,9 +16,9 @@
 
 ![material-list-page](images/material_list_page.png)
 
-**List with Pagination**
+**Collection Named All**
 
-![list-with-pagination](images/list_with_pagination.png)
+![collection](images/collection_all.png)
 
 **Timeline Demo**
 

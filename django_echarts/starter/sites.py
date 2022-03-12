@@ -1,9 +1,9 @@
 import json
-import pprint
 import re
 from functools import wraps
 from typing import Optional, List, Dict, Literal, Type, Any, Tuple, Union
 
+from borax.serialize import cjson
 from django.core.paginator import Paginator
 from django.http.response import JsonResponse
 from django.urls import reverse_lazy, path
@@ -108,7 +108,8 @@ class DJESiteCollectionView(DJESiteBackendView):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         collection_name = self.kwargs.get('name', 'all')
         widget_collection = site.build_collection(collection_name)
-        pprint.pprint(widget_collection.packed_matrix)
+        if not widget_collection:
+            self.abort_request(f'The collection {collection_name} contains no data..')
         context[_VAR_PAGE_CONTAINER_] = widget_collection
         return 'chart_collection.html'
 
@@ -122,7 +123,7 @@ class DJESiteFrontendView(SiteInjectMixin, View):
         if isinstance(data, JsonResponse):
             return data
         else:
-            return JsonResponse(data, safe=False)
+            return JsonResponse(data, safe=False, encoder=cjson.CJSONEncoder)
 
     def post(self, request, *args, **kwargs):
         site = SiteInjectMixin.get_site_object()
@@ -240,15 +241,10 @@ class DJESiteSettingsView(FormMixin, DJESiteBackendView):
         context['form'] = form_obj
         return
 
-    def get_form(self, form_class=None):
-        form_obj = super().get_form(form_class)
-        choices = [(k, k) for k in DJANGO_ECHARTS_SETTINGS.theme_manger.available_palettes]
-        form_obj.fields['theme_palette_name'].choices = choices
-        return form_obj
-
     def get_initial(self):
         opts = SiteInjectMixin.get_site_object().opts
         return {
+            'nav_top_fixed': opts.nav_top_fixed,
             'list_layout': opts.list_layout,
             'paginate_by': opts.paginate_by or 0,
             'theme_palette_name': DJANGO_ECHARTS_SETTINGS.theme.theme_palette
@@ -262,8 +258,8 @@ class DJESiteSettingsView(FormMixin, DJESiteBackendView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        print(form.errors)
         opts = SiteInjectMixin.get_site_object().opts
+        opts.nav_top_fixed = form.cleaned_data['nav_top_fixed']
         opts.list_layout = form.cleaned_data['list_layout']
         opts.paginate_by = form.cleaned_data['paginate_by']
         DJANGO_ECHARTS_SETTINGS.switch_palette(form.cleaned_data['theme_palette_name'])
@@ -475,34 +471,47 @@ class DJESite(WidgetGetterMixin):
         else:
             return decorator(function)
 
-    def add_collection(self, name: str, chart_names: List[str], layout: str = 'a', title: str = None,
-                       catalog: str = None, nav_parent_name: str = None, nav_after_separator: bool = False):
-        if not _SLUG_RE.match(name):
-            raise ValueError(f'Invalid collection slug:{name}')
-        collection = WidgetCollection(name=name, layout=layout)
-        for chart_name in chart_names:
-            collection.add_chart(chart_name)
-        self._collection_dic[name] = collection
-        c_nav_parent_name = nav_parent_name or catalog
-        if c_nav_parent_name:
-            title = title or name
-            url = reverse_lazy('dje_chart_collection', args=(name,))
-            self.nav.add_menu(text=c_nav_parent_name)
-            self.nav.add_item(
-                menu_text=c_nav_parent_name,
-                item=LinkItem(text=title, url=url, slug=name),
-                after_separator=nav_after_separator
-            )
-        return self
+    def register_collection(self, function=None, name: str = None, title: str = None,
+                            catalog: str = None, nav_parent_name: str = None, nav_after_separator: bool = False):
+        def decorator(func):
+            cname = name or func.__name__
+            if isinstance(func, WidgetCollection):
+                self._collection_dic[cname] = func
+            elif callable(func):
+                collection = func()
+                self._collection_dic[cname] = collection
+            else:
+                pass
+            url = reverse_lazy('dje_chart_collection', args=(cname,))
+            c_title = title or name
+            if nav_parent_name == 'self':
+                self.nav.add_menu(text=c_title, url=url)
+            elif nav_parent_name == 'none':
+                pass
+            else:
+                c_nav_parent_name = nav_parent_name or catalog
+                self.nav.add_menu(text=c_nav_parent_name)
+                self.nav.add_item(
+                    menu_text=c_nav_parent_name,
+                    item=LinkItem(text=c_title, url=url, slug=name),
+                    after_separator=nav_after_separator
+                )
+            return func
+
+        if function is None:
+            return decorator
+        else:
+            return decorator(function)
 
     def build_collection(self, name: str) -> WidgetCollection:
         if name == 'all':
             return self.build_collection_named_all()
         collection = self._collection_dic.get(name)
         collection.auto_mount(self)
+        return collection
 
     def build_collection_named_all(self) -> WidgetCollection:
-        w_collection = WidgetCollection(name='all')
+        w_collection = WidgetCollection(name='all', layout='s8')
         for info in self.chart_info_manager.query_chart_info_list():
             chart_obj, _, _ = self.resolve_chart(info.name)
             w_collection.pack_chart_widget(chart_obj, info)

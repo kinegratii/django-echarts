@@ -2,9 +2,9 @@
 {% load echarts %}
 
 {% block main_content %}
-    {% for row_data in widget_collection.packed_matrix %}
+    {% for row_widget in widget_collection.packed_matrix %}
         <div class="row">
-            {% for widget, col_span in row_data %}
+            {% for widget, col_span in row_widget %}
                 <div class="col-md-{{ col_span }} col-sm-12">
                     {% if widget.widget_type == 'InfoCard' %}
                         <div class="card-body">

@@ -116,19 +116,19 @@ django-echarts还支持自定义UI框架的调色主题。
 
 ```text
 PS E:\projects\zinc> python .\manage.py info -t bootstrap5.foo
-[File #01] : Catalog: palette_css
+[Resource #01] : Catalog: palette_css
         Remote Url: https://bootswatch.com/5/foo/bootstrap.min.css
         Static Url: /static/bootstrap5/bootstrap5.foo.min.css
         Local Path: E:\projects\zinc\static\bootstrap5/bootstrap5.foo.min.css
-[File #02] : Catalog: font_css
+[Resource #02] : Catalog: font_css
         Remote Url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css
         Static Url: /static/bootstrap5/bootstrap-icons.min.css
         Local Path: E:\projects\zinc\static\bootstrap5/bootstrap-icons.min.css
-[File #03] : Catalog: jquery_js
+[Resource #03] : Catalog: jquery_js
         Remote Url: https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js
         Static Url: /static/bootstrap5/jquery.min.js
         Local Path: E:\projects\zinc\static\bootstrap5/jquery.min.js
-[File #04] : Catalog: main_js
+[Resource #04] : Catalog: main_js
         Remote Url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js
         Static Url: /static/bootstrap5/bootstrap.bundle.min.js
         Local Path: E:\projects\zinc\static\bootstrap5/bootstrap.bundle.min.js
@@ -157,44 +157,6 @@ DJANGO_ECHARTS = {
 ```
 
 第三步，此时 `DJESite`的theme参数就可以指定你自定义的名称。
-
-## 本地化主题
-
-为了简化自定义设置过程的繁琐操作，django-echarts提供了一个简便的命令行工具。
-
-1 通过命令行下载文件。
-
-```shell
-$ python manage.py download --theme bootstrap5.cerulean
-Download file bootstrap.min.css start!
-Download file bootstrap-icons.min.css start!
-Download file jquery.min.js start!
-Download file bootstrap.bundle.min.js start!
-File bootstrap-icons.min.css download success!
-File bootstrap.bundle.min.js download success!
-File jquery.min.js download success!
-File bootstrap.min.css download success!
-Task Completed! You can use "bootstrap5.cerulean#local" to the site config.
-```
-
-该命令将自动下载文件并保存在项目静态文件目录下，文件结构如下：
-
-```
-|-- static
-     |-- bootstrap5
-           |-- bootstrap5.cerulean.min.css
-           |-- bootstrap-icons.min.css
-           |-- jquery.min.js
-           |-- bootstrap.bundle.min.js
-```
-
-2 在 `DJANGO_ECHARTS` 配置，添加 `#local` 后缀。
-
-```python
-DJANGO_ECHARTS = {
-    'theme_name': 'bootstrap5.cerulean#local'
-}
-```
 
 
 

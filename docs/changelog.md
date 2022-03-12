@@ -3,11 +3,15 @@
 ## v0.5.0
 
 - 使用主题独立APP架构，修改主题设置方式
+- 新增直接支持 `prettytable.PrettyTable` 表格类型
 - 命令 info / download / starttpl 可忽略 `--theme` 参数，默认为 `INSTALLED_APPS` 配置的主题。
 - 新增 *blank.html* 空白模板文件。
 - Nav组件新增底部链接列表。
 - 新增设置(settings)页面。
-- 支持更换调色主题。
+- 支持以表单方式更换调色主题。
+- 导航栏文字支持模板字符串 `DwString`
+- 导航栏支持是否固定设置
+- Borax更新至v3.5.3
 
 ## v0.5.0b2 - (20220306)
 

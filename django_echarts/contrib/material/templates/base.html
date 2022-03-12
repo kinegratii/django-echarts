@@ -23,8 +23,7 @@
                             {% if item.after_separator %}
                                 <li class="divider"></li>
                             {% endif %}
-                            <li><a href="{{ item.url }}"{% if item.new_page %}
-                                   target="_blank"{% endif %}>{{ item.text }}</a></li>
+                            <li>{% dw_link item %}</li>
                         {% endfor %}
                     </ul>
                 {% endif %}
@@ -36,10 +35,7 @@
                                data-target="{{ menu2.slug }}">{{ menu2.text }}<i
                                 class="material-icons right"></i></a></li>
                     {% else %}
-                        <li><a href="
-
-
-                            {% if menu2.url %}{{ menu2.url }}{% else %}javascript:;{% endif %}">{{ menu2.text }}</a>
+                        <li>{% dw_link menu2 %}
                         </li>
                     {% endif %}
                 {% endfor %}
@@ -49,7 +45,7 @@
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 {% for item in nav.links %}
                     <li>
-                        <a href="{{ item.url }}"{% if item.new_page %} target="_blank"{% endif %}>{{ item.text }}</a>
+                        {% dw_link item %}
                     </li>
                 {% endfor %}
             </ul>
@@ -70,8 +66,7 @@
                         <h5 class="white-text">Links</h5>
                         <ul>
                             {% for item in nav.footer_links %}
-                                <li><a class="grey-text text-lighten-3" href="{{ item.url }}" {% if item.new_page %}
-                                       target="_blank"{% endif %}>{{ item.text }}</a></li>
+                                <li>{% dw_link item class_="grey-text text-lighten-3" %}</li>
                             {% endfor %}
                         </ul>
                     {% endif %}

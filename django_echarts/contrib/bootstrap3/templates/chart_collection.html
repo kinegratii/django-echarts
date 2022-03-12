@@ -2,24 +2,23 @@
 {% load echarts %}
 
 {% block main_content %}
-    {% for chart_obj, chart_info, layout_opts in widget_collection.iter_for_layout %}
-        <div class="panel panel-default">
-            <div class="panel-heading">{{ chart_info.title }}</div>
-            <div class="row">
-                {% if layout_opts.start %}
-                    <div class="col-md-{{ layout_opts.info_span }} col-sm-12">
-                        <p class="card-text">{{ chart_info.description }}</p>
-                    </div>
-                {% endif %}
-                <div class="col-md-{{ layout_opts.chart_span }} col-sm-12">
-                    {% echarts_container chart_obj width="100%" %}
+    {% for row_widget in widget_collection.packed_matrix %}
+        <div class="row">
+            {% for widget, col_span in row_widget %}
+                <div class="col-md-{{ col_span }} col-sm-12">
+                    {% if widget.widget_type == 'InfoCard' %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">{{ widget.title }}</div>
+                            <div class="panel-body"><p>{{ widget.description }}</p></div>
+                        </div>
+
+                    {% elif widget.widget_type == 'ValuesPanel' %}
+                        {% dw_values_panel widget %}
+                    {% else %}
+                        {% echarts_container widget %}
+                    {% endif %}
                 </div>
-                {% if layout_opts.end %}
-                    <div class="col-md-{{ layout_opts.info_span }} col-sm-12">
-                        <p class="card-text">{{ chart_info.description }}</p>
-                    </div>
-                {% endif %}
-            </div>
+            {% endfor %}
         </div>
     {% endfor %}
 {% endblock %}

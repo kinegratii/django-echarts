@@ -103,30 +103,54 @@ def named_charts():
 
 ### 定义合辑
 
-一个合辑由 组件 和 布局 两个部分组成。布局参数由定义时传入，组件使用 `add_widget` 函数。
+> class WidgetCollection(name: str, title: str = None, layout: Union[str, LayoutOpts] = 'a')
+
+一个合辑对象 `WidgetCollection` 表示由若干图表和组件按照一定的布局组成的页面实体。
 
 ```python
-collection = WidgetCollection(name='first_collection', title='第一个合辑', layout='s8' )
-
-collection.add_html_widget(widget_names=['my_values_panel'])
+wc = WidgetCollection(
+    name='first_collection', title='第一个合辑', layout='s8'
+)
 ```
 
 参数列表
 
-| 参数   | 类型 | 描述                      |
-| ------ | ---- | ------------------------- |
-| name   | str  | 合辑标识，作为url的一部分 |
-| title  | str  | 标题                      |
-| layout | str  | 布局参数                  |
+| 参数   | 类型 | 描述                        |
+| ------ | ---- | --------------------------- |
+| name   | slug | 合辑标识符，作为url的一部分 |
+| title  | str  | 标题，菜单栏的文字          |
+| layout | str  | 整体布局                    |
 
-添加组件
+### 添加组件
+
+> WidgetCollection.pack_chart_widget(chart_obj, info: ChartInfo, ignore_ref: bool = True, layout: str = 'l8',
+>                           row_no: int = 0)
+>
+>  
+>
+> WidgetCollection.pack_html_widget(widget_list: List, layout: str = 'f', row_no: int = 0)
+
+
+
+`WdidgetCollection` 提供了 `pack_*` 方法用于添加组件，函数将参数的组件使用 `row` 类（一行12列）进行包裹。
 
 ```python
-collection.pack_chart_widget(widget_name='chart', with_info)
-collection.pack_html_widget(names=['w1', 'w2'], [8, 4])
+# 添加单个图表
+bar = Bar()
+info = DJEChartInfo(...)
+wc.pack_chart_widget(bar, info, layout='l8')
+
+# 多图表平均显示
+nc = NamedCharts()
+bar2 = Bar()
+line = Line()
+nc.add_chart(line1)
+nc.add_chart(bar)
+wc.pack_chart_widget(nc, layout='f6')
+
+# 按照给定的列数显示多个组件
+wc.pack_html_widget([w1, w2], [8, 4])
 ```
-
-
 
 ### 图表布局
 
@@ -174,15 +198,18 @@ def fj_fimily_type():
     # ...
     return bar
 
-site_obj.add_collection(
-    name='collection1',
-    charts=['fj_fimily_types', 'fj_area_bar'], layout='s8'
-)
+
+@site_obj.register_collection
+def collection1():
+    wc = WidgetCollection(title='合辑01', layout='s8')
+    wc.add_chart_widget(name='fj_area_bar')
+    wc.add_chart_widget(name='fj_fimily_types')
+    return wc
 ```
 
 访问URL */collection/collection1/* 可以预览页面效果。
 
-add_collection 函数参数及其意义：
+register_collection 函数参数及其意义：
 
 | 参数            | 类型      | 说明                                   |
 | --------------- | --------- | -------------------------------------- |

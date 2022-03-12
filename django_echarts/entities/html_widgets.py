@@ -1,5 +1,6 @@
 import uuid
 from datetime import date
+import operator
 
 from typing import List, Union, Literal, Any
 
@@ -42,7 +43,8 @@ class Nav:
         self.footer_links = []  # type: List[LinkItem]
 
     def add_menu(self, text: str, slug: str = None, url: str = None):
-        texts, slugs = fetch(self.menus, 'text', 'slug')
+        # Fixed in Borax v3.5.3
+        texts, slugs = fetch(self.menus, 'text', 'slug', getter=lambda item, key: getattr(item, key))
         if text in texts:
             return self
         if not slug or slug not in slugs:

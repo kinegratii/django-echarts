@@ -9,18 +9,18 @@ from pyecharts.datasets import FILENAMES, EXTRA
 __all__ = ['DependencyManager']
 
 
-def pyecharts_resolve_dep_name(dep_name):
-    if dep_name.startswith("https://api.map.baidu.com"):
-        return dep_name
+def pyecharts_resolve_dep_name(dep_name: str) -> Tuple[bool, str]:
+    if dep_name.startswith("https://") or dep_name.startswith('http://'):
+        return True, dep_name
     if dep_name in FILENAMES:
         f, ext = FILENAMES[dep_name]
-        return "{}.{}".format(f, ext)
+        return False, "{}.{}".format(f, ext)
     else:
         for url, files in EXTRA.items():
             if dep_name in files:
                 f, ext = files[dep_name]
-                return "{}.{}".format(f, ext)
-        return '{}.js'.format(dep_name)
+                return False, "{}.{}".format(f, ext)
+        return False, '{}.js'.format(dep_name)
 
 
 # The repo contains all dependencies
@@ -99,10 +99,12 @@ class DependencyManager:
         repo_name = repo_name or self._cur_repo_name
         if repo_name not in self._repo_dic:
             raise ValueError(f'Unknown dms repo: {repo_name}. Choices are:{",".join(self._repo_dic.keys())}')
-        url_fmt = self._repo_dic.get(repo_name).rstrip('/')
-        new_dep_name = pyecharts_resolve_dep_name(dep_name)
-        filename = d2f(new_dep_name)
 
+        use_url, new_dep_name = pyecharts_resolve_dep_name(dep_name)
+        if use_url:
+            return new_dep_name, None
+        filename = d2f(new_dep_name)
+        url_fmt = self._repo_dic.get(repo_name).rstrip('/')
         url = '{}/{}'.format(url_fmt.format(**self._context), filename)
         return url, filename
 
@@ -113,7 +115,8 @@ class DependencyManager:
     def iter_download_resources(self, dep_names: str, repo_name: str = None):
         for dep_name in dep_names:
             url, filename = self._resolve_dep(dep_name, repo_name)
-            yield dep_name, url, filename
+            if filename:
+                yield dep_name, url, filename
 
     @classmethod
     def create_default(cls, context: dict = None, repo_name: str = None):

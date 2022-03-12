@@ -10,9 +10,11 @@
         {% theme_css %}
     {% endblock %}
     <style rel="stylesheet">
+        {% if opts.nav_top_fixed %}
         #main_content {
             padding-top: 60px;
         }
+        {% endif %}
 
         nav {
             height: 58px;
@@ -27,7 +29,7 @@
 </head>
 <body>
 {% block nav %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary {% if opts.nav_top_fixed %}fixed-top{% endif %}">
         <div class="container">
             <a class="navbar-brand" href="{% url 'dje_home' %}">{{ site_title }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -48,33 +50,20 @@
                                                 <hr class="dropdown-divider">
                                             </li>
                                         {% endif %}
-                                        <li><a class="dropdown-item" href="{{ item.url }}"{% if item.new_page %}
-                                               target="_blank"{% endif %}>{{ item.text }}</a></li>
+                                        <li>{% dw_link item class_="dropdown-item" %}</li>
                                     {% endfor %}
                                 </ul>
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" href="
-
-
-
-
-
-
-
-
-                                        {% if menu2.url %}{{ menu2.url }}{% else %}javascript:;{% endif %}">{{ menu2.text }}</a>
+                            {% dw_link menu2 class_="nav-link" %}
                             </li>
                         {% endif %}
                     {% endfor %}
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     {% for item in nav.links %}
-                        <li class="nav-tem">
-                            <a class="nav-link" href="{{ item.url }}"{% if item.new_page %}
-                               target="_blank"{% endif %}>{{ item.text }}</a>
-                        </li>
+                        <li class="nav-item">{% dw_link item class_="nav-link" %}</li>
                     {% endfor %}
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -100,9 +89,7 @@
                         <div class="col-md-4 col-md-offset-2">
                             <ul class="list-inline list-unstyled">
                                 {% for item in nav.footer_links %}
-                                    <li class="list-inline-item"><a class="link-secondary" href="{{ item.url }}"
-                                            {% if item.new_page %}
-                                                                    target="_blank"{% endif %}>{{ item.text }}</a></li>
+                                    <li class="list-inline-item">{% dw_link item class_='link-secondary' %}</li>
                                 {% endfor %}
                             </ul>
                         </div>

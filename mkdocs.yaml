@@ -25,6 +25,7 @@ nav:
     - 组件和布局: starter/widget_and_layout.md
     - UI框架和主题: starter/themes.md
     - 依赖项和静态文件: guides/dms.md
+    - 本地化静态资源: starter/localize_staticfiles.md
     - 高级开发: guides/advance_development.md
   - 参考:
     - 项目设置: reference/configure.md

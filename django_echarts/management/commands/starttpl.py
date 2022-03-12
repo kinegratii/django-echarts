@@ -4,7 +4,7 @@ import shutil
 from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand
-
+from django.template import engines
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 
 
@@ -15,10 +15,18 @@ def concat_if(s: str, fix: str):
         return s
 
 
-def get_theme_dir(app_name, *args) -> str:
+def get_theme_template_dir(app_name, *args) -> str:
     for app_config in apps.get_app_configs():
         if app_name in app_config.name:
             return os.path.join(app_config.path, 'templates', *args)
+
+
+def get_dest_template_dir():
+    django_engine = engines['django']
+    if django_engine.dirs:
+        return django_engine.dirs[0]
+    else:
+        return os.path.join(str(settings.BASE_DIR), 'templates')
 
 
 class Command(BaseCommand):
@@ -66,7 +74,7 @@ class Command(BaseCommand):
             self.copy_template_files(theme_name, template_name, output, force_action)
 
     def get_all_template_names(self, theme_name):
-        theme_dir = get_theme_dir(theme_name)
+        theme_dir = get_theme_template_dir(theme_name)
         template_names = []
         for root, dirs, files in os.walk(theme_dir):
             for f in files:
@@ -79,12 +87,11 @@ class Command(BaseCommand):
             output = concat_if(output, '.html')
         else:
             output = template_name
-        from_path = get_theme_dir(theme_name, template_name)
+        from_path = get_theme_template_dir(theme_name, template_name)
         # From path
         if not os.path.exists(from_path):
             self.stdout.write(self.style.WARNING(f' {template_name}, skipped!'))
-        # TODO settings.TEMPLATES['DIR'][0]
-        pro_template_dir = os.path.join(str(settings.BASE_DIR), 'templates')
+        pro_template_dir = get_dest_template_dir()
         to_path = os.path.join(pro_template_dir, output)
         if os.path.exists(to_path) and not force_action:
             self.stdout.write(self.style.WARNING(f' {output}, Exists! Add  -f option to override write.'))

@@ -1,15 +1,14 @@
 """
-A integration module with models admin
+A integration module with django database.
 """
-
-from django.db import models
-from django_echarts.entities import ChartInfoManagerMixin, ChartInfo
-from django_echarts.starter.sites import DJESite
 
 from typing import List
 
+from django.db import models
+from django_echarts.entities import ChartInfoManagerMixin, ChartInfo
 
-class MChartInfo(models.Model):
+
+class XChartInfo(models.Model):
     name = models.CharField(max_length=30)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=300)
@@ -22,11 +21,11 @@ class MChartInfo(models.Model):
         abstract = True
 
 
-def chart2model(info: ChartInfo) -> MChartInfo:
+def chart2model(info: ChartInfo) -> XChartInfo:
     pass
 
 
-def model2chart(obj: MChartInfo) -> ChartInfo:
+def model2chart(obj: XChartInfo) -> ChartInfo:
     pass
 
 
@@ -38,6 +37,4 @@ class ChartModelManager(ChartInfoManagerMixin, models.Manager):
     def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[ChartInfo]:
         pass
 
-
-class ZincSite(DJESite):
-    pass
+# Site from database.

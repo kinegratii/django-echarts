@@ -41,7 +41,7 @@ class DownloadBaseCommand(BaseCommand):
                 else:
                     res.exists = False
                     msg = self.style.WARNING('        Local Path: {}'.format(res.local_path))
-                self.stdout.write('[File #{:02d}] {}: Catalog: {}'.format(i + 1, res.label, res.catalog))
+                self.stdout.write('[Resource #{:02d}] {}: Catalog: {}'.format(i + 1, res.label, res.catalog))
                 self.stdout.write('        Remote Url: {}'.format(res.remote_url))
                 self.stdout.write('        Static Url: {}'.format(res.ref_url))
                 self.stdout.write(msg)

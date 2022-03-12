@@ -96,6 +96,20 @@ urlpatterns = [
 ]
 ```
 
+## 用户名显示
+
+`DwString` 提供了一种利用模板字符串显示动态字符串的功能。
+
+例子：在右侧菜单栏显示用户信息，如果登录则显示用户名（`request.user.username`），未登录显示“匿名用户” 文字。
+
+```python
+site_obj.add_right_link(
+    LinkItem(text=DwString.login_name(un_login_text='匿名用户'))
+)
+```
+
+
+
 ## 组件编写
 
 django-echarts 内置的UI框架与下列项目是一样的，因此可以在项目中使用其提供模板标签以提高编码效率。

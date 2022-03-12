@@ -102,3 +102,4 @@ ENV/
 
 .idea
 demo.py
+example/

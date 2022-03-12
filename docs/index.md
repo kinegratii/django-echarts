@@ -7,18 +7,16 @@
 
 
 
-**目前v0.5.0版本还处于 Beta 状态，详细请查看 [v0.5.x Development Note (2022)](https://github.com/kinegratii/django-echarts/issues/30)。**
-
 ## 概述
 
-django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts) 和 [Django](https://www.djangoproject.com) 整合的可视化网站脚手架。
+django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts) 和 [Django](https://www.djangoproject.com) 的可视化网站脚手架。
 
 - 支持 90%+的pyecharts图表类型
-- 可显示页面：主页 / 列表 / 详情 / 关于
+- 可显示页面：主页 / 列表 / 详情 / 关于 / 设置 
 - 可支持组件：导航栏 / 网站底部栏 / 热门板块 / 列表 / 合辑 /  关于面板 
 - UI主题：Bootstrap3 / Bootstrap5 / Material ，支持更换颜色模式
 - 可灵活扩展: 支持整合 Django用户认证 / 数据库 / Session 
-- 基于Django Template Engine 的后端渲染
+- 基于Django Template System 的后端渲染
 - js/css静态文件托管，支持在线/本地切换
 - 生产力工具：代码生成器 / 静态文件下载器
 - 90%+ Python Typing Hints覆盖
@@ -140,8 +138,7 @@ def my_first_chart():
 
 
 ```python
-from django.conf.urls import url, include
-from django.urls import path
+from django.urls import path, include
 
 from .site_views import site_obj
 

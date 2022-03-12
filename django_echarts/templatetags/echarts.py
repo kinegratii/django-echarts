@@ -2,12 +2,17 @@
 """Template tags for django-echarts.
 
 """
+from typing import Union
 from django import template
 from django.template.loader import render_to_string, get_template
+from django.template import engines
 from django.utils.html import SafeString
 
+from borax.htmls import html_tag
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.entities.chart_widgets import NamedCharts, merge_js_dependencies, WidgetCollection
+from django_echarts.entities.html_widgets import LinkItem, Menu
+from django_echarts.entities.text import DwString
 from django_echarts.utils.burl import burl_kwargs
 
 register = template.Library()
@@ -171,9 +176,6 @@ def dw_collection(collection):
     return SafeString(tpl.render({'collection': collection}))
 
 
-# ----- The following tags takes data object from the context, not the user's parameters. -----
-
-
 @register.simple_tag
 def theme_js():
     theme = DJANGO_ECHARTS_SETTINGS.theme
@@ -196,3 +198,24 @@ def theme_css():
 def page_link(context, page_number: int):
     url = context['request'].get_full_path()
     return burl_kwargs(url, page=page_number)
+
+
+@register.simple_tag(takes_context=True)
+def dw_link(context, item: Union[LinkItem, Menu], class_: str = None):
+    params = {'href': item.url or 'javascript:;'}
+    if isinstance(item.text, DwString):
+        django_engine = engines['django']
+        template_obj = django_engine.from_string(item.text)
+        fields = ['request', ]
+        context_dic = {}
+        for f in fields:
+            if f in context:
+                context_dic[f] = context[f]
+        params['content'] = template_obj.render(context_dic)
+    else:
+        params['content'] = item.text
+    if class_:
+        params['class_'] = class_
+    if isinstance(item, LinkItem) and item.new_page:
+        params['target'] = '_blank'
+    return html_tag('a', **params)

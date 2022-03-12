@@ -5,3 +5,4 @@ from .chart_widgets import (NamedCharts, WidgetCollection, ChartPosition, Charts
 from .html_widgets import (
     LinkItem, Menu, Jumbotron, Nav, Copyright, Message, ValuesPanel
 )
+from .text import DwString

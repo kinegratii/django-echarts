@@ -2,7 +2,7 @@
 {% load echarts %}
 
 {% block main_content %}
-    {% for chart_obj, chart_info, layout_opts in widget_collection.iter_for_layout %}
+    {% for chart_obj, chart_info, layout_opts in widget_collection.packed_matrix %}
         <div class="card ">
             <div class="card-title blue-grey darken-1">{{ chart_info.title }}</div>
             <div class="row">

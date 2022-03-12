@@ -9,6 +9,21 @@
     {% block  include_css %}
         {% theme_css %}
     {% endblock %}
+    <style rel="stylesheet">
+        {% if opts.nav_top_fixed %}
+        #main_content {
+            padding-top: 80px;
+        }
+        {% endif %}
+
+        nav {
+            height: 58px;
+        }
+
+        .text-first-indent {
+            text-indent: 2rem;
+        }
+    </style>
     {% block extra_css %}
     {% endblock %}
 
@@ -16,7 +31,7 @@
 <body>
 
 {% block nav %}
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse {% if opts.nav_top_fixed %}navbar-fixed-top{% endif %}">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -44,21 +59,13 @@
                                         {% if item.after_separator %}
                                             <li role="separator" class="divider"></li>
                                         {% endif %}
-                                        <li><a href="{{ item.url }}"{% if item.new_page %}
-                                               target="_blank"{% endif %}>{{ item.text }}</a></li>
+                                        <li> {% dw_link item %}</li>
                                     {% endfor %}
                                 </ul>
                             </li>
                         {% else %}
                             <li>
-                                <a href="
-
-
-
-
-
-
-                                        {% if menu2.url %}{{ menu2.url }}{% else %}javascript:;{% endif %}">{{ menu2.text }}</a>
+                                {% dw_link menu2 %}
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -66,8 +73,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% for item in nav.links %}
                         <li>
-                            <a href="{{ item.url }}"{% if item.new_page %}
-                               target="_blank"{% endif %}>{{ item.text }}</a>
+                            {% dw_link item %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -75,7 +81,7 @@
         </div><!-- /.container-fluid -->
     </nav>
 {% endblock %}
-<div class="container">
+<div id="main_content" class="container">
     {% block main_content %}
 
     {% endblock %}
@@ -92,8 +98,7 @@
                         <div class="col-md-4 col-md-offset-2">
                             <ul class="list-inline list-unstyled">
                                 {% for item in nav.footer_links %}
-                                    <li class="list-inline-item"><a href="{{ item.url }}"{% if item.new_page %}
-                                                                    target="_blank"{% endif %}>{{ item.text }}</a></li>
+                                    <li class="list-inline-item">{% dw_link item %}</li>
                                 {% endfor %}
                             </ul>
                         </div>
