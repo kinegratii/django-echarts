@@ -1,3 +1,5 @@
+
+
 class DwString(str):
     """This is a str for django template string."""
 

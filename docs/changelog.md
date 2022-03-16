@@ -4,6 +4,7 @@
 
 - 使用主题独立APP架构，修改主题设置方式
 - 新增直接支持 `prettytable.PrettyTable` 表格类型
+- 新增支持自定义geojson地图
 - 命令 info / download / starttpl 可忽略 `--theme` 参数，默认为 `INSTALLED_APPS` 配置的主题。
 - 新增 *blank.html* 空白模板文件。
 - Nav组件新增底部链接列表。

@@ -15,7 +15,8 @@ __all__ = ['DJANGO_ECHARTS_SETTINGS']
 def get_django_echarts_settings():
     project_echarts_settings = getattr(settings, 'DJANGO_ECHARTS', {})
     extra_settings = {
-        'STATIC_URL': settings.STATIC_URL
+        'STATIC_URL': settings.STATIC_URL,
+        'STATICFILES_DIRS': settings.STATICFILES_DIRS
     }
     settings_store = SettingsStore(
         echarts_settings=project_echarts_settings,

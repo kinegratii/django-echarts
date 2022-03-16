@@ -2,9 +2,75 @@
 
 本文提供了一些在扩展开发过程所需要的功能。这些功能的实现可能需要整合Django核心模块功能或者其他第三方库。
 
-> 在Django中，一个基本的功能实现由视图、模板、路由三部分组成。
+## 图表开发
 
-## 自定义内置页面功能
+### 自定义geojson
+
+**1.  准备geojson文件**
+
+根据实际业务需求制作geojson文件，并放置在项目 `BASE_DIR / 'static / 'geojson'` 目录之下。
+
+**2. 引用geojson文件**
+
+使用 `use_geojson` 引用地图文件。
+
+```python
+@site_obj.register_chart
+def my_geojson_demo():
+    map1 = Map()
+    map1.add("", [('闽侯县', 23), ('湖里区', 45)], maptype="福建市县")
+    map1.set_global_opts(title_opts=opts.TitleOpts(title="自定义geojson"))
+    map1.height = '800px'
+    use_geojson(map1, 'fujian.geojson', '福建市县')
+    return map1
+```
+
+渲染后的前端代码如下（省略非关键代码）：
+
+```javascript
+$.getJSON("/geojson/fujian.geojson").done(function(mapdata){
+    echarts.registerMap("福建市县", mapdata);
+    var chart_3bf0d2a = echarts.init(
+        document.getElementById('3bf0d2a'),
+        'white',
+        {renderer: 'canvas'}
+    );
+    var option_3bf0d2a = {
+        "series": [
+            {
+                "type": "map",
+                "mapType": "福建市县",
+                "data": [
+                    { "name": "闽侯县", "value": 23 },
+                    { "name": "湖里区", "value": 45 }
+                ],
+            }
+        ],
+    };
+    chart_3bf0d2a.setOption(option_3bf0d2a);
+}).fail(function(jqXHR, textStatus, error){
+    $("#3bf0d2a").html("Load geojson file fail!Status:" + textStatus);
+});
+
+```
+
+
+
+## 组件
+
+### 组件编写
+
+django-echarts 内置的UI框架与下列项目是一样的，因此可以在项目中使用其提供模板标签以提高编码效率。
+
+- Bootstrap3: [https://github.com/zostera/django-bootstrap3](https://github.com/zostera/django-bootstrap3)
+- Bootstrap5: [https://github.com/zostera/django-bootstrap5](https://github.com/zostera/django-bootstrap5)
+- Material: [https://github.com/viewflow/django-material](https://github.com/viewflow/django-material)
+
+
+
+## 页面布局和逻辑
+
+### 自定义内置页面功能
 
 如果不想首页的默认布局和组件（大标题组件、热门图表等），也可以实现自己的视图和模板，只要路由保持不变即可。
 
@@ -43,7 +109,7 @@ class MyHomeView(DJESiteAboutView):
 site_obj.register_view(view_name='dje_home', view_class=MyAboutView)
 ```
 
-## 新的页面功能
+### 新的页面功能
 
 django-echarts支持增加新页面功能。
 
@@ -75,7 +141,9 @@ site_obj = MySite()
 
 模板页面必须继承模板的 *base.html* 页面。在 *main_content* 部分编写模板代码。方法同 *自定义内置页面功能* 一节。
 
-## 仅登录用户访问
+## 视图逻辑
+
+### 仅登录用户访问
 
 django提供了 `login_required` 装饰器用于仅登录用户可访问的功能，但是该装饰器只能装饰视图函数。因此只能单独一个一个添加到对应视图函数之前。
 
@@ -96,7 +164,7 @@ urlpatterns = [
 ]
 ```
 
-## 用户名显示
+### 用户名显示
 
 `DwString` 提供了一种利用模板字符串显示动态字符串的功能。
 
@@ -108,26 +176,3 @@ site_obj.add_right_link(
 )
 ```
 
-
-
-## 组件编写
-
-django-echarts 内置的UI框架与下列项目是一样的，因此可以在项目中使用其提供模板标签以提高编码效率。
-
-- Bootstrap3: [https://github.com/zostera/django-bootstrap3](https://github.com/zostera/django-bootstrap3)
-- Bootstrap5: [https://github.com/zostera/django-bootstrap5](https://github.com/zostera/django-bootstrap5)
-- Material: [https://github.com/viewflow/django-material](https://github.com/viewflow/django-material)
-
-## 修改布局和页面
-
-根据 Django 的模板文件寻找逻辑即可实现。
-
-第一，网站总体布局定义在 *base.html* 文件之中，将该文件复制到你的项目模板文件目录之下。
-
-```shell
-python manage.py starttpl -n base
-```
-
-第二，对新的文件进行修改，需要确保每个`block`都必须存在，否则其他页面无法继承。
-
-> 参考资料：[Django Best Practices: Template Structure](https://learndjango.com/tutorials/template-structure)

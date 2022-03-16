@@ -10,9 +10,8 @@ from django.utils.html import SafeString
 
 from borax.htmls import html_tag
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.entities.chart_widgets import NamedCharts, merge_js_dependencies, WidgetCollection
-from django_echarts.entities.html_widgets import LinkItem, Menu
-from django_echarts.entities.text import DwString
+from django_echarts.entities import (NamedCharts, WidgetCollection, LinkItem, Menu, DwString)
+from django_echarts.entities.chart_widgets import merge_js_dependencies
 from django_echarts.utils.burl import burl_kwargs
 
 register = template.Library()

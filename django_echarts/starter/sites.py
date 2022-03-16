@@ -11,9 +11,10 @@ from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 from django.views.generic.edit import FormMixin
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.core.exceptions import DJEAbortException
-from django_echarts.entities.articles import ChartInfo, LocalChartInfoManager, ChartInfoManagerMixin
-from django_echarts.entities.chart_widgets import WidgetGetterMixin, WidgetCollection
-from django_echarts.entities.html_widgets import Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
+from django_echarts.entities import (
+    ChartInfo, LocalChartInfoManager, ChartInfoManagerMixin, WidgetGetterMixin, WidgetCollection, Nav, LinkItem,
+    Jumbotron, Copyright, Message, ValuesPanel
+)
 from django_echarts.utils.compat import get_elided_page_range
 from django_echarts.utils.lazy_dict import LazyDict
 
@@ -227,6 +228,15 @@ class DJSiteChartOptionsView(DJESiteFrontendView):
             return json.loads(chart_obj.dump_options_with_quotes())
 
 
+class GeojsonDataView(View):
+    def get(self, request, *args, **kwargs):
+        geojson_name = self.kwargs.get('geojson_name')
+        file_path = DJANGO_ECHARTS_SETTINGS.get_geojson_path(geojson_name)
+        with open(file_path, 'r', encoding='utf8') as fp:
+            data = json.load(fp)
+        return JsonResponse(data, safe=False)
+
+
 class DJESiteAboutView(DJESiteBackendView):
     template_name = 'about.html'
 
@@ -351,7 +361,8 @@ class DJESite(WidgetGetterMixin):
             path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
                  name='dje_chart_collection'),
             path('about/', self._view_dict['dje_about'].as_view(), name='dje_about'),
-            path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings')
+            path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings'),
+            path('geojson/<str:geojson_name>', GeojsonDataView.as_view(), name='dje_geojson')
         ]
         custom_url = self.dje_get_urls()
         if custom_url:

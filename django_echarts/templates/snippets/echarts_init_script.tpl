@@ -1,3 +1,7 @@
+{% if c.geojson %}
+$.getJSON("{% url "dje_geojson" c.geojson.geojson_name %}").done(function(mapdata){
+    echarts.registerMap("{{ c.geojson.map_name }}", mapdata);
+{% endif %}
     var chart_{{ c.chart_id }} = echarts.init(
         document.getElementById('{{ c.chart_id }}'), '{{ c.theme }}', {renderer: '{{ c.renderer }}'});
     {% for js in c.js_functions.items %}
@@ -17,3 +21,8 @@
     window.addEventListener('resize', function(){
         chart_{{ c.chart_id }}.resize();
     });
+{% if c.geojson %}
+}).fail(function(jqXHR, textStatus, error){
+    $("#{{ c.chart_id }}").html("Load fail! Status: " + textStatus);
+});
+{% endif %}

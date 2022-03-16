@@ -1,3 +1,4 @@
+import os
 import warnings
 from dataclasses import dataclass, is_dataclass, field
 from typing import Optional, Dict, Union, Literal
@@ -160,3 +161,8 @@ class SettingsStore:
         else:
             theme_app = _THEME_NAME2APP_.get(theme_name)
         return self._tms.create_theme(theme_label, theme_app)
+
+    def get_geojson_path(self, name: str):
+        g_dir = self._extra_settings.get('STATICFILES_DIRS', [])[0]
+        pa = os.path.join(str(g_dir), 'geojson', name)
+        return pa
