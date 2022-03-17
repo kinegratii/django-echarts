@@ -4,56 +4,6 @@
 
 ## 图表开发
 
-### 自定义geojson
-
-**1.  准备geojson文件**
-
-根据实际业务需求制作geojson文件，并放置在项目 `BASE_DIR / 'static / 'geojson'` 目录之下。
-
-**2. 引用geojson文件**
-
-使用 `use_geojson` 引用地图文件。
-
-```python
-@site_obj.register_chart
-def my_geojson_demo():
-    map1 = Map()
-    map1.add("", [('闽侯县', 23), ('湖里区', 45)], maptype="福建市县")
-    map1.set_global_opts(title_opts=opts.TitleOpts(title="自定义geojson"))
-    map1.height = '800px'
-    use_geojson(map1, 'fujian.geojson', '福建市县')
-    return map1
-```
-
-渲染后的前端代码如下（省略非关键代码）：
-
-```javascript
-$.getJSON("/geojson/fujian.geojson").done(function(mapdata){
-    echarts.registerMap("福建市县", mapdata);
-    var chart_3bf0d2a = echarts.init(
-        document.getElementById('3bf0d2a'),
-        'white',
-        {renderer: 'canvas'}
-    );
-    var option_3bf0d2a = {
-        "series": [
-            {
-                "type": "map",
-                "mapType": "福建市县",
-                "data": [
-                    { "name": "闽侯县", "value": 23 },
-                    { "name": "湖里区", "value": 45 }
-                ],
-            }
-        ],
-    };
-    chart_3bf0d2a.setOption(option_3bf0d2a);
-}).fail(function(jqXHR, textStatus, error){
-    $("#3bf0d2a").html("Load geojson file fail!Status:" + textStatus);
-});
-
-```
-
 
 
 ## 组件

@@ -1,5 +1,5 @@
 {% if c.geojson %}
-$.getJSON("{% url "dje_geojson" c.geojson.geojson_name %}").done(function(mapdata){
+$.getJSON("{{ c.geojson.url }}").done(function(mapdata){
     echarts.registerMap("{{ c.geojson.map_name }}", mapdata);
 {% endif %}
     var chart_{{ c.chart_id }} = echarts.init(
@@ -23,6 +23,6 @@ $.getJSON("{% url "dje_geojson" c.geojson.geojson_name %}").done(function(mapdat
     });
 {% if c.geojson %}
 }).fail(function(jqXHR, textStatus, error){
-    $("#{{ c.chart_id }}").html("Load fail! Status: " + textStatus);
+    $("#{{ c.chart_id }}").html("Load geojson fail! Status: " + textStatus);
 });
 {% endif %}

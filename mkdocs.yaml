@@ -27,12 +27,14 @@ nav:
     - 依赖项和静态文件: guides/dms.md
     - 本地化静态资源: starter/localize_staticfiles.md
     - 高级开发: guides/advance_development.md
+    - Gallery: gallery.md
   - 参考:
     - 项目设置: reference/configure.md
     - 视图和模板: reference/api.md
     - 模板标签库: reference/tags.md
     - 命令行工具: reference/commands.md
-  - Gallery: gallery.md
+  - 文章:
+    - geojson地图: posts/use_custom_geojson.md
   - 项目开发:
     - 更新日志: changelog.md
     - 关于项目: about.md

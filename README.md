@@ -1,18 +1,12 @@
 # django-echarts
 
-![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) [![Build Status](https://travis-ci.org/kinegratii/django-echarts.svg?branch=master)](https://travis-ci.org/kinegratii/django-echarts) ![PyPI - Status](https://img.shields.io/pypi/status/django-echarts.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-echarts.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-echarts.svg)
+![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-echarts.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-echarts.svg)
 
 
 
 > A visual site scaffold based on pyecharts and django.
 
 django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts) 和 [Django](https://www.djangoproject.com) 整合的可视化网站脚手架。
-
-
-
-**目前v0.5.0版本还处于 Beta 状态，详细请查看 [v0.5.x Development Note (2022)](https://github.com/kinegratii/django-echarts/issues/30)。**
-
-
 
 ## 概述(Summary)
 

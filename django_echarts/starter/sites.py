@@ -17,6 +17,7 @@ from django_echarts.entities import (
 )
 from django_echarts.utils.compat import get_elided_page_range
 from django_echarts.utils.lazy_dict import LazyDict
+from django_echarts.geojson import GeojsonDataView
 
 from .optstools import SiteOptsForm, SiteOpts
 
@@ -226,15 +227,6 @@ class DJSiteChartOptionsView(DJESiteFrontendView):
             return {}
         else:
             return json.loads(chart_obj.dump_options_with_quotes())
-
-
-class GeojsonDataView(View):
-    def get(self, request, *args, **kwargs):
-        geojson_name = self.kwargs.get('geojson_name')
-        file_path = DJANGO_ECHARTS_SETTINGS.get_geojson_path(geojson_name)
-        with open(file_path, 'r', encoding='utf8') as fp:
-            data = json.load(fp)
-        return JsonResponse(data, safe=False)
 
 
 class DJESiteAboutView(DJESiteBackendView):

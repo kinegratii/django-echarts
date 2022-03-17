@@ -5,6 +5,7 @@ from typing import Optional, Dict, Union, Literal
 
 from borax.system import load_class
 from django.apps import apps
+from django.contrib.staticfiles import finders
 
 from .dms import DependencyManager
 from .tms import Theme, parse_theme_label, ThemeManager
@@ -163,6 +164,11 @@ class SettingsStore:
         return self._tms.create_theme(theme_label, theme_app)
 
     def get_geojson_path(self, name: str):
+        # STATIC_URL => path
+        # Ensure ajax /geojson/<name> success.
+        result = finders.find(f'geojson/{name}', all=False)
+        if result:
+            return result
         g_dir = self._extra_settings.get('STATICFILES_DIRS', [])[0]
         pa = os.path.join(str(g_dir), 'geojson', name)
         return pa

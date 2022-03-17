@@ -4,10 +4,6 @@ from typing import Optional, Any, Tuple
 from .articles import ChartInfo
 
 
-class ChartsConstants:
-    AUTO_WIDTH = '100%'
-
-
 def _is_table(obj):
     return hasattr(obj, 'get_html_string') or hasattr(obj, 'html_content')
 
@@ -147,8 +143,3 @@ class ChartWidget:
         pass
 
 
-Geojson = namedtuple('Geojson', field_names='geojson_name map_name')
-
-
-def use_geojson(chart_obj, geojson_name: str, map_name: str):
-    setattr(chart_obj, 'geojson', Geojson(geojson_name, map_name))

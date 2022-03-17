@@ -1,11 +1,11 @@
 # django-echarts文档
 
-![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![PyPI - Status](https://img.shields.io/pypi/status/django-echarts.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-echarts.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-echarts.svg)
+![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-echarts.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-echarts.svg)
 
 
 > A visual site scaffold based on [pyecharts](https://github.com/pyecharts/pyecharts) and [Django](https://www.djangoproject.com). 
 
-
+**代码仓库**： [https://github.com/kinegratii/django-echarts](https://github.com/kinegratii/django-echarts)
 
 ## 概述
 
