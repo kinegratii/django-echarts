@@ -1,11 +1,6 @@
 # 视图和模板
 
-本节介绍了 django-echarts中主要的API信息，包括：
-
-- 网站配置
-- 视图
-- 模板文件和变量
-- 接口方法
+本节介绍了 django-echarts中主要的API信息，包括视图、模板、接口方法。
 
 ## 网站架构
 
@@ -20,22 +15,25 @@
 | 关于页面 | 显示基本信息                                             | DJESiteAboutView       |      |
 | 设置页面 | 编辑部分设置项                                           | DJESiteSettingsView    |      |
 
-## 路由
+## 路由与视图
 
-DJESite 内置包含下列路由：
+DJESite 内置包含下列路由，均定义在 `DJESite.urls` 属性：
 
-| 功能页面 | 路由                           | 视图类型 | 视图类                 | 视图名称          |
-| -------- | ------------------------------ | -------- | ---------------------- | ----------------- |
-| 首页     | `''`                           | 前端     | DJESiteHomeView        | dje_home          |
-| 列表页面 | `'list/'`                      | 前端     | DJESiteListView        | dje_list          |
-| 图表页面 | `'chart/<slug:name>/'`         | 前端     | DJESiteDetailView      | dje_detail        |
-| 图表页面 | `'chart/<slug:name>/options/'` | 后端     | DJSiteChartOptionsView | dje_chart_options |
-| 关于页面 | `'about/'`                     | 前端     | DJESiteAboutView       | dje_about         |
-| 设置页面 | `settings/`                    | 后端     | DJESiteSettingsView    | dje_settings      |
+| 功能页面    | 路由                           | 视图类                 | 视图类型 | 视图名称          |
+| ----------- | ------------------------------ | ---------------------- | -------- | ----------------- |
+| 首页        | `''`                           | DJESiteHomeView        | 前端     | dje_home          |
+| 列表页面    | `'list/'`                      | DJESiteListView        | 前端     | dje_list          |
+| 图表页面    | `'chart/<slug:name>/'`         | DJESiteDetailView      | 前端     | dje_detail        |
+| 图表页面    | `'chart/<slug:name>/options/'` | DJSiteChartOptionsView | 后端     | dje_chart_options |
+| 关于页面    | `'about/'`                     | DJESiteAboutView       | 前端     | dje_about         |
+| 设置页面    | `settings/`                    | DJESiteSettingsView    | 后端     | dje_settings      |
+| geojson数据 | `geojson/<str:geojson_name>`   | GeojsonDataView        | 前端     | dje_geojson       |
 
 注：后端视图类指的是返回 `TemplateResponse`的视图类，前端视图类指的是返回 `JsonResponse` 的视图类。
 
 ## 视图类
+
+### SiteInjectMixin
 
  `DJESiteBackendView` 和 `DJESiteFrontendView` 均直接继承自 `View`， 并共同实现了站点对象注入。
 
@@ -48,17 +46,13 @@ class MyView(DJESiteBackendView):
         # ...
 ```
 
-
-
-### 后端视图类
+### DJESiteBackendView
 
  `DJESiteBackendView` 是所有后端视图类的基类 ，对应的模板页面为 *base.html* ，具体的需要传入的变量字典参见下一节的“模板及其变量”。
 
-### 前端视图类
+### DJESiteFrontendxView
 
 `DJESiteFrontendxView` 是所有前端视图类的基类。
-
-## 接口方法
 
 所有可重写的接口方法均以 *dje_* 开头。
 

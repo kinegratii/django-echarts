@@ -49,7 +49,7 @@ DJANGO_ECHARTS = {
 | STATICFILES_DIRS | 静态文件目录。如无重写模板文件，可不配置。                   |
 | DJANGO_ECHARTS   | django-echarts项目配置 <sup>2</sup>，字典类型。参数参见 `DJEOpts` 类。 |
 
-1. 主题APP内置包括： django_echarts.contrib.bootstrap3 / django_echarts.contrib.bootstrap5 / django_echarts.contrib.material。
+1. 内置主题APP包括： django_echarts.contrib.bootstrap3 / django_echarts.contrib.bootstrap5 / django_echarts.contrib.material。
 2. 默认配置已经能够支持最小化运行，可不配置此项。
 
 ## 创建站点
