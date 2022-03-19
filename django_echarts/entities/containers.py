@@ -148,7 +148,7 @@ class WidgetCollection:
         return self._packed_matrix
 
     @property
-    def charts(self):
+    def charts(self) -> list:
         return self._charts
 
     @property

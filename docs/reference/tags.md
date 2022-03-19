@@ -31,7 +31,7 @@ TEMPLATES = [
 ]
 ```
 
-## 标签库-echarts
+## 组件渲染
 
 ### echarts_container
 
@@ -39,6 +39,8 @@ TEMPLATES = [
 django_echarts.templatetags.echarts.echarts_container(echarts_instance)
 ```
 渲染图表容器(默认为 `<div></div>` )。
+
+## echarts初始化
 
 ### echarts_js_dependencies
 
@@ -68,3 +70,6 @@ django_echarts.templatetags.echarts.echarts_js_content_wrap(*echarts_list)
 django_echarts.templatetags.dje.page_link(context, page_number)
 ```
 
+## 主题相关
+
+略
