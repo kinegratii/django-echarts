@@ -69,7 +69,7 @@ INSTALL_APPS = (
 )
 ```
 
-**3.** 创建新文件 *site_views.py* ，输出下列代码。
+**3.** 创建新文件 *site_views.py* ，输入下列代码。
 
 ```python
 # ...
@@ -78,10 +78,9 @@ from django_echarts.entities import Copyright
 from pyecharts import options as opts
 from pyecharts.charts import Bar
 
-site_obj = DJESite(
-    site_title='福建统计',
-    copyright_=Copyright(start_year=2022, powered_by='Zinc')
-)
+site_obj = DJESite(site_title='福建统计')
+
+site_obj.add_widgets(copyright_=Copyright(start_year=2022, powered_by='Zinc'))
 
 chart_description = '截止2020年底，福建省土地面积1240.29万公顷，占我国国土总面积1.3%。全省森林面积811.58万公顷，森林覆盖率为66.8%，连续42年位居全国首位。
 
