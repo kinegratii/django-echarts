@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.entities import merge_js_dependencies
+from django_echarts.entities.widgettools import get_js_dependencies
 from django_echarts.starter.sites import DJESite
 from django_echarts.utils.downloader import download_files
 
@@ -78,5 +78,5 @@ class DownloadBaseCommand(BaseCommand):
         if not func_exists:
             self.stdout.write(self.style.WARNING('The chart with name does not exits.'))
             return []
-        dep_names = merge_js_dependencies(chart_obj)
+        dep_names = get_js_dependencies(chart_obj)
         return dep_names

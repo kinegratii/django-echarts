@@ -1,7 +1,7 @@
 import re
 from typing import List, Union
 
-from .chart_widgets import ChartInfo, WidgetGetterMixin, NamedCharts, merge_js_dependencies
+from .chart_widgets import ChartInfo, WidgetGetterMixin, NamedCharts
 
 
 class LayoutOpts:
@@ -151,6 +151,3 @@ class WidgetCollection:
     def charts(self) -> list:
         return self._charts
 
-    @property
-    def js_dependencies(self):
-        return merge_js_dependencies(*self.charts)

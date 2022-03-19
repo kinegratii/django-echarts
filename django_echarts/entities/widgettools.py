@@ -43,7 +43,14 @@ def flat_named_charts(widget: WidgetCollection):
 
 
 def get_js_dependencies(widget, enable_theme=False):
-    chart_list = flat_chart(widget)
+    dep_list = []
+    widget_list = []
+    for w in widget:
+        if isinstance(w, str):
+            dep_list.append(w)
+        else:
+            widget_list.append(w)
+    chart_list = flat_chart(widget_list)
 
     def _deps(_chart):
         if isinstance(_chart.js_dependencies, list):
@@ -52,7 +59,6 @@ def get_js_dependencies(widget, enable_theme=False):
             return list(_chart.js_dependencies.items)  # pyecharts.commons.utils.OrderedSet
         raise ValueError('Can not parse js_dependencies.')
 
-    dep_list = []
     for chart in chart_list:
         _dep_list = _deps(chart)
         for dep in _dep_list:

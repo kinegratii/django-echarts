@@ -1,47 +1,7 @@
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
 from typing import Optional, Any, Tuple
 
 from .articles import ChartInfo
-
-
-def _is_table(obj):
-    return hasattr(obj, 'get_html_string') or hasattr(obj, 'html_content')
-
-
-def _flat(ele):
-    if _is_table(ele):
-        return []
-    if hasattr(ele, 'js_dependencies'):
-        if isinstance(ele.js_dependencies, list):
-            return ele.js_dependencies
-        if hasattr(ele.js_dependencies, 'items'):
-            return list(ele.js_dependencies.items)  # pyecharts.commons.utils.OrderedSet
-        raise ValueError('Can not parse js_dependencies.')
-    if isinstance(ele, (list, tuple, set)):
-        return ele
-    return ele,
-
-
-def merge_js_dependencies(*chart_or_name_list, enable_theme=False):
-    front_required_items = ['echarts']
-    front_optional_items = ['echartsgl']
-    dependencies = []
-    fist_items = set()
-
-    def _add(_item):
-        if _item in front_required_items:
-            pass
-        elif _item in front_optional_items:
-            fist_items.add(_item)
-        elif _item not in dependencies:
-            dependencies.append(_item)
-
-    for d in chart_or_name_list:
-        for _d in _flat(d):
-            _add(_d)
-        if enable_theme and hasattr(d, 'theme'):
-            _add(d.theme)
-    return front_required_items + [x for x in front_optional_items if x in fist_items] + dependencies
 
 
 class NamedCharts:
@@ -107,10 +67,6 @@ class NamedCharts:
         return self
 
     # Chart-like feature
-
-    @property
-    def js_dependencies(self):
-        return merge_js_dependencies(*self)
 
     @classmethod
     def from_charts(cls, *charts):
