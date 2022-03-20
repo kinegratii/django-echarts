@@ -2,26 +2,20 @@
 """Template tags for django-echarts.
 
 """
+from collections import defaultdict
 from typing import Union
 
+from borax.utils import chain_getattr
 from django import template
 from django.template.loader import render_to_string, get_template
 from django.utils.html import SafeString
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.entities import (LinkItem, Menu)
+from django_echarts.entities import LinkItem, Menu
 from django_echarts.entities.widgettools import flat_chart, get_js_dependencies
-from django_echarts.renders import (render_widget, render_values_panel, render_link, render_table)
+from django_echarts.renders import render_widget
 from django_echarts.utils.burl import burl_kwargs
 
 register = template.Library()
-
-
-def _build_init_script(chart):
-    if hasattr(chart, '_is_geo_chart'):
-        chart.is_geo_chart = chart._is_geo_chart
-    context = {'c': chart}
-
-    return SafeString(render_to_string('snippets/echarts_init_script.tpl', context))
 
 
 @register.simple_tag(takes_context=True)
@@ -48,12 +42,17 @@ def echarts_js_dependencies(context, *args):
 
 
 def build_echarts_initial_fragment(*args):
-    contents = []
-    chart_obj_list = flat_chart(args)
-    for chart in chart_obj_list:
-        js_content = _build_init_script(chart)
-        contents.append(js_content)
-    return '\n'.join(contents)
+    chart_list = flat_chart(args)
+    structured_dic = defaultdict(list)
+    for chart in chart_list:
+        if hasattr(chart, '_is_geo_chart'):
+            chart.is_geo_chart = chart._is_geo_chart
+        geojson_url = chain_getattr(chart, 'geojson.url', '')
+        geojson_name = chain_getattr(chart, 'geojson.map_name', '')
+        structured_dic[(geojson_url, geojson_name)].append(chart)
+    structured_data = [(k[0], k[1], v) for k, v in structured_dic.items()]
+    context = {'structured_data': structured_data}
+    return SafeString(render_to_string('snippets/echarts_init_options.tpl', context))
 
 
 @register.simple_tag(takes_context=True)
@@ -73,12 +72,12 @@ def echarts_js_content_wrap(context, *charts):
 
 @register.simple_tag
 def dw_table(table_obj, **kwargs):
-    return render_table(table_obj, **kwargs)
+    return render_widget(table_obj, **kwargs)
 
 
 @register.simple_tag
 def dw_values_panel(panel):
-    return render_values_panel(panel)
+    return render_widget(panel)
 
 
 @register.simple_tag(takes_context=True)
@@ -118,4 +117,4 @@ def page_link(context, page_number: int):
 
 @register.simple_tag(takes_context=True)
 def dw_link(context, item: Union[LinkItem, Menu], class_: str = None):
-    return render_link(item, context=context, class_=class_)
+    return render_widget(item, context=context, class_=class_)

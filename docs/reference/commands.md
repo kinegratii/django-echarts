@@ -47,16 +47,18 @@ optional arguments:
 
 ```text
 E:\projects\zinc> python .\manage.py starttpl -h
-usage: manage.py starttpl [-h] [--theme {bootstrap3,bootstrap5,material}] [--tpl_name TPL_NAME [TPL_NAME ...]] [--output OUTPUT] [--force] 
+usage: manage.py starttpl [-h] [--theme {bootstrap3,bootstrap5,material}] [--output OUTPUT] [--force] tpl_name [tpl_name ...]
 
 Copy the builtin template files to your project templates.
+
+
+positional arguments:
+  tpl_name              The name of template file.
 
 optional arguments:
   -h, --help            show this help message and exit
   --theme {bootstrap3,bootstrap5,material}
                         The name of theme.
-  --tpl_name TPL_NAME [TPL_NAME ...], -n TPL_NAME [TPL_NAME ...]
-                        The name of template file.
   --output OUTPUT, -o OUTPUT
                         The output filename
   --force, -f           Whether to copy if the file exists.

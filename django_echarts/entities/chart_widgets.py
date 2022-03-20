@@ -86,16 +86,3 @@ class WidgetGetterMixin:
     def resolve_html_widget(self, name: str) -> Any:
         """Return a html widget object."""
         pass
-
-
-class ChartWidget:
-    def __init__(self, chart_id, width, height):
-        self.chart_id = chart_id
-        self.width = width
-        self.height = height
-
-    @classmethod
-    def from_chart_obj(cls, chart_obj):
-        pass
-
-

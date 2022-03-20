@@ -1,7 +1,9 @@
-{% if c.geojson %}
-$.getJSON("{{ c.geojson.url }}").done(function(mapdata){
-    echarts.registerMap("{{ c.geojson.map_name }}", mapdata);
-{% endif %}
+{% for geojson_url, geojson_map_name, chart_list in structured_data %}
+    {% if geojson_url %}
+$.getJSON("{{ geojson_url }}").done(function(mapdata){
+    echarts.registerMap("{{ geojson_map_name }}", mapdata);
+    {% endif %}
+    {% for c in chart_list %}
     var chart_{{ c.chart_id }} = echarts.init(
         document.getElementById('{{ c.chart_id }}'), '{{ c.theme }}', {renderer: '{{ c.renderer }}'});
     {% for js in c.js_functions.items %}
@@ -17,12 +19,14 @@ $.getJSON("{{ c.geojson.url }}").done(function(mapdata){
             {% endfor %}
         {% endif %}
     {% endif %}
-
     window.addEventListener('resize', function(){
         chart_{{ c.chart_id }}.resize();
     });
-{% if c.geojson %}
+    {% endfor %}
+
+    {% if geojson_url %}
 }).fail(function(jqXHR, textStatus, error){
     $("#{{ c.chart_id }}").html("Load geojson fail! Status: " + textStatus);
 });
-{% endif %}
+    {% endif %}
+{% endfor %}

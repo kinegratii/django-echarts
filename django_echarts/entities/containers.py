@@ -1,7 +1,8 @@
 import re
 from typing import List, Union
 
-from .chart_widgets import ChartInfo, WidgetGetterMixin, NamedCharts
+from .chart_widgets import WidgetGetterMixin, NamedCharts
+from .articles import ChartInfo
 
 
 class LayoutOpts:
@@ -150,4 +151,3 @@ class WidgetCollection:
     @property
     def charts(self) -> list:
         return self._charts
-

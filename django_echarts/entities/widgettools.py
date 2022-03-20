@@ -1,6 +1,7 @@
 from functools import singledispatch
 
-from django_echarts.entities import NamedCharts, WidgetCollection
+from .chart_widgets import NamedCharts
+from .containers import WidgetCollection
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
