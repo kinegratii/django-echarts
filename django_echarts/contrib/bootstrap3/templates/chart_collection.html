@@ -11,11 +11,8 @@
                             <div class="panel-heading">{{ widget.title }}</div>
                             <div class="panel-body"><p>{{ widget.description }}</p></div>
                         </div>
-
-                    {% elif widget.widget_type == 'ValuesPanel' %}
-                        {% dw_values_panel widget %}
                     {% else %}
-                        {% echarts_container widget %}
+                        {% dw_widget widget %}
                     {% endif %}
                 </div>
             {% endfor %}

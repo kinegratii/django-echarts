@@ -45,7 +45,7 @@ class Command(BaseCommand):
         """
         parser.add_argument('--theme', type=str, help='The name of theme.', default='bootstrap5',
                             choices=['bootstrap3', 'bootstrap5', 'material'])
-        parser.add_argument('--tpl_name', '-n', type=str, nargs='+', help='The name of template file.', )
+        parser.add_argument('tpl_name', type=str, nargs='+', help='The name of template file.', )
         parser.add_argument('--output', '-o', type=str, help='The output filename')
         parser.add_argument('--force', '-f', action='store_true', help='Whether to copy if the file exists.')
 

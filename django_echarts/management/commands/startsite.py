@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('output', type=str, help='The output file.')
         def_year = date.today().year
-        parser.add_argument('--site-title', '-t', type=str, help='The title of site.', default='Echarts List')
+        parser.add_argument('--site-title', '-t', type=str, help='The title of site.', default='Echarts Demo')
         parser.add_argument('--empty', '-e', action='store_true')
         parser.add_argument('--start-year', '-y', type=int, help='The start year.', default=def_year)
         parser.add_argument('--powered-by', '-p', type=str, help='The principal of copyright.',

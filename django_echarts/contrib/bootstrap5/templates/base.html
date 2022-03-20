@@ -50,20 +50,20 @@
                                                 <hr class="dropdown-divider">
                                             </li>
                                         {% endif %}
-                                        <li>{% dw_link item class_="dropdown-item" %}</li>
+                                        <li>{% dw_widget item class_="dropdown-item" %}</li>
                                     {% endfor %}
                                 </ul>
                             </li>
                         {% else %}
                             <li class="nav-item">
-                            {% dw_link menu2 class_="nav-link" %}
+                            {% dw_widget menu2 class_="nav-link" %}
                             </li>
                         {% endif %}
                     {% endfor %}
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     {% for item in nav.links %}
-                        <li class="nav-item">{% dw_link item class_="nav-link" %}</li>
+                        <li class="nav-item">{% dw_widget item class_="nav-link" %}</li>
                     {% endfor %}
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -89,7 +89,7 @@
                         <div class="col-md-4 col-md-offset-2">
                             <ul class="list-inline list-unstyled">
                                 {% for item in nav.footer_links %}
-                                    <li class="list-inline-item">{% dw_link item class_='link-secondary' %}</li>
+                                    <li class="list-inline-item">{% dw_widget item class_='link-secondary' %}</li>
                                 {% endfor %}
                             </ul>
                         </div>

@@ -33,12 +33,53 @@ TEMPLATES = [
 
 ## 组件渲染
 
-### echarts_container
+### 标签一览表
+
+下表列出了各种组件对应的标签函数：
+
+| 组件                      | 渲染标签                                    | kwargs参数             | 后端渲染js_init    |
+| ------------------------- | ------------------------------------------- | ---------------------- | ------------------ |
+| **单一组件**              |                                             |                        |                    |
+| pycharts.charts.base.Base | dw_widget <sup>1</sup > / echarts_container | width / height         | echarts_js_content |
+| prettytable.PrettlyTable  | dw_widget /   dw_table                      |                        | X                  |
+| pycharts.charts.Table     | dw_widget /   dw_table                      |                        | X                  |
+| ValuesPanel               | dw_widget /   dw_values_panel               | theme <sup>2</sup>     | X                  |
+| Copyright                 | dw_widget                                   | theme                  | X                  |
+| ChartInfo                 |                                             | theme                  |                    |
+| NamedCharts               | dw_widget /   echarts_container             | theme / width / height | echarts_js_content |
+| LinkItem / Menu           | dw_widget                                   | context / class_       |                    |
+| Collection                | dw_widget /   echarts_container             |                        | echarts_js_content |
+
+1. `dw_widget` 支持所有组件，`dw_table` / `dw_values_panel` / `echarts_container` 不再推荐使用。
+2.  使用者无需传入`theme` 参数，引用自 `DJANGO_ECHARTS_SETTINGS.theme`。
+
+### dw_widget
 
 ```python
-django_echarts.templatetags.echarts.echarts_container(echarts_instance)
+# 标签函数
+dw_widget(context, widget, **kwargs)
+# 实际渲染函数
+render_widget(widget, context, **kwargs)
 ```
-渲染图表容器(默认为 `<div></div>` )。
+
+使用方式如下：
+
+```text
+{% dw_widget chart %}
+{% dw_widget chart  width="100%" height="700px" %}
+```
+
+可支持的参数：
+
+| 参数   | 类型                   | 描述       |
+| ------ | ---------------------- | ---------- |
+| width  | Union[int, float, str] | 宽度       |
+| height | Union[int, float, str] | 高度       |
+| class_ | str                    | html元素类 |
+
+### echarts_container
+
+渲染图表，已被 `dw_widget` 替代。
 
 ## echarts初始化
 
@@ -72,4 +113,19 @@ django_echarts.templatetags.dje.page_link(context, page_number)
 
 ## 主题相关
 
-略
+### theme_css
+
+```python
+django_echarts.templatetags.dje.theme_css()
+```
+
+渲染主题css。
+
+### theme_js
+
+```python
+django_echarts.templatetags.dje.theme_js()
+```
+
+渲染主题javascript。
+

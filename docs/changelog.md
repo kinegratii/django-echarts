@@ -2,8 +2,8 @@
 
 ### v0.5.1 - 
 
-- 新增统一的 `dw_widget` 标签函数，原有 `dw_table` / `dw_values_panel` / `dw_link` 不再推荐使用
-- 新增 `get_js_dependencies` 替代 `merge_js_dependencies`
+- 新增统一的 `dw_widget` 组件渲染标签函数
+- 优化echarts依赖项解析逻辑
 
 ## v0.5.0 - (20220318)
 

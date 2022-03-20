@@ -72,7 +72,6 @@ def render_named_charts(widget: NamedCharts, **kwargs) -> SafeString:
 
 @render_widget.register(ChartInfo)
 def render_chart_info(widget, **kwargs) -> SafeString:
-    theme = DJANGO_ECHARTS_SETTINGS.theme
     tpl = get_template('widgets/info_card.html')
     return SafeString(tpl.render({'chart_info': widget}))
 

@@ -8,10 +8,8 @@
                         <h5 class="card-title">{{ widget.title }}</h5>
                         <p class="card-text">{{ widget.description }}</p>
                     </div>
-                {% elif widget.widget_type == 'ValuesPanel' %}
-                    {% dw_values_panel widget %}
                 {% else %}
-                    {% echarts_container widget %}
+                    {% dw_widget widget %}
                 {% endif %}
             </div>
         {% endfor %}

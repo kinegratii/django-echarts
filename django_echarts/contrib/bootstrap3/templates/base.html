@@ -59,13 +59,13 @@
                                         {% if item.after_separator %}
                                             <li role="separator" class="divider"></li>
                                         {% endif %}
-                                        <li> {% dw_link item %}</li>
+                                        <li> {% dw_widget item %}</li>
                                     {% endfor %}
                                 </ul>
                             </li>
                         {% else %}
                             <li>
-                                {% dw_link menu2 %}
+                                {% dw_widget menu2 %}
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -73,7 +73,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% for item in nav.links %}
                         <li>
-                            {% dw_link item %}
+                            {% dw_widget item %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -98,7 +98,7 @@
                         <div class="col-md-4 col-md-offset-2">
                             <ul class="list-inline list-unstyled">
                                 {% for item in nav.footer_links %}
-                                    <li class="list-inline-item">{% dw_link item %}</li>
+                                    <li class="list-inline-item">{% dw_widget item %}</li>
                                 {% endfor %}
                             </ul>
                         </div>

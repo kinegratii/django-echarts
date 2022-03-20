@@ -16,7 +16,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-9  col-sm-12">
-                            {% echarts_container chart_obj width="100%" height="320px" %}
+                            {% dw_widget chart_obj width="100%" height="320px" %}
                         </div>
                         <div class="col-md-3 col-sm-12">
                             <p>{{ chart_info.description }}</p>
@@ -29,7 +29,7 @@
         </div>
     {% endif %}
     {% if home_values_panel %}
-        {% dw_values_panel home_values_panel %}
+        {% dw_widget home_values_panel %}
     {% endif %}
     {% if top_chart_info_list %}
         <div class="page-header">

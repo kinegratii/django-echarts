@@ -32,6 +32,9 @@ lib_classifiers = [
     'Operating System :: OS Independent'
 ]
 
+with open('long_description.md', encoding='utf8') as f:
+    long_description = f.read()
+
 setup(
     name='django-echarts',
     version=__version__,
@@ -44,5 +47,7 @@ setup(
     description='A site generator based on pyecharts and django.',
     classifiers=lib_classifiers,
     python_requires='>=3.7',
-    install_requires=['borax~=3.5']
+    install_requires=['borax>=3.5.3'],
+    long_description=long_description,
+    long_description_content_type='text/markdown'
 )
