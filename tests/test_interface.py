@@ -4,16 +4,21 @@ import unittest
 
 from unittest.mock import MagicMock
 
-from django_echarts.entities.widgettools import get_js_dependencies
+from django_echarts.entities.widgettools import get_js_dependencies, flat_chart
 
 
-class MockCharts(object):
+class MockCharts:
     """
     A mock class for pyecharts.base.Base and pyecharts.custom.page.Page.
     """
 
     def __init__(self, js_dependencies):
         self.js_dependencies = MagicMock(items=js_dependencies)
+
+
+@flat_chart.register(MockCharts)
+def flat_mock(widget):
+    return [widget]
 
 
 class JsMergeTestCase(unittest.TestCase):
@@ -36,18 +41,15 @@ class JsMergeTestCase(unittest.TestCase):
         # Multiple charts
         self.assertListEqual(
             ['echarts', 'fujian'],
-            get_js_dependencies(
-                self.BASE_CHART,
-                self.MAP_CHART
-            )
+            get_js_dependencies([self.BASE_CHART, self.MAP_CHART])
         )
         self.assertListEqual(
             ['echarts', 'echartsgl'],
-            get_js_dependencies(self.BASE_CHART, self.THREE_D_CHART)
+            get_js_dependencies([self.BASE_CHART, self.THREE_D_CHART])
         )
         self.assertListEqual(
             ['echarts', 'echartsgl', 'fujian'],
-            get_js_dependencies(self.MAP_CHART, self.THREE_D_CHART)
+            get_js_dependencies([self.MAP_CHART, self.THREE_D_CHART])
         )
         self.assertListEqual(
             ['echarts', 'echartsgl', 'fujian'],
@@ -57,25 +59,5 @@ class JsMergeTestCase(unittest.TestCase):
     def test_string_dependencies(self):
         self.assertListEqual(
             ['echarts', 'echartsgl'],
-            get_js_dependencies('echartsgl', self.BASE_CHART)
-        )
-        self.assertListEqual(
-            ['echarts', 'fujian'],
-            get_js_dependencies('echarts', ['echarts', 'fujian'])
-        )
-
-    def test_nested_js_dependencies(self):
-        self.assertListEqual(
-            ['echarts', 'echartsgl', 'fujian'],
-            get_js_dependencies(
-                [get_js_dependencies(self.BASE_CHART), self.MAP_CHART, self.THREE_D_CHART]
-            )
-        )
-        self.assertListEqual(
-            ['echarts', 'echartsgl', 'fujian', 'zhejiang'],
-            get_js_dependencies([
-                get_js_dependencies(self.BASE_CHART, self.MAP_CHART),
-                self.THREE_D_CHART,
-                'zhejiang'
-            ])
+            get_js_dependencies(['echartsgl', self.BASE_CHART])
         )

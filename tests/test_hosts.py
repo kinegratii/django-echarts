@@ -17,15 +17,11 @@ class DependencyManagerTestCase(unittest.TestCase):
             context=m_context,
             repo_name='bootcdn',
         )
+        manager.add_repo('bootcdn', repo_url='https://cdn.bootcss.com/echarts/{echarts_version}/')
 
         self.assertEqual(
             'https://cdn.bootcss.com/echarts/3.7.0/echarts.min.js',
             manager.resolve_url('echarts.min')
-        )
-
-        self.assertEqual(
-            'https://cdnjs.cloudflare.com/ajax/libs/echarts/3.7.0/echarts.min.js',
-            manager.resolve_url('echarts.min', repo_name='cdnjs')
         )
 
     def test_map_host(self):
@@ -36,12 +32,13 @@ class DependencyManagerTestCase(unittest.TestCase):
         manager = DependencyManager.create_default(
             context=m_context,
         )
+        manager.add_repo('china-provinces', repo_url='https://echarts-maps.github.io/echarts-china-provinces-js/')
         self.assertEqual(
-            'https://echarts-maps.github.io/echarts-china-provinces-js/china.js',
+            'https://echarts-maps.github.io/echarts-china-provinces-js/maps/china.js',
             manager.resolve_url('china', repo_name='china-provinces')
         )
         # Add
-        manager.add_repo('amap', 'https://amap.com/js', catalog='map')
+        manager.add_repo('amap', 'https://amap.com/js')
         self.assertEqual(
             'https://amap.com/js/fujian.js',
             manager.resolve_url('fujian', 'amap')
@@ -58,8 +55,8 @@ class CustomHostTestCase(unittest.TestCase):
             context=m_context,
             repo_name='pyecharts'
         )
-        manager.add_repo('demo', '/demo/', catalog='map')
-        manager.add_repo('demo2', '/demo2/{echarts_version}', catalog='map')
+        manager.add_repo('demo', '/demo/')
+        manager.add_repo('demo2', '/demo2/{echarts_version}')
         self.assertEqual(
             '/demo/fujian.js',
             manager.resolve_url('fujian', repo_name='demo')

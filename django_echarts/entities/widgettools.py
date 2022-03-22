@@ -43,14 +43,28 @@ def flat_named_charts(widget: WidgetCollection):
     return chart_list
 
 
+_ECHARTS_LIB_NAMES = [
+    'echarts.common', 'echarts.common.min',
+    'echarts', 'echarts.min', 'echartsgl', 'echarts-gl', 'echarts-gl.min',
+    'echarts.simple', 'echarts.simple.min',
+    'extension/bmap', 'extension/bmap.min',
+    'extension/dataTool', 'extension/dataTool.min'
+]
+
+
 def get_js_dependencies(widget, enable_theme=False):
     dep_list = []
     widget_list = []
-    for w in widget:
-        if isinstance(w, str):
-            dep_list.append(w)
-        else:
-            widget_list.append(w)
+    if isinstance(widget, (list, tuple)):
+        for w in widget:
+            if isinstance(w, str):
+                dep_list.append(w)
+            else:
+                widget_list.append(w)
+    elif isinstance(widget, str):
+        dep_list.append(widget)
+    else:
+        widget_list.append(widget)
     chart_list = flat_chart(widget_list)
 
     def _deps(_chart):
@@ -60,11 +74,17 @@ def get_js_dependencies(widget, enable_theme=False):
             return list(_chart.js_dependencies.items)  # pyecharts.commons.utils.OrderedSet
         raise ValueError('Can not parse js_dependencies.')
 
+    front_items = []
     for chart in chart_list:
         _dep_list = _deps(chart)
+
         for dep in _dep_list:
-            if dep not in dep_list:
-                dep_list.append(dep)
+            if dep not in dep_list and dep not in front_items:
+                if dep in _ECHARTS_LIB_NAMES:
+                    front_items.append(dep)
+                else:
+                    dep_list.append(dep)
         if enable_theme and hasattr(chart, 'theme') and not chart.theme not in dep_list:
             dep_list.append(chart.theme)
-    return dep_list
+    front_items.sort(key=lambda x: _ECHARTS_LIB_NAMES.index(x))
+    return front_items + dep_list

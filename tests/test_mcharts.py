@@ -33,10 +33,9 @@ class MChartsTestCase(unittest.TestCase):
 
 class MChartsPY36TestCase(unittest.TestCase):
     def test_create_with_kwargs(self):
-        nc = NamedCharts(
-            bar=MagicMock(page_title='Bar-Chart'),
-            line=MagicMock(page_title='Line-Chart')
-        )
+        nc = NamedCharts()
+        nc.add_chart(MagicMock(page_title='Bar-Chart'), name='bar')
+        nc.add_chart(MagicMock(page_title='Line-Chart'), name='line')
         nc.add_chart(MagicMock(page_title='Map-Chart'), name='map')
         self.assertEqual('Bar-Chart', nc['bar'].page_title)
         self.assertListEqual(

@@ -134,6 +134,7 @@ class SettingsStore:
         return self._theme
 
     def _auto_get_theme_params(self):
+        """Get theme from settings.INSTALLED_APPS.A django project environment is required."""
         theme_app = ''
         for app_config in apps.get_app_configs():
             if app_config.name == self._opts.theme_app or app_config.name in _THEME_NAME2APP_.values():

@@ -43,18 +43,6 @@ _CUSTOM_D2U_MAP = {
     'echarts-gl': 'https://assets.pyecharts.org/assets/echarts-gl.min.js'
 }
 
-ECHARTS_LIB_NAMES = [
-    'echarts.common', 'echarts.common.min',
-    'echarts', 'echarts.min', 'echarts-gl', 'echarts-gl.min',
-    'echarts.simple', 'echarts.simple.min',
-    'extension/bmap', 'extension/bmap.min',
-    'extension/dataTool', 'extension/dataTool.min'
-]
-
-
-def _is_lib_dep(dep_name):
-    return dep_name in ECHARTS_LIB_NAMES
-
 
 def d2f(dep_name: str):
     if dep_name.endswith('.css') or dep_name.endswith('.js'):

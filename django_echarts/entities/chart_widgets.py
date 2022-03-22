@@ -45,17 +45,11 @@ class NamedCharts:
 
     # Dict-like feature
 
-    def __contains__(self, item):
-        return item in self._charts
-
     def __getitem__(self, item):
         if isinstance(item, int):
             # c[1], Just compatible with Page
             return list(self._charts.values())[item]
         return self._charts[item]
-
-    def __setitem__(self, key, value):
-        self._charts[key] = value
 
     # Compatible
 
@@ -65,15 +59,6 @@ class NamedCharts:
         for c in achart_or_charts:
             self.add_chart(chart_obj=c)
         return self
-
-    # Chart-like feature
-
-    @classmethod
-    def from_charts(cls, *charts):
-        mc = cls()
-        for chart in charts:
-            mc.add_chart(chart)
-        return mc
 
 
 # l1-l12 r1-r12 t1-t12 b1-b12 f1-f12 a s1-s12

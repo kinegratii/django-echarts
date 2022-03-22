@@ -33,7 +33,7 @@ django-echarts包运行环境要求如下：
 可以使用 pip 命令安装。
 
 ```shell
-pip install --pre django-echarts
+pip install django-echarts
 ```
 
 ## 3分钟上手(Quickstart in 3 Minutes)

@@ -96,15 +96,15 @@ The template names of Theme [bootstrap3]:
 复制内置的 message.html 文件
 
 ```text
-E:\projects\zinc> python .\manage.py starttpl -n message
-message.html, Success!
+E:\projects\zinc> python .\manage.py starttpl message
+Generate message.html, Success!
 ```
 
 创建新的空白模板
 
 ```text
-E:\projects\zinc> python .\manage.py starttpl -n blank -o my_page
-my_page.html, Success!
+E:\projects\zinc> python .\manage.py starttpl blank -o my_page
+Generate my_page.html, Success!
 ```
 
 

@@ -11,10 +11,6 @@ from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
 
 
-def is_table(widget):
-    return isinstance(widget, Table) or isinstance(widget, PrettyTable)
-
-
 def _to_css_length(val):
     if isinstance(val, (int, float)):
         return '{}px'.format(val)

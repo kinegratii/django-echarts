@@ -12,8 +12,8 @@
 django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts) 和 [Django](https://www.djangoproject.com) 的可视化网站脚手架。
 
 - 支持 90%+的pyecharts图表类型
-- 可显示页面：主页 / 列表 / 详情 / 关于 / 设置 
-- 可支持组件：导航栏 / 网站底部栏 / 热门板块 / 列表 / 合辑 /  关于面板 
+- 页面：主页 / 列表 / 详情 / 关于 / 设置 
+- 组件：导航栏 / 网站底部栏 / 热门板块 / 列表 / 合辑 /  关于面板 
 - UI主题：Bootstrap3 / Bootstrap5 / Material ，支持更换颜色模式
 - 可灵活扩展: 支持整合 Django用户认证 / 数据库 / Session 
 - 基于Django Template System 的后端渲染

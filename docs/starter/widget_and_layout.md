@@ -4,45 +4,88 @@
 
 ### 组件体系
 
-django-echarts可以在同一个页面上显示多个图表和其他数据组件，并支持定制不同的布局方式。该功能涉及到的类如下表：
+django-echarts 定义了一套较为完整的组件体系，主要逐渐包括：
 
-| 分组<sup>1</sup> | 组件                                      | 描述                        | 注册函数            | 数据容器          |
-| ---------------- | ----------------------------------------- | --------------------------- | ------------------- | ----------------- |
-| 容器             |                                           |                             |                     |                   |
-|                  | 合辑 WidgetCollection                      | 可包含各种组件              | register_collection | collections       |
-| 组件             |                                           |                             |                     |                   |
-|                  | 文章组件 ChartInfo                        | 图表信息数据实体类          | register_chart      | chart_info_manger |
-|                  | 单图表组件<sup>2</sup> pyecharts.charts.* | 可关联一个ChartInfo         | register_chart      | charts            |
-|                  | 多图表组件 NamedCharts                    | 多个图表关联同一个ChartInfo | register_chart      | charts            |
-|                  | HTML组件 ValuesPanel、Copyright           | 无法关联ChartInfo           | register_widget     | widgets           |
-| 布局             | 布局配置 LayoutOpts                       | 布局配置实体                |                     |                   |
+| 组件                                   | 描述        | 模板标签                        | 标签函数               |
+| -------------------------------------- | ----------- | ------------------------------- | ---------------------- |
+| **echarts图表** <sup>1</sup>           |             |                                 |                        |
+| pycharts.charts.base.Base <sup>2</sup> | echarts图表 | dw_widget / echarts_container   | width / height         |
+| prettytable.PrettlyTable               | 表格        | dw_widget /   dw_table          |                        |
+| pycharts.charts.Table                  | 表格        | dw_widget /   dw_table          |                        |
+| ChartInfo                              | 信息卡      |                                 | theme                  |
+| NamedCharts                            | 多图表      | dw_widget /   echarts_container | theme / width / height |
+| **HTML组件**                           |             |                                 |                        |
+| ValuesPanel                            | 数值面板    | dw_widget /   dw_values_panel   | theme <sup>3</sup>     |
+| Copyright                              | 版权栏      | dw_widget                       | theme                  |
+| LinkItem / Menu                        | 菜单项/链接 | dw_widget                       | context / class_       |
+| **容器组件**                           |             |                                 |                        |
+| Collection                             | 合辑        | dw_widget /   echarts_container |                        |
 
-1. 除pyecharts图表外，所有类均可以从 `django_echarts.entities` 包导入。
-1. 目前 django-echarts不支持 Tab / BMap / Page 类型图表，Page 可以使用 `NamedCharts` 代替。
+1. echarts图表可关联 `ChartInfo` 。HTML组件不可关联。
+2. `pyecharts.charts.base.Base` 类的图表，主要包括 Bar、Line、Grid、TimeLine等。
+4. 使用者无需传入`theme` 参数，引用自 `DJANGO_ECHARTS_SETTINGS.theme`。
 
-### 注册和使用组件
 
-无论是collection还是具体的组件均使用 `register_*` 方法注册。
 
-**方式一**：使用装饰器方式，此种情况下仅保存组件的创建器函数，并不会立即生成相应的对象。
+### 模板渲染
 
-```python
-@site_obj.register_chart(name='mybar', title='bar示例')
-def named_charts():
-    bar = Bar()
-    # ...
-    return bar
+在模板中所有组件均可使用 *dw_widget* 渲染。
+
+```
+{% dw_widget chart1 %}
+{% dw_widget chart2 width="100%" %}
 ```
 
-**方式二**：向 `register_*` 传入一个具体的组件对象，此种情况下组件的数据总是固定不变的。
+
+
+## 组件API
+
+### 多图表(NamedCharts)
+
+> class NamedCharts(page_title: str = 'EChart', col_chart_num: int = 1, is_combine: bool = False)
+
+NamedCharts 是一个多图表的图表类，能够同时显示多个图表，使用 add 函数添加图表对象。
 
 ```python
+ncharts = NamedCharts(page_title='复合图表', col_num=2)
+pie = Pie()
+ncharts.add_chart(pie, 'pie')
+
 bar = Bar()
-# ...
-site_obj.register_chart(bar, name='mybar', title='bar示例')
+ncharts.add_chart(bar, 'bar')
+
+bar2 = Bar()
+ncharts.add_chart(bar2) # 默认分配 'c{n}' 作为名称，此项为 'c2'
 ```
 
-## 组件列表
+构造函数参数：
+
+| 参数          | 类型 | 描述         |
+| ------------- | ---- | ------------ |
+| page_title    | str  | 标题         |
+| col_chart_num | str  | 每行图表个数 |
+| is_combine    | bool | 是否引用     |
+
+**图表引用**
+
+按字典方式引用某个图表。
+
+python代码
+
+```python
+ncharts['pie'] # result: pie
+ncharts[0] # result: pie
+ncharts['c2'] # result: bar2
+```
+
+模板代码
+
+```html
+{% dw_widget ncharts.pie %}
+{% dw_widget ncharts.c2 %}
+```
+
+
 
 ### 数字仪盘(ValuesPanel)
 
@@ -78,26 +121,7 @@ def home1_panel():
     return number_p
 ```
 
-### 多图表(NamedCharts)
 
-NamedCharts 和 Page 类似，能够同时显示多个图表，兼容内置的响应式布局。
-
-```python
-@site_obj.register_chart(name='named_charts', title='NamedCharts示例', description='使用NamedCharts')
-def named_charts():
-    page = NamedCharts(page_title='复合图表', col_num=2)
-    pie = Pie()
-    page.add_chart(pie, 'pie')
-    
-    bar = Bar()
-    page.add_chart(bar, 'bar')
-    return page
-```
-
-说明：
-
-- col_num 表示每行的图表个数，推荐设置1-3即可。在小屏幕上将自动调整为每行一个。
-- add_chart 函数将宽度设置为 100%。
 
 ## 图表合辑
 
