@@ -4,23 +4,25 @@
 
 ### 组件体系
 
-django-echarts 定义了一套较为完整的组件体系，主要逐渐包括：
+django-echarts 定义了一套较为完整、可扩展的组件体系，主要组件包括：
 
-| 组件                                   | 描述        | 模板标签                        | 标签函数               |
-| -------------------------------------- | ----------- | ------------------------------- | ---------------------- |
-| **echarts图表** <sup>1</sup>           |             |                                 |                        |
-| pycharts.charts.base.Base <sup>2</sup> | echarts图表 | dw_widget / echarts_container   | width / height         |
-| prettytable.PrettlyTable               | 表格        | dw_widget /   dw_table          |                        |
-| pycharts.charts.Table                  | 表格        | dw_widget /   dw_table          |                        |
-| ChartInfo                              | 信息卡      |                                 | theme                  |
-| NamedCharts                            | 多图表      | dw_widget /   echarts_container | theme / width / height |
-| **HTML组件**                           |             |                                 |                        |
-| ValuesPanel                            | 数值面板    | dw_widget /   dw_values_panel   | theme <sup>3</sup>     |
-| Copyright                              | 版权栏      | dw_widget                       | theme                  |
-| LinkItem / Menu                        | 菜单项/链接 | dw_widget                       | context / class_       |
-| **容器组件**                           |             |                                 |                        |
-| Collection                             | 合辑        | dw_widget /   echarts_container |                        |
+| 组件                                   | 描述        | 渲染                               |                           |
+| -------------------------------------- | ----------- | ---------------------------------- | ------------------------- |
+|                                        |             | **函数dw_widget参数 <sup>1</sup>** | **模板文件**              |
+| **echarts图表** <sup>2</sup>           |             |                                    |                           |
+| pycharts.charts.base.Base <sup>3</sup> | echarts图表 | width / height                     | -                         |
+| prettytable.PrettlyTable               | 表格        |                                    | -                         |
+| pycharts.charts.Table                  | 表格        |                                    | -                         |
+| ChartInfo                              | 信息卡      | theme                              | widgets/chart_info.html   |
+| NamedCharts                            | 多图表      | theme / width / height             | widgets/named_charts.html |
+| **HTML组件**                           |             |                                    |                           |
+| ValuesPanel                            | 数值面板    | theme <sup>4</sup>                 | widgets/values_panel.html |
+| Copyright                              | 版权栏      | theme                              | -                         |
+| LinkItem / Menu                        | 菜单项/链接 | context / class_                   | -                         |
+| **容器组件**                           |             |                                    |                           |
+| Collection                             | 合辑        |                                    | -                         |
 
+1. 渲染标签函数均使用 `dw_widget` ，原有的 echarts_container/dw_table等不再使用。
 1. echarts图表可关联 `ChartInfo` 。HTML组件不可关联。
 2. `pyecharts.charts.base.Base` 类的图表，主要包括 Bar、Line、Grid、TimeLine等。
 4. 使用者无需传入`theme` 参数，引用自 `DJANGO_ECHARTS_SETTINGS.theme`。
@@ -36,9 +38,47 @@ django-echarts 定义了一套较为完整的组件体系，主要逐渐包括�
 {% dw_widget chart2 width="100%" %}
 ```
 
+## 创建组件
+
+### 表格(PrettyTable)
+
+> pyecharts.charts.Table
+>
+> prettytable.PrettyTable
+>
+> django_echarts.entities.table_css(border=False, borderless=False, striped=False, size=None)
 
 
-## 组件API
+
+```python
+from pyecharts.charts import Table
+from django_echarts.entities.html_widgets import table_css
+
+table = Table()
+fields = ['位次', '城市', 'GDP(万亿)', '同比增长(%)']
+gdp2021 = [
+    [1, '福州市', 11324.5, 8.4], [2, '泉州市', 11304.2, 8.1],
+    [3, '厦门市', 7033.9, 8.1], [4, '漳州市', 5025.4, 7.7],
+    [5, '宁德市', 3151.1, 13.3], [6, '龙岩市', 3081.8, 7.7],
+    [7, '三明市', 2953.5, 5.8], [8, '莆田市', 2883, 6.4],
+    [9, '南平市', 2117.6, 6.5]
+]
+table.add(
+    fields, gdp2021,
+    attributes={'class': table_css(border=True, striped=True)}
+)
+```
+
+`table_css` 函数用于定义表格的样式。
+
+| 参数       | bootstrap对应类     | 描述     |
+| ---------- | ------------------- | -------- |
+| border     | table-bordered      | 边框     |
+| borderless | table-borderless    | 无边框   |
+| striped    | table-striped       | 阴影交叉 |
+| size       | table-sm / table-md | 大小     |
+
+
 
 ### 多图表(NamedCharts)
 
@@ -119,6 +159,97 @@ def home1_panel():
     number_p.add(ValueItem(str(site_obj.chart_info_manager.count()), '图表总数', '个', catalog='danger'))
     number_p.add(ValueItem('42142', '网站访问量', '人次'))
     return number_p
+```
+
+## 布局容器RowContainer
+
+> RowContainer(*args, **kwargs)
+
+`RowContainer` 用于表示 bootstrap/material 框架的row容器，一行有12列。
+
+```python
+rc = RowContainer()
+c1, _, _ = site.resolve_chart('search_word_cloud')
+rc.add_widget(c1)
+
+rc2 = RowContainer()
+ni = ValueItem('8.0', '福建省2021年GDP增长率', '%', catalog='info')
+rc2.add_widget(ni, span=12)
+ni2 = ValueItem('42142', '网站访问量', '人次')
+rc2.add_widget(ni2, span=12)
+ni3 = ValueItem('89.00', '中国联通5G套餐费用', '元', catalog='success')
+rc2.add_widget(ni3, span=12)
+
+rc.add_widget(rc2)
+c2, _, _ = site.resolve_chart('fj_total_population')
+rc.add_widget(c2)
+```
+
+效果图
+
+![row_container_demo](../images/row_container_demo.png)
+
+### 添加组件
+
+> RowContainer.add_widget(widget, name: str = None, width: str = "", height: str = "", span: int = 0)
+
+add_widget函数接受下列参数：
+
+| 参数   | 类型 | 描述                                                         |
+| ------ | ---- | ------------------------------------------------------------ |
+| widget | Any  | 所有在 `renders.render_widget` 注册的图表组件、HTML组件和容器，可嵌套。 |
+| name   | str  | 名称，如不提供默认为 'c1'、‘c2’等格式                        |
+| width  | str  | 组件宽度，默认将调整 `pyecharts.charts.Base`图表类为 '100%'。 |
+| height | str  | 组件高度。如有设置，优先使用此值，而不是 `widget.height`。   |
+| span   | int  | 样式类 `col-md-{span} col-sm-12` ，默认span=0表示平均分配。  |
+| offset | int  | 如果大于0则添加 `col-md-offset-{offset}` 样式类              |
+
+### 布局
+
+**1. 所见即所得**
+
+如果每次调用 `add_widget` 函数时均指定一个大于0的span值，则遵循“所见即所得”的标准。
+
+如
+
+```python
+rc = RowContainer()
+rc.add_widget(w1, span=5)
+
+rc2 = RowContainer()
+rc2.add_widget(n1, span=12)
+rc2.add_widget(n2, span=12)
+rc.add_widget(rc2, span=2)
+
+rc.add_widget(w2, span=5)
+```
+
+则布局渲染如下
+
+```html
+<div class="row">
+    <div class="col-md-5 col-sm-12">...</div>
+    <div class="col-md-2 col-sm-12">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">...</div>
+            <div class="col-md-12 col-sm-12">...</div>
+        </div>
+    </div>
+    <div class="col-md-5 col-sm-12">...</div>
+</div>
+```
+
+**2. 水平分布**
+
+如果 `add_widget` 均未指定任何 span ，则平均分布各组件。
+
+**3. 垂直分布**
+
+每个组件的span均设置为12。
+
+```python
+rc = RowContainer()
+rc.set_layout('f6') # 所有均设置为 6
 ```
 
 

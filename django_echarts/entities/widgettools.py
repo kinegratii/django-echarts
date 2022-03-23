@@ -1,16 +1,20 @@
 from functools import singledispatch
 
-from .chart_widgets import NamedCharts
-from .containers import WidgetCollection
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
+
+from .chart_widgets import NamedCharts
+from .containers import WidgetCollection
+from .html_widgets import ValueItem, ValuesPanel
+from .rows import RowContainer
 
 __all__ = ['flat_chart', 'get_js_dependencies']
 
 
 @singledispatch
 def flat_chart(widget):
+    """Get chart object list from a widget."""
     raise TypeError(f'Can not flat widget type: {widget.__class__.__name__}')
 
 
@@ -21,14 +25,17 @@ def flat_base(widget: Base):
 
 @flat_chart.register(PrettyTable)
 @flat_chart.register(Table)
+@flat_chart.register(ValueItem)
+@flat_chart.register(ValuesPanel)
 def flat_table(widget):
     return []
 
 
 @flat_chart.register(NamedCharts)
+@flat_chart.register(RowContainer)
 @flat_chart.register(tuple)
 @flat_chart.register(list)
-def flat_named_charts(widget: NamedCharts):
+def flat_named_charts(widget):
     chart_list = []
     for chart in widget:
         chart_list.extend(flat_chart(chart))

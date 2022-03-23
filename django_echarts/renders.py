@@ -4,8 +4,9 @@ from borax.htmls import HTMLString, html_tag
 from django.template import engines
 from django.template.loader import get_template
 from django.utils.html import SafeString
-from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.entities import ValuesPanel, LinkItem, Menu, NamedCharts, ChartInfo, DwString
+from django_echarts.entities import (
+    ValuesPanel, ValueItem, LinkItem, Menu, NamedCharts, ChartInfo, DwString, RowContainer
+)
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
@@ -18,23 +19,14 @@ def _to_css_length(val):
         return val
 
 
-def wrap_with_grid(html_list, col_item_num: int = 1, cns: dict = None):
-    cns = cns or {}
-    row_cn = cns.get('row', 'row')
-    col_cn = cns.get('col', 'col-md-{n}').format(n=int(12 / col_item_num))
-    output_list = ['<div class="{}">'.format(row_cn)]
-    for item_html in html_list:
-        output_list.append('<div class="{}">{}</div>'.format(col_cn, item_html))
-    output_list.append('</div>')
-    return ''.join(output_list)
-
-
 @singledispatch
 def render_widget(widget, **kwargs) -> SafeString:
     # python3.8+ use typing.Protocol
     if hasattr(widget, '__html__') and callable(widget.__html__):
         return widget.__html__()
-    return SafeString(f'<div>Unknown widget type:{widget.__class__.__name__}</div>')
+    message = f'<div>Unknown widget type:{widget.__class__.__name__}</div>'
+    raise TypeError(message)
+    # return SafeString(f'<div>Unknown widget type:{widget.__class__.__name__}</div>')
 
 
 @render_widget.register(SafeString)
@@ -56,28 +48,23 @@ def render_chart(widget, **kwargs) -> SafeString:
 
 
 @render_widget.register(NamedCharts)
-def render_named_charts(widget: NamedCharts, **kwargs) -> SafeString:
-    theme = DJANGO_ECHARTS_SETTINGS.theme
-    width = kwargs.get('width')
-    height = kwargs.get('height')
-    html_list = []
-    for schart in widget:
-        html_list.append(render_widget(schart, width=width, height=height))
-    return SafeString(wrap_with_grid(html_list, widget.col_chart_num, cns=theme.cns))
+@render_widget.register(RowContainer)
+@render_widget.register(ValuesPanel)
+def render_row_container(widget, **kwargs):
+    tpl = get_template('widgets/row_container.html')
+    return SafeString(tpl.render({'rc': widget}))
 
 
 @render_widget.register(ChartInfo)
 def render_chart_info(widget, **kwargs) -> SafeString:
-    tpl = get_template('widgets/info_card.html')
+    tpl = get_template('widgets/chart_info.html')
     return SafeString(tpl.render({'chart_info': widget}))
 
 
-@render_widget.register(ValuesPanel)
-def render_values_panel(widget: ValuesPanel, **kwargs) -> SafeString:
-    theme = DJANGO_ECHARTS_SETTINGS.theme
-    tpl = get_template('widgets/values_panel.html')
-    html_list = [tpl.render({'panel': item}) for item in widget]
-    return SafeString(wrap_with_grid(html_list, widget.col_item_num, theme.cns))
+@render_widget.register(ValueItem)
+def render_value_item(widget: ValueItem, **kwargs) -> SafeString:
+    tpl = get_template('widgets/value_item.html')
+    return SafeString(tpl.render({'item': widget}))
 
 
 @render_widget.register(Table)

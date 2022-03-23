@@ -2,9 +2,10 @@ from collections import OrderedDict
 from typing import Optional, Any, Tuple
 
 from .articles import ChartInfo
+from .rows import RowMixin
 
 
-class NamedCharts:
+class NamedCharts(RowMixin):
     """
     A data structure class containing multiple named charts.
     is_combine: if True, the collection <all> will not contains this chart.
@@ -14,8 +15,8 @@ class NamedCharts:
     widget_type = 'NamedCharts'
 
     def __init__(self, page_title: str = 'EChart', col_chart_num: int = 1, is_combine: bool = False):
+        super().__init__()
         self.page_title = page_title
-        self._charts = OrderedDict()
         self._col_chart_num = col_chart_num
         self.is_combine = is_combine
         self.has_ref = is_combine
@@ -25,33 +26,8 @@ class NamedCharts:
         return self._col_chart_num
 
     def add_chart(self, chart_obj, name=None):
-        name = name or self._next_name()
-        if hasattr(chart_obj, 'width'):
-            chart_obj.width = '100%'
-        self._charts[name] = chart_obj
+        self.add_widget(chart_obj, name=name)
         return self
-
-    def _next_name(self):
-        return 'c{}'.format(len(self))
-
-    # List-like feature
-
-    def __iter__(self):
-        for chart in self._charts.values():
-            yield chart
-
-    def __len__(self):
-        return len(self._charts)
-
-    # Dict-like feature
-
-    def __getitem__(self, item):
-        if isinstance(item, int):
-            # c[1], Just compatible with Page
-            return list(self._charts.values())[item]
-        return self._charts[item]
-
-    # Compatible
 
     def add(self, achart_or_charts):
         if not isinstance(achart_or_charts, (list, tuple, set)):

@@ -1,8 +1,8 @@
 import re
 from typing import List, Union
 
-from .chart_widgets import WidgetGetterMixin, NamedCharts
 from .articles import ChartInfo
+from .chart_widgets import WidgetGetterMixin, NamedCharts
 
 
 class LayoutOpts:
@@ -59,6 +59,7 @@ class LayoutOpts:
 
 
 class RowWidget(list):
+    # TODO replace this with RowContainer
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -69,6 +70,7 @@ class RowWidget(list):
 
 
 class WidgetCollection:
+    """A row-list-container"""
     widget_type = 'Collection'
 
     def __init__(self, name: str, title: str = None, layout: Union[str, LayoutOpts] = 'a'):

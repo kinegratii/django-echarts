@@ -1,12 +1,12 @@
 import uuid
 from datetime import date
-import operator
-
 from typing import List, Union, Literal, Any
 
 from borax.datasets.fetch import fetch
 
-__all__ = ['LinkItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright', 'Message', 'ValuesPanel']
+from .rows import RowMixin
+
+__all__ = ['LinkItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright', 'Message', 'ValuesPanel', 'ValueItem']
 
 
 def _new_slug() -> str:
@@ -133,18 +133,17 @@ class ValueItem:
         self.arrow = arrow
 
 
-class ValuesPanel:
-    widget_type = 'ValuesPanel'
+class ValuesPanel(RowMixin):
 
     def __init__(self, col_item_num: int = 1):
-        self._items = []  # type: List[ValueItem]
+        super(ValuesPanel, self).__init__()
         self.col_item_num = col_item_num
 
     def add(self, value: Any, description: str, unit: str = None, catalog: str = 'primary',
             arrow: Literal['up', 'down', ''] = ''):
         item = ValueItem(value=value, description=description, unit=unit, catalog=catalog, arrow=arrow)
-        self._items.append(item)
+        self.add_widget(item)
         return self
 
-    def __iter__(self):
-        yield from self._items
+    # def __iter__(self):
+    #     yield from self._widgets

@@ -6,14 +6,7 @@
         <div class="row">
             {% for widget, col_span in row_widget %}
                 <div class="col-md-{{ col_span }} col-sm-12">
-                    {% if widget.widget_type == 'InfoCard' %}
-                        <div class="panel panel-default">
-                            <div class="panel-heading">{{ widget.title }}</div>
-                            <div class="panel-body"><p>{{ widget.description }}</p></div>
-                        </div>
-                    {% else %}
-                        {% dw_widget widget %}
-                    {% endif %}
+                    {% dw_widget widget %}
                 </div>
             {% endfor %}
         </div>

@@ -1,0 +1,9 @@
+<div class="panel panel-{{ item.catalog }}">
+    <div class="panel-heading">
+        <p class="text-center"><span
+                style="font-size: 4rem;">{{ item.value }}</span>&nbsp;<small>{{ item.unit }}</small>
+            {% if item.arrow %}<i class="bi bi-arrow-{{ item.arrow }}" style="font-size: 2rem;"></i>{% endif %}</p>
+        <hr style="margin: 10px;height: 5px;"/>
+        <p class="text-center">{{ item.description }}</p>
+    </div>
+</div>
