@@ -2,26 +2,7 @@
 {% load echarts %}
 
 {% block main_content %}
-    {% for chart_obj, chart_info, layout_opts in widget_collection.packed_matrix %}
-        <div class="card ">
-            <div class="card-title blue-grey darken-1">{{ chart_info.title }}</div>
-            <div class="row">
-                {% if layout_opts.start %}
-                    <div class="col m{{ layout_opts.info_span }} s12">
-                        <p class="card-text">{{ chart_info.description }}</p>
-                    </div>
-                {% endif %}
-                <div class="col m{{ layout_opts.chart_span }} s12">
-                    {% dw_widget chart_obj width="100%" %}
-                </div>
-                {% if layout_opts.end %}
-                    <div class="col m{{ layout_opts.info_span }} s12">
-                        <p class="card-text">{{ chart_info.description }}</p>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    {% endfor %}
+    {% dw_widget widget_collection %}
 {% endblock %}
 
 {% block extra_script %}

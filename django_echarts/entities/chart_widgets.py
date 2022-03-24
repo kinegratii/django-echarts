@@ -1,18 +1,16 @@
-from collections import OrderedDict
 from typing import Optional, Any, Tuple
 
 from .articles import ChartInfo
-from .rows import RowMixin
+from .containers import RowContainer
 
 
-class NamedCharts(RowMixin):
+class NamedCharts(RowContainer):
     """
     A data structure class containing multiple named charts.
     is_combine: if True, the collection <all> will not contains this chart.
 
 
     """
-    widget_type = 'NamedCharts'
 
     def __init__(self, page_title: str = 'EChart', col_chart_num: int = 1, is_combine: bool = False):
         super().__init__()

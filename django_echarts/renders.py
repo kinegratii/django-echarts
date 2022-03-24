@@ -5,7 +5,7 @@ from django.template import engines
 from django.template.loader import get_template
 from django.utils.html import SafeString
 from django_echarts.entities import (
-    ValuesPanel, ValueItem, LinkItem, Menu, NamedCharts, ChartInfo, DwString, RowContainer
+    ValuesPanel, ValueItem, LinkItem, Menu, NamedCharts, ChartInfo, DwString, RowContainer, Container
 )
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
@@ -45,6 +45,12 @@ def render_chart(widget, **kwargs) -> SafeString:
         height=_to_css_length(height)
     )
     return SafeString(html)
+
+
+@render_widget.register(Container)
+def render_container(widget, **kwargs):
+    tpl = get_template('widgets/container.html')
+    return SafeString(tpl.render({'container': widget}))
 
 
 @render_widget.register(NamedCharts)

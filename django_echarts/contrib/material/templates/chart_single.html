@@ -23,6 +23,10 @@
                 {% endif %}
                 <div class="divider"></div>
                 {% dw_widget chart_obj %}
+                {% if chart_info.body %}
+                    <br/>
+                    <div style="text-indent: 2rem;">{{ chart_info.body }}</div>
+                {% endif %}
             </div>
         </div>
     </div>

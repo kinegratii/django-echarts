@@ -4,11 +4,11 @@
 
 django-echarts 实现了与 pyecharts 功能上相似的模板标签，均定义在 `django_echarts.templatetags.echarts` 包。在使用之前需要先行导入，有两种方式。
 
-**1. 按需导入**
+**方式一. 按需导入**
 
 在每个需要使用标签函数的模板文件使用 `{% laod echarts %}` 导入。
 
-**2. 统一导入**
+**方式二. 统一导入**
 
 添加标签目录到项目配置项 `TEMPLATES.OPTIONS.libraries` ，这样就无需在每个模板都使用 load 标签。
 

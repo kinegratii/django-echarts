@@ -1,155 +1,97 @@
-import re
-from typing import List, Union
-
-from .articles import ChartInfo
-from .chart_widgets import WidgetGetterMixin, NamedCharts
+from collections import OrderedDict
+from itertools import zip_longest
+from typing import Dict, Generator, Tuple, Any, List, Union
 
 
-class LayoutOpts:
-    """
-    Recommend layout: l8 l9 r8 r9 t6 t12 b6 b12 f4 f6 f12 a s8 s9
-    """
-    TOTAL_COLS = 12
-    __slots__ = ['chart_pos', 'chart_span', 'info_span', 'start', 'end']
+class LayoutCfg:
+    __slots__ = ['ww', 'wh', 'span', 'offset']
 
-    # l=left,r=right,s=stripped,t=top,b=bottom,f=full
-    _defaults = {'l': 8, 'r': 8, 's': 8, 't': 6, 'b': 6, 'f': 12}
-
-    _rm = re.compile(r'([lrtbfsa])(([1-9]|(1[12]))?)')
-
-    def __init__(self, chart_pos: str = 'r', chart_span: int = 8, info_span: int = 4,
-                 chart_num: int = 1):
-        if len(chart_pos) > 1:
-            chart_pos = chart_pos[0]
-        self.chart_pos = chart_pos
-        self.chart_span = chart_span
-        if chart_pos in 'lras':
-            if chart_num == 1 and chart_span + info_span < LayoutOpts.TOTAL_COLS:
-                info_span = LayoutOpts.TOTAL_COLS - chart_span
-            elif chart_num > 1:
-                info_span = 12
-        self.info_span = info_span
-        # start/end for info
-        self.start = chart_pos in 'rb'
-        self.end = chart_pos in 'lt'
-
-    @classmethod
-    def from_label(cls, label: str):
-        m = LayoutOpts._rm.match(label)
-        if m:
-            pos, cols = m.group(1), m.group(2)
-            if cols is None or cols == '':
-                cols = LayoutOpts._defaults.get(pos, 8)
-            else:
-                cols = int(cols)
-            return cls(pos, cols)
-        else:
-            raise ValueError(f'This layout can not be parsed: {label}')
-
-    def stripped_layout(self) -> 'LayoutOpts':
-        if self.chart_pos == 'r':
-            return LayoutOpts(chart_pos='l', chart_span=self.chart_span)
-        elif self.chart_pos == 'l':
-            return LayoutOpts(chart_pos='r', chart_span=self.chart_span)
-        else:
-            return self
-
-    def __str__(self):
-        return f'<LOptions:{self.chart_pos},{self.chart_span}, {self.info_span}>'
+    def __init__(self, ww: str = '', wh: str = '', span: int = 0, offset: int = 0):
+        self.ww = ww
+        self.wh = wh
+        self.span = span
+        self.offset = offset
 
 
-class RowWidget(list):
-    # TODO replace this with RowContainer
+COL_TOTAL = 12
+
+
+class ContainerBase:
+    """A container containing some widgets."""
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.title = kwargs.get('title')
+        self._widgets = OrderedDict()
+        self._layouts = {}  # type: Dict[str,LayoutCfg]
+        self.div_class = kwargs.get('div_class', '')
+        self._layout_str = ''
 
-    def add_widget(self, widget, span):
-        self.append((widget, span))
-
-
-class WidgetCollection:
-    """A row-list-container"""
-    widget_type = 'Collection'
-
-    def __init__(self, name: str, title: str = None, layout: Union[str, LayoutOpts] = 'a'):
-        self.name = name
-        self.title = title
-        self._user_defined_layout = LayoutOpts.from_label(layout)
-        # [[is_chart, layout, name1, name2, name3,...]]
-        self._ref_config_list = []  # type: List
-
-        self._packed_matrix = []  # type: List[RowWidget]
-        self._charts = []
-        self._row_no = 0
-
-    def start_(self):
-        self._packed_matrix = []
-        self._row_no = 0
+    def add_widget(self, widget, name: str = None, width: str = "", height: str = "", span: int = 0,
+                   first: bool = False):
+        """Add a widget in this container widget.
+        If first set to True, insert at the beginning position in list."""
+        name = name or 'c{}'.format(len(self._widgets))
+        self._widgets[name] = widget
+        lc = LayoutCfg(ww=width, wh=height, span=span)
+        self._layouts[name] = lc
+        if first:
+            self._widgets.move_to_end(name, False)
         return self
 
-    def add_chart_widget(self, chart_name: str, layout: str = 'l8'):
-        self._ref_config_list.append([True, layout, chart_name])
-        return self
+    def auto_layout(self):
+        """Auto compute col spans for each widget."""
+        pass
 
-    def add_html_widget(self, widget_names: List, layout: str = 'f'):
-        self._ref_config_list.append([False, layout, *widget_names])
+    def __iter__(self):
+        """Iter each widget."""
+        for chart in self._widgets.values():
+            yield chart
 
-    def auto_mount(self, widget_container: WidgetGetterMixin):
-        for is_chart, layout_str, *names in self._ref_config_list:
-            if is_chart:
-                chart_name = names[0]
-                chart_obj, _, info = widget_container.resolve_chart_widget(chart_name)
-                self.pack_chart_widget(chart_obj, info, row_no=self._row_no)
-            else:
-                widget_list = [widget_container.resolve_html_widget(name) for name in names]
-                self.pack_html_widget(widget_list)
+    def __len__(self):
+        return len(self._widgets)
 
-    def pack_chart_widget(self, chart_obj, info: ChartInfo, ignore_ref: bool = True, layout: str = 'l8',
-                          row_no: int = 0):
-        self._charts.append(chart_obj)
-        if isinstance(chart_obj, NamedCharts):
-            if chart_obj.has_ref and ignore_ref:
-                return
-                # raise TypeError(f'{info.name} :ChartCollection can not add a NamedCharts with is_combine=True')
-            chart_widget = list(chart_obj)
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            # c[1], Just compatible with Page
+            return list(self._widgets.values())[item]
+        return self._widgets[item]
+
+    def iter_layout(self) -> Generator[Tuple[Any, LayoutCfg], None, None]:
+        """Iter each widget and its layout config."""
+        self.auto_layout()
+        for name, widget in self._widgets.items():
+            yield widget, self._layouts.get(name, LayoutCfg())
+
+
+class Container(ContainerBase):
+    """General container."""
+
+    def __init__(self, *args, div_class: str = '', **kwargs):
+        super().__init__(div_class=div_class, *args, **kwargs)
+
+
+class RowContainer(ContainerBase):
+    """A row container."""
+
+    def set_spans(self, spans: Union[int, List[int]]):
+        """Set span value for each widget.
+        This should be called after all widgets is add."""
+        if isinstance(spans, int):
+            span_list = [spans] * len(self._layouts)
         else:
-            chart_widget = [chart_obj]
-        row_widget = RowWidget(title=info.title)
-        r_layout = self.compute_layout(LayoutOpts.from_label(layout))
-        if r_layout.start:
-            row_widget.add_widget(info, r_layout.info_span)
-        for widget in chart_widget:
-            row_widget.add_widget(widget, r_layout.chart_span)
-        if r_layout.end:
-            row_widget.add_widget(info, r_layout.info_span)
-        self._packed_matrix.append(row_widget)
-        self._row_no += 1
+            span_list = spans
+        for lc, span in zip_longest(self._layouts.values(), span_list):
+            if lc is None:
+                continue
+            lc.span = span or COL_TOTAL
 
-    def pack_html_widget(self, widget_list: List, layout: str = 'f', row_no: int = 0):
-        span = int(12 / len(widget_list))
-        row_widget = RowWidget()
-        for widget in widget_list:
-            row_widget.add_widget(widget, span)
-        self._packed_matrix.append(row_widget)
-        self._row_no += 1
-
-    def compute_layout(self, row_layout: LayoutOpts):
-        if self._user_defined_layout.chart_pos == 'a':
-            return row_layout
-        elif self._user_defined_layout.chart_pos == 's':
-            if self._row_no % 2 == 1:
-                return row_layout.stripped_layout()
-            else:
-                return row_layout
-        else:
-            return row_layout
-
-    @property
-    def packed_matrix(self):
-        return self._packed_matrix
-
-    @property
-    def charts(self) -> list:
-        return self._charts
+    def auto_layout(self):
+        """Auto compute col spans for each widget."""
+        item_num = len([lc for lc in self._layouts.values() if lc.span == 0])
+        if item_num == 0:  # Each widget has its own span.
+            return
+        total_span = COL_TOTAL - sum([lc.span for lc in self._layouts.values() if lc.span])
+        col_span = int(total_span / item_num)
+        for lc in self._layouts.values():
+            if lc.span == 0:
+                lc.span = col_span
+            lc.ww = '100%'

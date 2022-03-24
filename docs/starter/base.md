@@ -157,7 +157,6 @@ def mychart():
 | catalog             | str            | 分类，如果设置 |
 | top                 | int            | 置顶标志，0表示不置顶，数值越小，越靠前。      |
 | tags                | List[str]      | 标签列表，列表搜索功能时，标签也是搜索范围。   |
-| layout              | str            | 布局参数，参见 “组件和布局” 一章               |
 | **菜单参数** |                |                                                |
 | nav_parent_name     | str            | 上级菜单名称，默认为 catalog                   |
 | nav_after_separator | bool           | 是否在菜单项前使用分隔符                       |
@@ -198,17 +197,18 @@ def mychart():
 
 ```python
 from datetime import date
-from django_echarts.entities import ValuesPanel
+from django_echarts.entities import ValuesPanel, ValueItem
 from myapp import models
 
 @site_obj.register_html_widget
 def this_month_panel():
     today = date.today()
-    number_p = ValuesPanel(col_item_num=4)
+    number_p = ValuesPanel()
     access_total = models.AccessRecord.objects.filter(
         create_time__year=today.year, create_time__month=today.month
     ).count()
-    number_p.add(access_total, f'{today.year}年{today.month}月访问量', '人次')
+    item = ValueItem(access_total, f'{today.year}年{today.month}月访问量', '人次')
+    number_p.add_widget(item)
     return number_p
 ```
 
@@ -220,7 +220,6 @@ def this_month_panel():
 
 ```python
 number_p = site_obj.html_widgets.get('this_month_panel')  # 每次重新生成新的 ValuesPanel 对象。
-print(number_p.col_item_num)  # 4
 print(number_p[0].description)  # '2022年1月访问量'
 ```
 

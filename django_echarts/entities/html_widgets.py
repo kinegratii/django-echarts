@@ -4,7 +4,7 @@ from typing import List, Union, Literal, Any
 
 from borax.datasets.fetch import fetch
 
-from .rows import RowMixin
+from .containers import RowContainer
 
 __all__ = ['LinkItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright', 'Message', 'ValuesPanel', 'ValueItem']
 
@@ -133,7 +133,7 @@ class ValueItem:
         self.arrow = arrow
 
 
-class ValuesPanel(RowMixin):
+class ValuesPanel(RowContainer):
 
     def __init__(self, col_item_num: int = 1):
         super(ValuesPanel, self).__init__()
@@ -144,6 +144,3 @@ class ValuesPanel(RowMixin):
         item = ValueItem(value=value, description=description, unit=unit, catalog=catalog, arrow=arrow)
         self.add_widget(item)
         return self
-
-    # def __iter__(self):
-    #     yield from self._widgets

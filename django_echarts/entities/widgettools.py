@@ -4,10 +4,11 @@ from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
 
+from .articles import ChartInfo
 from .chart_widgets import NamedCharts
-from .containers import WidgetCollection
 from .html_widgets import ValueItem, ValuesPanel
-from .rows import RowContainer
+from .containers import RowContainer, Container
+from .pages import WidgetCollection
 
 __all__ = ['flat_chart', 'get_js_dependencies']
 
@@ -27,12 +28,15 @@ def flat_base(widget: Base):
 @flat_chart.register(Table)
 @flat_chart.register(ValueItem)
 @flat_chart.register(ValuesPanel)
+@flat_chart.register(ChartInfo)
 def flat_table(widget):
     return []
 
 
 @flat_chart.register(NamedCharts)
+@flat_chart.register(Container)
 @flat_chart.register(RowContainer)
+@flat_chart.register(WidgetCollection)
 @flat_chart.register(tuple)
 @flat_chart.register(list)
 def flat_named_charts(widget):
@@ -42,12 +46,12 @@ def flat_named_charts(widget):
     return chart_list
 
 
-@flat_chart.register(WidgetCollection)
-def flat_named_charts(widget: WidgetCollection):
-    chart_list = []
-    for chart in widget.charts:
-        chart_list.extend(flat_chart(chart))
-    return chart_list
+# @flat_chart.register(WidgetCollection)
+# def flat_named_charts(widget: WidgetCollection):
+#     chart_list = []
+#     for chart in widget.charts:
+#         chart_list.extend(flat_chart(chart))
+#     return chart_list
 
 
 _ECHARTS_LIB_NAMES = [

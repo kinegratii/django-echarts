@@ -5,6 +5,7 @@
 - 新增统一的 `dw_widget` 组件渲染标签函数
 - 新增布局容器组件 `RowContainer` 。
 - 优化echarts依赖项解析逻辑
+- `ValuesPanel` 支持布局特性，移除 data / col_item_span 参数
 
 ## v0.5.0 - (20220318)
 

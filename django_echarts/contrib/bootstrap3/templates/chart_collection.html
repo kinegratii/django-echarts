@@ -2,15 +2,7 @@
 {% load echarts %}
 
 {% block main_content %}
-    {% for row_widget in widget_collection.packed_matrix %}
-        <div class="row">
-            {% for widget, col_span in row_widget %}
-                <div class="col-md-{{ col_span }} col-sm-12">
-                    {% dw_widget widget %}
-                </div>
-            {% endfor %}
-        </div>
-    {% endfor %}
+    {% dw_widget widget_collection %}
 {% endblock %}
 
 {% block extra_script %}

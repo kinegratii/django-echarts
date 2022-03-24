@@ -1,0 +1,10 @@
+{% load echarts %}
+{% if container.div_class %}
+    <div class="{{ container.div_class }}">
+{% endif %}
+{% for row_container in container %}
+    {% dw_widget row_container %}
+{% endfor %}
+{% if container.div_class %}
+    </div>
+{% endif %}
