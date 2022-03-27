@@ -47,11 +47,11 @@ class LayoutOpts:
 
 
 class WidgetGetterMixin:
-    def resolve_chart_widget(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
+    def get_chart_and_info(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
         """Return a pycharts chart object."""
         pass
 
-    def resolve_html_widget(self, name: str) -> Any:
+    def get_html_widget(self, name: str) -> Any:
         """Return a html widget object."""
         pass
 
@@ -84,10 +84,10 @@ class WidgetCollection(Container):
         for is_chart, layout_str, *names in self._ref_config_list:
             if is_chart:
                 chart_name = names[0]
-                chart_obj, _, info = widget_container.resolve_chart_widget(chart_name)
+                chart_obj, _, info = widget_container.get_chart_and_info(chart_name)
                 self.pack_chart_widget(chart_obj, info, row_no=self._row_no)
             else:
-                widget_list = [widget_container.resolve_html_widget(name) for name in names]
+                widget_list = [widget_container.get_html_widget(name) for name in names]
                 self.pack_html_widget(widget_list)
 
     def pack_chart_widget(self, chart_obj, info: ChartInfo, ignore_ref: bool = True, layout: str = 'l8',

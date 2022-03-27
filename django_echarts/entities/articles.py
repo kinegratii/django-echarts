@@ -33,7 +33,7 @@ class ChartInfo(HTMLBase):
         return self.name == other.name
 
     def __str__(self):
-        return f'<ChartInfo {self.name}>'
+        return f'<ChartInfo {self.name} {self.title}>'
 
 
 class ChartInfoManagerMixin:

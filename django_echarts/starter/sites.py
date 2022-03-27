@@ -1,7 +1,7 @@
 import json
 import re
 from functools import wraps
-from typing import Optional, List, Dict, Literal, Type, Any, Tuple, Union
+from typing import Optional, List, Dict, Literal, Type, Any, Union
 
 from borax.serialize import cjson
 from django.core.paginator import Paginator
@@ -12,12 +12,11 @@ from django.views.generic.edit import FormMixin
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.core.exceptions import DJEAbortException
 from django_echarts.entities import (
-    ChartInfo, LocalChartInfoManager, ChartInfoManagerMixin, WidgetGetterMixin, WidgetCollection, Nav, LinkItem,
-    Jumbotron, Copyright, Message, ValuesPanel
+    ChartInfo, WidgetCollection, Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
 )
-from django_echarts.utils.compat import get_elided_page_range
-from django_echarts.utils.lazy_dict import LazyDict
 from django_echarts.geojson import GeojsonDataView
+from django_echarts.stores.entity_factory import factory
+from django_echarts.utils.compat import get_elided_page_range
 
 from .optstools import SiteOptsForm, SiteOpts
 
@@ -76,7 +75,7 @@ class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, V
         context['nav'] = site.nav
         context['site_title'] = site.site_title
         context['page_title'] = site.site_title
-        context['copyright'] = site.html_widgets.get('copyright')
+        context['copyright'] = factory.html_widgets.get('copyright')
         context['opts'] = site.opts
 
         # The data store in a view processing lifecycle.
@@ -99,7 +98,7 @@ class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, V
 class DJESiteDetailBaseView(DJESiteBackendView):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         chart_name = self.kwargs.get('name')
-        chart_info = site.chart_info_manager.get_or_none(chart_name)
+        chart_info = factory.chart_info_manager.get_or_none(chart_name)
         context['chart_info'] = chart_info
         if not chart_info:
             self.abort_request('The chart does not exist.')
@@ -148,13 +147,13 @@ class DJESiteHomeView(DJESiteBackendView):
     template_name = 'home.html'
 
     def dje_init_page_context(self, context, site: 'DJESite'):
-        context['jumbotron'] = site.html_widgets.get(WidgetRefs.home_jumbotron)
-        chart_obj, _, info = site.resolve_chart(WidgetRefs.home_jumbotron_chart)
+        context['jumbotron'] = factory.get_html_widget(WidgetRefs.home_jumbotron)
+        chart_obj, _, info = factory.get_chart_and_info(WidgetRefs.home_jumbotron_chart)
         if chart_obj:
             context[_VAR_CHART_] = chart_obj
             context[_VAR_CHART_INFO_] = info
-        context[WidgetRefs.home_values_panel] = site.html_widgets.get(WidgetRefs.home_values_panel)
-        context['top_chart_info_list'] = site.chart_info_manager.query_chart_info_list(with_top=True)
+        context[WidgetRefs.home_values_panel] = factory.get_html_widget(WidgetRefs.home_values_panel)
+        context['top_chart_info_list'] = factory.chart_info_manager.query_chart_info_list(with_top=True)
         context['layout_tpl'] = 'items_grid.html'
 
 
@@ -175,7 +174,7 @@ class DJESiteListView(DJESiteBackendView):
         if query_string:
             qs.update({'keyword': query_string})
             context['keyword'] = query_string
-        chart_info_list = site.chart_info_manager.query_chart_info_list(**qs)
+        chart_info_list = factory.chart_info_manager.query_chart_info_list(**qs)
         paginate_by = site.opts.paginate_by
         if paginate_by:
             paginator = Paginator(chart_info_list, paginate_by, allow_empty_first_page=True)
@@ -203,7 +202,7 @@ class DJESiteChartSingleView(DJESiteBackendView):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         context['view_name'] = 'dje_chart_single'
         chart_name = self.kwargs.get('name')
-        chart_obj, func_exists, chart_info = site.resolve_chart(chart_name)
+        chart_obj, func_exists, chart_info = factory.get_chart_and_info(chart_name)
         if not func_exists:
             self.abort_request('The chart does not exist.')
         if not chart_obj:
@@ -221,8 +220,7 @@ class DJESiteChartSingleView(DJESiteBackendView):
 class DJSiteChartOptionsView(DJESiteFrontendView):
     def dje_get(self, request, *args, **kwargs) -> Any:
         chart_name = self.kwargs.get('name')
-        site = kwargs.get('site')  # type: DJESite
-        chart_obj, _, _ = site.resolve_chart(chart_name)
+        chart_obj, _, _ = factory.get_chart_and_info(chart_name)
         if not chart_obj:
             return {}
         else:
@@ -276,13 +274,11 @@ class NavMenuPosition:
 _SLUG_RE = re.compile(r'[-a-zA-Z0-9_]+')
 
 
-class DJESite(WidgetGetterMixin):
+class DJESite:
     """A generator endpoint for visual chart site.
     Example:
         site_obj = DJESite(site_title='MySite', opts=SiteOpts(paginate_by=10))
     """
-
-    chart_info_manager_class = LocalChartInfoManager  # type: Type[ChartInfoManagerMixin]
 
     def __init__(self, site_title: str, opts: Optional[SiteOpts] = None):
         self.site_title = site_title
@@ -312,11 +308,6 @@ class DJESite(WidgetGetterMixin):
         # Inject site object to views.
         SiteInjectMixin.get_site_object = self._inject(SiteInjectMixin.get_site_object)
 
-        # Charts & Widgets & Collections
-        self._html_widgets = LazyDict()  # html_widgets
-        self._chart_obj_dic = LazyDict()  # chart_widgets
-        # chart_card_widgets
-        self._chart_info_manager = self.chart_info_manager_class()  # type: ChartInfoManagerMixin
         self._collection_dic = {}  # type: Dict[str,WidgetCollection]
 
     def _inject(self, func):
@@ -331,14 +322,6 @@ class DJESite(WidgetGetterMixin):
     @property
     def opts(self) -> SiteOpts:
         return self._opts
-
-    @property
-    def html_widgets(self) -> LazyDict:
-        return self._html_widgets
-
-    @property
-    def chart_info_manager(self) -> ChartInfoManagerMixin:
-        return self._chart_info_manager
 
     @property
     def urls(self):
@@ -395,17 +378,17 @@ class DJESite(WidgetGetterMixin):
                     jumbotron_chart: Union[str, Any] = None, values_panel: Union[str, ValuesPanel] = None):
         """Place widgets to pages."""
         if copyright_:
-            self._html_widgets.func_register(copyright_, 'copyright')
+            factory.register_html_widget(copyright_, 'copyright')
         if jumbotron:
-            self._html_widgets.func_register(jumbotron, WidgetRefs.home_jumbotron)
+            factory.register_html_widget(jumbotron, WidgetRefs.home_jumbotron)
         if isinstance(jumbotron_chart, str):
-            self._chart_obj_dic.set_ref(WidgetRefs.home_jumbotron_chart, jumbotron_chart)
+            factory.set_chart_ref(WidgetRefs.home_jumbotron_chart, jumbotron_chart)
         elif jumbotron_chart:
-            self._chart_obj_dic.func_register(jumbotron_chart, WidgetRefs.home_jumbotron_chart)
+            factory.register_chart_widget(jumbotron_chart, WidgetRefs.home_jumbotron_chart)
         if isinstance(values_panel, str):
-            self._html_widgets.set_ref(WidgetRefs.home_values_panel, values_panel)
+            factory.set_html_ref(WidgetRefs.home_values_panel, values_panel)
         elif isinstance(values_panel, ValuesPanel):
-            self._html_widgets.func_register(values_panel, WidgetRefs.home_values_panel)
+            factory.register_html_widget(values_panel, WidgetRefs.home_values_panel)
         return self
 
     # Register function and views class
@@ -424,8 +407,9 @@ class DJESite(WidgetGetterMixin):
             else:
                 c_info = ChartInfo(name=cname, title=title or cname, description=description, body=body,
                                    url=url, top=top, catalog=catalog, tags=tags, layout=layout)
-            self._chart_obj_dic.func_register(func, c_info.name)
-            self._chart_info_manager.add_chart_info(c_info)
+            factory.register_chart_widget(func, c_info.name, info=c_info)
+            # self._chart_obj_dic.func_register(func, c_info.name)
+            # factory.chart_info_manager.add_chart_info(c_info)
 
             if nav_parent_name == 'self':
                 self.nav.add_menu(text=title or cname, slug=cname, url=url)
@@ -447,26 +431,14 @@ class DJESite(WidgetGetterMixin):
         else:
             return decorator(function)
 
-    def resolve_chart(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
-        """Execute chart function and return pyecharts chart object.
-        """
-        if name in self._chart_obj_dic:
-            func_exists = True
-            chart_obj = self._chart_obj_dic.get(name)
-            info_name = self._chart_obj_dic.actual_key(name)
-            info = self._chart_info_manager.get_or_none(info_name)
-            return chart_obj, func_exists, info
-        else:
-            return None, False, None
-
     def register_html_widget(self, function=None, *, name: str = None):
-        """A short method for @DJESite.html_widgets.register"""
+        """Define a html widget."""
 
         def decorator(func):
             cname = name or func.__name__
             if not _SLUG_RE.match(cname):
                 raise ValueError(f'Invalid widget slug:{cname}')
-            self._html_widgets.func_register(func, cname)
+            factory.register_html_widget(func, cname)
             return func
 
         if function is None:
@@ -510,21 +482,21 @@ class DJESite(WidgetGetterMixin):
         if name == 'all':
             return self.build_collection_named_all()
         collection = self._collection_dic.get(name)
-        collection.auto_mount(self)
+        collection.auto_mount(factory)
         return collection
 
     def build_collection_named_all(self) -> WidgetCollection:
         w_collection = WidgetCollection(name='all', layout='s8')
-        for info in self.chart_info_manager.query_chart_info_list():
-            chart_obj, _, _ = self.resolve_chart(info.name)
+        for info in factory.chart_info_manager.query_chart_info_list():
+            chart_obj, _, _ = factory.get_chart_and_info(info.name)
             w_collection.pack_chart_widget(chart_obj, info)
         return w_collection
 
-    def resolve_chart_widget(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
-        return self.resolve_chart(name)
-
-    def resolve_html_widget(self, name: str) -> Any:
-        return self._html_widgets.get(name)
+    # def resolve_chart_widget(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
+    #     return self.resolve_chart(name)
+    #
+    # def resolve_html_widget(self, name: str) -> Any:
+    #     return self._html_widgets.get(name)
 
     # Public Interfaces
 

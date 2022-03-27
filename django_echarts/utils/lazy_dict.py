@@ -72,3 +72,6 @@ class LazyDict:
 
     def __contains__(self, item):
         return item in self._entries or item in self._refs
+
+    def __len__(self):
+        return len(self._entries)

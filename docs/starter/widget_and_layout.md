@@ -359,8 +359,8 @@ rc.set_spans(6) # 6列
 下面是一个嵌套各种组件的布局：
 
 ```python
-rc = RowContainer() # 外层rc容器未指定任何span值，以4,4,4显示3个组件
-c1, _, _ = site.resolve_chart('search_word_cloud')
+rc = RowContainer()  # 外层rc容器未指定任何span值，以4,4,4显示3个组件
+c1, _, _ = site.get_chart_and_info('search_word_cloud')
 rc.add_widget(c1)
 
 rc2 = RowContainer()
@@ -370,10 +370,10 @@ ni2 = ValueItem('42142', '网站访问量', '人次')
 rc2.add_widget(ni2)
 ni3 = ValueItem('89.00', '中国联通5G套餐费用', '元', catalog='success')
 rc2.add_widget(ni3)
-rc2.set_spans(span=12) # 每个组件均以12列显示，即垂直方式
+rc2.set_spans(span=12)  # 每个组件均以12列显示，即垂直方式
 
 rc.add_widget(rc2)
-c2, _, _ = site.resolve_chart('fj_total_population')
+c2, _, _ = site.get_chart_and_info('fj_total_population')
 rc.add_widget(c2)
 ```
 

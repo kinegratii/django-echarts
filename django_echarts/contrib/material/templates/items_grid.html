@@ -12,7 +12,7 @@
                     {% endif %}
                 </div>
                 <div class="card-action">
-                    <a href="{{ chart_info.url }}">详情</a>
+                    <a href="{% url 'dje_chart_single' chart_info.name %}">详情</a>
                 </div>
             </div>
         </div>

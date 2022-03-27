@@ -2,6 +2,7 @@
 
 ### v0.5.1 - 
 
+- 重构底层逻辑，新增 `django_echarts.renders` 渲染层和 `django_echarts.stores` 组件存储层
 - 新增统一的 `dw_widget` 组件渲染标签函数
 - 新增布局容器组件 `RowContainer` 
 - 优化echarts依赖项解析逻辑

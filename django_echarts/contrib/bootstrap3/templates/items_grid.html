@@ -3,7 +3,7 @@
         <div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="{{ chart_info.url }}">{{ chart_info.title }}</a>
+                    <a href="{% url 'dje_chart_single' chart_info.name %}">{{ chart_info.title }}</a>
                     {% if chart_info.tags %}
                         <span class="pull-right">
                                                 {% for tag in chart_info.tags %}
