@@ -171,8 +171,8 @@ def mychart():
 | ------------- | --------------- | --------------------------------- |
 | None(未设置)  | None(未设置)    | 不显示在菜单栏上                  |
 | 'BarCharts'   | None(未设置)    | 显示，“BarCharts- Chart1”         |
-| None(未设置)  | 'Menu1'         | 显示，“Menu - Chart1”             |
-| 'BarCharts'   | 'Menu1'         | 显示 "Menu - Chart1" <sup>1</sup> |
+| None(未设置)  | 'Menu'          | 显示，“Menu - Chart1”             |
+| 'BarCharts'   | 'Menu'          | 显示 "Menu - Chart1" <sup>1</sup> |
 | 任意          | 'self'          | 显示一级菜单<sup>2</sup>          |
 | 任意          | 'none'          | 不显示<sup>3</sup>                |
 
@@ -188,10 +188,7 @@ def mychart():
 
 > DJESite.register_html_widget(function=None, *, name: str = None)
 
-装饰器 register_html_widget 用于注册HTML组件。可支持的组件类型：
-
-- Copyright / Jumbotron / Message
-- ValuesPanel
+装饰器 register_html_widget 用于注册HTML组件。
 
 以注册ValuesPanel为例子。
 
@@ -288,21 +285,6 @@ item2 = LinkItem(text='关于', url=reverse_lazy('about'))
 site_obj.add_right_link(item2)
 ```
 
-### 底部版权栏(Copyright)
-
-`Copyright` 类用于初始化页面底部的版权文字。可以传入的参数有：
-
-| 参数       | 类型 | 描述         |
-| ---------- | ---- | ------------ |
-| start_year | int  | 开始的年份   |
-| powered_by | str  | 版权主题名称 |
-
-例子 `Copyright(start_year=2017, powered_by='Django-Echarts')` 的将渲染为下列文字：
-
-```
-©2017-2022, Powered By Django-Echarts
-```
-
 ## 首页
 
 在首页可以通过 `add_widgets` 函数定制部分组件。
@@ -322,24 +304,6 @@ DJESite.add_widgets(*, jumbotron: Jumbotron = None, copyright_: Copyright = None
 
 1. 静态方式：home_jumbotron_chart 直接指定一个图表对象（如Bar）。
 2. 动态方式：home_jumbotron_chart 仅指定一个图表字符串标识，这些图表或组件通过 `register_chart` / `register_widget` 的方式注册。
-
-### 大标题组件(Jumbotron)
-
-`Jumbotron` 是大标题组件的数据类。
-
-```python
-site_obj.add_widgets(
-    jumbotron=Jumbotron('图表可视化', main_text='这是一个由django-echarts-starter驱动的可视化网站。', small_text='版本1.0'),
-)
-```
-
-可设置下列参数：
-
-| 参数       | 类型 | 描述     |
-| ---------- | ---- | -------- |
-| title      | str  | 主标题   |
-| main_text  | str  | 主要文字 |
-| small_text | str  | 小文字   |
 
 ### 大标题图表(JumbotronChart)
 

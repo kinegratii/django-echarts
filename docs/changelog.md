@@ -3,9 +3,11 @@
 ### v0.5.1 - 
 
 - 新增统一的 `dw_widget` 组件渲染标签函数
-- 新增布局容器组件 `RowContainer` 。
+- 新增布局容器组件 `RowContainer` 
 - 优化echarts依赖项解析逻辑
 - `ValuesPanel` 支持布局特性，移除 data / col_item_span 参数
+- 新增表格css函数，bootstrap_table_css 和 material_table_css
+- 表格css函数 `django_echarts.entities.table_css` 重命名未 `django_echarts.entities.bootsrap_table_css`
 
 ## v0.5.0 - (20220318)
 

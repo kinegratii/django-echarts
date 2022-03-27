@@ -1,10 +1,11 @@
 from collections import defaultdict
 from typing import Dict, Optional, List, Tuple
+from .html_widgets import HTMLBase
 
 __all__ = ['ChartInfo', 'ChartInfoManagerMixin', 'LocalChartInfoManager']
 
 
-class ChartInfo:
+class ChartInfo(HTMLBase):
     widget_type = 'InfoCard'
     """The meta-data class for a chart."""
     __slots__ = ['name', 'title', 'description', 'body', 'url', 'selected', 'catalog', 'top', 'tags', 'layout',

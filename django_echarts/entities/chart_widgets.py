@@ -1,6 +1,3 @@
-from typing import Optional, Any, Tuple
-
-from .articles import ChartInfo
 from .containers import RowContainer
 
 
@@ -12,16 +9,19 @@ class NamedCharts(RowContainer):
 
     """
 
-    def __init__(self, page_title: str = 'EChart', col_chart_num: int = 1, is_combine: bool = False):
+    def __init__(self, page_title: str = 'EChart', col_chart_num: int = 0, is_combine: bool = False):
         super().__init__()
         self.page_title = page_title
         self._col_chart_num = col_chart_num
         self.is_combine = is_combine
         self.has_ref = is_combine
 
-    @property
-    def col_chart_num(self):
-        return self._col_chart_num
+    def auto_layout(self):
+        if self._col_chart_num != 0:
+            span = int(12 / self._col_chart_num)
+            self.set_spans(span)
+        else:
+            super().auto_layout()
 
     def add_chart(self, chart_obj, name=None):
         self.add_widget(chart_obj, name=name)
@@ -33,15 +33,3 @@ class NamedCharts(RowContainer):
         for c in achart_or_charts:
             self.add_chart(chart_obj=c)
         return self
-
-
-# l1-l12 r1-r12 t1-t12 b1-b12 f1-f12 a s1-s12
-
-class WidgetGetterMixin:
-    def resolve_chart_widget(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
-        """Return a pycharts chart object."""
-        pass
-
-    def resolve_html_widget(self, name: str) -> Any:
-        """Return a html widget object."""
-        pass

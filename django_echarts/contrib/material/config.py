@@ -12,3 +12,9 @@ STATIC_URL_DICT = {
 PALETTE_POLICY = 'replace'
 
 CLASS_NAMES = {'row': 'row', 'col': 'col s12 m{n}'}
+
+TABLE_CLASS_NAMES = {
+    'default': 'responsive-table',
+    'striped': 'striped',
+    'center': 'centered'
+}

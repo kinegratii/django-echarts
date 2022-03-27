@@ -15,3 +15,11 @@ STATIC_URL_DICT = {
 PALETTE_POLICY = 'replace'
 
 CLASS_NAMES = {'row': 'row', 'col': 'col-sm-12 col-md-{n}'}
+
+TABLE_CLASS_NAMES = {
+    'default': 'table table-responsive',
+    'border': 'table-bordered',
+    'borderless': 'table-borderless',
+    'striped': 'table-striped',
+    'size': 'table-{size}'
+}

@@ -13,7 +13,12 @@ def _new_slug() -> str:
     return uuid.uuid4().hex
 
 
-class LinkItem:
+class HTMLBase:
+    """A entity class for html widget without any js_dependencies."""
+    pass
+
+
+class LinkItem(HTMLBase):
     """The data for the <a> element."""
 
     def __init__(self, text: str, url: str = None, slug: str = None,
@@ -25,7 +30,7 @@ class LinkItem:
         self.after_separator = after_separator
 
 
-class Menu:
+class Menu(HTMLBase):
     """The menu element in top nav."""
     __slots__ = ['text', 'slug', 'url', 'children']
 
@@ -64,7 +69,7 @@ class Nav:
         return self
 
 
-class Jumbotron:
+class Jumbotron(HTMLBase):
     widget_type = 'Jumbotron'
     """The main panel in home page."""
     __slots__ = ['title', 'main_text', 'small_text']
@@ -75,7 +80,7 @@ class Jumbotron:
         self.small_text = small_text
 
 
-class Copyright:
+class Copyright(HTMLBase):
     widget_type = 'Copyright'
     """The copyright text on the footer in every page."""
     __slots__ = ['year_range', 'powered_by']
@@ -98,7 +103,7 @@ class ThemeColor:
     DARK = 'dark'
 
 
-class Message:
+class Message(HTMLBase):
     widget_type = 'Message'
     __slots__ = ['text', 'title', 'catalog']
 
@@ -108,20 +113,7 @@ class Message:
         self.catalog = catalog
 
 
-def table_css(border=False, borderless=False, striped=False, size=None):
-    class_list = ['table', 'table-responsive']
-    if border:
-        class_list.append('table-bordered')
-    if borderless:
-        class_list.append('table-borderless')
-    if striped:
-        class_list.append('table-striped')
-    if size:
-        class_list.append(f'table-{size}')
-    return ' '.join(class_list)
-
-
-class ValueItem:
+class ValueItem(HTMLBase):
     __slots__ = ['value', 'description', 'unit', 'catalog', 'arrow']
 
     def __init__(self, value: Any, description: str, unit: str = None, catalog: str = 'primary',

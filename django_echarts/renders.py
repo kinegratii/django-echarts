@@ -29,6 +29,11 @@ def render_widget(widget, **kwargs) -> SafeString:
     # return SafeString(f'<div>Unknown widget type:{widget.__class__.__name__}</div>')
 
 
+@render_widget.register(type(None))
+def render_none(widget, **kwargs) -> SafeString:
+    return SafeString('')
+
+
 @render_widget.register(SafeString)
 @render_widget.register(HTMLString)
 def render_html(widget, **kwargs) -> SafeString:

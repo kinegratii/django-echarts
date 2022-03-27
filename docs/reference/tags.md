@@ -6,7 +6,7 @@ django-echarts 实现了与 pyecharts 功能上相似的模板标签，均定义
 
 **方式一. 按需导入**
 
-在每个需要使用标签函数的模板文件使用 `{% laod echarts %}` 导入。
+在每个需要使用标签函数的模板文件使用 `{% load echarts %}` 导入。
 
 **方式二. 统一导入**
 
@@ -38,27 +38,18 @@ TEMPLATES = [
 
 ### dw_widget
 
-```python
-# 标签函数
-dw_widget(context, widget, **kwargs)
-# 实际渲染函数
-render_widget(widget, context, **kwargs)
-```
-
-使用方式如下：
-
-```text
-{% dw_widget chart %}
+```html
+{% dw_widget row_container %}
 {% dw_widget chart  width="100%" height="700px" %}
 ```
 
 可支持的参数：
 
-| 参数   | 类型                   | 描述       |
-| ------ | ---------------------- | ---------- |
-| width  | Union[int, float, str] | 宽度       |
-| height | Union[int, float, str] | 高度       |
-| class_ | str                    | html元素类 |
+| 参数   | 类型                   | 描述                                 |
+| ------ | ---------------------- | ------------------------------------ |
+| width  | Union[int, float, str] | 宽度，仅适用于 pyecharts.charts.Base |
+| height | Union[int, float, str] | 高度，仅适用于 pyecharts.charts.Base |
+| class_ | str                    | 仅适用于LinkItem/Menu                |
 
 ### echarts_container
 
@@ -66,7 +57,7 @@ render_widget(widget, context, **kwargs)
 
 ## echarts初始化
 
-> 本节标签函数中参数widgets参数指的是echarts图表对象组成的列表。
+> 本节标签函数中参数 widgets 参数传入任何组件对象，标签函数自动提取其中的echarts图表对象。
 
 ### echarts_js_dependencies
 

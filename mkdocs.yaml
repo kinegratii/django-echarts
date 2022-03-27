@@ -35,6 +35,7 @@ nav:
     - 命令行工具: reference/commands.md
   - 文章:
     - geojson地图: posts/use_custom_geojson.md
+    - 合辑: posts/widget_collection.md
   - 项目开发:
     - 更新日志: changelog.md
     - 关于项目: about.md

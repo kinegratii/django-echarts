@@ -1,9 +1,8 @@
 import re
 from collections import OrderedDict
-from typing import List, Union
+from typing import List, Union, Tuple, Any, Optional
 
 from .articles import ChartInfo
-from .chart_widgets import WidgetGetterMixin, NamedCharts
 from .containers import RowContainer, Container
 
 
@@ -45,6 +44,16 @@ class LayoutOpts:
 
     def __str__(self):
         return f'<LOptions:{self.pos},{self.span}>'
+
+
+class WidgetGetterMixin:
+    def resolve_chart_widget(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
+        """Return a pycharts chart object."""
+        pass
+
+    def resolve_html_widget(self, name: str) -> Any:
+        """Return a html widget object."""
+        pass
 
 
 class WidgetCollection(Container):

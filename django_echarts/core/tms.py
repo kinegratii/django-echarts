@@ -144,6 +144,25 @@ class ThemeManager:
     def get_custom_url(self, theme_label: str, name: str):
         return self.file2url.get(theme_label, {}).get(name, '')
 
+    def table_css(self, border=False, borderless=False, striped=False, size=None) -> str:
+        """Get class name for table element."""
+        table_class_dic = self.theme_app_config.get('TABLE_CLASS_NAMES', '')
+        cns = []
+
+        def _get(_f, _v):
+            if _v:
+                _val = table_class_dic.get(_f, '')
+                if _val:
+                    cns.append(_val.format(**{_f: _v}))
+
+        _get('default', 1)
+        _get('border', border)
+        _get('borderless', borderless)
+        _get('borderless', borderless)
+        _get('striped', striped)
+        _get('size', size)
+        return ' '.join(cns)
+
     @property
     def available_palettes(self) -> List[str]:
         return [self.theme_name] + [f'{self.theme_name}.{p}' for p in self._available_palettes]
