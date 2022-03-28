@@ -38,6 +38,12 @@ TEMPLATES = [
 
 ### dw_widget
 
+```python
+django_echarts.templatetags.echarts.dw_widget(context, widget, **kwargs)
+```
+
+渲染单个组件，可以是图表组件、HTML组件和容器组件。使用方法如下：
+
 ```html
 {% dw_widget row_container %}
 {% dw_widget chart  width="100%" height="700px" %}

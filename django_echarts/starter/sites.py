@@ -218,6 +218,7 @@ class DJESiteChartSingleView(DJESiteBackendView):
 
 
 class DJSiteChartOptionsView(DJESiteFrontendView):
+    # TODO move to django_echarts.views
     def dje_get(self, request, *args, **kwargs) -> Any:
         chart_name = self.kwargs.get('name')
         chart_obj, _, _ = factory.get_chart_and_info(chart_name)
@@ -491,12 +492,6 @@ class DJESite:
             chart_obj, _, _ = factory.get_chart_and_info(info.name)
             w_collection.pack_chart_widget(chart_obj, info)
         return w_collection
-
-    # def resolve_chart_widget(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
-    #     return self.resolve_chart(name)
-    #
-    # def resolve_html_widget(self, name: str) -> Any:
-    #     return self._html_widgets.get(name)
 
     # Public Interfaces
 

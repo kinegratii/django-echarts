@@ -2,6 +2,8 @@
 
 ### v0.5.1 - 
 
+[发布日志](/release-note/v051)
+
 - 重构底层逻辑，新增 `django_echarts.renders` 渲染层和 `django_echarts.stores` 组件存储层
 - 新增统一的 `dw_widget` 组件渲染标签函数
 - 新增布局容器组件 `RowContainer` 
@@ -11,6 +13,8 @@
 - 表格css函数 `django_echarts.entities.table_css` 重命名未 `django_echarts.entities.bootsrap_table_css`
 
 ## v0.5.0 - (20220318)
+
+[发布日志](/release-note/v050)
 
 - 使用主题独立APP架构，修改主题设置方式
 - 新增直接支持 `prettytable.PrettyTable` 表格类型

@@ -35,8 +35,6 @@ class EntityFactory(WidgetGetterMixin):
                 c_info = None
             else:
                 c_info = info
-            print(f'--------{cname}')
-            print(c_info)
             if c_info:
                 self.register_chart_info(c_info)
             return func
@@ -79,6 +77,18 @@ class EntityFactory(WidgetGetterMixin):
 
     def get_html_widget(self, name: str) -> Any:
         return self._html_widgets.get(name)
+
+    def get_widget_by_name(self, name: str) -> Any:
+        if name[:5] == 'info:':
+            info_name = self._chart_obj_dic.actual_key(name[5:])
+            return self._chart_info_manager.get_or_none(info_name)
+        else:
+            if name in self._chart_obj_dic:
+                return self._chart_obj_dic.get(name)
+            elif name in self._html_widgets:
+                return self._html_widgets.get(name)
+            else:
+                return None
 
     def get_chart_total(self) -> int:
         return len(self._chart_obj_dic)

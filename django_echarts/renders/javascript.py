@@ -3,11 +3,7 @@ from functools import singledispatch
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
-
-from .chart_widgets import NamedCharts
-from .html_widgets import ValuesPanel, HTMLBase
-from .containers import RowContainer, Container
-from .pages import WidgetCollection
+from django_echarts.entities import (NamedCharts, ValuesPanel, RowContainer, Container, WidgetCollection, HTMLBase)
 
 __all__ = ['flat_chart', 'get_js_dependencies']
 

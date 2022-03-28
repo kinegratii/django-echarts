@@ -1,12 +1,49 @@
 # 图表合辑
 
-## 图表合辑
+## 概述
 
-### 定义合辑
+合辑类 `WidgetCollection` 实现的是按照用户指定的布局填充相应的组件。
+
+```
+                   Container       WidgetGetterMixin
+                      ^                   ^
+                      |                   |
+                      |                   |
+user_layout --> WidgetCollection    EntityFactory
+                      |
+                      |- auto_mount(widget_container: WidgetGetterMixin)
+```
+
+这样可以减少中间环节的大量 `add_widget` 操作。比如，使用Container构建组件时：
+
+```python
+factory = EntityFactory()
+
+container = Container()
+row_container = RowContainer()
+chart1, info, _ = factory.get_chart_and_info('my_chart_name')
+row_container.add_widget(chart1, span=8)
+row_container.add_widget(info)
+container.add_widget(row_container)
+```
+
+使用 WidgetCollection 时，将中间 `RowContainer` 的创建和添加组件封装实现在 `auto_mount` 函数之中。
+
+```python
+factory = EntityFactory()
+
+wc = WidgetCollection()
+wc.add_chart_widget('my_chart_name', layout='l8')
+wc.auto_mount(factory)
+```
+
+
+
+## 定义
 
 > class WidgetCollection(name: str, title: str = None, layout: Union[str, LayoutOpts] = 'a')
 
-一个合辑对象 `WidgetCollection` 表示由若干图表和组件按照一定的布局组成的页面实体，继承 `Container`类。
+一个合辑对象 `WidgetCollection` ，继承 `Container`类。
 
 ```python
 wc = WidgetCollection(
@@ -16,73 +53,62 @@ wc = WidgetCollection(
 
 参数列表
 
-| 参数   | 类型 | 描述                        |
-| ------ | ---- | --------------------------- |
-| name   | slug | 合辑标识符，作为url的一部分 |
-| title  | str  | 标题，菜单栏的文字          |
-| layout | str  | 整体布局                    |
+| 参数   | 类型 | 描述                                   |
+| ------ | ---- | -------------------------------------- |
+| name   | slug | 合辑标识符，作为url的一部分            |
+| title  | str  | 标题，菜单栏的文字                     |
+| layout | str  | 整体布局，仅对 `add_chart_widget` 方式 |
 
-### 添加组件
+## 添加子组件
 
-> WidgetCollection.pack_chart_widget(chart_obj, info: ChartInfo, ignore_ref: bool = True, layout: str = 'l8',
->                        row_no: int = 0)
->
-> 
->
-> WidgetCollection.pack_html_widget(widget_list: List, layout: str = 'f', row_no: int = 0)
+本节的添加方式均是按照 `auto_mount` 方式。
 
+### 添加echarts图表
 
+> WidgetCollection.add_chart_widget(self, chart_name: str, layout: str = 'l8')
 
 `WdidgetCollection` 提供了 `pack_*` 方法用于添加组件，函数将参数的组件使用 `row` 类（一行12列）进行包裹。
 
 ```python
-# 添加单个图表
-bar = Bar()
-info = DJEChartInfo(...)
-wc.pack_chart_widget(bar, info, layout='l8')
+# 添加名为my_first的图表和对应的信息卡组件，以8:4方式显示
+wc.add_chart_widget(chart_name='my_first', layout='l8')
 
-# 多图表平均显示
-nc = NamedCharts()
-bar2 = Bar()
-line = Line()
-nc.add_chart(line1)
-nc.add_chart(bar)
-wc.pack_chart_widget(nc, layout='f6')
-
-# 按照给定的列数显示多个组件
-wc.pack_html_widget([w1, w2], [8, 4])
+# 显示名为my_named_charts的多图表组件NamedCharts。
+wc.add_chart_widget(chart_name='my_named_charts', layout='l6')
 ```
 
-### 图表布局
+### 添加HTML组件
 
-布局分为网格布局和行内布局两种。布局方式使用一个字母和一个数字组成的字符串。第1个字母表示图表的所在位置，第2个字母表示图表所占用的列数（总列数为12）。可使用的位置标识（使用首字母即可）如下：
+>  WidgetCollection.add_html_widget(widget_list: List, spans:List=None)
 
-| 标识 | left | right | top  | bottom | full           | stripped     | auto           |
-| ---- | ---- | ----- | ---- | ------ | -------------- | ------------ | -------------- |
-| 描述 | 左侧 | 右侧  | 顶部 | 底部   | 不显示信息Info | 左右交叉图表 | 按行内布局显示 |
+构建一个 RowContainer 容器，并添加一个或多个子组件。
 
-使用规则：
+```python
+# 按照给定的列数显示多个组件
+wc.add_html_widget(widget_names=['w1', 'w2'], spans=[8, 4])
+```
 
-- 其中 a和s仅合辑网格布局可使用。
-- lrtbf布局网格布局和行内布局均可使用。
-- l8表示 “图表8列 + 信息卡4列”； r8 表示“信息卡4列+图表8列”
-- 响应式布局：所设置的列数仅在md以上有效，sm及其以下均会扩展到整行12列
 
-下面是常见使用场景的布局定义：
 
-| WidgetWidgetCollection.layout | 描述                                                    |
-| ----------------------------- | ------------------------------------------------------- |
-| l8                            | 每行显示1个图表，图表全部靠左显示                       |
-| r8                            | 每行显示1个图表，图表全部靠右显示                       |
-| s8                            | 每行显示1个图表，左右信息卡交叉显示                     |
-| f6                            | 每行显示2个图表，不显示信息卡                           |
-| f12                           | 每行显示1个图表，不显示信息卡                           |
-| t6                            | 每行显示2个图表，信息卡显示在顶部。(信息卡包含少量文字) |
-| b6                            | 每行显示2个图表，信息卡显示在低部。(信息卡包含大量文字) |
+### 组件布局
 
-### 注册合辑
+添加不同组件可使用的布局不同。
 
-可以通过 `rDJESite.register_collection` 方法构建一个图表合辑页面。
+| 布局layout |         | 合辑定义         | 只添加echarts图表 | 添加html组件     |
+| ---------- | ------- | ---------------- | ----------------- | ---------------- |
+| 类型       | 示例    | WidgetCollection | add_chart_widget  | add_html_widget  |
+| str        | l8      | Y                | 8列图表 + 4列卡片 | -                |
+|            | r8      | Y                | 4列卡片 + 8列图表 | -                |
+|            | s8      | Y                | 交叉使用l8和r8    | -                |
+| int        | 0       | -                | 12列图表          | 每个子组件平均分 |
+|            | 8       | -                | 8列图表           | 每个子组件8列    |
+| List[int]  | [4,4,4] | -                | 接受长度为2的列表 | Y                |
+
+
+
+## 注册合辑
+
+可以通过 `DJESite.register_collection` 方法构建一个图表合辑页面。
 
 ```python
 site_obj = DJESite(site_title='DJE Demo')
@@ -112,12 +138,12 @@ def collection1():
 
 register_collection 函数参数及其意义：
 
-| 参数            | 类型      | 说明                                   |
-| --------------- | --------- | -------------------------------------- |
-| name            | slug      | 合辑标识                               |
-| charts          | List[str] | 包含的图表标识                         |
-| layout          | str       | 合辑布局                               |
-| title           | str       | 标题                                   |
-| catalog         | str       | 如果设置，将添加合辑链接到该菜单项之下 |
-| after_separator | bool      | 是否在菜单项前使用分隔符               |
+| 参数            | 类型      | 说明                                      |
+| --------------- | --------- | ----------------------------------------- |
+| name            | slug      | 合辑标识，用于 `DJESite` 创建对应视图路由 |
+| charts          | List[str] | 包含的图表标识                            |
+| layout          | str       | 合辑布局                                  |
+| title           | str       | 标题                                      |
+| catalog         | str       | 如果设置，将添加合辑链接到该菜单项之下    |
+| after_separator | bool      | 是否在菜单项前使用分隔符                  |
 

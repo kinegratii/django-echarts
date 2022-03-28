@@ -12,6 +12,9 @@ class LayoutCfg:
         self.span = span
         self.offset = offset
 
+    def __str__(self):
+        return f'<LCfg: col-md-{self.span}>'
+
 
 COL_TOTAL = 12
 
@@ -76,7 +79,10 @@ class RowContainer(ContainerBase):
         """Set span value for each widget.
         This should be called after all widgets is add."""
         if isinstance(spans, int):
-            span_list = [spans] * len(self._layouts)
+            if spans == 0:
+                span_list = [int(12 / len(self._widgets))] * len(self._layouts)
+            else:
+                span_list = [spans] * len(self._layouts)
         else:
             span_list = spans
         for lc, span in zip_longest(self._layouts.values(), span_list):
