@@ -1,11 +1,12 @@
 from functools import singledispatch
 
 from borax.htmls import HTMLString, html_tag
+from borax.strings import camel2snake
 from django.template import engines
 from django.template.loader import get_template
 from django.utils.html import SafeString
 from django_echarts.entities import (
-    ValuesPanel, ValueItem, LinkItem, Menu, NamedCharts, ChartInfo, DwString, RowContainer, Container
+    ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase
 )
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
@@ -53,29 +54,20 @@ def render_chart(widget, **kwargs) -> SafeString:
 
 
 @render_widget.register(Container)
-def render_container(widget, **kwargs):
-    tpl = get_template('widgets/container.html')
-    return SafeString(tpl.render({'container': widget}))
-
-
+@render_widget.register(HTMLBase)
 @render_widget.register(NamedCharts)
 @render_widget.register(RowContainer)
 @render_widget.register(ValuesPanel)
-def render_row_container(widget, **kwargs):
-    tpl = get_template('widgets/row_container.html')
-    return SafeString(tpl.render({'rc': widget}))
-
-
-@render_widget.register(ChartInfo)
-def render_chart_info(widget, **kwargs) -> SafeString:
-    tpl = get_template('widgets/chart_info.html')
-    return SafeString(tpl.render({'chart_info': widget}))
-
-
-@render_widget.register(ValueItem)
-def render_value_item(widget: ValueItem, **kwargs) -> SafeString:
-    tpl = get_template('widgets/value_item.html')
-    return SafeString(tpl.render({'item': widget}))
+def render_with_tpl(widget, **kwargs) -> SafeString:
+    if 'tpl' in kwargs:
+        tpl_name = kwargs['tpl']
+    else:
+        widget_name = camel2snake(widget.__class__.__name__)
+        if widget_name in ('values_panel', 'named_charts'):
+            widget_name = 'row_container'
+        tpl_name = 'widgets/{}.html'.format(widget_name)
+    tpl = get_template(tpl_name)
+    return SafeString(tpl.render({'widget': widget}))
 
 
 @render_widget.register(Table)

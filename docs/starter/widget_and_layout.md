@@ -21,10 +21,10 @@ django-echarts 定义了一套较为完整、可扩展的组件体系，主要�
 | ValueItem                              | 数字卡片       |                  | value_item.html                                  |
 | **容器组件**                           |                |                  |                                                  |
 | ContainerBase                          | 容器基础类     | 不可实例化       |                                                  |
-| Container                              | 页面容器       |                  | widgets/container.html                           |
 | RowContainer                           | 行容器         |                  | widgets/row_container.html                       |
 | NamedCharts                            | 多图表         |                  | widgets/row_container.html <sup>4</sup>          |
 | ValuesPanel                            | 数值面板       |                  | widgets/row_container.html                       |
+| Container                              | 页面容器       |                  | widgets/container.html                           |
 | WidgetCollection                       | 合辑           |                  | -                                                |
 
 1. 渲染标签函数均使用 `dw_widget` ，原有的具体组件渲染函数 echarts_container/dw_table等不再推荐使用。
@@ -36,7 +36,7 @@ django-echarts 定义了一套较为完整、可扩展的组件体系，主要�
 
 ### 模板渲染
 
-在模板中所有组件均可使用 *dw_widget* 渲染。
+在模板中所有组件均可使用 *dw_widget* 渲染，其他参数使用关键字方式传入参数。
 
 ```
 {% dw_widget chart1 %}
@@ -49,7 +49,7 @@ django-echarts 定义了一套较为完整、可扩展的组件体系，主要�
 
 > pycharts.charts.base.Base
 
-Base 组件在创建和配置方面请参考 pyecharts 文档。
+Base 组件在创建和配置方面请参考 [pyecharts 文档](https://pyecharts.org/)。
 
 **Geojson地图**
 
@@ -115,37 +115,33 @@ table.add(
 
 ## HTML组件
 
-### 数字仪盘(ValuesPanel)
+### 数字仪盘(ValuesItem)
 
 ```python
 ValueItem(value: Any, description: str, unit: str = None, catalog: str = 'primary', trend: Literal['up', 'down', ''] = '')
-
-ValuesPanel(col_item_num: int = 1)
 ```
 
 以突出方式显示数字数值。
 
-| 参数            | 类型                      | 描述             |
-| --------------- | ------------------------- | ---------------- |
-| **ValueItem**   |                           |                  |
-| value           | Any                       | 数值型数据       |
-| description     | str                       | 描述性文字       |
-| unit            | str                       | 单位文字         |
-| catalog         | str                       | 决定背景颜色     |
-| arrow           | Literal['up', 'down', ''] | 数字后的箭头符号 |
-| **ValuesPanel** |                           |                  |
-| col_item_num    | int                       | 每行多少个       |
+| 参数          | 类型                      | 描述             |
+| ------------- | ------------------------- | ---------------- |
+| **ValueItem** |                           |                  |
+| value         | Any                       | 数值型数据       |
+| description   | str                       | 描述性文字       |
+| unit          | str                       | 单位文字         |
+| catalog       | str                       | 决定背景颜色     |
+| arrow         | Literal['up', 'down', ''] | 数字后的箭头符号 |
 
 例子：
 
 ```python
 @site_obj.register_html_widget
 def home1_panel():
-    number_p = ValuesPanel()
+    rc = RowContainer()
     # 显示图表总个数
-    number_p.add_widget(ValueItem(str(site_obj.chart_info_manager.count()), '图表总数', '个', catalog='danger'))
-    number_p.add_widget(ValueItem('42142', '网站访问量', '人次'))
-    return number_p
+    rc.add_widget(ValueItem(str(site_obj.chart_info_manager.count()), '图表总数', '个', catalog='danger'))
+    rc.add_widget(ValueItem('42142', '网站访问量', '人次'))
+    return rc
 ```
 
 ### 大标题组件(Jumbotron)
@@ -281,8 +277,6 @@ ncharts.add_chart(bar2) # 默认分配 'c{n}' 作为名称，此项为 'c2'
 | page_title | str  | 标题     |
 | is_combine | bool | 是否引用 |
 
-
-
 ### 数值面板(ValuesPanel)
 
 该类已不再推荐使用，直接使用其父类 `RowContainer` 即可。原有的 `add` 函数可以使用 `add_widget` 代替。
@@ -351,7 +345,8 @@ rc.add_widget(w1)
 rc.add_widget(w2)
 
 rc.set_spans([4, 8]) # 4列，8列
-rc.set_spans(6) # 6列
+rc.set_spans(6) # 每行2个组件
+rc.set_spans(12) # 每行1个组件
 ```
 
 ### 示例
@@ -360,7 +355,7 @@ rc.set_spans(6) # 6列
 
 ```python
 rc = RowContainer()  # 外层rc容器未指定任何span值，以4,4,4显示3个组件
-c1, _, _ = site.get_chart_and_info('search_word_cloud')
+c1 = factory.get_widget_by_name('search_word_cloud')
 rc.add_widget(c1)
 
 rc2 = RowContainer()
@@ -373,7 +368,7 @@ rc2.add_widget(ni3)
 rc2.set_spans(span=12)  # 每个组件均以12列显示，即垂直方式
 
 rc.add_widget(rc2)
-c2, _, _ = site.get_chart_and_info('fj_total_population')
+c2 = factory.get_widget_by_name('fj_total_population')
 rc.add_widget(c2)
 ```
 
@@ -389,4 +384,29 @@ rc.add_widget(c2)
 效果图
 
 ![row_container_demo](../images/row_container_demo.png)
+
+## 新的组件
+
+django-echarts 提供了创建新组件。
+
+**创建组件类**
+
+创建组件类。继承自 `HTMLBase` 。
+
+```python
+class MyWidget(HTMLBase):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+```
+
+**模板文件**
+
+模板文件位置位于 *widgets/{widget_name}.html* 。这里是 *widgets/my_widget.html* 。（类名称的蛇形命名形式）
+
+```html
+<div>
+    {{ widget.x}},{{ widget.y }}
+</div>
+```
 

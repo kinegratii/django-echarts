@@ -1,8 +1,8 @@
 {% load echarts %}
 <div class="row">
-    {% for widget, layout in rc.iter_layout %}
+    {% for rw, layout in widget.iter_layout %}
         <div class="col-md-{{ layout.span }} col-sm-12">
-            {% dw_widget widget width=layout.ww height=layout.wh %}
+            {% dw_widget rw width=layout.ww height=layout.wh %}
         </div>
     {% endfor %}
 </div>

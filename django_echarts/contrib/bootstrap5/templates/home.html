@@ -1,17 +1,7 @@
 {% extends 'base.html' %}
 {% load echarts %}
 {% block main_content %}
-    {% if jumbotron %}
-        <div class="container-fluid bg-secondary text-light p-5">
-            <div class="container bg-secondary p-5">
-                <h1 class="display-4">{{ jumbotron.title }}</h1>
-                <hr>
-                <p>{{ jumbotron.main_text }}</p>
-                <p><small>{{ jumbotron.small_text }}</small></p>
-            </div>
-        </div>
-
-    {% endif %}
+    {% dw_widget jumbotron %}
     {% if chart_obj %}
         <div class="container">
             <div class="row">
@@ -38,7 +28,7 @@
         {% dw_widget home_values_panel %}
     {% endif %}
     {% if top_chart_info_list %}
-        <div class="page-header" style="margin: 5px;">
+        <div style="margin: 5px;">
             <h2> 热门图表</h2>
             <hr/>
         </div>

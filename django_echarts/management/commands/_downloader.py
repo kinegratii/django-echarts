@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.renders import get_js_dependencies
-from django_echarts.starter.sites import DJESite
+from django_echarts.stores.entity_factory import factory
 from django_echarts.utils.downloader import download_files
 
 
@@ -72,9 +72,8 @@ class DownloadBaseCommand(BaseCommand):
         return resources
 
     def resolve_chart(self, chart_name) -> List[str]:
-        site_obj = DJANGO_ECHARTS_SETTINGS.get_site_obj()  # type: DJESite
-        chart_obj, func_exists, _ = site_obj.resolve_chart(chart_name)
-        if not func_exists:
+        chart_obj = factory.get_chart_widget(chart_name)
+        if not chart_obj:
             self.stdout.write(self.style.WARNING('The chart with name does not exits.'))
             return []
         dep_names = get_js_dependencies(chart_obj)

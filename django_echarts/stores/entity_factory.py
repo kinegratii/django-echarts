@@ -64,7 +64,8 @@ class EntityFactory(WidgetGetterMixin):
         self._html_widgets.set_ref(ref_name, name)
 
     def get_chart_and_info(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
-        """Execute chart function and return pyecharts chart object.
+        """Execute chart creator and return pyecharts chart object.
+        Use get_chart_widget instead if the info is not used.
         """
         if name in self._chart_obj_dic:
             func_exists = True
@@ -74,6 +75,9 @@ class EntityFactory(WidgetGetterMixin):
             return chart_obj, func_exists, info
         else:
             return None, False, None
+
+    def get_chart_widget(self, name: str) -> Any:
+        return self._chart_obj_dic.get(name)
 
     def get_html_widget(self, name: str) -> Any:
         return self._html_widgets.get(name)

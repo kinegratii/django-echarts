@@ -1,13 +1,7 @@
 {% extends 'base.html' %}
 {% load echarts %}
 {% block main_content %}
-    {% if jumbotron %}
-        <div class="jumbotron">
-            <h1>{{ jumbotron.title }}</h1>
-            <p>{{ jumbotron.main_text }}</p>
-            <p class="small">{{ jumbotron.small_text }}</p>
-        </div>
-    {% endif %}
+    {% dw_widget jumbotron %}
     {% if chart_obj %}
         <div class="container">
 

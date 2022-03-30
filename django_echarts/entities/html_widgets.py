@@ -136,3 +136,11 @@ class ValuesPanel(RowContainer):
         item = ValueItem(value=value, description=description, unit=unit, catalog=catalog, arrow=arrow)
         self.add_widget(item)
         return self
+
+
+class Title(HTMLBase):
+    __slots__ = ['text', 'small_text']
+
+    def __init__(self, text: str, small_text: str = None):
+        self.text = text
+        self.small_text = small_text

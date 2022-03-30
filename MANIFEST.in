@@ -1,2 +1,5 @@
 recursive-include django_echarts/templates/ *.tpl *.py *.html
-recursive-include django_echarts/contrib/  *.html
+include django_echarts/contrib/*.html
+include django_echarts/contrib/*/*.html
+include django_echarts/contrib/*/*/*.html
+include django_echarts/contrib/*/*/*/*.html

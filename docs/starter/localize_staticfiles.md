@@ -156,6 +156,8 @@ python manage.py download -d echarts 福建 上海
 
 ### 按照图表
 
+> Updated in v0.5.1: 不再需要设置 `site_class` 值。
+
 在使用本功能时，必须先设置 `DJEOpts.site_class` 的值，该值指向网站入口 DJESite 对象。
 
 ```python

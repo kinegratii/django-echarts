@@ -13,7 +13,7 @@ use_geojson(chart_obj, map_name:str, url:str)
 | 参数      | 描述                                                         |
 | --------- | ------------------------------------------------------------ |
 | chart_obj | pyecharts中的图表                                            |
-| map_name  | 地图名称，可以为任何字符串。用于 `echarts.options.series0.mapType` 。 |
+| map_name  | 地图名称，可以为任何字符串。用于 `echarts.registerMap` 的第一个参数。 |
 | url       | geojson文件引用地址，该url须返回一个json格式数据             |
 
 远程地址使用

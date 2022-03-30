@@ -44,6 +44,7 @@ class WidgetCollection(Container):
         self._ref_config_list.append([False, layout, *widget_names])
 
     def auto_mount(self, widget_container: WidgetGetterMixin):
+        self.start_()
         for is_chart, layout_str, *names in self._ref_config_list:
             if is_chart:
                 chart_name = names[0]

@@ -1,4 +1,3 @@
-import json
 import re
 from functools import wraps
 from typing import Optional, List, Dict, Literal, Type, Any, Union
@@ -9,12 +8,13 @@ from django.http.response import JsonResponse
 from django.urls import reverse_lazy, path
 from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 from django.views.generic.edit import FormMixin
+from django_echarts.ajax_echarts import ChartOptionsView
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.core.exceptions import DJEAbortException
 from django_echarts.entities import (
     ChartInfo, WidgetCollection, Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
 )
-from django_echarts.geojson import GeojsonDataView
+from django_echarts.geojson import geo_urlpatterns
 from django_echarts.stores.entity_factory import factory
 from django_echarts.utils.compat import get_elided_page_range
 
@@ -217,17 +217,6 @@ class DJESiteChartSingleView(DJESiteBackendView):
         return self.page_title.format(name=name, title=title)
 
 
-class DJSiteChartOptionsView(DJESiteFrontendView):
-    # TODO move to django_echarts.views
-    def dje_get(self, request, *args, **kwargs) -> Any:
-        chart_name = self.kwargs.get('name')
-        chart_obj, _, _ = factory.get_chart_and_info(chart_name)
-        if not chart_obj:
-            return {}
-        else:
-            return json.loads(chart_obj.dump_options_with_quotes())
-
-
 class DJESiteAboutView(DJESiteBackendView):
     template_name = 'about.html'
 
@@ -283,6 +272,7 @@ class DJESite:
 
     def __init__(self, site_title: str, opts: Optional[SiteOpts] = None):
         self.site_title = site_title
+        self._custom_urlpatterns = []  # url entry
         if opts is None:
             self._opts = SiteOpts()
         else:
@@ -301,7 +291,7 @@ class DJESite:
             'dje_home': DJESiteHomeView,
             'dje_list': DJESiteListView,
             'dje_chart_single': DJESiteChartSingleView,
-            'dje_chart_options': DJSiteChartOptionsView,
+            'dje_chart_options': ChartOptionsView,
             'dje_chart_collection': DJESiteCollectionView,
             'dje_about': DJESiteAboutView,
             'dje_settings': DJESiteSettingsView
@@ -328,22 +318,23 @@ class DJESite:
     def urls(self):
         """Return the URLPattern list for site entrypoint."""
         urls = [
-            path('', self._view_dict['dje_home'].as_view(), name='dje_home'),
-            path('list/', self._view_dict['dje_list'].as_view(), name='dje_list'),
-            path('chart/<slug:name>/', self._view_dict['dje_chart_single'].as_view(), name='dje_chart_single'),
-            path('chart/<slug:name>/options/', self._view_dict['dje_chart_options'].as_view(),
-                 name='dje_chart_options'),
-            path('collection/', self._view_dict['dje_chart_collection'].as_view(), name='dje_chart_collection_all'),
-            path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
-                 name='dje_chart_collection'),
-            path('about/', self._view_dict['dje_about'].as_view(), name='dje_about'),
-            path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings'),
-            path('geojson/<str:geojson_name>', GeojsonDataView.as_view(), name='dje_geojson')
-        ]
-        custom_url = self.dje_get_urls()
-        if custom_url:
-            urls += custom_url
+                   path('', self._view_dict['dje_home'].as_view(), name='dje_home'),
+                   path('list/', self._view_dict['dje_list'].as_view(), name='dje_list'),
+                   path('chart/<slug:name>/', self._view_dict['dje_chart_single'].as_view(), name='dje_chart_single'),
+                   path('chart/<slug:name>/options/', self._view_dict['dje_chart_options'].as_view(),
+                        name='dje_chart_options'),
+                   path('collection/', self._view_dict['dje_chart_collection'].as_view(),
+                        name='dje_chart_collection_all'),
+                   path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
+                        name='dje_chart_collection'),
+                   path('about/', self._view_dict['dje_about'].as_view(), name='dje_about'),
+                   path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings'),
+
+               ] + geo_urlpatterns + self._custom_urlpatterns
         return urls
+
+    def extend_urlpatterns(self, urlpatterns):
+        self._custom_urlpatterns.extend(urlpatterns)
 
     def register_view(
             self,
@@ -409,8 +400,6 @@ class DJESite:
                 c_info = ChartInfo(name=cname, title=title or cname, description=description, body=body,
                                    url=url, top=top, catalog=catalog, tags=tags, layout=layout)
             factory.register_chart_widget(func, c_info.name, info=c_info)
-            # self._chart_obj_dic.func_register(func, c_info.name)
-            # factory.chart_info_manager.add_chart_info(c_info)
 
             if nav_parent_name == 'self':
                 self.nav.add_menu(text=title or cname, slug=cname, url=url)
@@ -481,20 +470,14 @@ class DJESite:
 
     def build_collection(self, name: str) -> WidgetCollection:
         if name == 'all':
-            return self.build_collection_named_all()
+            return self._build_collection_named_all()
         collection = self._collection_dic.get(name)
         collection.auto_mount(factory)
         return collection
 
-    def build_collection_named_all(self) -> WidgetCollection:
+    def _build_collection_named_all(self) -> WidgetCollection:
         w_collection = WidgetCollection(name='all', layout='s8')
         for info in factory.chart_info_manager.query_chart_info_list():
-            chart_obj, _, _ = factory.get_chart_and_info(info.name)
+            chart_obj = factory.get_chart_widget(info.name)
             w_collection.pack_chart_widget(chart_obj, info)
         return w_collection
-
-    # Public Interfaces
-
-    def dje_get_urls(self) -> List:
-        """Custom you url routes here."""
-        pass

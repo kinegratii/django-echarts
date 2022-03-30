@@ -1,8 +1,34 @@
 # 视图和模板
 
-本节介绍了 django-echarts中主要的API信息，包括视图、模板、接口方法。
+本节介绍了 `django_echarts` 业务层 中主要的API信息，包括视图、模板、接口方法。涉及到的代码包：
 
-## 网站架构
+| 包/模块                     | 描述                    |
+| --------------------------- | ----------------------- |
+| django_echarts.starter      | 一个可视化网站脚手架    |
+| django_echarts.ajax_echarts | ajax方式渲染echarts图表 |
+| django_echarts.geojson      | 处理geojson数据         |
+
+## 路由与视图
+
+django_echarts 包含下列路由：
+
+| 功能页面                        | 路由                           | 视图类 <sup>1</sup>    | 视图名称          |
+| ------------------------------- | ------------------------------ | ---------------------- | ----------------- |
+| **django_echarts.starter**      |                                |                        |                   |
+| 首页                            | `''`                           | DJESiteHomeView        | dje_home          |
+| 列表页面                        | `'list/'`                      | DJESiteListView        | dje_list          |
+| 图表页面                        | `'chart/<slug:name>/'`         | DJESiteDetailView      | dje_detail        |
+| 关于页面                        | `'about/'`                     | DJESiteAboutView       | dje_about         |
+| 设置页面                        | `settings/`                    | DJESiteSettingsView    | dje_settings      |
+| **django_echarts.ajax_echarts** |                                |                        |                   |
+| 图表options数据                 | `'chart/<slug:name>/options/'` | DJSiteChartOptionsView | dje_chart_options |
+| **django_echarts.geojson**      |                                |                        |                   |
+| geojson数据                     | `geojson/<str:geojson_name>`   | GeojsonDataView        | dje_geojson       |
+
+1. 视图类可以通过 `DJESite.register_view` 替换为自己的视图类。
+1. 后端视图类指的是返回 `TemplateResponse`的视图类，前端视图类指的是返回 `JsonResponse` 的视图类。
+
+## Starter网站架构
 
 网站可视化提供了一种用户友好的前台界面（和django-admin后台管理界面相对应）。主要由以下几个页面组成：
 
@@ -15,21 +41,98 @@
 | 关于页面 | 显示基本信息                                             | DJESiteAboutView       |      |
 | 设置页面 | 编辑部分设置项                                           | DJESiteSettingsView    |      |
 
-## 路由与视图
 
-DJESite 内置包含下列路由，均定义在 `DJESite.urls` 属性：
 
-| 功能页面    | 路由                           | 视图类                 | 视图类型 | 视图名称          |
-| ----------- | ------------------------------ | ---------------------- | -------- | ----------------- |
-| 首页        | `''`                           | DJESiteHomeView        | 前端     | dje_home          |
-| 列表页面    | `'list/'`                      | DJESiteListView        | 前端     | dje_list          |
-| 图表页面    | `'chart/<slug:name>/'`         | DJESiteDetailView      | 前端     | dje_detail        |
-| 图表页面    | `'chart/<slug:name>/options/'` | DJSiteChartOptionsView | 后端     | dje_chart_options |
-| 关于页面    | `'about/'`                     | DJESiteAboutView       | 前端     | dje_about         |
-| 设置页面    | `settings/`                    | DJESiteSettingsView    | 后端     | dje_settings      |
-| geojson数据 | `geojson/<str:geojson_name>`   | GeojsonDataView        | 前端     | dje_geojson       |
+## 站点对象DJESite
 
-注：后端视图类指的是返回 `TemplateResponse`的视图类，前端视图类指的是返回 `JsonResponse` 的视图类。
+### 构造函数
+
+```python
+class DJESite(site_title: str, opts: Optional[SiteOpts] = None)
+```
+
+参数可传入标题和配置类，如果未指定配置对象，则采用默认配置。
+
+### opts
+
+属性。返回配置对象。
+
+### urls
+
+属性。路由列表。需使用 `include` 挂载到项目主路由模块。
+
+### register_view
+
+使用自己视图类替换现有内置视图。
+
+### add_left_link
+
+添加到左侧导航栏。
+
+```python
+# 添加为一级菜单
+site_obj.add_left_link(item=LinkItem(...)) 
+
+# 在一级菜单“Menu1”之下添加二级菜单
+site_obj.add_left_link(item=LinkItem(...), menu_title='Menu1') 
+```
+
+### add_footer_link
+
+添加底部链接。
+
+```python
+site_obj.add_footer_link(item=LinkItem(...)) 
+```
+
+### add_widgets
+
+添加组件。
+
+### register_chart
+
+函数，可作为装饰器。注册一个图表。
+
+### register_html_widget
+
+函数，可作为装饰器。注册一个HTML组件。
+
+### register_collection
+
+函数，可作为装饰器。注册合辑页面。
+
+### extend_urlpatterns
+
+新增自定义的视图路由配置。确保在挂载到项目主路由模块之前调用。
+
+## 站点配置
+
+
+
+```python
+@dataclass
+class SiteOpts:
+    """The opts for DJESite."""
+    list_layout: Literal['grid', 'list'] = 'grid'
+    paginate_by: Optional[int] = 0
+    nav_top_fixed: bool = False
+    detail_tags_position: Literal['none', 'top', 'bottom'] = 'top'
+    detail_sidebar_shown: bool = True
+    nav_shown_pages: List = field(default_factory=lambda: ['home'])
+```
+
+配置项如下：
+
+| 参数                 | 页面   | 描述                 |
+| -------------------- | ------ | -------------------- |
+| nav_top_fixed        | 总体   | 是否固定顶部导航栏   |
+| nav_shown_pages      | 总体   | 导航栏默认显示的页面 |
+| list_layout          | 列表页 | 每项的布局           |
+| paginate_by          | 列表页 | 每页的项目数目       |
+| detail_tags_position | 图表页 | 标签位置             |
+| detail_sidebar_shown | 图标页 | 是否显示左侧导航栏   |
+
+
 
 ## 视图类
 
@@ -59,14 +162,29 @@ class MyView(DJESiteBackendView):
 ### DJESiteBackendView
 
 ```python
-class DJESiteBackendView:
+class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, View):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         pass
 ```
 
 **dje_init_page_context**
 
-实现基于 DJESite的模板渲染。
+已废弃。实现基于 DJESite的模板渲染。
+
+目前可以按照 `TemplateView` 方式自定义自己的视图类。
+
+```python
+class MyPageView(DJESiteBackendView):
+    
+    template_name = 'mypage.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['name'] = 'John'
+        return context
+```
+
+
 
 ### DJESiteAjaxView
 
@@ -88,22 +206,7 @@ class DJESiteAjaxView(View):
 - 可以通过 `kwargs.get('site')` 获取当前绑定的DJESite对象。
 - 直接返回 list 或者 dict 对象即可，无需直接返回 `JSONResponse`。
 
-### DJESite
 
-```python
-class DJESite:
-    def dje_get_current_theme(self, request, *args, **kwargs) -> Theme:
-        """Get the theme for this request."""
-        return self.theme
-
-    def dje_get_urls(self) -> List:
-        """Custom you url routes here."""
-        pass
-```
-
-**dje_get_urls**
-
-返回自定义的视图路由配置。
 
 ## 模板及其变量
 

@@ -46,16 +46,29 @@ django_echarts.templatetags.echarts.dw_widget(context, widget, **kwargs)
 
 ```html
 {% dw_widget row_container %}
-{% dw_widget chart  width="100%" height="700px" %}
+{% dw_widget chart width="100%" height="700px" %}
 ```
 
 可支持的参数：
 
-| 参数   | 类型                   | 描述                                 |
-| ------ | ---------------------- | ------------------------------------ |
-| width  | Union[int, float, str] | 宽度，仅适用于 pyecharts.charts.Base |
-| height | Union[int, float, str] | 高度，仅适用于 pyecharts.charts.Base |
-| class_ | str                    | 仅适用于LinkItem/Menu                |
+| 参数   | 类型                   | 描述                                                         |
+| ------ | ---------------------- | ------------------------------------------------------------ |
+| width  | Union[int, float, str] | 宽度，仅适用于 pyecharts.charts.Base                         |
+| height | Union[int, float, str] | 高度，仅适用于 pyecharts.charts.Base                         |
+| class_ | str                    | 仅适用于LinkItem/Menu                                        |
+| tpl    | str                    | 模板文件，仅适用于 HTMLBase。默认为 *widgets/{widget_name}.html* |
+
+当widget为None（不包括0, ''等空值），`dw_widget` 将输出空字符串。
+
+```html
+# 直接使用即可
+{% dw_widget widget %}
+
+# 而不必使用if判断
+{% if widget %}
+  {% dw_widget widget %}
+{% endif %}
+```
 
 ### echarts_container
 

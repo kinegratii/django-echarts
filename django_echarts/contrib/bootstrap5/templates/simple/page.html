@@ -1,0 +1,18 @@
+{% load echarts %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    {% block  include_css %}
+        {% theme_css %}
+    {% endblock %}
+</head>
+<body>
+{% dw_widget container_obj %}
+{% theme_js %}
+{% echarts_js_dependencies container_obj %}
+{% echarts_js_content container_obj %}
+</body>
+</html>

@@ -67,7 +67,7 @@ wc = WidgetCollection(
 
 > WidgetCollection.add_chart_widget(self, chart_name: str, layout: str = 'l8')
 
-`WdidgetCollection` 提供了 `pack_*` 方法用于添加组件，函数将参数的组件使用 `row` 类（一行12列）进行包裹。
+`WdidgetCollection` 提供了 `add_*` 方法用于添加组件，函数将参数的组件使用 `row` 类（一行12列）进行包裹。
 
 ```python
 # 添加名为my_first的图表和对应的信息卡组件，以8:4方式显示
