@@ -33,7 +33,7 @@ nav:
     - 模板标签库: reference/tags.md
     - 视图和模板: reference/views_and_templates.md
     - 命令行工具: reference/commands.md
-    - 体系设计: reference/system_design.md
+    - 设计与实现: reference/system_design.md
   - 文章:
     - 新的页面功能: posts/new_page_feature.md
     - geojson地图: posts/use_custom_geojson.md

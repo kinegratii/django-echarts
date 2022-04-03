@@ -46,7 +46,7 @@ class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, V
 
     def get(self, request, *args, **kwargs):
         site = SiteInjectMixin.get_site_object()
-        context = self.get_context_data(site=site, **kwargs)
+        context = self.get_context_data(site=site, **kwargs)  # TODO ? DJEAbortException in get_context_data
         try:
             template_name = self.dje_init_page_context(context=context, site=site)
             if isinstance(template_name, dict):

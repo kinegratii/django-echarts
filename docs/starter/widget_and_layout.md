@@ -385,28 +385,27 @@ rc.add_widget(c2)
 
 ![row_container_demo](../images/row_container_demo.png)
 
-## 新的组件
+## 自定义组件
 
-django-echarts 提供了创建新组件。
+django-echarts 提供了创建新的自定义组件的方法。
 
 **创建组件类**
 
 创建组件类。继承自 `HTMLBase` 。
 
 ```python
-class MyWidget(HTMLBase):
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+class SolarDateWidget(HTMLBase):
+    def __init__(self, day:date):
+        self.day = day
 ```
 
 **模板文件**
 
-模板文件位置位于 *widgets/{widget_name}.html* 。这里是 *widgets/my_widget.html* 。（类名称的蛇形命名形式）
+模板文件位置位于 *widgets/{widget_name}.html* 。这里是 *widgets/solar_date_widget.html* 。（类名称的蛇形命名形式）
 
 ```html
 <div>
-    {{ widget.x}},{{ widget.y }}
+    {{ widget.day.year}}年{{ widget.day.month }}月{{ widget.day.day }}日
 </div>
 ```
 

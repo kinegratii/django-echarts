@@ -25,7 +25,9 @@ DJANGO_ECHARTS = DJEOpts(
 )
 ```
 
-## 依赖项
+## 配置选项 DJEOpts
+
+### 依赖项
 
 ```python
 DJEOpts.echarts_version: str = '4.8.0'
@@ -35,11 +37,9 @@ DJEOpts.dep2url: Dict[str, str]
 
 关于依赖项的配置参见 “依赖项和静态文件” 一章。
 
-## 图表渲染配置
+### 渲染引擎
 
 这些配置默认不提供有效值，由各图表对象自行设置。如果这些配置有设置，则使用该配置覆盖各图表设置。
-
-### 渲染引擎
 
 ```python
 DJEOpts.render:str = ''
@@ -57,7 +57,7 @@ django-echarts 支持 echarts 主题功能，为了减少主题资源加载，�
 - 不会请求任何theme对应的javascript文件
 - 前端 `echarts.init` 函数不传入任何主题参数，即使 python代码`pycharts.options.InitOpts` 传入了 `theme` 参数
 
-## 脚手架
+
 
 ### 主题名称
 
@@ -101,5 +101,112 @@ DJANGO_ECHARTS = {
 }
 ```
 
-在使用按照图表下载依赖项时需要设置此项功能。
+## 全局配置访问入口 SettingsStore
+
+模块变量 `django_echarts.conf.DJANGO_ECHARTS_SETTINGS` 是项目配置的访问入口，是一个 `SettingsStore` 类实例。
+
+```python
+from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
+print(DJANGO_ECHARTS_SETTINGS.opts.dms_repo)
+```
+
+不正确的用法
+
+```python
+from django.conf import settings
+print(settings.DJANGO_ECHARTS['dms_repo'])
+```
+
+### opts
+
+属性，类型 `DJEOpts`。运行所使用的配置，由用户自定义和默认配置合并而成。
+
+### dependency_manager
+
+属性，类型 `DependencyManager`。 依赖项管理接口类。
+
+### theme_manager
+
+属性，类型 `ThemeManager`。主题管理接口类。
+
+### theme
+
+属性，类型 `Theme`。 当前所使用的主题。
+
+### resolve_url
+
+```python
+def SettingsStore.resolve_url(dep_name:str, repo_name:Optional[str]=None)->str
+```
+
+实例方法。获取某个依赖项的实际url地址。
+
+### get_site_obj
+
+实例方法。根据 `DJEOpts.site_class` 获取对应的站点对象。
+
+### switch_palette
+
+```python
+def SettingsStore.switch_palette(self, theme_label: str) -> Theme
+```
+
+实例方法。切换主题，修改 `SettingsStore.theme` 值。
+
+## 依赖项接口类 DependencyManager
+
+使用 `DJANGO_ECHARTS_SETTINGS.dependency_manager` 获取项目的依赖项管理访问入口。
+
+## 主题接口类 ThemeManager
+
+使用 `DJANGO_ECHARTS_SETTINGS.theme_manager` 获取项目的主题管理访问入口。
+
+### create_from_module
+
+类方法，创建器函数。
+
+### available_palettes
+
+属性，类型 `list`。当前主题可用的调色。
+
+```python
+available_palettes = ['bootstrap5', 'bootstrap5.yeti', ...]
+```
+
+### create_theme
+
+实例方法。根据设置创建 `Theme` 对象。
+
+```python
+tms = ThemeManager.create_from_module('django_echarts.contrib.bootstrap5')
+theme = tms.create_theme('bootstrap5.yeti')
+```
+
+### table_css
+
+实例方法，返回表格的css类。
+
+## 主题对象 Theme
+
+由 `ThemeManager` 创建。
+
+### 属性列表
+
+一个主题对象由以下三个参数唯一确定。
+
+| 属性          | 类型 | 描述                           |
+| ------------- | ---- | ------------------------------ |
+| name          | str  | 主题名称，如bootstrap5。       |
+| theme_palette | str  | 主题调色，如 bootstrap5.yeti。 |
+| is_local      | bool | 是否本地主题。                 |
+
+字符串表示法如 `{theme}.{palette}(#local)`，示例：
+
+```
+bootstrap5
+bootstrap5.yeti
+bootstrap5#local
+bootstrap5.yeti#local
+
+```
 

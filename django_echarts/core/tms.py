@@ -77,7 +77,7 @@ class Theme:
         new_theme = Theme(self.theme, self.theme_palette, is_local=True)
         new_theme.cns = self.cns
         for name, url in self._url_dic.items():
-            new_theme.set_file_url(self._localize_url(url)[1], name)
+            new_theme.set_file_url(self._localize_url(name)[1], name)
         return new_theme
 
     def list_staticfiles(self):
@@ -168,6 +168,6 @@ class ThemeManager:
         return [self.theme_name] + [f'{self.theme_name}.{p}' for p in self._available_palettes]
 
     @classmethod
-    def create_from_config_module(cls, theme_app: str, d2u: dict = None):
+    def create_from_module(cls, theme_app: str, d2u: dict = None):
         theme_app_config = module2dict(f'{theme_app}.config')
         return cls(theme_app_config, d2u)

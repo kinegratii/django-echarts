@@ -51,19 +51,6 @@ def d2f(dep_name: str):
         return f'{dep_name}.js'
 
 
-def _parse_val(value: str):
-    if value.startswith('@'):
-        return value[1:], ''
-    else:
-        return '', value
-
-
-def _format_static_url(url: str, context: dict) -> str:
-    if '{STATIC_URL}' in url and 'STATIC_URL' not in context:
-        raise ValueError(f'Can not parse {url} without STATIC_URL value.')
-    return url.format(**context)
-
-
 class DependencyManager:
     def __init__(self, *, context: dict = None, repo_name: str = None):
         self._context = context or {}

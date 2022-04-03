@@ -65,6 +65,8 @@ def render_with_tpl(widget, **kwargs) -> SafeString:
         widget_name = camel2snake(widget.__class__.__name__)
         if widget_name in ('values_panel', 'named_charts'):
             widget_name = 'row_container'
+        elif widget_name == 'widget_collection':
+            widget_name = 'container'
         tpl_name = 'widgets/{}.html'.format(widget_name)
     tpl = get_template(tpl_name)
     return SafeString(tpl.render({'widget': widget}))

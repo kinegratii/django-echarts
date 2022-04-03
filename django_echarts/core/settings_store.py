@@ -1,11 +1,9 @@
-import os
 import warnings
 from dataclasses import dataclass, is_dataclass, field
 from typing import Optional, Dict, Union, Literal
 
 from borax.system import load_class
 from django.apps import apps
-from django.contrib.staticfiles import finders
 
 from .dms import DependencyManager
 from .tms import Theme, parse_theme_label, ThemeManager
@@ -91,7 +89,9 @@ class SettingsStore:
         self._dms.load_from_dep2url_dict(self._opts.dep2url)
 
         user_theme_label, user_theme_app = self._auto_get_theme_params()
-        self._tms = ThemeManager.create_from_config_module(theme_app=user_theme_app)
+        if not self._opts.theme_app:
+            self._opts.theme_app = user_theme_app
+        self._tms = ThemeManager.create_from_module(theme_app=user_theme_app)
 
         self._theme = self._tms.create_theme(user_theme_label)
 
@@ -154,22 +154,12 @@ class SettingsStore:
             theme_label = name_from_app
         return theme_label, theme_app
 
-    def create_theme(self, theme_label: str = None):
-        if theme_label is None:
-            theme_label = self._opts.theme_name
+    def create_theme(self, theme_label: str = None) -> Theme:
+        if not theme_label:
+            return self._theme
         theme_palette, theme_name, palette, is_local = parse_theme_label(theme_label)
         if self._opts.theme_app:
             theme_app = self._opts.theme_app
         else:
             theme_app = _THEME_NAME2APP_.get(theme_name)
         return self._tms.create_theme(theme_label, theme_app)
-
-    def get_geojson_path(self, name: str):
-        # STATIC_URL => path
-        # Ensure ajax /geojson/<name> success.
-        result = finders.find(f'geojson/{name}', all=False)
-        if result:
-            return result
-        g_dir = self._extra_settings.get('STATICFILES_DIRS', [])[0]
-        pa = os.path.join(str(g_dir), 'geojson', name)
-        return pa
