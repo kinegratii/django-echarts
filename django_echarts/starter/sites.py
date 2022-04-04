@@ -1,6 +1,6 @@
 import re
 from functools import wraps
-from typing import Optional, List, Dict, Literal, Type, Any, Union
+from typing import Optional, List, Dict, Type, Any, Union
 
 from borax.serialize import cjson
 from django.core.paginator import Paginator
@@ -318,30 +318,26 @@ class DJESite:
     def urls(self):
         """Return the URLPattern list for site entrypoint."""
         urls = [
-                   path('', self._view_dict['dje_home'].as_view(), name='dje_home'),
-                   path('list/', self._view_dict['dje_list'].as_view(), name='dje_list'),
-                   path('chart/<slug:name>/', self._view_dict['dje_chart_single'].as_view(), name='dje_chart_single'),
-                   path('chart/<slug:name>/options/', self._view_dict['dje_chart_options'].as_view(),
-                        name='dje_chart_options'),
-                   path('collection/', self._view_dict['dje_chart_collection'].as_view(),
-                        name='dje_chart_collection_all'),
-                   path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
-                        name='dje_chart_collection'),
-                   path('about/', self._view_dict['dje_about'].as_view(), name='dje_about'),
-                   path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings'),
+            path('', self._view_dict['dje_home'].as_view(), name='dje_home'),
+            path('list/', self._view_dict['dje_list'].as_view(), name='dje_list'),
+            path('chart/<slug:name>/', self._view_dict['dje_chart_single'].as_view(), name='dje_chart_single'),
+            path('chart/<slug:name>/options/', self._view_dict['dje_chart_options'].as_view(),
+                 name='dje_chart_options'),
+            path('collection/', self._view_dict['dje_chart_collection'].as_view(), name='dje_chart_collection_all'),
+            path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
+                 name='dje_chart_collection'),
+            path('about/', self._view_dict['dje_about'].as_view(), name='dje_about'),
+            path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings'),
 
-               ] + geo_urlpatterns + self._custom_urlpatterns
+        ]
+        urls += + geo_urlpatterns + self._custom_urlpatterns
         return urls
 
     def extend_urlpatterns(self, urlpatterns):
         self._custom_urlpatterns.extend(urlpatterns)
 
-    def register_view(
-            self,
-            view_name: Literal[
-                'dje_home', 'dje_list', 'dje_chart_single', 'dje_chart_collection', 'dje_about', 'dje_settings'],
-            view_class: Type[DJESiteBackendView]
-    ):
+    def register_view(self, view_name: str, view_class: Type[DJESiteBackendView]):
+        #  Literal['dje_home', 'dje_list', 'dje_chart_single', 'dje_chart_collection', 'dje_about', 'dje_settings']
         self._view_dict[view_name] = view_class
 
     # Init Widgets

@@ -4,13 +4,14 @@ from borax.htmls import HTMLString, html_tag
 from borax.strings import camel2snake
 from django.template import engines
 from django.template.loader import get_template
-from django.utils.html import SafeString
-from django_echarts.entities import (
-    ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase
-)
+from django.utils.safestring import SafeString
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
+
+from django_echarts.entities import (
+    ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase
+)
 
 
 def _to_css_length(val):

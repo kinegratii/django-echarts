@@ -20,7 +20,7 @@ class SettingsWithStaticUrlTestCase(unittest.TestCase):
                 'dep2url': {
                     'foo': 'https://foo.icc/foo.js',
                     'zzz': '#local',
-                    'err':'#err'
+                    'err': '#err'
                 }
             },
             extra_settings={

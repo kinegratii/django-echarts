@@ -1,6 +1,6 @@
 import warnings
 from dataclasses import dataclass, is_dataclass, field
-from typing import Optional, Dict, Union, Literal
+from typing import Optional, Dict, Union
 
 from borax.system import load_class
 from django.apps import apps
@@ -16,7 +16,7 @@ class DJEOpts:
     dep2url: Dict[str, str] = field(default_factory=dict)
     local_dir: str = ''
 
-    renderer: Literal['', 'svg', 'canvas'] = ''
+    renderer: str = ''  # Literal['', 'svg', 'canvas']
     enable_echarts_theme: bool = False
     echarts_theme: Union[bool, str] = False
 

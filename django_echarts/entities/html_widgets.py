@@ -1,6 +1,6 @@
 import uuid
 from datetime import date
-from typing import List, Union, Literal, Any
+from typing import List, Union, Any
 
 from borax.datasets.fetch import fetch
 
@@ -117,7 +117,8 @@ class ValueItem(HTMLBase):
     __slots__ = ['value', 'description', 'unit', 'catalog', 'arrow']
 
     def __init__(self, value: Any, description: str, unit: str = None, catalog: str = 'primary',
-                 arrow: Literal['up', 'down', ''] = ''):
+                 arrow: str = ''):
+        # arrow: Literal['up', 'down', '']
         self.value = str(value)
         self.description = description
         self.unit = unit or ''
@@ -132,7 +133,8 @@ class ValuesPanel(RowContainer):
         self.col_item_num = col_item_num
 
     def add(self, value: Any, description: str, unit: str = None, catalog: str = 'primary',
-            arrow: Literal['up', 'down', ''] = ''):
+            arrow: str = ''):
+        # arrow: Literal['up', 'down', '']
         item = ValueItem(value=value, description=description, unit=unit, catalog=catalog, arrow=arrow)
         self.add_widget(item)
         return self

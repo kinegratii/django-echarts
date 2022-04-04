@@ -1,6 +1,6 @@
 # django-echarts文档
 
-![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-echarts.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-echarts.svg)
+![django-echarts version](https://img.shields.io/pypi/v/django-echarts.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-echarts.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-echarts.svg) [![unittest](https://github.com/kinegratii/django-echarts/actions/workflows/unittest.yaml/badge.svg)](https://github.com/kinegratii/django-echarts/actions/workflows/unittest.yaml)
 
 
 > A visual site scaffold based on [pyecharts](https://github.com/pyecharts/pyecharts) and [Django](https://www.djangoproject.com). 

@@ -8,7 +8,8 @@ from typing import Union
 from borax.utils import chain_getattr
 from django import template
 from django.template.loader import render_to_string, get_template
-from django.utils.html import SafeString
+from django.utils.safestring import SafeString
+
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.entities import LinkItem, Menu
 from django_echarts.renders import render_widget, flat_chart, get_js_dependencies
