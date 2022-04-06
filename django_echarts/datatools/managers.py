@@ -1,7 +1,7 @@
 # coding=utf8
 
-from django.db import models
 from borax.datasets.fetch import fetch
+from django.db import models
 
 
 class AxisValuesQuerySet(models.QuerySet):

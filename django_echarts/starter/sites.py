@@ -17,6 +17,7 @@ from django_echarts.entities import (
 from django_echarts.geojson import geo_urlpatterns
 from django_echarts.stores.entity_factory import factory
 from django_echarts.utils.compat import get_elided_page_range
+from typing_extensions import Literal
 
 from .optstools import SiteOptsForm, SiteOpts
 
@@ -339,8 +340,12 @@ class DJESite:
     def extend_urlpatterns(self, urlpatterns):
         self._custom_urlpatterns.extend(urlpatterns)
 
-    def register_view(self, view_name: str, view_class: Type[DJESiteBackendView]):
-        #  Literal['dje_home', 'dje_list', 'dje_chart_single', 'dje_chart_collection', 'dje_about', 'dje_settings']
+    def register_view(
+            self,
+            view_name: Literal[
+                'dje_home', 'dje_list', 'dje_chart_single', 'dje_chart_collection', 'dje_about', 'dje_settings'],
+            view_class: Type[DJESiteBackendView]
+    ):
         self._view_dict[view_name] = view_class
 
     # Init Widgets

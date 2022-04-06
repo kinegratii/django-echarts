@@ -1,5 +1,6 @@
 from collections import defaultdict
 from typing import Dict, Optional, List, Tuple
+
 from .html_widgets import HTMLBase
 
 __all__ = ['ChartInfo', 'ChartInfoManagerMixin', 'LocalChartInfoManager']

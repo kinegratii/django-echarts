@@ -1,9 +1,10 @@
 import warnings
 from dataclasses import dataclass, is_dataclass, field
-from typing import Optional, Dict, Union
+from typing import Optional, Dict
 
 from borax.system import load_class
 from django.apps import apps
+from typing_extensions import Literal
 
 from .dms import DependencyManager
 from .tms import Theme, parse_theme_label, ThemeManager
@@ -16,7 +17,7 @@ class DJEOpts:
     dep2url: Dict[str, str] = field(default_factory=dict)
     local_dir: str = ''
 
-    renderer: str = ''  # Literal['', 'svg', 'canvas']
+    renderer: Literal['svg', 'canvas'] = 'canvas'
     echarts_theme: Optional[str] = None
 
     theme_name: Optional[str] = None

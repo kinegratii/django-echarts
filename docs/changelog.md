@@ -4,17 +4,15 @@
 
 [发布日志](/release-note/v051)
 
-- 重构底层逻辑，新增 `django_echarts.renders` 渲染层和 `django_echarts.stores` 组件存储层
 - 新增统一的 `dw_widget` 组件渲染标签函数
-- 重构  `WidgetGetterMixin` 接口
-- 新增 `DJESite.extend_urlpatterns` 函数，移除 `DJESite.dje_get_urls` 函数
-- 新增布局容器组件 `RowContainer` 
-- 新增文本组件 `Title`
 - 优化echarts依赖项解析逻辑
+- 新增echarts主题全局配置 `DJEOpts.echarts_theme`
+- 重构  `WidgetGetterMixin` 接口
+- 新增布局容器组件 `RowContainer` 、文本组件 `Title`
 - `ValuesPanel` 支持布局特性，移除 data / col_item_span 参数
 - 新增表格css函数，bootstrap_table_css 和 material_table_css
 - 重命名表格css函数
-- 新增echarts主题全局配置 `DJEOpts.echarts_theme`
+- 新增 `DJESite.extend_urlpatterns` 函数，移除 `DJESite.dje_get_urls` 函数
 - 命令 download / info 按图表不再需要设置 `site_class`
 - 新增 unittest 单元测试构建
 

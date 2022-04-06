@@ -47,7 +47,10 @@ setup(
     description='A site generator based on pyecharts and django.',
     classifiers=lib_classifiers,
     python_requires='>=3.7',
-    install_requires=['borax>=3.5.3'],
+    install_requires=[
+        'borax>=3.5.3',
+        'typing_extensions~=4.0'
+    ],
     long_description=long_description,
     long_description_content_type='text/markdown'
 )

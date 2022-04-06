@@ -2,17 +2,17 @@ from dataclasses import dataclass, field
 from typing import Optional, List
 
 from django import forms
-
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
+from typing_extensions import Literal
 
 
 @dataclass
 class SiteOpts:
     """The opts for DJESite."""
-    list_layout: str = 'grid'  # Literal['grid', 'list']
+    list_layout: Literal['grid', 'list'] = 'grid'
     paginate_by: Optional[int] = 0
     nav_top_fixed: bool = False
-    detail_tags_position: str = 'top'  # Literal['none', 'top', 'bottom']
+    detail_tags_position: Literal['none', 'top', 'bottom'] = 'top'
     detail_sidebar_shown: bool = True
     nav_shown_pages: List = field(default_factory=lambda: ['home'])
 

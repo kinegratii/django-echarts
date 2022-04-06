@@ -27,10 +27,20 @@ jobs:
           pip install django~=${{ matrix.django-version }}
           pip install borax>=3.5
           pip install pyecharts~=1.9
+          pip install typing_extensions~=4.0
           pip install flake8~=3.9
-      - name: Run Unittest
-        run: |
-          python -m unittest discover
+          pip install nose2~=0.10
       - name: Lint with flake8
         run: |
           flake8 django_echarts tests
+      - name: Test with pytest
+        run: |
+          nose2 --with-coverage --coverage django_echarts --coverage-report xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true

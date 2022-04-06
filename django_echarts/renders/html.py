@@ -1,17 +1,17 @@
 from functools import singledispatch
+from typing import Union
 
 from borax.htmls import HTMLString, html_tag
 from borax.strings import camel2snake
 from django.template import engines
 from django.template.loader import get_template
 from django.utils.safestring import SafeString
-from prettytable import PrettyTable
-from pyecharts.charts.base import Base
-from pyecharts.components.table import Table
-
 from django_echarts.entities import (
     ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase
 )
+from prettytable import PrettyTable
+from pyecharts.charts.base import Base
+from pyecharts.components.table import Table
 
 
 def _to_css_length(val):
@@ -23,7 +23,6 @@ def _to_css_length(val):
 
 @singledispatch
 def render_widget(widget, **kwargs) -> SafeString:
-    # python3.8+ use typing.Protocol
     if hasattr(widget, '__html__') and callable(widget.__html__):
         return widget.__html__()
     message = f'<div>Unknown widget type:{widget.__class__.__name__}</div>'
@@ -86,7 +85,7 @@ def render_table(widget, **kwargs) -> SafeString:
 
 @render_widget.register(LinkItem)
 @render_widget.register(Menu)
-def render_link(widget, **kwargs) -> SafeString:
+def render_link(widget, **kwargs) -> Union[SafeString, HTMLString]:
     context = kwargs.get('context')
     class_ = kwargs.get('class_')
     params = {'href': widget.url or 'javascript:;'}
