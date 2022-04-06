@@ -17,23 +17,18 @@ class DJEOpts:
     local_dir: str = ''
 
     renderer: str = ''  # Literal['', 'svg', 'canvas']
-    enable_echarts_theme: bool = False
-    echarts_theme: Union[bool, str] = False
+    echarts_theme: Optional[str] = None
 
     theme_name: Optional[str] = None
     theme_app: Optional[str] = None
     theme_d2u: Optional[Dict] = None
     site_class: Optional[str] = None
 
-    def get_echarts_theme(self, echarts_theme) -> str:
-        if self.echarts_theme is False:
-            return ''
-        elif self.echarts_theme is True:
-            return echarts_theme
-        elif isinstance(self.echarts_theme, str):
+    def get_echarts_theme(self, instance_theme) -> str:
+        if self.echarts_theme:
             return self.echarts_theme
         else:
-            return ''
+            return instance_theme
 
     @staticmethod
     def upgrade_dict(vals: dict):

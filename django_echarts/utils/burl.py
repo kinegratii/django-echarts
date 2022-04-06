@@ -8,10 +8,14 @@ class BUrl:
         self._query_params = parse_qs(self._query_string)
 
     def replace(self, name, value):
+        if name not in self._query_params:
+            self._query_params[name] = []
         self._query_params[name] = [value]
         return self
 
     def append(self, name, value):
+        if name not in self._query_params:
+            self._query_params[name] = []
         self._query_params[name].append(value)
         return self
 

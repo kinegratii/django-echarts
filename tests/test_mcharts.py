@@ -3,7 +3,6 @@
 Test Cases for NamedCharts
 """
 
-import sys
 import unittest
 from unittest.mock import MagicMock
 

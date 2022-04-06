@@ -33,7 +33,7 @@ def echarts_container(context, *echarts, **kwargs):
 
 @register.simple_tag(takes_context=True)
 def echarts_js_dependencies(context, *args):
-    dependencies = get_js_dependencies(args, enable_theme=DJANGO_ECHARTS_SETTINGS.opts.enable_echarts_theme)
+    dependencies = get_js_dependencies(args, global_theme=DJANGO_ECHARTS_SETTINGS.opts.echarts_theme)
     links = map(DJANGO_ECHARTS_SETTINGS.resolve_url, dependencies)
 
     return template.Template(
@@ -47,6 +47,7 @@ def build_echarts_initial_fragment(*args):
     for chart in chart_list:
         if hasattr(chart, '_is_geo_chart'):
             chart.is_geo_chart = chart._is_geo_chart
+        chart.dje_echarts_theme = DJANGO_ECHARTS_SETTINGS.opts.get_echarts_theme(chart.theme)
         geojson_url = chain_getattr(chart, 'geojson.url', '')
         geojson_name = chain_getattr(chart, 'geojson.map_name', '')
         structured_dic[(geojson_url, geojson_name)].append(chart)

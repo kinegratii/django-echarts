@@ -23,7 +23,10 @@ class LazyDict:
 
     def register(self, function=None, name: str = None, **kwargs):
         def decorator(func):
-            cname = name or func.__name__
+            if not name and hasattr(func, '__name__'):
+                cname = func.__name__
+            else:
+                cname = name
             self.func_register(func, cname, **kwargs)
             return func
 

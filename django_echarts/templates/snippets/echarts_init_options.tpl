@@ -5,7 +5,7 @@ $.getJSON("{{ geojson_url }}").done(function(mapdata){
     {% endif %}
     {% for c in chart_list %}
     var chart_{{ c.chart_id }} = echarts.init(
-        document.getElementById('{{ c.chart_id }}'), '{{ c.theme }}', {renderer: '{{ c.renderer }}'});
+        document.getElementById('{{ c.chart_id }}'), '{{ c.dje_echarts_theme }}', {renderer: '{{ c.renderer }}'});
     {% for js in c.js_functions.items %}
         {{ js|safe }}
     {% endfor %}

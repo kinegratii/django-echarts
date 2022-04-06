@@ -1,6 +1,6 @@
 # 更新日志
 
-### v0.5.1 - 
+### v0.5.1 - （20220423）
 
 [发布日志](/release-note/v051)
 
@@ -14,6 +14,7 @@
 - `ValuesPanel` 支持布局特性，移除 data / col_item_span 参数
 - 新增表格css函数，bootstrap_table_css 和 material_table_css
 - 重命名表格css函数
+- 新增echarts主题全局配置 `DJEOpts.echarts_theme`
 - 命令 download / info 按图表不再需要设置 `site_class`
 - 新增 unittest 单元测试构建
 

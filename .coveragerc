@@ -1,0 +1,5 @@
+[run]
+omit = tests/*,django_echarts/views.py,django_echarts/starter/*,django_echarts/management/*,django_echarts/utils/compat.py,django_echarts\geojson.py
+
+[report]
+omit = tests/*,django_echarts/views.py,django_echarts/starter/*,django_echarts/management/*,django_echarts/utils/compat.py,django_echarts\geojson.py

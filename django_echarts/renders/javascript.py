@@ -3,6 +3,7 @@ from functools import singledispatch
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
+from pyecharts.globals import ThemeType
 from django_echarts.entities import (NamedCharts, ValuesPanel, RowContainer, Container, WidgetCollection, HTMLBase)
 
 __all__ = ['flat_chart', 'get_js_dependencies']
@@ -50,7 +51,7 @@ _ECHARTS_LIB_NAMES = [
 ]
 
 
-def get_js_dependencies(widget, enable_theme=False):
+def get_js_dependencies(widget, global_theme: str = None):
     dep_list = []
     widget_list = []
     if isinstance(widget, (list, tuple)):
@@ -82,7 +83,9 @@ def get_js_dependencies(widget, enable_theme=False):
                     front_items.append(dep)
                 else:
                     dep_list.append(dep)
-        if enable_theme and hasattr(chart, 'theme') and not chart.theme not in dep_list:
-            dep_list.append(chart.theme)
+        if hasattr(chart, 'theme'):
+            theme_dep = global_theme or chart.theme
+            if theme_dep not in ThemeType.BUILTIN_THEMES and theme_dep not in dep_list:
+                dep_list.append(theme_dep)
     front_items.sort(key=lambda x: _ECHARTS_LIB_NAMES.index(x))
     return front_items + dep_list

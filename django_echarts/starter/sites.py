@@ -146,7 +146,8 @@ class DJESiteFrontendView(SiteInjectMixin, View):
 class DJESiteHomeView(DJESiteBackendView):
     template_name = 'home.html'
 
-    def dje_init_page_context(self, context, site: 'DJESite'):
+    def get_context_data(self, **kwargs):
+        context = super(DJESiteHomeView, self).get_context_data(**kwargs)
         context['jumbotron'] = factory.get_html_widget(WidgetRefs.home_jumbotron)
         chart_obj, _, info = factory.get_chart_and_info(WidgetRefs.home_jumbotron_chart)
         if chart_obj:
@@ -155,6 +156,7 @@ class DJESiteHomeView(DJESiteBackendView):
         context[WidgetRefs.home_values_panel] = factory.get_html_widget(WidgetRefs.home_values_panel)
         context['top_chart_info_list'] = factory.chart_info_manager.query_chart_info_list(with_top=True)
         context['layout_tpl'] = 'items_grid.html'
+        return context
 
 
 class DJESiteListView(DJESiteBackendView):
@@ -226,10 +228,11 @@ class DJESiteSettingsView(FormMixin, DJESiteBackendView):
     template_name = 'settings.html'
     success_url = reverse_lazy('dje_settings')  # self page
 
-    def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         form_obj = self.get_form()
         context['form'] = form_obj
-        return
+        return context
 
     def get_initial(self):
         opts = SiteInjectMixin.get_site_object().opts
@@ -330,7 +333,7 @@ class DJESite:
             path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings'),
 
         ]
-        urls += + geo_urlpatterns + self._custom_urlpatterns
+        urls += geo_urlpatterns + self._custom_urlpatterns
         return urls
 
     def extend_urlpatterns(self, urlpatterns):

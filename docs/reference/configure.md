@@ -42,22 +42,21 @@ DJEOpts.dep2url: Dict[str, str]
 这些配置默认不提供有效值，由各图表对象自行设置。如果这些配置有设置，则使用该配置覆盖各图表设置。
 
 ```python
-DJEOpts.render:str = ''
+DJEOpts.render:str = 'canvas'
 ```
 
-### ECharts主题
+可选值：canvas 或 svg。
+
+### Echarts主题
 
 ```python
-DJEOpts.enable_echarts_theme:bool = False
+DJEOpts.echarts_theme:Option[str] = None
 ```
 
-django-echarts 支持 echarts 主题功能，为了减少主题资源加载，默认情况下不启用该功能。
+echarts主题全局性设置。
 
-- 全局配置：`enable_echarts_theme = False`
-- 不会请求任何theme对应的javascript文件
-- 前端 `echarts.init` 函数不传入任何主题参数，即使 python代码`pycharts.options.InitOpts` 传入了 `theme` 参数
-
-
+- 设置为`None`，使用各图表单独的设置。
+- 设置为不为空的字符串，使用同一的设置。
 
 ### 主题名称
 
