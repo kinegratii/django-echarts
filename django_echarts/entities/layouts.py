@@ -41,7 +41,7 @@ TYPE_LAYOUT_OPTS = Union[int, List[int], str]
 
 @singledispatch
 def any2layout(obj) -> LayoutOpts:
-    pass
+    raise TypeError('Can not parse LayOpts.')
 
 
 @any2layout.register(LayoutOpts)

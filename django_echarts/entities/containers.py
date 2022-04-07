@@ -101,3 +101,6 @@ class RowContainer(ContainerBase):
             if lc.span == 0:
                 lc.span = col_span
             lc.ww = '100%'
+
+    def get_spans(self) -> Tuple[int]:
+        return tuple([lc.span for lc in self._layouts.values()])

@@ -1,5 +1,35 @@
 [run]
-omit = tests/*,django_echarts/views.py,django_echarts/starter/*,django_echarts/management/*,django_echarts/utils/compat.py,django_echarts\geojson.py
+omit =
+    tests/*
+    django_echarts/views.py
+    django_echarts/ajax_echarts.py
+    django_echarts/starter/*
+    django_echarts/management/*
+    django_echarts/utils/compat.py
+    django_echarts/geojson.py
+    django_echarts/utils/downloader.py
 
 [report]
-omit = tests/*,django_echarts/views.py,django_echarts/starter/*,django_echarts/management/*,django_echarts/utils/compat.py,django_echarts\geojson.py
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    def __eq__
+    def __hash__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod
+omit =
+    tests/*
+    django_echarts/views.py
+    django_echarts/ajax_echarts.py
+    django_echarts/starter/*
+    django_echarts/management/*
+    django_echarts/utils/compat.py
+    django_echarts/geojson.py
+    django_echarts/utils/downloader.py

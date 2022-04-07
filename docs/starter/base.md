@@ -15,6 +15,8 @@ django-echarts 不会将 django 和 pyecharts 作为显式依赖库（虽然在�
 在 Django 项目中，配置模块位于 *project.settings* 。和 django-echarts 有关的配置如下：
 
 ```python
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 INSTALLED_APPS = [
     #...
     'django_echarts',
@@ -120,7 +122,7 @@ def mychart():
     return bar
 ```
 
-当然也可以携带一些参数，这些参数通常和 `ChartInfo` 类参数意义相同。
+当然也可以携带一些参数，这些参数用于构建对应的 `ChartInfo` 对象。
 
 ```python
 @site_obj.register_chart(description='词云示例', catalog='示例一')
@@ -180,10 +182,6 @@ def mychart():
 2. 使用特殊标识 'self' 表示显示为一级菜单
 3. 使用特殊标识 'none' 表示不显示
 
-
-
-## 注册HTML组件
-
 ### 注册组件
 
 > DJESite.register_html_widget(function=None, *, name: str = None)
@@ -207,17 +205,6 @@ def this_month_panel():
     item = ValueItem(access_total, f'{today.year}年{today.month}月访问量', '人次')
     number_p.add_widget(item)
     return number_p
-```
-
-### 获取组件
-
-> DJESite.html_widgets.get(name:str)
-
-在注册组件后，可以通过标识获取到这个组件，如果是装饰器方式注册，每次将重新生成新的组件对象。
-
-```python
-number_p = site_obj.html_widgets.get('this_month_panel')  # 每次重新生成新的 ValuesPanel 对象。
-print(number_p[0].description)  # '2022年1月访问量'
 ```
 
 ## 网站公共组件
