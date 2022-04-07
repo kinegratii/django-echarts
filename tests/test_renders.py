@@ -95,4 +95,3 @@ class TemplateTagsTestCase(unittest.TestCase):
         template_obj2 = self.django_engine.from_string('{% load echarts %}{% echarts_js_content_wrap widget %}')
         result2 = template_obj2.render({'widget': bar})
         self.assertIn('getElementById', result2)
-

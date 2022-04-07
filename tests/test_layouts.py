@@ -51,5 +51,3 @@ class RowContainerTestCase(unittest.TestCase):
         self.assertTupleEqual((4, 8), rc.get_spans())
         rc.set_spans(6)
         self.assertTupleEqual((6, 6), rc.get_spans())
-
-
