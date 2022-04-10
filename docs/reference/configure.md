@@ -2,10 +2,7 @@
 
 ## 定义
 
-django-echarts 遵循统一配置的原则，所有的配置均定义在项目配置模块一个名为 `settings.DJANGO_ECHARTS` 变量中，该变量可以指向
-
-- 一个`dict`对象
-- `django_echarts.core.settings_store.DJEOpts` 对象
+django-echarts 遵循统一配置的原则，所有的配置均定义在项目配置模块一个名为 `settings.DJANGO_ECHARTS` 变量中，该变量指向一个`dict`对象。
 
 例子( *settings.py*)
 
@@ -14,15 +11,6 @@ DJANGO_ECHARTS = {
     'echarts_version': '4.8.0',
     'dms_repo': 'pyecharts'
 }
-
-# 或者
-
-from django_echarts.core.dms import DJEOpts
-
-DJANGO_ECHARTS = DJEOpts(
-    echarts_version='4.8.0',
-    dms_repo='pyecharts',
-)
 ```
 
 ## 配置选项 DJEOpts
