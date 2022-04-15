@@ -59,11 +59,14 @@ _THEME_NAME2APP_ = {
 
 # SettingsStore -> DependencyManage -> DJEOpts
 class SettingsStore:
+    """A settings entry for dms and tms."""
 
     def __init__(self, *, echarts_settings=None, extra_settings=None, **kwargs):
         # Pre check settings
 
         self._extra_settings = extra_settings or {}
+        self.static_url = kwargs.get('static_url', '/static/')
+        self.staticfiles_dir = kwargs.get('staticfiles_dir', '')
 
         if isinstance(echarts_settings, dict):
             new_opts = DJEOpts.upgrade_dict(echarts_settings)
@@ -77,17 +80,19 @@ class SettingsStore:
 
         context = {'echarts_version': self._opts.echarts_version}
         if 'STATIC_URL' in self._extra_settings:
-            context.update({'STATIC_URL': self._extra_settings['STATIC_URL']})
+            context.update({'STATIC_URL': self.static_url})
         self._dms = DependencyManager.create_default(
             context=context,
             repo_name=self._opts.dms_repo
         )
         self._dms.load_from_dep2url_dict(self._opts.dep2url)
+        self._dms.set_localize_opts(static_url=self.static_url, staticfiles_dir=self.staticfiles_dir)
 
         user_theme_label, user_theme_app = self._auto_get_theme_params()
         if not self._opts.theme_app:
             self._opts.theme_app = user_theme_app
-        self._tms = ThemeManager.create_from_module(theme_app=user_theme_app)
+        self._tms = ThemeManager.create_from_module(theme_app=user_theme_app, d2u=self._opts.theme_d2u)
+        self._tms.set_localize_opts(static_url=self.static_url, staticfiles_dir=self.staticfiles_dir)
 
         self._theme = self._tms.create_theme(user_theme_label)
 
@@ -109,16 +114,13 @@ class SettingsStore:
     def theme(self) -> Theme:
         return self._theme
 
-    def resolve_url(self, dep_name: str, repo_name: Optional[str] = None):
+    def resolve_url(self, dep_name: str, repo_name: Optional[str] = None) -> str:
         return self._dms.resolve_url(dep_name, repo_name)
 
     def generate_js_link(self, js_name, js_host=None, **kwargs):
         warnings.warn('The method SettingsStore.generate_js_link is deprecated, use SettingsStore.resolve_url instead.',
                       DeprecationWarning, stacklevel=2)
         return self._dms.resolve_url(dep_name=js_name, repo_name=js_host)
-
-    def get(self, key, default=None):
-        return getattr(self._opts, key, default)
 
     def get_site_obj(self):
         if not self._opts.site_class:

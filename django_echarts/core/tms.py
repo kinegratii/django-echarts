@@ -2,6 +2,8 @@ import importlib
 from collections import OrderedDict
 from typing import List, Dict
 
+from .localfiles import LocalFilesMixin, DownloaderResource
+
 __all__ = ['Theme', 'parse_theme_label', 'ThemeManager']
 
 _ORDERED_FIELDS_ = ['base_css', 'main_css', 'palette_css', 'font_css', 'jquery_js', 'main_js']
@@ -57,30 +59,11 @@ class Theme:
     def set_cns(self, cns):
         self.cns.update(cns)
 
-    def iter_local_paths(self):
-        for name in self._url_dic.keys():
-            url, local_path = self._localize_url(name)
-            yield name, url, local_path
-
-    def _localize_url(self, name: str, as_url=False):
-        url = self._url_dic[name]
-        if name == 'palette_css':
-            local_path = '/'.join([self.name, self.theme_palette]) + '.min.css'
-        else:
-            filepath = url.rsplit('/')[-1]
-            local_path = self.name + '/' + filepath
-        if as_url:
-            local_path = '/static/' + local_path
-        return url, local_path
-
-    def local_theme(self) -> 'Theme':
-        new_theme = Theme(self.theme, self.theme_palette, is_local=True)
-        new_theme.cns = self.cns
+    def iter_name_and_url(self):
         for name, url in self._url_dic.items():
-            new_theme.set_file_url(self._localize_url(name)[1], name)
-        return new_theme
+            yield name, url
 
-    def list_staticfiles(self):
+    def list_urls(self):
         yield from self.css_urls
         yield from self.js_urls
 
@@ -95,7 +78,7 @@ def module2dict(module_path: str) -> dict:
     return settings_dict
 
 
-class ThemeManager:
+class ThemeManager(LocalFilesMixin):
     def __init__(self, theme_app_config: dict = None, file2url: Dict = None):
         self.theme_app_config = theme_app_config or {}
         self.theme_name = theme_app_config.get('NAME')
@@ -123,9 +106,9 @@ class ThemeManager:
                 theme_obj.set_file_url(_url.format(palette=palette), 'palette_css')
 
         for f in _ORDERED_FIELDS_:
-            val = static_dic.get(f)
+            val = self.get_custom_url(theme_palette, f)
             if not val:
-                val = self.get_custom_url(theme_palette, f)
+                val = static_dic.get(f)
             if not val:
                 continue
             if f == 'main_css':
@@ -163,11 +146,38 @@ class ThemeManager:
         _get('size', size)
         return ' '.join(cns)
 
+    def url2filename(self, url, **kwargs) -> str:
+        name = kwargs.get('name')
+        theme = kwargs.get('theme')  # type:Theme
+        if name == 'palette_css':
+            filename = '/'.join([theme.name, theme.theme_palette]) + '.min.css'
+        else:
+            filepath = url.rsplit('/')[-1]
+            filename = theme.name + '/' + filepath
+        return filename
+
+    def localize_theme(self, theme: Theme) -> Theme:
+        new_theme = Theme(theme.theme, theme.theme_palette, is_local=True)
+        new_theme.cns = theme.cns
+        for name, url in theme.iter_name_and_url():
+            filename = self.url2filename(url, name=name, theme=theme)
+            new_theme.set_file_url(self.localize_url(filename)[0], name)
+        return new_theme
+
+    def get_download_resources(self, theme: Theme) -> List[DownloaderResource]:
+        resources = []
+        for name, url in theme.iter_name_and_url():
+            filename = self.url2filename(url, name=name, theme=theme)
+            local_ref_url, local_path = self.localize_url(filename)
+            resources.append(DownloaderResource(url, local_ref_url, local_path, label='', catalog=name))
+        return resources
+
     @property
     def available_palettes(self) -> List[str]:
         return [self.theme_name] + [f'{self.theme_name}.{p}' for p in self._available_palettes]
 
     @classmethod
     def create_from_module(cls, theme_app: str, d2u: dict = None):
+        """Create a theme manager with config module."""
         theme_app_config = module2dict(f'{theme_app}.config')
         return cls(theme_app_config, d2u)

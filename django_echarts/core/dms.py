@@ -2,9 +2,10 @@
 """
 A Implement that you can use host name instead of its url.
 """
-from typing import Tuple
+from typing import Tuple, List
 
 from pyecharts.datasets import FILENAMES, EXTRA
+from .localfiles import LocalFilesMixin, DownloaderResource
 
 __all__ = ['DependencyManager']
 
@@ -51,7 +52,7 @@ def d2f(dep_name: str):
         return f'{dep_name}.js'
 
 
-class DependencyManager:
+class DependencyManager(LocalFilesMixin):
     def __init__(self, *, context: dict = None, repo_name: str = None):
         self._context = context or {}
         self._repo_dic = {}
@@ -87,11 +88,15 @@ class DependencyManager:
         url, _ = self._resolve_dep(dep_name, repo_name)
         return url
 
-    def iter_download_resources(self, dep_names: str, repo_name: str = None):
+    def get_download_resources(self, dep_names: List[str], repo_name: str = None) -> List[DownloaderResource]:
+        resources = []
         for dep_name in dep_names:
             url, filename = self._resolve_dep(dep_name, repo_name)
-            if filename:
-                yield dep_name, url, filename
+            local_ref_url, local_path = self.localize_url(filename)
+            resources.append(
+                DownloaderResource(url, local_ref_url, local_path, label=dep_name, catalog='Dependency')
+            )
+        return resources
 
     @classmethod
     def create_default(cls, context: dict = None, repo_name: str = None):
