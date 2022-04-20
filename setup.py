@@ -44,7 +44,7 @@ setup(
     license='MIT',
     author='kinegratii',
     author_email='kinegratii@gmail.com',
-    description='A site generator based on pyecharts and django.',
+    description='A visual site scaffold based on pyecharts and django.',
     classifiers=lib_classifiers,
     python_requires='>=3.7',
     install_requires=[

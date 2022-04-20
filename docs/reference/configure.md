@@ -169,6 +169,23 @@ tms = ThemeManager.create_from_module('django_echarts.contrib.bootstrap5')
 theme = tms.create_theme('bootstrap5.yeti')
 ```
 
+### localize_theme
+
+> Add in v0.5.2
+
+返回给定主题对应的本地主题。
+
+```python
+theme = tms.create_theme('bootstrap5')
+local_theme.localize_theme(theme)
+```
+
+### get_download_resources
+
+> Add in v0.5.2
+
+返回给定主题的文件下载信息。
+
 ### table_css
 
 实例方法，返回表格的css类。

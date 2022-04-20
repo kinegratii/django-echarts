@@ -157,6 +157,8 @@ class ThemeManager(LocalFilesMixin):
         return filename
 
     def localize_theme(self, theme: Theme) -> Theme:
+        if theme.is_local:
+            return theme
         new_theme = Theme(theme.theme, theme.theme_palette, is_local=True)
         new_theme.cns = theme.cns
         for name, url in theme.iter_name_and_url():

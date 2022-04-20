@@ -3,7 +3,8 @@ import unittest
 from borax.htmls import HTMLString
 from django import setup
 from django_echarts.entities import (
-    Title, LinkItem, ChartInfo, bootstrap_table_class, material_table_class, Message, ValueItem, RowContainer
+    Title, LinkItem, ChartInfo, bootstrap_table_class, material_table_class, Message, ValueItem, RowContainer,
+    ElementEntity
 )
 from django_echarts.renders import render_widget
 from pyecharts.charts import Bar
@@ -59,6 +60,12 @@ class RenderTestCase(unittest.TestCase):
         rc.add_widget(Message('xxF'))
         rc.set_spans(6)
         self.assertTupleEqual((6, 6), rc.get_spans())
+
+    def test_render_element_entity(self):
+        ee = ElementEntity('div', style_width='200px', style_height='100px')
+        html_str = render_widget(ee)
+        self.assertIn('width:200px', html_str)
+        self.assertIn('height:100px', html_str)
 
 
 class TemplateTagsTestCase(unittest.TestCase):

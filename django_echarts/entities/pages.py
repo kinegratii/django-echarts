@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from abc import abstractmethod
 from typing import List, Union, Tuple, Any, Optional
 
 from .articles import ChartInfo
@@ -7,14 +8,17 @@ from .layouts import LayoutOpts, TYPE_LAYOUT_OPTS, any2layout
 
 
 class WidgetGetterMixin:
+    @abstractmethod
     def get_chart_and_info(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
         """Return a pycharts chart object."""
         pass
 
+    @abstractmethod
     def get_html_widget(self, name: str) -> Any:
         """Return a html widget object."""
         pass
 
+    @abstractmethod
     def get_widget_by_name(self, name: str) -> Any:
         pass
 

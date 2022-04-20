@@ -1,8 +1,10 @@
 import uuid
+import warnings
 from datetime import date
 from typing import List, Union, Any
 
 from borax.datasets.fetch import fetch
+from borax.htmls import html_tag
 from typing_extensions import Literal
 
 from .containers import RowContainer
@@ -58,7 +60,7 @@ class Nav:
         return self
 
     def add_item(self, menu_text: str, item: Union[LinkItem], after_separator=False):
-        item.after_separator = after_separator
+        item.after_separator = item.after_separator | after_separator
         for menu in self.menus:
             if menu.text == menu_text:
                 menu.children.append(item)
@@ -127,13 +129,18 @@ class ValueItem(HTMLBase):
 
 
 class ValuesPanel(RowContainer):
+    """A row container containing some ValueItem objects.
+    This class is not recommend anymore, use RowContainer instead.
+    """
 
     def __init__(self, col_item_num: int = 1):
+        warnings.warn('This class is deprecated.Use RowContainer instead.', PendingDeprecationWarning, stacklevel=2)
         super(ValuesPanel, self).__init__()
         self.col_item_num = col_item_num
 
     def add(self, value: Any, description: str, unit: str = None, catalog: str = 'primary',
             arrow: Literal['up', 'down', ''] = ''):
+        warnings.warn('This method is deprecated.Use ValuesPanel.add_widget instead.', DeprecationWarning, stacklevel=2)
         item = ValueItem(value=value, description=description, unit=unit, catalog=catalog, arrow=arrow)
         self.add_widget(item)
         return self
@@ -145,3 +152,28 @@ class Title(HTMLBase):
     def __init__(self, text: str, small_text: str = None):
         self.text = text
         self.small_text = small_text
+
+
+# tag_name: str, content: str = None,
+#              *, id_: str = None, style: Dict = None, class_: Union[List, str, None] = None, style_width: str = None,
+#              style_height: str = None, **kwargs
+class ElementEntity(HTMLBase):
+    """A common entity for a html element."""
+
+    def __init__(self, tag_name: str, id_: str = None, content: str = None, class_: str = None, style: dict = None,
+                 style_width: str = None, style_height: str = None, **kwargs):
+        self.tag_name = tag_name
+        self.id_ = id_
+        self.class_ = class_
+        self.content = content
+        self.style = style or {}
+        if style_width is not None:
+            self.style.update({'width': style_width})
+        if style_height is not None:
+            self.style.update({'height': style_height})
+        self.style = {k: v for k, v in self.style.items() if v not in (None, '', [], ())}
+        self.attrs = kwargs
+
+    def __html__(self):
+        return html_tag(self.tag_name, id_=self.id_, content=self.content, class_=self.class_, style=self.style,
+                        **self.attrs)

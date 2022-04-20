@@ -7,7 +7,7 @@ from django.template import engines
 from django.template.loader import get_template
 from django.utils.safestring import SafeString
 from django_echarts.entities import (
-    ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase
+    ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase, ElementEntity
 )
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
@@ -59,6 +59,8 @@ def render_chart(widget, **kwargs) -> SafeString:
 @render_widget.register(RowContainer)
 @render_widget.register(ValuesPanel)
 def render_with_tpl(widget, **kwargs) -> SafeString:
+    if hasattr(widget, '__html__') and callable(widget.__html__):
+        return widget.__html__()
     if 'tpl' in kwargs:
         tpl_name = kwargs['tpl']
     else:

@@ -104,19 +104,19 @@ class SettingsWithStaticUrlTestCase(unittest.TestCase):
 
     @patch('django.apps.apps.get_app_configs')
     def test_without_settings_app(self, get_func):
-        get_func.return_value = [MockAppConfig('django_echarts.contrib.bootstrap5')]
+        get_func.return_value = [MockAppConfig('django_echarts.contrib.material')]
         target_store = SettingsStore(
             echarts_settings={
                 'dms_repo': 'pyecharts',
                 # 'theme_app': 'django_echarts.contrib.bootstrap5',
-                'theme_name': 'bootstrap5.yeti'
+                'theme_name': 'material'
             },
             extra_settings={
                 'STATIC_URL': '/static/'
             }
         )
         theme = target_store.theme
-        self.assertEqual('bootstrap5.yeti', theme.theme_palette)
+        self.assertEqual('material', theme.theme_palette)
 
     @patch('django.apps.apps.get_app_configs')
     def test_localize_feature(self, get_func):
