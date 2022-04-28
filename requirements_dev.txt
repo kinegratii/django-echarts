@@ -1,4 +1,4 @@
-typing_extensions~=4.0
+typing_extensions
 pyecharts~=1.9
 borax>=3.5.3
 django~=3.2

@@ -1,12 +1,12 @@
 # 关于(About)
 
-## 贡献者
+## 贡献者(Contributions )
 
 | 作者 | 主页 |
 | ---- | ---- |
 | Samuel.Yan |  [https://github.com/kinegratii](https://github.com/kinegratii) |
 
-## 资源
+## 资源(Resources)
 
 本项目参考或者引用了下列资源：
 
@@ -28,7 +28,7 @@
 
 
 
-## 参与开发
+## 参与开发(Development)
 
 在参与开发之前，您必须确保：
 
@@ -36,13 +36,13 @@
 - 熟悉Django框架的有关内容，包括但不限于路由、模板系统、CBV等
 - 熟悉pyecharts库的功能，以及核心实现逻辑
 
-## 开发方向
+## 开发方向(Roadmap)
 
 - 【数据处理】基于 Django Model的数据预处理。
 - 【UI框架扩展标准】通过进一步抽象UI框架渲染逻辑，使得能够更好地支持现有的其他主流UI框架。
 - 【版本特性兼容】关注Django和pyecharts的重大版本更新，能够兼容更多的版本组合。
 
-## 开源协议
+## 开源协议(License)
 
 MIT License
 

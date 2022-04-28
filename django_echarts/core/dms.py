@@ -5,24 +5,10 @@ A Implement that you can use host name instead of its url.
 from typing import Tuple, List
 
 from pyecharts.datasets import FILENAMES, EXTRA
+from django_echarts.utils.burl import BUrl
 from .localfiles import LocalFilesMixin, DownloaderResource
 
 __all__ = ['DependencyManager']
-
-
-def pyecharts_resolve_dep_name(dep_name: str) -> Tuple[bool, str]:
-    if dep_name.startswith("https://") or dep_name.startswith('http://'):
-        return True, dep_name
-    if dep_name in FILENAMES:
-        f, ext = FILENAMES[dep_name]
-        return False, "{}.{}".format(f, ext)
-    else:
-        for url, files in EXTRA.items():
-            if dep_name in files:
-                f, ext = files[dep_name]
-                return False, "{}.{}".format(f, ext)
-        return False, '{}.js'.format(dep_name)
-
 
 # The repo contains all dependencies
 _BUILTIN_REPOS_ = {
@@ -58,6 +44,7 @@ class DependencyManager(LocalFilesMixin):
         self._repo_dic = {}
         self._custom_dep2url = {}  # depname=> url
         self._cur_repo_name = repo_name
+        self._baidu_map_ak = self._context.get('baidu_map_ak')
 
     def add_repo(self, repo_name: str, repo_url: str):
         self._repo_dic[repo_name] = repo_url
@@ -76,7 +63,7 @@ class DependencyManager(LocalFilesMixin):
         if repo_name not in self._repo_dic:
             raise ValueError(f'Unknown dms repo: {repo_name}. Choices are:{",".join(self._repo_dic.keys())}')
 
-        use_url, new_dep_name = pyecharts_resolve_dep_name(dep_name)
+        use_url, new_dep_name = self._pyecharts_resolve_dep_name(dep_name)
         if use_url:
             return new_dep_name, None
         filename = d2f(new_dep_name)
@@ -97,6 +84,26 @@ class DependencyManager(LocalFilesMixin):
                 DownloaderResource(url, local_ref_url, local_path, label=dep_name, catalog='Dependency')
             )
         return resources
+
+    def _pyecharts_resolve_dep_name(self, dep_name: str) -> Tuple[bool, str]:
+        if all([
+            self._baidu_map_ak,
+            dep_name.startswith('https://api.map.baidu.com/') or dep_name.startswith('http://api.map.baidu.com/'),
+            'ak=' in dep_name
+        ]):
+            # Replace baidu map ak with global settings.
+            return True, BUrl(dep_name).replace('ak', self._baidu_map_ak).url
+        if dep_name.startswith("https://") or dep_name.startswith('http://'):
+            return True, dep_name
+        if dep_name in FILENAMES:
+            f, ext = FILENAMES[dep_name]
+            return False, "{}.{}".format(f, ext)
+        else:
+            for url, files in EXTRA.items():
+                if dep_name in files:
+                    f, ext = files[dep_name]
+                    return False, "{}.{}".format(f, ext)
+            return False, '{}.js'.format(dep_name)
 
     @classmethod
     def create_default(cls, context: dict = None, repo_name: str = None):

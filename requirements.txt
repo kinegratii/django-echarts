@@ -1,2 +1,2 @@
-typing_extensions~=4.0
+typing_extensions
 borax>=3.5.3

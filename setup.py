@@ -49,7 +49,7 @@ setup(
     python_requires='>=3.7',
     install_requires=[
         'borax>=3.5.3',
-        'typing_extensions~=4.0'
+        'typing_extensions'
     ],
     long_description=long_description,
     long_description_content_type='text/markdown'

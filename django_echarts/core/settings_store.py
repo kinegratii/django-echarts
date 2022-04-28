@@ -25,6 +25,8 @@ class DJEOpts:
     theme_d2u: Optional[Dict] = None
     site_class: Optional[str] = None
 
+    baidu_map_ak: str = None
+
     def get_echarts_theme(self, instance_theme) -> str:
         if self.echarts_theme:
             return self.echarts_theme
@@ -78,7 +80,10 @@ class SettingsStore:
         else:
             self._opts = DJEOpts()
 
-        context = {'echarts_version': self._opts.echarts_version}
+        context = {
+            'echarts_version': self._opts.echarts_version,
+            'baidu_map_ak': self._opts.baidu_map_ak
+        }
         if 'STATIC_URL' in self._extra_settings:
             context.update({'STATIC_URL': self.static_url})
         self._dms = DependencyManager.create_default(

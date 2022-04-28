@@ -2,9 +2,10 @@
 
 ## v0.5.2 - 
 
+- 新增 `ElementEntity` HTML组件
+- 新增百度地图密钥全局配置 `DJEOpts.baidu_map_ak`
 - 优化资源本地化功能
 - 修正 `Nav.add_item` 函数中 `after_separator` 逻辑
-- 新增 `ElementEntity` HTML组件
 
 ## v0.5.1 - （20220410）
 
