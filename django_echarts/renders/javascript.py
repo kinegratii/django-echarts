@@ -5,6 +5,7 @@ from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
 from pyecharts.globals import ThemeType
+from htmlgenerator.base import BaseElement
 
 __all__ = ['flat_chart', 'get_js_dependencies']
 
@@ -24,6 +25,7 @@ def flat_base(widget: Base):
 @flat_chart.register(PrettyTable)
 @flat_chart.register(Table)
 @flat_chart.register(HTMLBase)
+@flat_chart.register(BaseElement)
 def flat_not_chart(widget):
     return []
 

@@ -1,4 +1,4 @@
-第三方HTML库
+# 第三方HTML库 - htmlgenerator
 
 本文介绍了几个使用第三方HTML库扩展 django-echarts widget 的例子。
 

@@ -49,7 +49,8 @@ setup(
     python_requires='>=3.7',
     install_requires=[
         'borax>=3.5.3',
-        'typing_extensions'
+        'typing_extensions',
+        'htmlgenerator~=1.2'
     ],
     long_description=long_description,
     long_description_content_type='text/markdown'

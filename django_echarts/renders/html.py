@@ -12,6 +12,7 @@ from django_echarts.entities import (
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
+import htmlgenerator as hg
 
 
 def _to_css_length(val):
@@ -107,3 +108,9 @@ def render_link(widget, **kwargs) -> Union[SafeString, HTMLString]:
     if isinstance(widget, LinkItem) and widget.new_page:
         params['target'] = '_blank'
     return html_tag('a', **params)
+
+
+@render_widget.register(hg.BaseElement)
+def render_library_html(widget: hg.BaseElement, **kwargs):
+    context = kwargs.get('context', {})
+    return hg.render(widget, context)
