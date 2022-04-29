@@ -6,6 +6,7 @@
 - 新增百度地图密钥全局配置 `DJEOpts.baidu_map_ak`
 - 优化资源本地化功能
 - 修正 `Nav.add_item` 函数中 `after_separator` 逻辑
+- 依赖项自定义d2u支持format字符串格式化
 
 ## v0.5.1 - （20220410）
 

@@ -58,6 +58,7 @@ class DependencyManager(LocalFilesMixin):
             if value.startswith('#'):
                 repo_name = value[1:]
             else:
+                value = value.format(**self._context)
                 return value, d2f(dep_name)
         repo_name = repo_name or self._cur_repo_name
         if repo_name not in self._repo_dic:

@@ -140,6 +140,8 @@ Build on [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/)
 
 ## 示例项目(Demo Project)
 
+在线示例 [https://zinc.pythonanywhere.com](https://zinc.pythonanywhere.com) 
+
 参见项目 [kinegratii/zinc](https://github.com/kinegratii/zinc) 。
 
 ## 截图(Screen Shots)

@@ -5,6 +5,7 @@ omit =
     django_echarts/ajax_echarts.py
     django_echarts/starter/*
     django_echarts/management/*
+    django_echarts/extensions/*
     django_echarts/utils/compat.py
     django_echarts/geojson.py
     django_echarts/utils/downloader.py
@@ -30,6 +31,7 @@ omit =
     django_echarts/ajax_echarts.py
     django_echarts/starter/*
     django_echarts/management/*
+    django_echarts/extensions/*
     django_echarts/utils/compat.py
     django_echarts/geojson.py
     django_echarts/utils/downloader.py

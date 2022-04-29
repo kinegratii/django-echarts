@@ -19,12 +19,14 @@
 - Codecov: [https://about.codecov.io/](https://about.codecov.io/)
 - django: [https://www.djangoproject.com/](https://www.djangoproject.com/)
 - Django Best Practices: [https://django-best-practices.readthedocs.io/en/latest/index.html](https://django-best-practices.readthedocs.io/en/latest/index.html)
+- domonic: [https://github.com/byteface/domonic](https://github.com/byteface/domonic)
 - echarts: [https://echarts.apache.org/zh/index.html](https://echarts.apache.org/zh/index.html)
 - Jinja2: [https://jinja2docs.readthedocs.io/en/stable/](https://jinja2docs.readthedocs.io/en/stable/)
 - Materialize: [https://materializecss.com/](https://materializecss.com/)
 - PrettyTable: [https://github.com/jazzband/prettytable](https://github.com/jazzband/prettytable)
 - pyecharts: [https://pyecharts.org/](https://pyecharts.org/)
-- pyecharts-asserts [https://github.com/pyecharts/pyecharts-assets](https://github.com/pyecharts/pyecharts-assets)
+- pyecharts-asserts: [https://github.com/pyecharts/pyecharts-assets](https://github.com/pyecharts/pyecharts-assets)
+- yattag: [https://www.yattag.org/](https://www.yattag.org/)
 
 
 
