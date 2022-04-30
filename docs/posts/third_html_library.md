@@ -1,107 +1,76 @@
-# 第三方HTML库 - htmlgenerator
+# 第三方HTML渲染库 
 
-本文介绍了几个使用第三方HTML库扩展 django-echarts widget 的例子。
+本文介绍了一些常用的 HTML渲染库。
 
-## domonic
+## htmlgenerator
 
+地址： [https://github.com/basxsoftwareassociation/htmlgenerator](https://github.com/basxsoftwareassociation/htmlgenerator)
 
+### 安装
 
-[domonic](https://github.com/byteface/domonic) 是一个使用 python 构建html的库，django-echarts提供的整合方法。
+自 v0.5.2开始，django-echarts 已经内置 htmlgenerator 作为依赖库，无需额外安装。
 
-```python
-from domonic.html import *
-print(html(body(h1('Hello, World!'))))
-# <html><body><h1>Hello, World!</h1></body></html>
-```
+### 创建元素
 
- 步骤1：安装库。
-
-```shell
-pip install domonic
-```
-
-步骤2：在App的ready 函数导入初始化模块 `django_echarts.extendsions.domonic_html`。
+下面是一个简单的例子。
 
 ```python
-from django.apps import AppConfig
+import htmlgenerator as hg
 
+my_page = hg.HTML(hg.HEAD(), hg.BODY(hg.H1("It works!")))
+print(hg.render(my_page, {}))
 
-class CcsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'ccs'
-    
-    def ready(self):
-        from django_echarts.extendsions import domonic_html
-
+my_element = hg.DIV('This is a text.', _class='panel', id='my-div')
+print(hg.render(my_element, {}))
 ```
 
-步骤3：使用方法。
+说明：
+
+1. 在 htmlgenerator中，所有元素均是 `htmlgenerator.BaseElement` 的子类。
+2. HTML标签以大写字符串
+3. 子节点以位置参数传入
+4. 属性值以关键字参数传入
+
+### 动态值
+
+使用 `htmlgenerator.render` 函数可以对同一元素进行多次不同渲染。
 
 ```python
-from domonic.html import div
+my_div = hg.DIV("Hello, ", hg.C("person.name"))
 
-@factory.register_html_widget
-def create_banner():
-    return div(span('Demo Text'))
+print(hg.render(my_div, {"person": {"name": "Alice", "occupation": "Writer"}},))
+
+print(hg.render(my_div,{"person": {"name": "John", "occupation": "Police"}},))
 ```
 
+### Django页面响应对象
 
-
-## yattag
-
-[yattag](https://www.yattag.org/) 是一个构建html的纯python库。
+`BaseElement` 类的 `render` 函数返回值可以直接传入 `HttpResponse`。
 
 ```python
-from yattag import Doc
+from django.http import HttpResponse
 
-doc, tag, text = Doc().tagtext()
-
-with tag('html'):
-    with tag('body', id = 'hello'):
-        with tag('h1'):
-            text('Hello world!')
-
-print(doc.getvalue())
+def render_layout_to_response(request, layout, context):
+    return HttpResponse(layout.render(context))
 ```
 
- 步骤1：安装库。
 
-```shell
-pip install yattag
-```
 
-步骤2：在App的ready 函数导入初始化模块 `django_echarts.extendsions.yattag_html`。
+### 与django-echarts
+
+django-echarts 渲染模块内置支持 `htmlgenerator.BaseElement`  类型。因此
+
+- 可以作为模板标签函数 `dw_widget` 的参数 
+- 可以作为 `Container.add_widget` 的参数，融入现有的组件体系
+
+
 
 ```python
-from django.apps import AppConfig
+import htmlgenerator as hg
+from django_echarts.entities import RowContainer
 
-
-class CcsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'ccs'
-    
-    def ready(self):
-        from django_echarts.extendsions import yattag_html
-
+container = RowContainer()
+header_div = hg.DIV(hg.H1('Page Title'), _class='header')
+container.add_widget(header_div)
 ```
 
-步骤3：使用方法。
-
-```python
-from yattag import Doc
-
-@factory.register_html_widget
-def create_banner():
-    doc, tag, text = Doc().tagtext()
-    with tag('div'):
-        with tag('span'):
-            text('Demo Text')
-    return doc
-```
-
-## 其他资源
-
-
-
-- https://github.com/srittau/python-htmlgen
-- [HTMLTags - generate HTML in Python « Python recipes « ActiveState Code](https://code.activestate.com/recipes/366000-htmltags-generate-html-in-python/)

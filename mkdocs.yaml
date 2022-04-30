@@ -40,7 +40,7 @@ nav:
     - 新的页面功能: posts/new_page_feature.md
     - geojson地图: posts/use_custom_geojson.md
     - 图表合辑: posts/widget_collection.md
-    - 第三方HTML库: posts/third_html_library.md
+    - 第三方HTML渲染库: posts/third_html_library.md
   - 项目开发:
     - 更新日志: changelog.md
     - 破坏性变更: breaking-change.md
