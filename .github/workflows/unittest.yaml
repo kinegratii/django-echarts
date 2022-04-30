@@ -28,6 +28,7 @@ jobs:
           pip install borax>=3.5
           pip install pyecharts~=1.9
           pip install typing_extensions~=4.0
+          pip install htmlgenerator~=1.2
           pip install flake8~=3.9
           pip install nose2~=0.10
       - name: Lint with flake8
