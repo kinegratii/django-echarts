@@ -25,6 +25,31 @@ DJEOpts.dep2url: Dict[str, str]
 
 关于依赖项的配置参见 “依赖项和静态文件” 一章。
 
+### 百度地图密钥
+
+> Add in v0.5.2
+
+```python
+DJEOpts.baidu_map_ak:str = None
+```
+
+密钥申请参见 [百度地图开放平台 ](https://lbsyun.baidu.com/index.php) 。如果有设置，将以覆盖方式替换每个 `BMap` 设置的密钥值。
+
+构建图表对象时，仍需调用 `BMap.add_schema` 函数，此时 `baidu_ak` 可留空，也可以使用 `django_echarts.conf.DJANGO_ECHARTS_SETTINGS.opts.baidu_map_ak` 引用。
+
+```python
+DJANGO_ECHARTS = {
+    'baidu_map_ak': 'my-baidu-ak'
+}
+
+from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
+
+
+bmap = BMap()
+bmap.add_schema(baidu_ak='',...)
+bmap.add_schema(baidu_ak=DJANGO_ECHARTS_SETTINGS.opts.baiu_map_ak,...)
+```
+
 ### 渲染引擎
 
 这些配置默认不提供有效值，由各图表对象自行设置。如果这些配置有设置，则使用该配置覆盖各图表设置。
@@ -168,6 +193,23 @@ available_palettes = ['bootstrap5', 'bootstrap5.yeti', ...]
 tms = ThemeManager.create_from_module('django_echarts.contrib.bootstrap5')
 theme = tms.create_theme('bootstrap5.yeti')
 ```
+
+### localize_theme
+
+> Add in v0.5.2
+
+返回给定主题对应的本地主题。
+
+```python
+theme = tms.create_theme('bootstrap5')
+local_theme.localize_theme(theme)
+```
+
+### get_download_resources
+
+> Add in v0.5.2
+
+返回给定主题的文件下载信息。
 
 ### table_css
 

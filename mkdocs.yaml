@@ -1,5 +1,6 @@
 site_name: django-echarts
 theme:
+  language: zh
   icon:
     logo: material/monitor-dashboard
   name: material
@@ -30,6 +31,7 @@ nav:
     - Gallery: gallery.md
   - 参考:
     - 配置及其访问: reference/configure.md
+    - 组件存储类: reference/stores.md
     - 模板标签库: reference/tags.md
     - 视图和模板: reference/views_and_templates.md
     - 命令行工具: reference/commands.md
@@ -38,8 +40,10 @@ nav:
     - 新的页面功能: posts/new_page_feature.md
     - geojson地图: posts/use_custom_geojson.md
     - 图表合辑: posts/widget_collection.md
+    - 第三方HTML渲染库: posts/third_html_library.md
   - 项目开发:
     - 更新日志: changelog.md
+    - 破坏性变更: breaking-change.md
     - 关于项目: about.md
     - 发布日志:
       - v0.5.0: release-note/v050.md

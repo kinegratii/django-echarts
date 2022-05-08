@@ -15,6 +15,7 @@ django-echarts 定义了一套较为完整、可扩展的组件体系，主要�
 | pycharts.charts.Table                  | 表格           |                  | -                                                |
 | **HTML组件**                           |                |                  |                                                  |
 | HTMLBase                               | HTML组件基础类 | 不可实例化       |                                                  |
+| ElementEntity                          | HTML元素       |                  |                                                  |
 | ChartInfo                              | 信息卡         |                  | widgets/chart_info.html                          |
 | Copyright                              | 版权栏         |                  | widgets/copyright.html                           |
 | LinkItem / Menu                        | 菜单项/链接    | context / class_ | -                                                |
@@ -28,7 +29,7 @@ django-echarts 定义了一套较为完整、可扩展的组件体系，主要�
 | WidgetCollection                       | 合辑           |                  | -                                                |
 
 1. 渲染标签函数均使用 `dw_widget` ，原有的具体组件渲染函数 echarts_container/dw_table等不再推荐使用。
-1. 未指定模板文件的组件其渲染方式和具体的css框架无关，或者需要由用户传入样式类名称，如 Table。
+1. 未指定模板文件的组件其渲染方式和具体的css框架无关（如ElementEntity），或者需要由用户传入样式类名称（如 Table）。
 2. `pyecharts.charts.base.Base` 类的图表，主要包括 Bar、Line、Grid、TimeLine等。
 4. `NamedCharts` 和 `ValuesPanel` 渲染逻辑同 `RowContainer`，可以使用 `RowContainer` 代替。
 
@@ -114,6 +115,27 @@ table.add(
 | center     | -                      | centered         | 居中     |
 
 ## HTML组件
+
+### HTML元素(ElementEntity)
+
+> Add in v0.5.2
+
+```python
+ElementEntity(tag_name: str, id_: str = None, content: str = None, class_: str = None, style: dict = None,
+                 style_width: str = None, style_height: str = None, **kwargs)
+```
+
+html元素。
+
+```python
+ee1 = ElementEntity('div', id_='mybar', style_height='200px')
+# <div id="mybar" style="height:200px;"></div>
+
+ee2 = ElementEntity('img', id_='myimg', height='200px' src="./myimage1.jpg")
+# <img id="myimg" height="200px" src="./myimage1.jpg"/>
+```
+
+
 
 ### 数字仪盘(ValuesItem)
 
@@ -279,6 +301,8 @@ ncharts.add_chart(bar2) # 默认分配 'c{n}' 作为名称，此项为 'c2'
 
 ### 数值面板(ValuesPanel)
 
+> Updated in v0.5.2: 此类已标记为Deprecated。
+
 该类已不再推荐使用，直接使用其父类 `RowContainer` 即可。原有的 `add` 函数可以使用 `add_widget` 代替。
 
 ```python
@@ -289,8 +313,6 @@ vp.add('8.0', '福建省2021年GDP增长率', '%', catalog='info')
 rc = RowContainer()
 rc.add_widget(ValueItem('8.0', '福建省2021年GDP增长率', '%', catalog='info'))
 ```
-
-
 
 ## 布局
 

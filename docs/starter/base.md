@@ -48,11 +48,11 @@ DJANGO_ECHARTS = {
 | INSTALLED_APPS   | 项目所包含的APP。必须包含 `django_echarts`和对应的主题APP <sup>1</sup>。 |
 | TEMPLATES        | 模板引擎、文件目录。采用django引擎渲染，且必须开启 `APP_DIRS` 选项。 |
 | STATIC_URL       | 静态文件URL。                                                |
-| STATICFILES_DIRS | 静态文件目录。如无重写模板文件，可不配置。                   |
+| STATICFILES_DIRS | 静态文件目录。                                               |
 | DJANGO_ECHARTS   | django-echarts项目配置 <sup>2</sup>，字典类型。参数参见 `DJEOpts` 类。 |
 
 1. 内置主题APP包括： django_echarts.contrib.bootstrap3 / django_echarts.contrib.bootstrap5 / django_echarts.contrib.material。
-2. 默认配置已经能够支持最小化运行，可不配置此项。
+2. 默认配置已经能够支持最小化运行，此配置可以留空。
 
 ## 创建站点
 

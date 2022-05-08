@@ -1,1 +1,3 @@
+typing_extensions
 borax>=3.5.3
+htmlgenerator~=1.2

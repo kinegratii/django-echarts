@@ -1,22 +1,13 @@
 import os
 from typing import List
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
+
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
+from django_echarts.core.localfiles import DownloaderResource
 from django_echarts.renders import get_js_dependencies
 from django_echarts.stores.entity_factory import factory
 from django_echarts.utils.downloader import download_files
-
-
-class DownloaderResource:
-    def __init__(self, remote_url, ref_url, local_path, label=None, catalog=None, exists=False):
-        self.remote_url = remote_url
-        self.ref_url = ref_url
-        self.local_path = local_path
-        self.label = label or ''
-        self.catalog = catalog or ''
-        self.exists = exists
 
 
 class DownloadBaseCommand(BaseCommand):
@@ -50,26 +41,15 @@ class DownloadBaseCommand(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Task completed!'))
 
     def resolve_dep(self, dep_names, repo_name) -> List[DownloaderResource]:
-        resources = []
         manager = DJANGO_ECHARTS_SETTINGS.dependency_manager
-        for dep_name, url, filename in manager.iter_download_resources(dep_names, repo_name):
-            resources.append(DownloaderResource(
-                url, '/static/' + filename, os.path.join(settings.BASE_DIR, 'static', filename),
-                label=dep_name, catalog='Dependency'
-            ))
-        return resources
+        return manager.get_download_resources(dep_names, repo_name)
 
     def resolve_theme(self, theme_name) -> List[DownloaderResource]:
         if theme_name:
             theme = DJANGO_ECHARTS_SETTINGS.create_theme(theme_name)
         else:
             theme = DJANGO_ECHARTS_SETTINGS.theme
-        resources = []
-        for f_name, url, ref_url in theme.iter_local_paths():
-            local_path = os.path.join(settings.BASE_DIR, 'static', ref_url)
-            ref_url = '/static/' + ref_url
-            resources.append(DownloaderResource(url, ref_url, local_path, label='', catalog=f_name))
-        return resources
+        return DJANGO_ECHARTS_SETTINGS.theme_manger.get_download_resources(theme)
 
     def resolve_chart(self, chart_name) -> List[str]:
         chart_obj = factory.get_chart_widget(chart_name)

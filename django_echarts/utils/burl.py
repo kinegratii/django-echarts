@@ -7,8 +7,10 @@ class BUrl:
         self._scheme, self._netloc, self._path, self._query_string, self._fragment = urlsplit(url)
         self._query_params = parse_qs(self._query_string)
 
-    def replace(self, name, value):
+    def replace(self, name, value, only_replace=False):
         if name not in self._query_params:
+            if only_replace:
+                return self
             self._query_params[name] = []
         self._query_params[name] = [value]
         return self

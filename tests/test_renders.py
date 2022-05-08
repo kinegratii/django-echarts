@@ -3,11 +3,13 @@ import unittest
 from borax.htmls import HTMLString
 from django import setup
 from django_echarts.entities import (
-    Title, LinkItem, ChartInfo, bootstrap_table_class, material_table_class, Message, ValueItem, RowContainer
+    Title, LinkItem, ChartInfo, bootstrap_table_class, material_table_class, Message, ValueItem, RowContainer,
+    ElementEntity
 )
 from django_echarts.renders import render_widget
 from pyecharts.charts import Bar
 from pyecharts.components import Table
+import htmlgenerator as hg
 
 
 class TableCssTestCase(unittest.TestCase):
@@ -60,6 +62,18 @@ class RenderTestCase(unittest.TestCase):
         rc.set_spans(6)
         self.assertTupleEqual((6, 6), rc.get_spans())
 
+    def test_render_element_entity(self):
+        ee = ElementEntity('div', style_width='200px', style_height='100px')
+        html_str = render_widget(ee)
+        self.assertIn('width:200px', html_str)
+        self.assertIn('height:100px', html_str)
+
+
+class HTMLGeneratorTestCase(unittest.TestCase):
+    def test_html(self):
+        widget = hg.DIV('Div text', _class='ss')
+        self.assertIn('ss', render_widget(widget))
+
 
 class TemplateTagsTestCase(unittest.TestCase):
     @classmethod
@@ -74,6 +88,12 @@ class TemplateTagsTestCase(unittest.TestCase):
         template_obj = self.django_engine.from_string('{% load echarts %}{% dw_widget widget %}')
         result = template_obj.render({'widget': tw})
         self.assertIn('DemoTitle', result)
+
+    def test_html_generator_widget(self):
+        widget = hg.H1('The First Title')
+        template_obj = self.django_engine.from_string('{% load echarts %}{% dw_widget widget %}')
+        result = template_obj.render({'widget': widget})
+        self.assertIn('The First Title', result)
 
     def test_theme(self):
         template_obj = self.django_engine.from_string('{% load echarts %}{% theme_js %} {% theme_css %}')

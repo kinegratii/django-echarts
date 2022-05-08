@@ -1,3 +1,4 @@
+import warnings
 from .containers import RowContainer
 
 
@@ -24,12 +25,14 @@ class NamedCharts(RowContainer):
             super().auto_layout()
 
     def add_chart(self, chart_obj, name=None):
+        warnings.warn('This method is deprecated. Use NamedChart.add_widget instead.', DeprecationWarning, stacklevel=2)
         self.add_widget(chart_obj, name=name)
         return self
 
     def add(self, achart_or_charts):
+        warnings.warn('This method is deprecated. Use NamedChart.add_widget instead.', DeprecationWarning, stacklevel=2)
         if not isinstance(achart_or_charts, (list, tuple, set)):
             achart_or_charts = achart_or_charts,  # Make it a sequence
         for c in achart_or_charts:
-            self.add_chart(chart_obj=c)
+            self.add_widget(c)
         return self
