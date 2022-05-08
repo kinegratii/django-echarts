@@ -3,6 +3,7 @@ import os
 import zipfile
 import pathlib
 import re
+import sys
 
 
 def get_version():
@@ -23,8 +24,7 @@ def source_file_list():
     return filenames
 
 
-def zip_file_list():
-    version = get_version()
+def zip_file_list(version):
     whl_file_path = pathlib.Path('dist') / f'django_echarts-{version}-py3-none-any.whl'
 
     with zipfile.ZipFile(whl_file_path) as archive:
@@ -32,9 +32,9 @@ def zip_file_list():
     return zip_filenames
 
 
-def validate():
+def validate(version):
     s_list = source_file_list()
-    z_list = zip_file_list()
+    z_list = zip_file_list(version)
 
     missing_files = list(set(s_list) - set(z_list))
     if len(missing_files) == 0:
@@ -46,4 +46,9 @@ def validate():
 
 
 if __name__ == '__main__':
-    validate()
+    if len(sys.argv) > 1:
+        version = sys.argv[1]
+    else:
+        version = get_version()
+    print(f'Start validating. Version={version}')
+    validate(version)

@@ -1,6 +1,6 @@
 # 更新日志
 
-## v0.5.2 - 
+## v0.5.2 - （20220508）
 
 - 新增 `ElementEntity` HTML组件
 - 新增支持HTML生成库：[htmlgenerator](https://github.com/basxsoftwareassociation/htmlgenerator)
