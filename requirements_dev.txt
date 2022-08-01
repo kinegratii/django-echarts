@@ -3,5 +3,5 @@ pyecharts~=1.9
 borax>=3.5.3
 django~=3.2
 htmlgenerator~=1.2
-flake8~=3.9
+flake8~=5.0
 mccabe~=0.6
