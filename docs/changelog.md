@@ -1,5 +1,9 @@
 # 更新日志
 
+## v0.5.3
+
+- 新增 `WidgetNotRegisteredError` 异常
+
 ## v0.5.2 - （20220508）
 
 - 新增 `ElementEntity` HTML组件

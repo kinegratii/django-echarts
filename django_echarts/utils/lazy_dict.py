@@ -36,6 +36,7 @@ class LazyDict:
             return decorator(function)
 
     def set_ref(self, ref_name: str, name: str):
+        """Set a alias name for the exist name."""
         self._refs[ref_name] = name
         return self
 
