@@ -1,6 +1,6 @@
 import unittest
 from django_echarts.utils.burl import burl_kwargs, burl_args, BUrl
-from django_echarts.utils.lazy_dict import LazyDict
+from django_echarts.utils.lazy_dict import LazyDict, ParameterMissingError
 
 
 class BurlTestCase(unittest.TestCase):
@@ -37,3 +37,33 @@ class LazyDictTestCase(unittest.TestCase):
             return key1
 
         self.assertEqual('value1', demo())
+
+    def test_func_with_parameters(self):
+        l_dic = LazyDict()
+
+        @l_dic.register
+        def func1(year: int):
+            return year
+
+        @l_dic.register
+        def func2(year: int, month: int = 2):
+            pass
+
+        @l_dic.register
+        def func3(year: int, **kwargs):
+            pass
+
+        my_params = {'year': '2022'}
+
+        self.assertDictEqual({'year': 2022}, l_dic.validate_caller_params('func1', my_params))
+        my_params2 = {'year': 2021}
+        self.assertDictEqual({'year': 2021}, l_dic.validate_caller_params('func1', my_params2))
+        self.assertEqual(2021, l_dic.get('func1', {'year': 2021}))
+
+        self.assertDictEqual({'year': 2021, 'month': 3},
+                             l_dic.validate_caller_params('func2', {'year': 2021, 'month': 3}))
+        self.assertDictEqual({'year': 2021, 'month': 2}, l_dic.validate_caller_params('func2', {'year': 2021}))
+        self.assertDictEqual({'year': 2021, 'month': 2},
+                             l_dic.validate_caller_params('func3', {'year': 2021, 'month': 2}))
+        with self.assertRaises(ParameterMissingError):
+            l_dic.validate_caller_params('func1', {'year': 2021, 'month': 2})

@@ -1,4 +1,9 @@
 from functools import wraps
+import inspect
+
+
+class ParameterMissingError(BaseException):
+    pass
 
 
 class LazyDict:
@@ -8,6 +13,7 @@ class LazyDict:
         self._entries = {}
         self._opt_dic = {}
         self._dynamic_names = []
+        self._dynamic_parameters = {}
         self._refs = {}  # dict[str,str]
 
     def func_register(self, obj, name: str = None, **kwargs):
@@ -17,6 +23,9 @@ class LazyDict:
             raise TypeError('The name must not be empty.')
         if callable(obj):
             self._dynamic_names.append(name)
+            parameters = inspect.signature(obj).parameters
+            if len(parameters) > 0:
+                self._dynamic_parameters[name] = parameters
         self._entries[name] = obj
         self._opt_dic[name] = kwargs
         return self
@@ -40,12 +49,13 @@ class LazyDict:
         self._refs[ref_name] = name
         return self
 
-    def get(self, name: str):
+    def get(self, name: str, caller_kwargs: dict = None):
         if name in self._refs:
             name = self._refs[name]
         if name in self._entries:
             if name in self._dynamic_names:
-                return self._entries[name]()
+                caller_kwargs = caller_kwargs or {}
+                return self._entries[name](**caller_kwargs)
             else:
                 return self._entries[name]
         return
@@ -73,6 +83,37 @@ class LazyDict:
             return decorated
 
         return _inner
+
+    def validate_caller_params(self, func_name: str, param_dic: dict) -> dict:
+        """Validate and convert values with type annotation in registered function.
+        """
+        declare_dic = self._dynamic_parameters.get(func_name, None)
+        if declare_dic is None:
+            return param_dic
+        new_param_dic = {}
+        extra_param_names = []
+        for name, value in param_dic.items():
+            if name in declare_dic:
+                if declare_dic[name].annotation is not inspect.Parameter.empty:
+                    new_val = declare_dic[name].annotation(value)
+                    new_param_dic[name] = new_val
+                else:
+                    new_param_dic[name] = value
+            else:
+                extra_param_names.append(name)
+        valid = False
+        for name, parameter in declare_dic.items():
+            if parameter.kind == inspect.Parameter.VAR_KEYWORD:
+                new_param_dic.update({k: v for k, v in param_dic.items()})
+                valid = True
+                break
+            if parameter.default is not None and name not in param_dic:
+                new_param_dic[name] = parameter.default
+        if not valid and len(extra_param_names) == 0:
+            valid = True
+        if not valid:
+            raise ParameterMissingError(f'These parameters are required: {",".join(extra_param_names)}')
+        return new_param_dic
 
     def __contains__(self, item):
         return item in self._entries or item in self._refs
