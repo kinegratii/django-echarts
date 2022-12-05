@@ -9,3 +9,4 @@ from .html_widgets import (
 )
 from .pages import (WidgetCollection, WidgetGetterMixin)
 from .styles import (bootstrap_table_class, material_table_class)
+from .uri import EntityURI

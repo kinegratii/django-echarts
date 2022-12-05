@@ -115,6 +115,10 @@ class LazyDict:
             raise ParameterMissingError(f'These parameters are required: {",".join(extra_param_names)}')
         return new_param_dic
 
+    def has_parameters(self, name: str) -> bool:
+        name = self.actual_key(name)
+        return name in self._dynamic_parameters
+
     def __contains__(self, item):
         return item in self._entries or item in self._refs
 

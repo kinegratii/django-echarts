@@ -10,13 +10,15 @@ from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 from django.views.generic.edit import FormMixin
 from django_echarts.ajax_echarts import ChartOptionsView
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.core.exceptions import DJEAbortException
+from django_echarts.core.exceptions import DJEAbortException,ChartDoesNotExist
 from django_echarts.entities import (
     ChartInfo, WidgetCollection, Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
 )
+from django_echarts.entities.uri import EntityURI
 from django_echarts.geojson import geo_urlpatterns
 from django_echarts.stores.entity_factory import factory
 from django_echarts.utils.compat import get_elided_page_range
+
 from typing_extensions import Literal
 
 from .optstools import SiteOptsForm, SiteOpts
@@ -205,7 +207,13 @@ class DJESiteChartSingleView(DJESiteBackendView):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         context['view_name'] = 'dje_chart_single'
         chart_name = self.kwargs.get('name')
-        chart_obj, func_exists, chart_info = factory.get_chart_and_info(chart_name)
+        chart_uri = EntityURI.from_params_path('chart', chart_name, self.kwargs.get('chart_params', ''))
+        factory.clean_uri_params(chart_uri)
+        # TODO exception ChartDoesNotExist ChartParamsInvalid
+        try:
+            chart_obj, func_exists, chart_info = factory.get_chart_and_info2(chart_uri)
+        except ChartDoesNotExist as e:
+            self.abort_request(str(e))
         if not func_exists:
             self.abort_request('The chart does not exist.')
         if not chart_obj:
@@ -327,6 +335,8 @@ class DJESite:
             path('chart/<slug:name>/', self._view_dict['dje_chart_single'].as_view(), name='dje_chart_single'),
             path('chart/<slug:name>/options/', self._view_dict['dje_chart_options'].as_view(),
                  name='dje_chart_options'),
+            path('chart/<slug:name>/<path:chart_params>/', self._view_dict['dje_chart_single'].as_view(),
+                 name='dje_chart_single'),
             path('collection/', self._view_dict['dje_chart_collection'].as_view(), name='dje_chart_collection_all'),
             path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
                  name='dje_chart_collection'),

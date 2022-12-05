@@ -1,7 +1,9 @@
+import copy
 from collections import defaultdict
 from typing import Dict, Optional, List, Tuple
 
 from .html_widgets import HTMLBase
+from .uri import EntityURI
 
 __all__ = ['ChartInfo', 'ChartInfoManagerMixin', 'LocalChartInfoManager']
 
@@ -10,7 +12,7 @@ class ChartInfo(HTMLBase):
     widget_type = 'InfoCard'
     """The meta-data class for a chart."""
     __slots__ = ['name', 'title', 'description', 'body', 'url', 'selected', 'catalog', 'top', 'tags', 'layout',
-                 'extra']
+                 'extra', 'is_bound']
 
     def __init__(self, name: str, title: str = None, description: str = None, body: str = None, url: str = None,
                  selected: bool = False, catalog: str = None, top: int = 0, tags: List = None, layout: str = None,
@@ -18,7 +20,7 @@ class ChartInfo(HTMLBase):
         self.name = name
         self.title = title or self.name
         self.description = description or ''
-        self.body = body
+        self.body = body or ''
         self.url = url
         self.selected = selected
         self.top = top
@@ -26,6 +28,18 @@ class ChartInfo(HTMLBase):
         self.tags = tags or []
         self.layout = layout
         self.extra = extra or {}
+        self.is_bound = True
+
+    def set_bound(self, is_bound: bool):
+        self.is_bound = is_bound
+        return self
+
+    def format_data_with_params(self, params: dict):
+        self.title = self.title.format(**params)
+        self.description = self.description.format(**params)
+        print(self.body)
+        self.body = self.body.format(**params)
+        self.is_bound = True
 
     def __hash__(self):
         return hash(self.name)
@@ -49,7 +63,7 @@ class ChartInfoManagerMixin:
     def query_group_list(self) -> List[Tuple[str, List[ChartInfo]]]:
         pass
 
-    def get_or_none(self, name: str) -> Optional[ChartInfo]:
+    def get_or_none(self, name: str = None, uri: EntityURI = None) -> Optional[ChartInfo]:
         pass
 
     def count(self) -> int:
@@ -64,7 +78,7 @@ class LocalChartInfoManager(ChartInfoManagerMixin):
         self._chart_info_list.append(info)
 
     def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[ChartInfo]:
-        chart_info_list = [info for info in self._chart_info_list if not with_top or info.top]
+        chart_info_list = [info for info in self._chart_info_list if info.is_bound and (not with_top or info.top)]
         if keyword:
             def _filter(_item):
                 return keyword in _item.title or keyword in _item.tags
@@ -90,10 +104,18 @@ class LocalChartInfoManager(ChartInfoManagerMixin):
         grouped_data.append(('Others', catalog2info['Others']))
         return grouped_data
 
-    def get_or_none(self, name: str) -> Optional[ChartInfo]:
+    def get_or_none(self, name: str = None, uri: EntityURI = None) -> Optional[ChartInfo]:
+        if uri:
+            q_name = uri.name
+        else:
+            q_name = name
         for info in self._chart_info_list:
-            if info.name == name:
-                return info
+            if info.name == q_name:
+                if info.is_bound:
+                    return info
+                new_info = copy.copy(info)
+                new_info.format_data_with_params(uri.params)
+                return new_info
 
     def count(self) -> int:
         return len(self._chart_info_list)
