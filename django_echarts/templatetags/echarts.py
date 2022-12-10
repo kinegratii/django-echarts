@@ -10,9 +10,10 @@ from django import template
 from django.template.loader import render_to_string, get_template
 from django.utils.safestring import SafeString
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.entities import LinkItem, Menu
+from django_echarts.entities import LinkItem, Menu, EntityURI
 from django_echarts.renders import render_widget, flat_chart, get_js_dependencies
 from django_echarts.utils.burl import burl_kwargs
+from django_echarts.site_exts import reverse_chart_url
 
 register = template.Library()
 
@@ -118,3 +119,9 @@ def page_link(context, page_number: int):
 @register.simple_tag(takes_context=True)
 def dw_link(context, item: Union[LinkItem, Menu], class_: str = None):
     return render_widget(item, context=context, class_=class_)
+
+
+# Site urls
+
+def url_single_chart(uri_or_name: Union[EntityURI, str], params_dic: dict = None):
+    return reverse_chart_url(uri_or_name, params_dic)

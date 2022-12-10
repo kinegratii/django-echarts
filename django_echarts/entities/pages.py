@@ -1,13 +1,16 @@
 from collections import OrderedDict
 from abc import abstractmethod
 from typing import List, Union, Tuple, Any, Optional
+import warnings
 
+from .uri import EntityURI
 from .articles import ChartInfo
 from .containers import RowContainer, Container
 from .layouts import LayoutOpts, TYPE_LAYOUT_OPTS, any2layout
 
 
 class WidgetGetterMixin:
+
     @abstractmethod
     def get_chart_and_info(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
         """Return a pycharts chart object."""
@@ -20,10 +23,16 @@ class WidgetGetterMixin:
 
     @abstractmethod
     def get_widget_by_name(self, name: str) -> Any:
+        warnings.warn('This method is deprecated, use get_entity instead.', DeprecationWarning, stacklevel=2)
+        pass
+
+    @abstractmethod
+    def get_widget_by_uri(self, uri: EntityURI):
         pass
 
 
 class WidgetCollection(Container):
+    # TODO use uri string
     """A row-list-container"""
     widget_type = 'Collection'
 

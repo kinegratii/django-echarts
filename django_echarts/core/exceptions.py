@@ -20,5 +20,5 @@ class WidgetNotRegisteredError(BaseException):
 class ChartDoesNotExist(BaseException):
     def __init__(self, message: str = None, param_name: str = None, param_input=None, param_choices=None):
         if param_name:
-            message = f'Invalid param: {param_name}={param_input}. Choices are: {param_choices}'
+            message = f'Invalid param value: {param_name}={param_input}. Choices are: {param_choices}'
         super().__init__(message)

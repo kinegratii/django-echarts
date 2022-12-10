@@ -4,7 +4,9 @@
 
 - 新增参数化图表支持
 - 新增 `WidgetNotRegisteredError` 异常
+- `WidgetGetterMixin` 接口类支持 `EntityURI`
 - Borax 更新至 4.0
+- Site 去掉引用机制
 
 ## v0.5.2 - （20220508）
 

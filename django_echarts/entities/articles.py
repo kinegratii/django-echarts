@@ -12,7 +12,7 @@ class ChartInfo(HTMLBase):
     widget_type = 'InfoCard'
     """The meta-data class for a chart."""
     __slots__ = ['name', 'title', 'description', 'body', 'url', 'selected', 'catalog', 'top', 'tags', 'layout',
-                 'extra', 'is_bound']
+                 'extra', 'is_bound', 'uri']
 
     def __init__(self, name: str, title: str = None, description: str = None, body: str = None, url: str = None,
                  selected: bool = False, catalog: str = None, top: int = 0, tags: List = None, layout: str = None,
@@ -30,6 +30,8 @@ class ChartInfo(HTMLBase):
         self.extra = extra or {}
         self.is_bound = True
 
+    # Methods related to bound states.
+
     def set_bound(self, is_bound: bool):
         self.is_bound = is_bound
         return self
@@ -37,7 +39,6 @@ class ChartInfo(HTMLBase):
     def format_data_with_params(self, params: dict):
         self.title = self.title.format(**params)
         self.description = self.description.format(**params)
-        print(self.body)
         self.body = self.body.format(**params)
         self.is_bound = True
 

@@ -1,4 +1,5 @@
 import re
+from collections import defaultdict
 from functools import wraps
 from typing import Optional, List, Dict, Type, Any, Union
 
@@ -10,7 +11,7 @@ from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 from django.views.generic.edit import FormMixin
 from django_echarts.ajax_echarts import ChartOptionsView
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.core.exceptions import DJEAbortException,ChartDoesNotExist
+from django_echarts.core.exceptions import DJEAbortException, ChartDoesNotExist
 from django_echarts.entities import (
     ChartInfo, WidgetCollection, Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
 )
@@ -18,7 +19,6 @@ from django_echarts.entities.uri import EntityURI
 from django_echarts.geojson import geo_urlpatterns
 from django_echarts.stores.entity_factory import factory
 from django_echarts.utils.compat import get_elided_page_range
-
 from typing_extensions import Literal
 
 from .optstools import SiteOptsForm, SiteOpts
@@ -78,7 +78,7 @@ class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, V
         context['nav'] = site.nav
         context['site_title'] = site.site_title
         context['page_title'] = site.site_title
-        context['copyright'] = factory.html_widgets.get('copyright')
+        context['copyright'] = factory.get_widget_by_uri(site.ref2uri['copyright'])
         context['opts'] = site.opts
 
         # The data store in a view processing lifecycle.
@@ -150,13 +150,15 @@ class DJESiteHomeView(DJESiteBackendView):
     template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
+        site = SiteInjectMixin.get_site_object()
         context = super(DJESiteHomeView, self).get_context_data(**kwargs)
-        context['jumbotron'] = factory.get_html_widget(WidgetRefs.home_jumbotron)
-        chart_obj, _, info = factory.get_chart_and_info(WidgetRefs.home_jumbotron_chart)
+        context['jumbotron'] = factory.get_widget_by_uri(site.ref2uri[WidgetRefs.home_jumbotron])
+        chart_obj, _, info = factory.get_chart_and_info2(site.ref2uri[WidgetRefs.home_jumbotron_chart])
         if chart_obj:
             context[_VAR_CHART_] = chart_obj
             context[_VAR_CHART_INFO_] = info
-        context[WidgetRefs.home_values_panel] = factory.get_html_widget(WidgetRefs.home_values_panel)
+        context[WidgetRefs.home_values_panel] = factory.get_widget_by_uri(
+            site.ref2uri[WidgetRefs.home_values_panel])
         context['top_chart_info_list'] = factory.chart_info_manager.query_chart_info_list(with_top=True)
         context['layout_tpl'] = 'items_grid.html'
         return context
@@ -212,17 +214,17 @@ class DJESiteChartSingleView(DJESiteBackendView):
         # TODO exception ChartDoesNotExist ChartParamsInvalid
         try:
             chart_obj, func_exists, chart_info = factory.get_chart_and_info2(chart_uri)
+            if not func_exists:
+                self.abort_request('The chart does not exist.')
+            if not chart_obj:
+                self.abort_request(f'The chart function {chart_name} returns nothing..')
+            chart_obj.width = '100%'
+            context['chart_info'] = chart_info
+            context['chart_obj'] = chart_obj
+            context['title'] = self.get_dje_page_title(name=chart_info.name, title=chart_info.title)
+            return self.template_name
         except ChartDoesNotExist as e:
             self.abort_request(str(e))
-        if not func_exists:
-            self.abort_request('The chart does not exist.')
-        if not chart_obj:
-            self.abort_request(f'The chart function {chart_name} returns nothing..')
-        chart_obj.width = '100%'
-        context['chart_info'] = chart_info
-        context['chart_obj'] = chart_obj
-        context['title'] = self.get_dje_page_title(name=chart_info.name, title=chart_info.title)
-        return self.template_name
 
     def get_dje_page_title(self, name, title, **kwargs):
         return self.page_title.format(name=name, title=title)
@@ -313,6 +315,8 @@ class DJESite:
 
         self._collection_dic = {}  # type: Dict[str,WidgetCollection]
 
+        self._ref2uri = defaultdict(EntityURI.empty)
+
     def _inject(self, func):
         @wraps(func)
         def decorated(*args, **kwargs):
@@ -321,6 +325,10 @@ class DJESite:
             return func(*args, **new_kwargs)
 
         return decorated
+
+    @property
+    def ref2uri(self):
+        return self._ref2uri
 
     @property
     def opts(self) -> SiteOpts:
@@ -383,19 +391,26 @@ class DJESite:
     def add_widgets(self, *, copyright_: Copyright = None, jumbotron: Jumbotron = None,
                     jumbotron_chart: Union[str, Any] = None, values_panel: Union[str, ValuesPanel] = None):
         """Place widgets to pages."""
-        if copyright_:
-            factory.register_html_widget(copyright_, 'copyright')
-        if jumbotron:
-            factory.register_html_widget(jumbotron, WidgetRefs.home_jumbotron)
-        if isinstance(jumbotron_chart, str):
-            factory.set_chart_ref(WidgetRefs.home_jumbotron_chart, jumbotron_chart)
-        elif jumbotron_chart:
-            factory.register_chart_widget(jumbotron_chart, WidgetRefs.home_jumbotron_chart)
-        if isinstance(values_panel, str):
-            factory.set_html_ref(WidgetRefs.home_values_panel, values_panel)
-        elif isinstance(values_panel, ValuesPanel):
-            factory.register_html_widget(values_panel, WidgetRefs.home_values_panel)
+        # TODO Use WidgetDefineMixin
+
+        self._add_widget('copyright', copyright_, 'widget')
+        self._add_widget(WidgetRefs.home_jumbotron, jumbotron, 'widget')
+        self._add_widget(WidgetRefs.home_jumbotron_chart, jumbotron_chart, 'chart')
+        self._add_widget(WidgetRefs.home_values_panel, values_panel, 'widget')
         return self
+
+    def _add_widget(self, ref_name: str, entity_obj_or_name=None, entity_catalog: str = None):
+        if entity_obj_or_name is None:
+            return
+        if isinstance(entity_obj_or_name, str):
+            uri = EntityURI.from_str(entity_obj_or_name, catalog=entity_catalog)
+        else:
+            uri = EntityURI.from_str(ref_name, catalog=entity_catalog)
+            if entity_catalog == 'chart':
+                factory.register_chart_widget(entity_obj_or_name, uri.name)
+            else:
+                factory.register_html_widget(entity_obj_or_name, uri.name)
+        self._ref2uri[ref_name] = uri
 
     # Register function and views class
     def register_chart(self, function=None, *, info: ChartInfo = None, name: str = None, title: str = None,
@@ -407,7 +422,7 @@ class DJESite:
             cname = name or func.__name__
             if not _SLUG_RE.match(cname):
                 raise ValueError(f'Invalid chart slug:{cname}')
-            url = reverse_lazy('dje_chart_single', args=(cname,))
+            url = reverse_lazy('dje_chart_single', args=(cname,))  # TODO
             if info:
                 c_info = info
             else:

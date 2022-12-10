@@ -87,7 +87,6 @@ class EntityFactory(WidgetGetterMixin):
         return self._html_widgets.get(name, params)
 
     def get_widget_by_name(self, name: str) -> Any:
-        # TODO use entity_id
         if name[:5] == 'info:':
             info_name = self._chart_obj_dic.actual_key(name[5:])
             return self._chart_info_manager.get_or_none(info_name)
@@ -111,7 +110,9 @@ class EntityFactory(WidgetGetterMixin):
         else:
             uri.params = self.html_widgets.validate_caller_params(uri.name, uri.params)
 
-    def get_entity(self, uri: EntityURI):
+    def get_widget_by_uri(self, uri: EntityURI):
+        if uri.is_empty():
+            return None
         if uri.catalog == 'chart':
             return self._chart_obj_dic.get(uri.name, uri.params)
         elif uri.catalog == 'info':
@@ -121,7 +122,7 @@ class EntityFactory(WidgetGetterMixin):
             return self._html_widgets.get(uri.name, uri.params)
 
     def get_chart_and_info2(self, uri: EntityURI):
-        if uri.name in self._chart_obj_dic:
+        if not uri.is_empty() and uri.name in self._chart_obj_dic:
             func_exists = True
             chart_obj = self._chart_obj_dic.get(uri.name, uri.params)
             info_name = self._chart_obj_dic.actual_key(uri.name)

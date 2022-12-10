@@ -154,9 +154,6 @@ class Title(HTMLBase):
         self.small_text = small_text
 
 
-# tag_name: str, content: str = None,
-#              *, id_: str = None, style: Dict = None, class_: Union[List, str, None] = None, style_width: str = None,
-#              style_height: str = None, **kwargs
 class ElementEntity(HTMLBase):
     """A common entity for a html element."""
 
