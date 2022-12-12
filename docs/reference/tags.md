@@ -125,8 +125,16 @@ django_echarts.templatetags.dje.theme_js()
 ### page_link
 
 ```python
-django_echarts.templatetags.dje.page_link(context, page_number)
+django_echarts.templatetags.echarts.page_link(context, page_number)
 ```
 
 将当前url增加page参数。
+
+***url_single_chart***
+
+```python
+django_echarts.templatetags.echarts.url_single_chart(uri_or_name: Union[EntityURI, str], params_dic: dict = None)
+```
+
+
 

@@ -3,7 +3,7 @@ from collections import defaultdict
 from typing import Dict, Optional, List, Tuple
 
 from .html_widgets import HTMLBase
-from .uri import EntityURI
+from .uri import EntityURI, ParamsConfig
 
 __all__ = ['ChartInfo', 'ChartInfoManagerMixin', 'LocalChartInfoManager']
 
@@ -12,11 +12,11 @@ class ChartInfo(HTMLBase):
     widget_type = 'InfoCard'
     """The meta-data class for a chart."""
     __slots__ = ['name', 'title', 'description', 'body', 'url', 'selected', 'catalog', 'top', 'tags', 'layout',
-                 'extra', 'is_bound', 'uri']
+                 'extra', 'is_bound', 'uri', 'params_config']
 
     def __init__(self, name: str, title: str = None, description: str = None, body: str = None, url: str = None,
                  selected: bool = False, catalog: str = None, top: int = 0, tags: List = None, layout: str = None,
-                 extra: Dict = None):
+                 extra: Dict = None, params_config: ParamsConfig = None):
         self.name = name
         self.title = title or self.name
         self.description = description or ''
@@ -29,6 +29,7 @@ class ChartInfo(HTMLBase):
         self.layout = layout
         self.extra = extra or {}
         self.is_bound = True
+        self.params_config = params_config or ParamsConfig.empty()
 
     # Methods related to bound states.
 
@@ -36,10 +37,18 @@ class ChartInfo(HTMLBase):
         self.is_bound = is_bound
         return self
 
+    def create_bound_chart_info(self, uri: EntityURI) -> 'ChartInfo':
+        if self.is_bound:
+            return self
+        new_info = copy.copy(self)
+        new_info.format_data_with_params(uri.params)
+        return new_info
+
     def format_data_with_params(self, params: dict):
-        self.title = self.title.format(**params)
-        self.description = self.description.format(**params)
-        self.body = self.body.format(**params)
+        if len(params) != 0:
+            self.title = self.title.format(**params)
+            self.description = self.description.format(**params)
+            self.body = self.body.format(**params)
         self.is_bound = True
 
     def __hash__(self):
@@ -112,11 +121,7 @@ class LocalChartInfoManager(ChartInfoManagerMixin):
             q_name = name
         for info in self._chart_info_list:
             if info.name == q_name:
-                if info.is_bound:
-                    return info
-                new_info = copy.copy(info)
-                new_info.format_data_with_params(uri.params)
-                return new_info
+                return info.create_bound_chart_info(uri)
 
     def count(self) -> int:
         return len(self._chart_info_list)

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    {{ chart_info.title }}
+
+    {% for link in link_group %}
+        <a href="{{ link.href }}">{{ link.text }}</a>
+    {% endfor %}
+{% endblock %}

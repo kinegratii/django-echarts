@@ -2,6 +2,10 @@
 
 ## v0.6.0
 
+> 新增 Django 4.1 构建支持
+
+
+
 - 新增参数化图表支持
 - 新增 `WidgetNotRegisteredError` 异常
 - `WidgetGetterMixin` 接口类支持 `EntityURI`

@@ -1,5 +1,5 @@
 import unittest
-from django_echarts.entities.uri import EntityURI
+from django_echarts.entities.uri import EntityURI, parse_params_choices
 
 
 class EntityURITestCase(unittest.TestCase):
@@ -27,3 +27,9 @@ class EntityURITestCase(unittest.TestCase):
         self.assertEqual('chart', uri_with_params.catalog)
         self.assertEqual('name1', uri_with_params.name)
         self.assertEqual('2022', uri_with_params.params['year'])
+
+
+class ParamsConfigTestCase(unittest.TestCase):
+    def test_parse_dict(self):
+        result = list(parse_params_choices({'year': [2021, 2022], 'month': [1, 2]}))
+        self.assertEqual(4, len(result))

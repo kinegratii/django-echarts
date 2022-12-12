@@ -1,5 +1,6 @@
 from functools import wraps
 import inspect
+from typing import Tuple
 
 
 class ParameterMissingError(BaseException):
@@ -84,12 +85,13 @@ class LazyDict:
 
         return _inner
 
-    def validate_caller_params(self, func_name: str, param_dic: dict) -> dict:
+    def validate_caller_params(self, func_name: str, param_dic: dict) -> Tuple[dict, bool]:
         """Validate and convert values with type annotation in registered function.
         """
         declare_dic = self._dynamic_parameters.get(func_name, None)
-        if declare_dic is None:
-            return param_dic
+        is_parametric = declare_dic is not None
+        if len(param_dic) == 0 or not is_parametric:
+            return param_dic, is_parametric
         new_param_dic = {}
         extra_param_names = []
         for name, value in param_dic.items():
@@ -107,13 +109,13 @@ class LazyDict:
                 new_param_dic.update({k: v for k, v in param_dic.items()})
                 valid = True
                 break
-            if parameter.default is not None and name not in param_dic:
+            if parameter.default is not inspect.Parameter.empty and name not in param_dic:
                 new_param_dic[name] = parameter.default
         if not valid and len(extra_param_names) == 0:
             valid = True
         if not valid:
             raise ParameterMissingError(f'These parameters are required: {",".join(extra_param_names)}')
-        return new_param_dic
+        return new_param_dic, is_parametric
 
     def has_parameters(self, name: str) -> bool:
         name = self.actual_key(name)

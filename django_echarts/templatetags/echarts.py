@@ -122,6 +122,7 @@ def dw_link(context, item: Union[LinkItem, Menu], class_: str = None):
 
 
 # Site urls
-
-def url_single_chart(uri_or_name: Union[EntityURI, str], params_dic: dict = None):
+@register.simple_tag(takes_context=True)
+def url_single_chart(context, uri_or_name: Union[EntityURI, str], params_dic: dict = None):
+    # TODO use {% dw uri %} <a>?
     return reverse_chart_url(uri_or_name, params_dic)

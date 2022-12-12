@@ -55,15 +55,15 @@ class LazyDictTestCase(unittest.TestCase):
 
         my_params = {'year': '2022'}
 
-        self.assertDictEqual({'year': 2022}, l_dic.validate_caller_params('func1', my_params))
+        self.assertDictEqual({'year': 2022}, l_dic.validate_caller_params('func1', my_params)[0])
         my_params2 = {'year': 2021}
-        self.assertDictEqual({'year': 2021}, l_dic.validate_caller_params('func1', my_params2))
+        self.assertDictEqual({'year': 2021}, l_dic.validate_caller_params('func1', my_params2)[0])
         self.assertEqual(2021, l_dic.get('func1', {'year': 2021}))
 
         self.assertDictEqual({'year': 2021, 'month': 3},
-                             l_dic.validate_caller_params('func2', {'year': 2021, 'month': 3}))
-        self.assertDictEqual({'year': 2021, 'month': 2}, l_dic.validate_caller_params('func2', {'year': 2021}))
+                             l_dic.validate_caller_params('func2', {'year': 2021, 'month': 3})[0])
+        self.assertDictEqual({'year': 2021, 'month': 2}, l_dic.validate_caller_params('func2', {'year': 2021})[0])
         self.assertDictEqual({'year': 2021, 'month': 2},
-                             l_dic.validate_caller_params('func3', {'year': 2021, 'month': 2}))
+                             l_dic.validate_caller_params('func3', {'year': 2021, 'month': 2})[0])
         with self.assertRaises(ParameterMissingError):
             l_dic.validate_caller_params('func1', {'year': 2021, 'month': 2})

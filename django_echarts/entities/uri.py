@@ -1,3 +1,7 @@
+from typing import List, Union, Generator
+import itertools
+
+
 class EntityURI:
     __empty = None
 
@@ -6,6 +10,7 @@ class EntityURI:
     CATALOG_WIDGET = 'widget'
     CATALOG_LAYOUT = 'layout'
     CATALOG_COLLECTION = 'collection'
+    # TODO description attr
 
     __slots__ = ['catalog', 'name', 'params', '_params_path']
 
@@ -13,7 +18,10 @@ class EntityURI:
         self.catalog = catalog
         self.name = name
         self.params = params or {}
-        self._params_path = '/'.join([item for kv in self.params.items() for item in kv])
+        _items = []
+        for k, v in self.params.items():
+            _items.extend([k, str(v)])
+        self._params_path = '/'.join(_items)
 
     @property
     def params_path(self):
@@ -21,6 +29,8 @@ class EntityURI:
 
     def __str__(self):
         return f'{self.catalog}:{self.name}'
+
+    __repr__ = __str__
 
     def is_empty(self):
         return not self.catalog or self.catalog == 'empty'
@@ -82,3 +92,43 @@ class EntityURI:
         else:
             name, params_path = st[:pos], st[pos + 1:]
         return cls.from_params_path(_catalog, name, params_path, param_names)
+
+
+USER_PARAMS_CONFIGS_TYPE = Union[List[dict], dict]
+
+
+def parse_params_choices(config: USER_PARAMS_CONFIGS_TYPE) -> Generator[dict, None, None]:
+    """
+    [{'year':2021, 'month':1},{'year':2021, 'month':2},]
+    {'year':[2021,2022], 'month':[1,2]}
+    """
+    if isinstance(config, List):
+        for item in config:
+            yield item
+    else:
+        names = []
+        values_list = []
+        for name, values in config.items():
+            names.append(name)
+            values_list.append(values)
+        for t in itertools.product(*values_list):
+            item = dict((k, v) for k, v in zip(names, t))
+            yield item
+
+
+class ParamsConfig:
+    __empty__ = None
+    __slots__ = ['choices']
+
+    def __init__(self, choices: USER_PARAMS_CONFIGS_TYPE = None):
+        self.choices = choices or {}
+
+    def __iter__(self):
+        for param_dic in parse_params_choices(self.choices):
+            yield param_dic
+
+    @classmethod
+    def empty(cls):
+        if ParamsConfig.__empty__ is None:
+            ParamsConfig.__empty__ = ParamsConfig()
+        return ParamsConfig.__empty__

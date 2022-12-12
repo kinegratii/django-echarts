@@ -9,13 +9,15 @@
 实现一个参数化图表很简单，只需在图表注册函数添加参数即可。
 
 ```python
+from django_echarts.entity.uri import ParamsConfig
 from django_echarts.starter.sites import DJESite
 from pyecharts import options as opts
 from pyecharts.charts import Bar
 
 site_obj = DJESite(site_title='福建统计')
 
-@site_obj.register_chart(title='{year}年福建省家庭户类型组成')
+@site_obj.register_chart(title='{year}年福建省家庭户类型组成', 
+                        params_config=ParamsConfig({'year': [1982, 1990, 2000, 2010, 2020]}))
 def yearly_family_types(year: int):
     family_types = [
         '一人户', '二人户', '三人户', '四人户', '五人户', '六人户', '七人户', '八人户', '九人户', '十人及其以上'
@@ -52,7 +54,7 @@ django-echarts 推荐尽可能遵循下列明确性的规则：
 
 `DJESite.register` 或 `EntityFactory.register` 装饰器的三个参数 title，description，body支持模板字符串，如上述例子中的 `{year}年福建省家庭户类型组成`。
 
-**注意：此处使用`str.format的单括号形式，而不是Django模板的双括号形式。`**
+**注意：此处使用str.format的单括号形式，而不是Django模板的双括号形式。**
 
 ### 返回图表
 

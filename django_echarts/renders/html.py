@@ -28,8 +28,8 @@ def _to_css_length(val):
 def render_widget(widget, **kwargs) -> SafeString:
     if hasattr(widget, '__html__') and callable(widget.__html__):
         return widget.__html__()
-    raise WidgetNotRegisteredError(widget)
-    # return SafeString(f'<div>Unknown widget type:{widget.__class__.__name__}</div>')
+    # raise WidgetNotRegisteredError(widget)
+    return SafeString(f'<div>Unknown widget type:{widget.__class__.__name__}</div>')
 
 
 @render_widget.register(type(None))

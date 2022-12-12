@@ -15,10 +15,11 @@ from django_echarts.core.exceptions import DJEAbortException, ChartDoesNotExist
 from django_echarts.entities import (
     ChartInfo, WidgetCollection, Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
 )
-from django_echarts.entities.uri import EntityURI
+from django_echarts.entities.uri import EntityURI, ParamsConfig
 from django_echarts.geojson import geo_urlpatterns
 from django_echarts.stores.entity_factory import factory
-from django_echarts.utils.compat import get_elided_page_range
+from django_echarts.utils.compat import compat_get_elided_page_range
+from django_echarts.site_exts import reverse_chart_url
 from typing_extensions import Literal
 
 from .optstools import SiteOptsForm, SiteOpts
@@ -153,7 +154,7 @@ class DJESiteHomeView(DJESiteBackendView):
         site = SiteInjectMixin.get_site_object()
         context = super(DJESiteHomeView, self).get_context_data(**kwargs)
         context['jumbotron'] = factory.get_widget_by_uri(site.ref2uri[WidgetRefs.home_jumbotron])
-        chart_obj, _, info = factory.get_chart_and_info2(site.ref2uri[WidgetRefs.home_jumbotron_chart])
+        chart_obj, _, info = factory.get_chart_and_info_by_uri(site.ref2uri[WidgetRefs.home_jumbotron_chart])
         if chart_obj:
             context[_VAR_CHART_] = chart_obj
             context[_VAR_CHART_INFO_] = info
@@ -188,11 +189,7 @@ class DJESiteListView(DJESiteBackendView):
             page_number = self.request.GET.get(self.page_kwarg, 1)
             page_obj = paginator.get_page(page_number)
             context['page_obj'] = page_obj
-            try:
-                # Django3.2+
-                elided_page_nums = paginator.get_elided_page_range(page_number)
-            except (AttributeError, TypeError, ValueError):
-                elided_page_nums = get_elided_page_range(paginator, page_number)
+            elided_page_nums = compat_get_elided_page_range(paginator, page_number)
             context['elided_page_nums'] = list(elided_page_nums)
             return 'list_with_paginator.html'
         else:
@@ -210,10 +207,12 @@ class DJESiteChartSingleView(DJESiteBackendView):
         context['view_name'] = 'dje_chart_single'
         chart_name = self.kwargs.get('name')
         chart_uri = EntityURI.from_params_path('chart', chart_name, self.kwargs.get('chart_params', ''))
-        factory.clean_uri_params(chart_uri)
+        is_parametric = factory.clean_uri_params(chart_uri)
+        if len(chart_uri.params) == 0 and is_parametric:
+            return self.update_context_for_parametric_chart_without_params(context, chart_uri)
         # TODO exception ChartDoesNotExist ChartParamsInvalid
         try:
-            chart_obj, func_exists, chart_info = factory.get_chart_and_info2(chart_uri)
+            chart_obj, func_exists, chart_info = factory.get_chart_and_info_by_uri(chart_uri)
             if not func_exists:
                 self.abort_request('The chart does not exist.')
             if not chart_obj:
@@ -225,6 +224,20 @@ class DJESiteChartSingleView(DJESiteBackendView):
             return self.template_name
         except ChartDoesNotExist as e:
             self.abort_request(str(e))
+
+    def update_context_for_parametric_chart_without_params(self, context, uri: EntityURI):
+        chart_info = factory.chart_info_manager.get_or_none(uri=uri)
+        context['chart_info'] = chart_info
+        context['title'] = self.get_dje_page_title(name=chart_info.name, title=chart_info.title)
+        link_group = []
+        for params_dic in chart_info.params_config:
+            link = {
+                'href': reverse_chart_url(EntityURI('chart', chart_info.name, params_dic)),
+                'text': chart_info.title.format(**params_dic)
+            }
+            link_group.append(link)
+        context['link_group'] = link_group
+        return 'chart_parametric.html'
 
     def get_dje_page_title(self, name, title, **kwargs):
         return self.page_title.format(name=name, title=title)
@@ -415,7 +428,8 @@ class DJESite:
     # Register function and views class
     def register_chart(self, function=None, *, info: ChartInfo = None, name: str = None, title: str = None,
                        description: str = None, body: str = None, layout: str = None, top: int = 0, catalog: str = None,
-                       tags: List = None, nav_parent_name: str = None, nav_after_separator: bool = False):
+                       tags: List = None, nav_parent_name: str = None, nav_after_separator: bool = False,
+                       params_config: ParamsConfig = None):
         """Register chart function."""
 
         def decorator(func):
@@ -426,8 +440,8 @@ class DJESite:
             if info:
                 c_info = info
             else:
-                c_info = ChartInfo(name=cname, title=title or cname, description=description, body=body,
-                                   url=url, top=top, catalog=catalog, tags=tags, layout=layout)
+                c_info = ChartInfo(name=cname, title=title or cname, description=description, body=body, url=url,
+                                   top=top, catalog=catalog, tags=tags, layout=layout, params_config=params_config)
             factory.register_chart_widget(func, c_info.name, info=c_info)
 
             if nav_parent_name == 'self':

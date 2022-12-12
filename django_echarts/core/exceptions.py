@@ -7,6 +7,8 @@ class DJEAbortException(BaseException):
         super().__init__(message)
 
 
+# ErrorMessageException / WarningMessageException
+
 class ChartFuncCallError(BaseException):
     def __init__(self, char_name: str):
         super().__init__(f'ChartName:{char_name}')

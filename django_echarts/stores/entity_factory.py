@@ -23,6 +23,14 @@ class EntityFactory(WidgetGetterMixin):
         return self._chart_obj_dic
 
     @property
+    def html_widget_manger(self) -> LazyDict:
+        return self._html_widgets
+
+    @property
+    def chart_manager(self) -> LazyDict:
+        return self._chart_obj_dic
+
+    @property
     def chart_info_manager(self) -> ChartInfoManagerMixin:
         return self._chart_info_manager
 
@@ -103,26 +111,29 @@ class EntityFactory(WidgetGetterMixin):
 
     # Methods related Entity URI
 
-    def clean_uri_params(self, uri: EntityURI):
-        """Validate and convert params."""
+    def clean_uri_params(self, uri: EntityURI) -> bool:
+        """Validate and convert params inplace.And return parametric flag for the name"""
         if uri.catalog in ('chart', 'info'):
-            uri.params = self.chart_widgets.validate_caller_params(uri.name, uri.params)
+            uri.params, is_parametric = self.chart_manager.validate_caller_params(uri.name, uri.params)
         else:
-            uri.params = self.html_widgets.validate_caller_params(uri.name, uri.params)
+            uri.params, is_parametric = self.html_widget_manger.validate_caller_params(uri.name, uri.params)
+        return is_parametric
 
     def get_widget_by_uri(self, uri: EntityURI):
         if uri.is_empty():
             return None
+        self.clean_uri_params(uri)
         if uri.catalog == 'chart':
             return self._chart_obj_dic.get(uri.name, uri.params)
         elif uri.catalog == 'info':
             info_name = self._chart_obj_dic.actual_key(uri.name)
-            return self._chart_info_manager.get_or_none(info_name)
+            return self._chart_info_manager.get_or_none(uri=uri)
         else:
             return self._html_widgets.get(uri.name, uri.params)
 
-    def get_chart_and_info2(self, uri: EntityURI):
+    def get_chart_and_info_by_uri(self, uri: EntityURI):
         if not uri.is_empty() and uri.name in self._chart_obj_dic:
+            self.clean_uri_params(uri)
             func_exists = True
             chart_obj = self._chart_obj_dic.get(uri.name, uri.params)
             info_name = self._chart_obj_dic.actual_key(uri.name)
