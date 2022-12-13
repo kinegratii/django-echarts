@@ -72,6 +72,21 @@ class Nav:
         return self
 
 
+class LinkGroup(HTMLBase):
+    """A list panel containing links."""
+    widget_type = 'LinkGroup'
+
+    def __init__(self):
+        self.widgets = []  # type:List[LinkItem]
+
+    def add_widget(self, widget: LinkItem):
+        self.widgets.append(widget)
+
+    def __iter__(self):
+        for widget in self.widgets:
+            yield widget
+
+
 class Jumbotron(HTMLBase):
     widget_type = 'Jumbotron'
     """The main panel in home page."""

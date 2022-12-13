@@ -13,7 +13,7 @@ from django_echarts.ajax_echarts import ChartOptionsView
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 from django_echarts.core.exceptions import DJEAbortException, ChartDoesNotExist
 from django_echarts.entities import (
-    ChartInfo, WidgetCollection, Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
+    ChartInfo, WidgetCollection, Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel, LinkGroup
 )
 from django_echarts.entities.uri import EntityURI, ParamsConfig
 from django_echarts.geojson import geo_urlpatterns
@@ -229,13 +229,13 @@ class DJESiteChartSingleView(DJESiteBackendView):
         chart_info = factory.chart_info_manager.get_or_none(uri=uri)
         context['chart_info'] = chart_info
         context['title'] = self.get_dje_page_title(name=chart_info.name, title=chart_info.title)
-        link_group = []
+        link_group = LinkGroup()
         for params_dic in chart_info.params_config:
-            link = {
-                'href': reverse_chart_url(EntityURI('chart', chart_info.name, params_dic)),
-                'text': chart_info.title.format(**params_dic)
-            }
-            link_group.append(link)
+            link = LinkItem(
+                text=chart_info.title.format(**params_dic),
+                url=reverse_chart_url(EntityURI('chart', chart_info.name, params_dic))
+            )
+            link_group.add_widget(link)
         context['link_group'] = link_group
         return 'chart_parametric.html'
 

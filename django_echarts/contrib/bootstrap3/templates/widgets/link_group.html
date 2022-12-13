@@ -1,0 +1,5 @@
+<div class="list-group">
+    {% for link in widget %}
+        <a href="{{ link.url }}" class="list-group-item">{{ link.text }}</a>
+    {% endfor %}
+</div>

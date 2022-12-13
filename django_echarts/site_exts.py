@@ -16,4 +16,7 @@ def reverse_chart_url(uri_or_name: Union[EntityURI, str], params_dic: dict = Non
         uri = uri_or_name
     else:
         uri = EntityURI('chart', uri_or_name, params_dic)
-    return reverse_lazy('dje_chart_single', args=(uri.name, uri.params_path))
+    if len(uri.params):
+        return reverse_lazy('dje_chart_single', args=(uri.name, uri.params_path))
+    else:
+        return reverse_lazy('dje_chart_single', args=(uri.name,))

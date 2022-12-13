@@ -30,6 +30,7 @@ class ChartInfo(HTMLBase):
         self.extra = extra or {}
         self.is_bound = True
         self.params_config = params_config or ParamsConfig.empty()
+        self.uri = EntityURI('chart', self.name)  # type:EntityURI
 
     # Methods related to bound states.
 
@@ -42,6 +43,7 @@ class ChartInfo(HTMLBase):
             return self
         new_info = copy.copy(self)
         new_info.format_data_with_params(uri.params)
+        new_info.uri = uri
         return new_info
 
     def format_data_with_params(self, params: dict):
