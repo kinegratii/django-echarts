@@ -51,6 +51,7 @@ class Nav:
         self.footer_links = []  # type: List[LinkItem]
 
     def add_menu(self, text: str, slug: str = None, url: str = None):
+        # TODO Update for borax 4.0
         # Fixed in Borax v3.5.3
         texts, slugs = fetch(self.menus, 'text', 'slug', getter=lambda item, key: getattr(item, key))
         if text in texts:

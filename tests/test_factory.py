@@ -1,6 +1,7 @@
 import unittest
 
 from django_echarts.entities import (Title, ChartInfo, WidgetCollection)
+from django_echarts.entities.uri import EntityURI, ParamsConfig
 from django_echarts.stores.entity_factory import EntityFactory
 
 
@@ -37,3 +38,24 @@ class EntityFactoryTestCase(unittest.TestCase):
         wc.add_chart_widget('chart1')
         wc.add_html_widget(['demo1'])
         wc.auto_mount(my_factory)
+
+    def test_factory_uri_methods(self):
+        factory2 = EntityFactory()
+
+        @factory2.register_chart_widget
+        def chart1():
+            pass
+
+        @factory2.register_chart_widget(info=ChartInfo('chart2'))
+        def chart2(year: int):
+            pass
+
+        @factory2.register_chart_widget(info=ChartInfo('chart3', params_config=ParamsConfig({'year': [2022, 2023]})))
+        def chart3(year: int):
+            pass
+
+        uri_list = list(factory2.get_all_chart_uri())
+        uri_string_list = [str(uri) for uri in uri_list]
+        self.assertEqual(3, len(uri_list))
+        self.assertIn('chart:chart3/year/2022', uri_string_list)
+        self.assertFalse(any(['chart2' in s for s in uri_string_list]))

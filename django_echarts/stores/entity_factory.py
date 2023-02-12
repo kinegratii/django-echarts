@@ -142,5 +142,22 @@ class EntityFactory(WidgetGetterMixin):
         else:
             return None, False, None
 
+    def get_all_chart_uri(self):
+        info_dic = {info.name: info for info in self._chart_info_manager.query_all_chart_info()}
+        for chart_name in self._chart_obj_dic.keys():
+            if self._chart_obj_dic.has_parameters(chart_name):
+                info = info_dic.get(chart_name)
+                if info is not None:
+                    for params_dic in info.params_config:
+                        uri = EntityURI('chart', chart_name, params=params_dic)
+                        yield uri
+                else:
+                    # param functions without provided ParamsConfig.
+                    pass
+            else:
+                uri = EntityURI('chart', chart_name)
+                yield uri
 
+
+# Project entry for entities
 factory = EntityFactory()

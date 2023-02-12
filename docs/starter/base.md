@@ -6,9 +6,9 @@
 
 django-echarts 不会将 django 和 pyecharts 作为显式依赖库（虽然在代码中总是导入这两个库），对其版本没有强制性的依赖。下列是推荐性的版本。
 
-| django-echarts版本系列 | pyecharts | django | python | 备注       |
-| ---------------------- | --------- | ------ | ------ | ---------- |
-| 0.5.x                  | 1.9+      | 2.0+   | 3.7+   | 开发维护中 |
+| django-echarts版本系列 | pyecharts | django    | python |
+| ---------------------- | --------- | --------- | ------ |
+| 0.5.x - 0.6.x          | 1.9+      | 2.0 - 4.1 | 3.7+   |
 
 ### 项目配置
 
@@ -60,7 +60,7 @@ DJANGO_ECHARTS = {
 
 > DJESite(site_title: str,  opts: Optional[SiteOpts] = None):
 
-`DJESite` 是所有界面和逻辑的入口点，首先必须创建你自己的站点对象 `site_obj`。
+`DJESite` 是站点界面和逻辑的入口点，首先必须创建你自己的站点对象 `site_obj`。
 
 ```python
 from django_echarts.entities import Jumbotron, Copyright, LinkItem
@@ -85,7 +85,7 @@ site_obj.add_widgets(
 | 参数                 | 类型或可选值 | 描述                                                         |
 | -------------------- | ------------ | ------------------------------------------------------------ |
 | site_title           | str          | 网站标题                                                     |
-| opts                 | SiteOpts     | 选项类                                                       |
+| opts                 | SiteOpts     | 站点配置类                                                   |
 | opts.nav_shown_pages | List         | 导航栏显示的菜单项，可选为 home / list /collection / settings。默认为 ['home'] <sup>1</sup> |
 
 1. 此项设置必须在 `DJESite` 初始化时传入，以便将这些菜单项先插入导航栏靠前的位置
@@ -122,7 +122,7 @@ def mychart():
     return bar
 ```
 
-当然也可以携带一些参数，这些参数用于构建对应的 `ChartInfo` 对象。
+当然该装饰器也可以传入参数，这些参数用于构建对应的 `ChartInfo` 对象。
 
 ```python
 @site_obj.register_chart(description='词云示例', catalog='示例一')
@@ -159,11 +159,14 @@ def mychart():
 | catalog             | str            | 分类，如果设置 |
 | top                 | int            | 置顶标志，0表示不置顶，数值越小，越靠前。      |
 | tags                | List[str]      | 标签列表，列表搜索功能时，标签也是搜索范围。   |
+| **参数图表配置** |  |  |
+| params_config | ParamConfig | 图表参数配置 <sup>2</sup> |
 | **菜单参数** |                |                                                |
 | nav_parent_name     | str            | 上级菜单名称，默认为 catalog                   |
 | nav_after_separator | bool           | 是否在菜单项前使用分隔符                       |
 
 1. `Slug`类型指的是Django内置Converter，为符合正则表达式 `[-a-zA-Z0-9_]+` 的字符串，作为url的一部分。
+1.  0.6新增。参见 [《参数化图表》](/guides/entity_params)
 
 ### 关联导航栏
 

@@ -297,8 +297,9 @@ class DJESite:
         site_obj = DJESite(site_title='MySite', opts=SiteOpts(paginate_by=10))
     """
 
-    def __init__(self, site_title: str, opts: Optional[SiteOpts] = None):
+    def __init__(self, site_title: str, opts: Optional[SiteOpts] = None, ignore_register_nav: bool = False):
         self.site_title = site_title
+        self.ignore_register_nav = ignore_register_nav
         self._custom_urlpatterns = []  # url entry
         if opts is None:
             self._opts = SiteOpts()
@@ -404,7 +405,6 @@ class DJESite:
     def add_widgets(self, *, copyright_: Copyright = None, jumbotron: Jumbotron = None,
                     jumbotron_chart: Union[str, Any] = None, values_panel: Union[str, ValuesPanel] = None):
         """Place widgets to pages."""
-        # TODO Use WidgetDefineMixin
 
         self._add_widget('copyright', copyright_, 'widget')
         self._add_widget(WidgetRefs.home_jumbotron, jumbotron, 'widget')
@@ -524,3 +524,7 @@ class DJESite:
             chart_obj = factory.get_chart_widget(info.name)
             w_collection.pack_chart_widget(chart_obj, info)
         return w_collection
+
+    @classmethod
+    def load_from_yaml(cls, yaml_file: str):
+        return cls(ignore_register_nav=True)

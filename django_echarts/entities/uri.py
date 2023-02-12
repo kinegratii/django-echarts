@@ -28,7 +28,10 @@ class EntityURI:
         return self._params_path
 
     def __str__(self):
-        return f'{self.catalog}:{self.name}'
+        if len(self.params):
+            return f'{self.catalog}:{self.name}/{self.params_path}'
+        else:
+            return f'{self.catalog}:{self.name}'
 
     __repr__ = __str__
 
@@ -121,7 +124,7 @@ class ParamsConfig:
     __slots__ = ['choices']
 
     def __init__(self, choices: USER_PARAMS_CONFIGS_TYPE = None):
-        self.choices = choices or {}
+        self.choices = choices or []
 
     def __iter__(self):
         for param_dic in parse_params_choices(self.choices):

@@ -27,6 +27,7 @@ nav:
     - UI框架和主题: starter/themes.md
     - 依赖项和静态文件: guides/dms.md
     - 本地化静态资源: starter/localize_staticfiles.md
+    - 参数化图表: guides/entity_params.md
     - 高级开发: guides/advance_development.md
     - Gallery: gallery.md
   - 参考:
@@ -46,5 +47,6 @@ nav:
     - 破坏性变更: breaking-change.md
     - 关于项目: about.md
     - 发布日志:
-      - v0.5.0: release-note/v050.md
+      - v0.6.0: release-note/v060.md
       - v0.5.1: release-note/v051.md
+      - v0.5.0: release-note/v050.md

@@ -47,7 +47,7 @@ def yearly_family_types(year: int):
 
 django-echarts 推荐尽可能遵循下列明确性的规则：
 
-- 为每个参数声明数据类型，在URL方式调用下能够将其转化为对应的数据类型值，参见下面章节。
+- 为每个参数声明数据类型，在URL方式调用下能够将其转化为对应的数据类型值，目前仅支持 `int / float / str / UUID` 等构造函数为`type(s)`的数据类型。
 - 不推荐使用 `*args` ，使用 `**kwags`。
 
 ### 定义关联ChartInfo
@@ -59,6 +59,36 @@ django-echarts 推荐尽可能遵循下列明确性的规则：
 ### 返回图表
 
 如果用户输入的参数没有对应的图表，可以抛出 `ChartDoesNotExist` 异常。
+
+### 参数配置ParamsConfig
+
+`params_config` 用于定义可选参数项，仅用于无参数时的图表页面显示。
+
+在构建图表对象时不会检查参数是否符合在此配置之中，因此在图表构建函数中仍需检查相应的参数，对不符合的情况抛出 `ChartDoesNotExist 异常`。
+
+`params_config` 必须是支持下列接口的对象。
+
+```python
+class ParamsConfigMixin:
+    def __iter__(self) -> Generator[dict, Any, None]:
+        pass
+```
+
+如下列两种方式定义是等效的。
+
+```python
+pc1 = ParamsConfig([
+    {'year':2021, 'month':1}, {'year':2021, 'month':2},
+    {'year':2021, 'month':3}, {'year':2021, 'month':4}
+])
+
+pc2 = ParamsConfig({
+    'year':[2021],
+    'month':[1, 2, 3, 4]
+})
+```
+
+
 
 ## EntityURI
 

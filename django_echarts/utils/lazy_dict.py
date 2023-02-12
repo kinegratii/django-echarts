@@ -68,6 +68,10 @@ class LazyDict:
             return name
         return
 
+    def keys(self):
+        for k in self._entries.keys():
+            yield k
+
     def items(self):
         for k in self._entries.keys():
             yield k, self.get(k)
@@ -97,7 +101,7 @@ class LazyDict:
         for name, value in param_dic.items():
             if name in declare_dic:
                 if declare_dic[name].annotation is not inspect.Parameter.empty:
-                    new_val = declare_dic[name].annotation(value)
+                    new_val = declare_dic[name].annotation(value)  # Convert value
                     new_param_dic[name] = new_val
                 else:
                     new_param_dic[name] = value

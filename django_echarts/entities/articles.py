@@ -66,7 +66,12 @@ class ChartInfo(HTMLBase):
 class ChartInfoManagerMixin:
     """The backend for the store of chart info."""
 
+    # TODO Refactor interfaces
+
     def add_chart_info(self, info: ChartInfo):
+        pass
+
+    def query_all_chart_info(self) -> List[ChartInfo]:
         pass
 
     def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[ChartInfo]:
@@ -88,6 +93,9 @@ class LocalChartInfoManager(ChartInfoManagerMixin):
 
     def add_chart_info(self, info: ChartInfo):
         self._chart_info_list.append(info)
+
+    def query_all_chart_info(self) -> List[ChartInfo]:
+        return self._chart_info_list
 
     def query_chart_info_list(self, keyword: str = None, with_top: bool = False) -> List[ChartInfo]:
         chart_info_list = [info for info in self._chart_info_list if info.is_bound and (not with_top or info.top)]
