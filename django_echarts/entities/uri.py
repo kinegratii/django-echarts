@@ -10,6 +10,8 @@ class EntityURI:
     CATALOG_WIDGET = 'widget'
     CATALOG_LAYOUT = 'layout'
     CATALOG_COLLECTION = 'collection'
+
+    CATALOG_VIEW = 'view'
     # TODO description attr
 
     __slots__ = ['catalog', 'name', 'params', '_params_path']

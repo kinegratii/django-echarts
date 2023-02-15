@@ -23,6 +23,7 @@ nav:
   - 快速开始: index.md
   - 可视化构建:
     - 使用教程: starter/base.md
+    - 网站配置: starter/site_configuration.md
     - 组件和布局: starter/widget_and_layout.md
     - UI框架和主题: starter/themes.md
     - 依赖项和静态文件: guides/dms.md
