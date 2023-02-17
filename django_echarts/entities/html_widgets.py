@@ -49,6 +49,9 @@ class Menu(HTMLBase):
 
 
 class Nav:
+    """A html widget for top nav and footer links."""
+    CHART_PLACEHOLDER = 'chart_nav'  # A placeholder for chart nav.
+
     def __init__(self):
         self.left_menu = []  # type: List[Menu]
         self.right_menu = []  # type:List[Menu]

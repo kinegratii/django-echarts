@@ -302,9 +302,13 @@ class NavBuilder:
         NavBuilder._build_menu(left_menu_config, nav.left_menu)
         NavBuilder._build_menu(right_menu_config, nav.right_menu)
         for data in footer_links_config:
-            menu = Menu(**NavBuilder._parse_params(data))
-            nav.footer_links.append(menu)
+            link = LinkItem(**NavBuilder._parse_params(data))
+            nav.footer_links.append(link)
         return nav
+
+    @staticmethod
+    def build_default_nav(nav_shown_pages: list):
+        return NavBuilder.build_nav(left_menu_config=nav_shown_pages)
 
     @staticmethod
     def _build_menu(menu_config: list, menu_container: list):
@@ -313,7 +317,7 @@ class NavBuilder:
             if isinstance(data, str):
                 menu = Menu(**NavBuilder._parse_params(data))
             elif isinstance(data, dict):
-                if 'view_name' in data:
+                if 'view_name' in data or 'url' in data:
                     menu = Menu(**NavBuilder._parse_params(data))
                 elif 'children' in data:
                     menu = Menu(**NavBuilder._parse_params(data))
@@ -324,8 +328,11 @@ class NavBuilder:
 
     @staticmethod
     def _parse_params(val: Union[str, dict]):
+        # todo handle uri
         if isinstance(val, str):
-            if val == 'home':
+            if val == Nav.CHART_PLACEHOLDER:
+                return dict(text=val)
+            elif val == 'home':
                 return dict(text='首页', slug='home', url=reverse_lazy('dje_home'))
             elif val == 'list':
                 return dict(text='所有', slug='list', url=reverse_lazy('dje_list'))
@@ -340,8 +347,12 @@ class NavBuilder:
                 return dict(text=val.get('text'), slug=val.get('slug'),
                             url=reverse_lazy(val['view_name'], kwargs=val.get('kwargs', {})))
             elif 'url' in val:
-                return dict(text=val.get('text'), slug=val.get('slug'),
-                            url=val['url'])
+                if val['url'].startswith('chart:'):
+                    uri = EntityURI.from_str(val['url'])
+                    url = reverse_lazy('dje_chart_single', args=[uri.name, uri.params_path])
+                else:
+                    url = val['url']
+                return dict(text=val.get('text'), slug=val.get('slug'), url=url)
             elif 'children' in val:
                 return dict(text=val.get('text'), slug=val.get('slug'))
 
@@ -360,16 +371,8 @@ class DJESite:
             self._opts = SiteOpts()
         else:
             self._opts = opts
-        self.nav = Nav()
-        # if 'home' in self.opts.nav_shown_pages:
-        #     self.nav.add_menu(text='首页', slug='home', url=reverse_lazy('dje_home'))
-        # if 'list' in self.opts.nav_shown_pages:
-        #     self.nav.add_menu(text='所有', slug='list', url=reverse_lazy('dje_list'))
-        # if 'collection' in self.opts.nav_shown_pages:
-        #     self.nav.add_menu(text='合辑', slug='collection-all', url=reverse_lazy('dje_chart_collection_all'))
-        # if 'settings' in self.opts.nav_shown_pages:
-        #     self.nav.add_right_link(LinkItem(text='设置', slug='settings', url=reverse_lazy('dje_settings')))
-
+        self.nav = NavBuilder.build_default_nav(self._opts.nav_shown_pages)
+        self._chart_nav = Nav()
         self._view_dict = {
             'dje_home': DJESiteHomeView,
             'dje_list': DJESiteListView,
@@ -436,13 +439,19 @@ class DJESite:
         self._view_dict[view_name] = view_class
 
     def config_menu(self, menu_config: dict = None):
-        if menu_config is None:
-            menu_config = {'nav_left': ['home', 'list'], 'nav_right': ['settings']}
-        self.nav = NavBuilder.build_nav(
-            left_menu_config=menu_config.get('nav_left'),
-            right_menu_config=menu_config.get('nav_right'),
-            footer_links_config=menu_config.get('nav_footer'),
-        )
+        if menu_config:
+            self.nav = NavBuilder.build_nav(
+                left_menu_config=menu_config.get('nav_left'),
+                right_menu_config=menu_config.get('nav_right'),
+                footer_links_config=menu_config.get('nav_footer'),
+            )
+        holder_index = -1
+        for i, menu in enumerate(self.nav.left_menu):
+            if menu.text == Nav.CHART_PLACEHOLDER:
+                holder_index = i
+                break
+        self.nav.left_menu = self.nav.left_menu[:holder_index] + self._chart_nav.left_menu + self.nav.left_menu[
+                                                                                             holder_index + 1:]
 
     # Init Widgets
 
@@ -509,19 +518,19 @@ class DJESite:
             factory.register_chart_widget(func, c_info.name, info=c_info)
             # TODO Delete menu register for single chart
             #
-            # if nav_parent_name == 'self':
-            #     self.nav.add_menu(text=title or cname, slug=cname, url=url)
-            # elif nav_parent_name == 'none':
-            #     pass
-            # else:
-            #     c_nav_parent_name = nav_parent_name or catalog
-            #     if c_nav_parent_name:
-            #         self.nav.add_menu(text=c_nav_parent_name)
-            #         self.nav.add_item(
-            #             menu_text=c_nav_parent_name,
-            #             item=LinkItem(text=title or cname, url=url, slug=cname),
-            #             after_separator=nav_after_separator
-            #         )
+            if nav_parent_name == 'self':
+                self._chart_nav.add_left_menu(text=title or cname, slug=cname, url=url)
+            elif nav_parent_name == 'none':
+                pass
+            else:
+                c_nav_parent_name = nav_parent_name or catalog
+                if c_nav_parent_name:
+                    self._chart_nav.add_left_menu(text=c_nav_parent_name)
+                    self._chart_nav.add_item_in_left_menu(
+                        menu_text=c_nav_parent_name,
+                        item=LinkItem(text=title or cname, url=url, slug=cname),
+                        after_separator=nav_after_separator
+                    )
             return func
 
         if function is None:
@@ -557,18 +566,18 @@ class DJESite:
                 pass
             url = reverse_lazy('dje_chart_collection', args=(cname,))
             c_title = title or name
-            # if nav_parent_name == 'self':
-            #     self.nav.add_menu(text=c_title, url=url)
-            # elif nav_parent_name == 'none':
-            #     pass
-            # else:
-            #     c_nav_parent_name = nav_parent_name or catalog
-            #     self.nav.add_menu(text=c_nav_parent_name)
-            #     self.nav.add_item(
-            #         menu_text=c_nav_parent_name,
-            #         item=LinkItem(text=c_title, url=url, slug=name),
-            #         after_separator=nav_after_separator
-            #     )
+            if nav_parent_name == 'self':
+                self._chart_nav.add_left_menu(text=c_title, url=url)
+            elif nav_parent_name == 'none':
+                pass
+            else:
+                c_nav_parent_name = nav_parent_name or catalog
+                self._chart_nav.add_left_menu(text=c_nav_parent_name)
+                self._chart_nav.add_item_in_left_menu(
+                    menu_text=c_nav_parent_name,
+                    item=LinkItem(text=c_title, url=url, slug=name),
+                    after_separator=nav_after_separator
+                )
             return func
 
         if function is None:

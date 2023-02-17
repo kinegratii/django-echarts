@@ -1,16 +1,17 @@
 # 使用教程
 
-## 创建项目
+## 一、 创建项目
 
-### Django&pyecharts版本
+### 1.1 Django&pyecharts版本
 
 django-echarts 不会将 django 和 pyecharts 作为显式依赖库（虽然在代码中总是导入这两个库），对其版本没有强制性的依赖。下列是推荐性的版本。
 
 | django-echarts版本系列 | pyecharts | django    | python |
 | ---------------------- | --------- | --------- | ------ |
-| 0.5.x - 0.6.x          | 1.9+      | 2.0 - 4.1 | 3.7+   |
+| 0.5.x                  | 1.9.x     | 2.0 - 4.0 | 3.7+   |
+| 0.6.x                  | 2.0.x     | 2.0 - 4.1 | 3.7+   |
 
-### 项目配置
+### 1.2 项目配置
 
 在 Django 项目中，配置模块位于 *project.settings* 。和 django-echarts 有关的配置如下：
 
@@ -54,9 +55,9 @@ DJANGO_ECHARTS = {
 1. 内置主题APP包括： django_echarts.contrib.bootstrap3 / django_echarts.contrib.bootstrap5 / django_echarts.contrib.material。
 2. 默认配置已经能够支持最小化运行，此配置可以留空。
 
-## 创建站点
+## 二、创建站点
 
-### 初始化DJESite对象
+### 2.1 初始化DJESite对象
 
 > DJESite(site_title: str,  opts: Optional[SiteOpts] = None):
 
@@ -90,7 +91,7 @@ site_obj.add_widgets(
 
 1. 此项设置必须在 `DJESite` 初始化时传入，以便将这些菜单项先插入导航栏靠前的位置
 
-### 连接到路由模块
+### 2.2 连接到路由模块
 
 > DJESite.urls: list[Union[URLResolver, URLPattern]]
 
@@ -108,9 +109,11 @@ urlpatterns = [
 ]
 ```
 
-## 注册echarts图表
+## 三、编写函数和注册echarts图表
 
-### 新增图表
+### 3.1 新增图表
+
+图表使用遵循“定义 - 注册 - 使用” 的规则。
 
 `site_obj.register_chart` 装饰器用于注册图表的创建函数。默认未携带任何参数情况下，函数名将作为图表标识符。
 
@@ -145,9 +148,9 @@ def mychart():
     return bar
 ```
 
-### 其他配置
+### 3.2 装饰器参数
 
-`DJESite.register_chart` 接受下列可选参数：
+装饰器 `DJESite.register_chart` 接受下列可选参数：
 
 | 参数名称            | 类型           | 说明                                           |
 | ------------------- | -------------- | ---------------------------------------------- |
@@ -168,7 +171,7 @@ def mychart():
 1. `Slug`类型指的是Django内置Converter，为符合正则表达式 `[-a-zA-Z0-9_]+` 的字符串，作为url的一部分。
 1.  0.6新增。参见 [《参数化图表》](/guides/entity_params)
 
-### 关联导航栏
+### 3.3 关联导航栏
 
 下面是演示如何添加到导航菜单栏的。以 `chart.title = 'Chart1'` 为例子：
 
@@ -185,7 +188,7 @@ def mychart():
 2. 使用特殊标识 'self' 表示显示为一级菜单
 3. 使用特殊标识 'none' 表示不显示
 
-### 注册组件
+### 3.4 注册组件
 
 > DJESite.register_html_widget(function=None, *, name: str = None)
 
@@ -210,9 +213,9 @@ def this_month_panel():
     return number_p
 ```
 
-## 网站公共组件
+## 四、网站配置
 
-### 导航栏(Nav)
+### 4.1 导航栏(Nav)
 
 导航栏位于页面顶部，由 *左侧二级菜单* 、 *右侧一级菜单* 和 *底部链接* 三部分组成，根据目标链接的类型有不同的添加方式。
 
@@ -275,7 +278,9 @@ item2 = LinkItem(text='关于', url=reverse_lazy('about'))
 site_obj.add_right_link(item2)
 ```
 
-## 首页
+## 五、页面配置
+
+### 5.1 首页
 
 在首页可以通过 `add_widgets` 函数定制部分组件。
 
@@ -295,7 +300,7 @@ DJESite.add_widgets(*, jumbotron: Jumbotron = None, copyright_: Copyright = None
 1. 静态方式：home_jumbotron_chart 直接指定一个图表对象（如Bar）。
 2. 动态方式：home_jumbotron_chart 仅指定一个图表字符串标识，这些图表或组件通过 `register_chart` / `register_widget` 的方式注册。
 
-### 大标题图表(JumbotronChart)
+#### 5.1.1 大标题图表(JumbotronChart)
 
 可以为 add_widgets 的 jumbotron_chart 指定一个图表名称，则显示该图表，不再显示 Jumbotron 组件。下面是一个例子：
 
@@ -309,7 +314,7 @@ def mychart():
     return bar
 ```
 
-### 热门图表
+#### 5.1.2 热门图表
 
 按照网格方式显示标记为 top 的图表。向装饰器 `register_chart` 的 top 参数指定一个大于0的数字即可（数字越小，越靠前显示）。
 
@@ -321,13 +326,13 @@ def mychart():
     return bar
 ```
 
-## 列表页
+### 5.2 列表页
 
-### 搜索
+#### 5.2.1 搜索
 
 列表页支持关键字搜索，搜索范围有：图表标题、标签、描述文字。
 
-### 显示样式
+#### 5.2.2 显示样式
 
 > 定义: SiteOpts.list_layout: Literal['grid', 'list'] = 'list'
 
@@ -346,7 +351,7 @@ site_obj = DJESite(
 )
 ```
 
-### 设置分页
+#### 5.2.3 设置分页
 
 > 定义: SiteOpts.paginate_by:Optional[int] = None
 

@@ -2,11 +2,12 @@
 
 ## v0.6.0
 
-> 新增 Django 4.1 构建支持
+> pycharts更新至2.0.x。新增 Django 4.1 构建支持。
 
 
 
 - 新增参数化图表支持
+- 新增资源类 `EntityURI`
 - 新增 `WidgetNotRegisteredError` 异常
 - `WidgetGetterMixin` 接口类支持 `EntityURI`
 - Borax 更新至 4.0
