@@ -217,66 +217,7 @@ def this_month_panel():
 
 ### 4.1 导航栏(Nav)
 
-导航栏位于页面顶部，由 *左侧二级菜单* 、 *右侧一级菜单* 和 *底部链接* 三部分组成，根据目标链接的类型有不同的添加方式。
-
-**第一种：内置页面**
-
-内置页面通常位于左侧二级菜单栏的最前面，使用 `SiteOpts.nav_shown_pages` 定义。
-
-```python
-SiteOpts(nav_shown_pages=['home', 'collection'])
-```
-
-包括：
-
-| 标识       | 页面功能                                                     |
-| ---------- | ------------------------------------------------------------ |
-| home       | 首页。默认已添加。                                           |
-| list       | 包含所有图表的信息页。不显示图表，显示描述、标签等。默认已添加。 |
-| collection | 包含所有图表的合辑，显示图表和简短的文字描述信息。           |
-
-**第二种：图表和合辑**
-
-将图表或者合辑添加到左侧二级菜单，由 `DJESite.register_chart` / `DJESite.register_collection` 中参数控制 。详细参见 注册图表 一节。
-
-**第三种：自定义链接**
-
-> class LinkItem(text: str, url: str = None, slug: str = None, new_page: bool = False, after_separator: bool = False)
-
-链接使用 `LinkItem` 类表示。
-
-| 参数            | 类型 | 描述                                       |
-| --------------- | ---- | ------------------------------------------ |
-| text            | str  | 链接文字                                   |
-| url             | str  | 链接地址                                   |
-| slug            | str  | 标识符，可自动生成                         |
-| new_page        | bool | target属性是否设置为 _blank                |
-| after_separator | bool | 在菜单前是否添加分隔符，仅适用于顶部导航栏 |
-
-**注意**：使用django视图反向解析时必须使用 `reverse_lazy`，而不是 `reverse`，否则出现无法解析的异常。因为此时 site_obj 还未挂载到项目全局的 url 路由规则之中。
-
-`DJESite`提供了 `add_*_link` 函数用于向站点添加链接。
-
-| 函数                                                     | 说明                         |      |
-| -------------------------------------------------------- | ---------------------------- | ---- |
-| `DJESite.add_left_link(item: LinkItem)`                  | 在左侧添加一级菜单           |      |
-| `DJESite.add_left_link(item: LinkItem, menu_title: str)` | 在menu_title之下添加二级菜单 |      |
-| `DJESite.add_right_link(item: LinkItem)`                 | 在右侧添加链接               |      |
-| `DJESite.add_footer_link(item: LinkItem)`                 | 在底部添加链接               |      |
-
-例子：
-
-```python
-from django.urls import reverse_lazy
-from django_echarts.entities.html_widgets import LinkItem
-
-# 在右侧添加项目仓库链接，以新标签页方式打开
-item = LinkItem(text='Github仓库', url='https://github.com/kinegratii/django-echarts', new_page=True)
-site_obj.add_right_link(item)
-
-item2 = LinkItem(text='关于', url=reverse_lazy('about'))
-site_obj.add_right_link(item2)
-```
+参见 [导航栏](starter/site_configuration)一章。
 
 ## 五、页面配置
 

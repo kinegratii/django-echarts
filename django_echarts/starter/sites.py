@@ -4,6 +4,7 @@ from functools import wraps
 from typing import Optional, List, Dict, Type, Any, Union
 
 from borax.serialize import cjson
+from borax.system import load_object
 from django.core.paginator import Paginator
 from django.http.response import JsonResponse
 from django.urls import reverse_lazy, path
@@ -299,8 +300,8 @@ class NavBuilder:
         right_menu_config = right_menu_config or []
         footer_links_config = footer_links_config or []
         nav = Nav()
-        NavBuilder._build_menu(left_menu_config, nav.left_menu)
-        NavBuilder._build_menu(right_menu_config, nav.right_menu)
+        NavBuilder._build_nav(left_menu_config, nav.left_menus)
+        NavBuilder._build_nav(right_menu_config, nav.right_menus)
         for data in footer_links_config:
             link = LinkItem(**NavBuilder._parse_params(data))
             nav.footer_links.append(link)
@@ -311,7 +312,7 @@ class NavBuilder:
         return NavBuilder.build_nav(left_menu_config=nav_shown_pages)
 
     @staticmethod
-    def _build_menu(menu_config: list, menu_container: list):
+    def _build_nav(menu_config: list, menu_container: list):
         for data in menu_config:
             menu = None
             if isinstance(data, str):
@@ -438,42 +439,31 @@ class DJESite:
     ):
         self._view_dict[view_name] = view_class
 
-    def config_menu(self, menu_config: dict = None):
-        if menu_config:
+    def config_nav(self, nav_config: dict = None):
+        """fill nav from a config dict."""
+        if nav_config:
             self.nav = NavBuilder.build_nav(
-                left_menu_config=menu_config.get('nav_left'),
-                right_menu_config=menu_config.get('nav_right'),
-                footer_links_config=menu_config.get('nav_footer'),
+                left_menu_config=nav_config.get('nav_left'),
+                right_menu_config=nav_config.get('nav_right'),
+                footer_links_config=nav_config.get('nav_footer'),
             )
         holder_index = -1
-        for i, menu in enumerate(self.nav.left_menu):
+        for i, menu in enumerate(self.nav.left_menus):
             if menu.text == Nav.CHART_PLACEHOLDER:
                 holder_index = i
                 break
-        self.nav.left_menu = self.nav.left_menu[:holder_index] + self._chart_nav.left_menu + self.nav.left_menu[
+        if holder_index == -1:
+            return self
+        self.nav.left_menus = self.nav.left_menus[:holder_index] + self._chart_nav.left_menus + self.nav.left_menus[
                                                                                              holder_index + 1:]
+        return self
+
+    def config_nav_from_module(self, variable_path: str):
+        """Generate nav from the variable in a module."""
+        nav_config = load_object(variable_path)
+        return self.config_nav(nav_config)
 
     # Init Widgets
-
-    def add_left_link(self, item: LinkItem, menu_title: str = None):
-        if menu_title:
-            self.nav.add_item_in_left_menu(menu_text=menu_title, item=item)
-        else:
-            self.nav.add_left_menu(text=item.text, slug=item.slug, url=item.url)
-        return
-
-    def add_right_link(self, item: LinkItem):
-        """Add link on nav."""
-        self.nav.add_item_in_right_menu(item)
-        return self
-
-    def add_menu_item(self, item: LinkItem, menu_title: str = None):
-        self.add_left_link(item, menu_title)
-        return self
-
-    def add_footer_link(self, item: LinkItem):
-        self.nav.footer_links.append(item)
-        return self
 
     def add_widgets(self, *, copyright_: Copyright = None, jumbotron: Jumbotron = None,
                     jumbotron_chart: Union[str, Any] = None, values_panel: Union[str, ValuesPanel] = None):

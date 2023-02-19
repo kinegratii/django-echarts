@@ -53,37 +53,37 @@ class Nav:
     CHART_PLACEHOLDER = 'chart_nav'  # A placeholder for chart nav.
 
     def __init__(self):
-        self.left_menu = []  # type: List[Menu]
-        self.right_menu = []  # type:List[Menu]
+        self.left_menus = []  # type: List[Menu]
+        self.right_menus = []  # type:List[Menu]
         self.footer_links = []  # type: List[LinkItem]
 
     @property
     def menus(self):
-        return self.left_menu
+        return self.left_menus
 
     @property
     def links(self):
-        return self.right_menu
+        return self.right_menus
 
     def add_left_menu(self, text: str, slug: str = None, url: str = None):
-        texts, slugs = fetch(self.left_menu, 'text', 'slug')
+        texts, slugs = fetch(self.left_menus, 'text', 'slug')
         if text in texts:
             return self
         if not slug or slug not in slugs:
-            self.left_menu.append(Menu(text, slug, url))
+            self.left_menus.append(Menu(text, slug, url))
         return self
 
     def add_right_menu(self, text: str, slug: str = None, url: str = None):
-        texts, slugs = fetch(self.right_menu, 'text', 'slug')
+        texts, slugs = fetch(self.right_menus, 'text', 'slug')
         if text in texts:
             return self
         if not slug or slug not in slugs:
-            self.right_menu.append(Menu(text, slug, url))
+            self.right_menus.append(Menu(text, slug, url))
         return self
 
     def add_item_in_left_menu(self, menu_text: str, item: Union[LinkItem], after_separator=False):
         item.after_separator = item.after_separator | after_separator
-        for menu in self.left_menu:
+        for menu in self.left_menus:
             if menu.text == menu_text:
                 menu.children.append(item)
                 break
@@ -91,7 +91,7 @@ class Nav:
 
     def add_item_in_right_menu(self, menu_text: str, item: Union[LinkItem], after_separator=False):
         item.after_separator = item.after_separator | after_separator
-        for menu in self.left_menu:
+        for menu in self.left_menus:
             if menu.text == menu_text:
                 menu.children.append(item)
                 break
