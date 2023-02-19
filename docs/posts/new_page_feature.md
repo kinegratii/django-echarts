@@ -40,9 +40,6 @@ class MyPageView(DJESiteBackendView):
 
 ```python
 site_obj = MySite()
-site_obj.add_left_link(
-    LinkItem(title='我的页面', url=reverse_lazy('view_my_page'))
-)
 
 site_obj.extend_urlpatterns([
     path('mypage/', MyPageView.as_view(), name='view_my_page')

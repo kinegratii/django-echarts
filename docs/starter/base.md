@@ -164,12 +164,13 @@ def mychart():
 | tags                | List[str]      | 标签列表，列表搜索功能时，标签也是搜索范围。   |
 | **参数图表配置** |  |  |
 | params_config | ParamConfig | 图表参数配置 <sup>2</sup> |
-| **菜单参数** |                |                                                |
+| **菜单参数** <sup>3</sup> |                |                                                |
 | nav_parent_name     | str            | 上级菜单名称，默认为 catalog                   |
 | nav_after_separator | bool           | 是否在菜单项前使用分隔符                       |
 
 1. `Slug`类型指的是Django内置Converter，为符合正则表达式 `[-a-zA-Z0-9_]+` 的字符串，作为url的一部分。
 1.  0.6新增。参见 [《参数化图表》](/guides/entity_params)
+1.  从0.6.0开始，此项默认不启用，如需开启，需搭配 `DJESite.config_nav` 使用。
 
 ### 3.3 关联导航栏
 
