@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% load echarts %}
+
+{% block main_content %}
+    {{ chart_info.title }}
+
+    {% dw_widget link_group %}
+{% endblock %}

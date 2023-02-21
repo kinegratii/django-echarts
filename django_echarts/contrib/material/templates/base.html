@@ -16,7 +16,7 @@
     <nav class="light-blue lighten-1" role="navigation">
         <div class="nav-wrapper container"><a id="logo-container" href="{% url 'dje_home' %}"
                                               class="brand-logo center">{{ site_title }}</a>
-            {% for menu2 in nav.menus %}
+            {% for menu2 in nav.left_menus %}
                 {% if menu2.children %}
                     <ul id="{{ menu2.slug }}" class="dropdown-content">
                         {% for item in menu2.children %}
@@ -29,7 +29,7 @@
                 {% endif %}
             {% endfor %}
             <ul class="left hide-on-med-and-down">
-                {% for menu2 in nav.menus %}
+                {% for menu2 in nav.left_menus %}
                     {% if menu2.children %}
                         <li><a class="dropdown-trigger" href="javascript:"
                                data-target="{{ menu2.slug }}">{{ menu2.text }}<i
@@ -43,11 +43,18 @@
             </ul>
 
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-                {% for item in nav.links %}
-                    <li>
-                        {% dw_widget item %}
-                    </li>
-                {% endfor %}
+            {% for menu2 in nav.right_menus %}
+                {% if menu2.children %}
+                    <ul id="{{ menu2.slug }}" class="dropdown-content">
+                        {% for item in menu2.children %}
+                            {% if item.after_separator %}
+                                <li class="divider"></li>
+                            {% endif %}
+                            <li>{% dw_widget item %}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
             </ul>
         </div>
     </nav>

@@ -25,9 +25,9 @@ django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts
 
 django-echarts包运行环境要求如下：
 
-| django-echarts版本系列 | pyecharts | django | python | 备注 |
-| ------ | ------ | ------ | ----- | ----- |
-| 0.5.x | 1.9+ | 2.0+ | 3.7+ | 开发维护中 |
+| django-echarts版本系列 | pyecharts | django | python |
+| ------ | ------ | ------ | ----- |
+| 0.5.x - 0.6.x | 1.9+ | 2.0 - 4.1 | 3.7+ |
 
 可以使用 pip 命令安装。
 

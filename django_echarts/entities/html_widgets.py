@@ -9,7 +9,7 @@ from typing_extensions import Literal
 
 from .containers import RowContainer
 
-__all__ = ['LinkItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright', 'Message', 'ValuesPanel', 'ValueItem']
+__all__ = ['LinkItem', 'SeparatorItem', 'Menu', 'Jumbotron', 'Nav', 'Copyright', 'Message', 'ValuesPanel', 'ValueItem']
 
 
 def _new_slug() -> str:
@@ -33,6 +33,10 @@ class LinkItem(HTMLBase):
         self.after_separator = after_separator
 
 
+class SeparatorItem(HTMLBase):
+    pass
+
+
 class Menu(HTMLBase):
     """The menu element in top nav."""
     __slots__ = ['text', 'slug', 'url', 'children']
@@ -45,31 +49,68 @@ class Menu(HTMLBase):
 
 
 class Nav:
+    """A html widget for top nav and footer links."""
+    CHART_PLACEHOLDER = 'chart_nav'  # A placeholder for chart nav.
+
     def __init__(self):
-        self.menus = []  # type: List[Menu]
-        self.links = []  # type: List[LinkItem]
+        self.left_menus = []  # type: List[Menu]
+        self.right_menus = []  # type:List[Menu]
         self.footer_links = []  # type: List[LinkItem]
 
-    def add_menu(self, text: str, slug: str = None, url: str = None):
-        # Fixed in Borax v3.5.3
-        texts, slugs = fetch(self.menus, 'text', 'slug', getter=lambda item, key: getattr(item, key))
+    @property
+    def menus(self):
+        return self.left_menus
+
+    @property
+    def links(self):
+        return self.right_menus
+
+    def add_left_menu(self, text: str, slug: str = None, url: str = None):
+        texts, slugs = fetch(self.left_menus, 'text', 'slug')
         if text in texts:
             return self
         if not slug or slug not in slugs:
-            self.menus.append(Menu(text, slug, url))
+            self.left_menus.append(Menu(text, slug, url))
         return self
 
-    def add_item(self, menu_text: str, item: Union[LinkItem], after_separator=False):
+    def add_right_menu(self, text: str, slug: str = None, url: str = None):
+        texts, slugs = fetch(self.right_menus, 'text', 'slug')
+        if text in texts:
+            return self
+        if not slug or slug not in slugs:
+            self.right_menus.append(Menu(text, slug, url))
+        return self
+
+    def add_item_in_left_menu(self, menu_text: str, item: Union[LinkItem], after_separator=False):
         item.after_separator = item.after_separator | after_separator
-        for menu in self.menus:
+        for menu in self.left_menus:
             if menu.text == menu_text:
                 menu.children.append(item)
                 break
         return self
 
-    def add_right_link(self, item: LinkItem):
-        self.links.append(item)
+    def add_item_in_right_menu(self, menu_text: str, item: Union[LinkItem], after_separator=False):
+        item.after_separator = item.after_separator | after_separator
+        for menu in self.left_menus:
+            if menu.text == menu_text:
+                menu.children.append(item)
+                break
         return self
+
+
+class LinkGroup(HTMLBase):
+    """A list panel containing links."""
+    widget_type = 'LinkGroup'
+
+    def __init__(self):
+        self.widgets = []  # type:List[LinkItem]
+
+    def add_widget(self, widget: LinkItem):
+        self.widgets.append(widget)
+
+    def __iter__(self):
+        for widget in self.widgets:
+            yield widget
 
 
 class Jumbotron(HTMLBase):
@@ -154,9 +195,6 @@ class Title(HTMLBase):
         self.small_text = small_text
 
 
-# tag_name: str, content: str = None,
-#              *, id_: str = None, style: Dict = None, class_: Union[List, str, None] = None, style_width: str = None,
-#              style_height: str = None, **kwargs
 class ElementEntity(HTMLBase):
     """A common entity for a html element."""
 

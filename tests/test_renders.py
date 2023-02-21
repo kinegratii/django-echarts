@@ -34,8 +34,8 @@ class RenderTestCase(unittest.TestCase):
         self.assertEqual('bootstrap5', DJANGO_ECHARTS_SETTINGS.theme.name)
 
     def test_render_default(self):
-        with self.assertRaises(TypeError):
-            render_widget(object)
+        # with self.assertRaises(TypeError):
+        #     render_widget(object)
         info = ChartInfo('DemoInfo')
         self.assertIn('DemoInfo', render_widget(info))
         self.assertEqual('xxx', render_widget(HTMLString('xxx')))

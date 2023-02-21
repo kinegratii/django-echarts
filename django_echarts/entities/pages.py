@@ -1,25 +1,40 @@
 from collections import OrderedDict
 from abc import abstractmethod
 from typing import List, Union, Tuple, Any, Optional
+import warnings
 
+from .uri import EntityURI
 from .articles import ChartInfo
 from .containers import RowContainer, Container
 from .layouts import LayoutOpts, TYPE_LAYOUT_OPTS, any2layout
 
 
 class WidgetGetterMixin:
+
     @abstractmethod
     def get_chart_and_info(self, name: str) -> Tuple[Optional[Any], bool, Optional[ChartInfo]]:
         """Return a pycharts chart object."""
+        warnings.warn('This method is deprecated, use get_chart_and_info_by_uri instead.', DeprecationWarning,
+                      stacklevel=2)
         pass
 
     @abstractmethod
     def get_html_widget(self, name: str) -> Any:
         """Return a html widget object."""
+        warnings.warn('This method is deprecated, use get_widget_by_uri instead.', DeprecationWarning, stacklevel=2)
         pass
 
     @abstractmethod
     def get_widget_by_name(self, name: str) -> Any:
+        warnings.warn('This method is deprecated, use get_widget_by_uri instead.', DeprecationWarning, stacklevel=2)
+        pass
+
+    @abstractmethod
+    def get_chart_and_info_by_uri(self, uri: EntityURI) -> Tuple[Any, bool, Optional[ChartInfo]]:
+        pass
+
+    @abstractmethod
+    def get_widget_by_uri(self, uri: EntityURI):
         pass
 
 
@@ -41,21 +56,22 @@ class WidgetCollection(Container):
         return self
 
     def add_chart_widget(self, chart_name: str, layout: TYPE_LAYOUT_OPTS = 'l8'):
-        self._ref_config_list.append([True, layout, chart_name])
+        self._ref_config_list.append([True, layout, EntityURI.from_str(chart_name, catalog='chart')])
         return self
 
     def add_html_widget(self, widget_names: List, layout: TYPE_LAYOUT_OPTS = 0):
-        self._ref_config_list.append([False, layout, *widget_names])
+        widget_uri_list = [EntityURI.from_str(name, catalog='widget') for name in widget_names]
+        self._ref_config_list.append([False, layout, *widget_uri_list])
 
     def auto_mount(self, widget_container: WidgetGetterMixin):
         self.start_()
-        for is_chart, layout_str, *names in self._ref_config_list:
+        for is_chart, layout_str, *uri_list in self._ref_config_list:
             if is_chart:
-                chart_name = names[0]
-                chart_obj, _, info = widget_container.get_chart_and_info(chart_name)
+                chart_uri = uri_list[0]
+                chart_obj, _, info = widget_container.get_chart_and_info_by_uri(chart_uri)
                 self.pack_chart_widget(chart_obj, info, row_no=self._row_no)
             else:
-                widget_list = [widget_container.get_widget_by_name(name) for name in names]
+                widget_list = [widget_container.get_widget_by_uri(uri) for uri in uri_list]
                 self.pack_html_widget(widget_list)
 
     def pack_chart_widget(self, chart_obj, info: ChartInfo, ignore_ref: bool = True, layout: str = 'l8',

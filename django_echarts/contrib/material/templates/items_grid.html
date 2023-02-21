@@ -1,3 +1,4 @@
+{% load echarts %}
 <div class="row">
     {% for chart_info in chart_info_list %}
         <div class="col s12 m4">
@@ -12,7 +13,7 @@
                     {% endif %}
                 </div>
                 <div class="card-action">
-                    <a href="{% url 'dje_chart_single' chart_info.name %}">详情</a>
+                    <a href="{% url_single_chart chart_info.uri %}">详情</a>
                 </div>
             </div>
         </div>
