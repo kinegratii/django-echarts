@@ -52,10 +52,15 @@ class EntityFactoryTestCase(unittest.TestCase):
 
         @factory2.register_chart_widget(info=ChartInfo('chart3', params_config=ParamsConfig({'year': [2022, 2023]})))
         def chart3(year: int):
-            pass
+            return MockChart(100, 100)
 
         uri_list = list(factory2.get_all_chart_uri())
         uri_string_list = [str(uri) for uri in uri_list]
         self.assertEqual(3, len(uri_list))
         self.assertIn('chart:chart3/year/2022', uri_string_list)
         self.assertFalse(any(['chart2' in s for s in uri_string_list]))
+
+        widget = factory2.get_widget_by_uri(EntityURI.from_str('chart:chart3/year/2022'))
+        self.assertTrue(isinstance(widget, MockChart))
+        info = factory2.get_widget_by_uri(EntityURI.from_str('info:chart3/year/2022'))
+        self.assertTrue(isinstance(widget, MockChart))

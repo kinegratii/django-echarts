@@ -1,4 +1,5 @@
 import re
+import sys
 from collections import defaultdict
 from functools import wraps
 from typing import Optional, List, Dict, Type, Any, Union
@@ -455,13 +456,15 @@ class DJESite:
         if holder_index == -1:
             return self
         self.nav.left_menus = self.nav.left_menus[:holder_index] + self._chart_nav.left_menus + self.nav.left_menus[
-                                                                                             holder_index + 1:]
+                                                                                                holder_index + 1:]
         return self
 
-    def config_nav_from_module(self, variable_path: str):
-        """Generate nav from the variable in a module."""
-        nav_config = load_object(variable_path)
-        return self.config_nav(nav_config)
+    def load_config_from_module(self, module_path: str):
+        """Load config from a python module."""
+        __import__(module_path)
+        mod = sys.modules[module_path]
+        nav_config = getattr(mod, 'nav_config')
+        self.config_nav(nav_config)
 
     # Init Widgets
 
