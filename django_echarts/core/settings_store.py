@@ -9,6 +9,20 @@ from typing_extensions import Literal
 from .dms import DependencyManager
 from .tms import Theme, parse_theme_label, ThemeManager
 
+_CUSTOM_D2U_MAP = {
+    'echarts': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}/echarts.min.js',
+    'echarts-gl': 'https://cdnjs.cloudflare.com/ajax/libs/echarts-gl/{echarts_gl_version}/echarts-gl.min.js',
+    'echarts-wordcloud': 'https://unpkg.com/echarts-wordcloud@{echarts_wordcloud_version}/dist/echarts-wordcloud.min.js',
+    'echarts-liquidfill': 'https://unpkg.com/echarts-liquidfill@{echarts_liquidfill_version}/dist/echarts-liquidfill.min.js',
+}
+
+_ECHARTS_VERSION_DIC = {
+    '4.8.0': {'echarts_version': '4.8.0', 'echarts_gl_version': '1.1.2', 'echarts_wordcloud_version': '1.1.3',
+              'echarts_liquidfill_version': '2.0.6'},
+    '5.4.0': {'echarts_version': '5.4.0', 'echarts_gl_version': '2.0.8', 'echarts_wordcloud_version': '2.1.0',
+              'echarts_liquidfill_version': '3.1.0'},
+}
+
 
 @dataclass
 class DJEOpts:
@@ -84,13 +98,15 @@ class SettingsStore:
             'echarts_version': self._opts.echarts_version,
             'baidu_map_ak': self._opts.baidu_map_ak
         }
+        context.update(_ECHARTS_VERSION_DIC.get(self._opts.echarts_version, {}))
         if 'STATIC_URL' in self._extra_settings:
             context.update({'STATIC_URL': self.static_url})
         self._dms = DependencyManager.create_default(
             context=context,
             repo_name=self._opts.dms_repo
         )
-        self._dms.load_from_dep2url_dict(self._opts.dep2url)
+        dep2url = self.opts.dep2url or _CUSTOM_D2U_MAP
+        self._dms.load_from_dep2url_dict(dep2url)
         self._dms.set_localize_opts(static_url=self.static_url, staticfiles_dir=self.staticfiles_dir)
 
         user_theme_label, user_theme_app = self._auto_get_theme_params()

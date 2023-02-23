@@ -25,11 +25,6 @@ _OTHER_REPOS_ = {
     'united-kingdom': 'https://echarts-maps.github.io/echarts-united-kingdom-js'
 }
 
-_CUSTOM_D2U_MAP = {
-    'echarts': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/4.8.0/echarts.min.js',
-    'echarts-gl': 'https://assets.pyecharts.org/assets/echarts-gl.min.js'
-}
-
 
 def d2f(dep_name: str):
     if dep_name.endswith('.css') or dep_name.endswith('.js'):
