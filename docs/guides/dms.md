@@ -58,3 +58,18 @@ DJANGO_ECHARTS = {
 }
 ```
 
+## 默认值
+
+django-echarts 0.6.x默认配置如下：
+
+```python
+{
+    'echarts_version': '5.4.0',
+    'dms_repo': 'pyecharts',
+    'dep2url':{
+        'echarts': '#cdnjs'
+    }
+}
+```
+
+由于 pyecharts 源的 *echarts.min.js* 不做版本化工作，因此依赖项文件 *echarts.min.js* 改用 cdnjs 的文件。其他文件还是引用 pycharts 源。

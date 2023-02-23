@@ -40,13 +40,13 @@ use_geojson(map1, '福建市县', reverse_lazy('dje_geojson', args=('fujian.geoj
 
 第一步，打开阿里云数据可视化平台提供的工具 [http://datav.aliyun.com/portal/school/atlas/area_selector](http://datav.aliyun.com/portal/school/atlas/area_selector) ，依次下载福建省9个地市的geojson文件（须勾选 “包括子区域”）。
 
-第二步， 打开 [geojson.io](http://geojson.io/) 网站，导入各地市geojson文件，直接再导出合并后的geojson，文件名为 *map.geojson*。
+第二步， 打开 [geojson.io](http://geojson.io/) 网站，导入各地市geojson文件，直接再导出合并后的geojson，文件名为 *fujian.geojson*。
 
 ![Export](../images/geojson-io-export.png)
 
 ### 编写图表代码
 
-第一步，将 *map.geojson* 改名，名称只能包含 数字、字母、下划线、横杠等字符。
+第一步，将 *fujian.geojson* 改名，名称只能包含 数字、字母、下划线、横杠等字符。
 
 并放置在 static 目录下，具体路径为：
 
