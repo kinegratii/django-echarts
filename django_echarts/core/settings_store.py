@@ -6,7 +6,7 @@ from borax.system import load_class
 from django.apps import apps
 from typing_extensions import Literal
 
-from .dms import DependencyManager
+from .dms import DependencyManager, PyechartsDMS
 from .tms import Theme, parse_theme_label, ThemeManager
 
 _CUSTOM_D2U_MAP = {
@@ -94,6 +94,12 @@ class SettingsStore:
         else:
             self._opts = DJEOpts()
 
+        if self._opts.dms_repo == 'pyecharts':
+            version_pre = PyechartsDMS.get_pyecharts__primary_version()
+            repo_info = PyechartsDMS.get_pycharts_repo(version_pre)
+            self._opts.dms_repo = repo_info.get('dms_repo')
+            self._opts.echarts_version = repo_info.get('echarts_version')
+
         context = {
             'echarts_version': self._opts.echarts_version,
             'baidu_map_ak': self._opts.baidu_map_ak
@@ -105,8 +111,8 @@ class SettingsStore:
             context=context,
             repo_name=self._opts.dms_repo
         )
-        dep2url = self.opts.dep2url or _CUSTOM_D2U_MAP
-        self._dms.load_from_dep2url_dict(dep2url)
+        # dep2url = self.opts.dep2url or _CUSTOM_D2U_MAP
+        self._dms.load_from_dep2url_dict(self.opts.dep2url)
         self._dms.set_localize_opts(static_url=self.static_url, staticfiles_dir=self.staticfiles_dir)
 
         user_theme_label, user_theme_app = self._auto_get_theme_params()

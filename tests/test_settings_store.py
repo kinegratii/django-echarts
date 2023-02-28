@@ -1,8 +1,8 @@
 # coding=utf8
-
+"""A general test module for dms and tms from settings entry.See detail in test_dms.py and test_tms.py"""
 import unittest
 from collections import namedtuple
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from django_echarts.core.settings_store import SettingsStore
 

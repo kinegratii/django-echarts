@@ -5,6 +5,7 @@ A Implement that you can use host name instead of its url.
 from typing import Tuple, List
 
 from pyecharts.datasets import FILENAMES, EXTRA
+from pyecharts._version import __version__ as pyecharts_version
 from django_echarts.utils.burl import BUrl
 from .localfiles import LocalFilesMixin, DownloaderResource
 
@@ -13,8 +14,26 @@ __all__ = ['DependencyManager']
 # The repo contains all dependencies
 _BUILTIN_REPOS_ = {
     'pyecharts': 'https://assets.pyecharts.org/assets/',
+    'pycharts-v5': 'https://assets.pyecharts.org/assets/v5',
     'local': '/static/assets/'
 }
+
+
+class PyechartsDMS:
+    VERSION2REPO = {
+        '1.9': {'dms_repo': 'pyecharts', 'echarts_version': '4.8.0'},
+        '2.0': {'dms_repo': 'pycharts-v5', 'echarts_version': '5.4.1'}
+    }
+
+    @staticmethod
+    def get_pyecharts__primary_version():
+        return pyecharts_version[:3]
+
+    @staticmethod
+    def get_pycharts_repo(version_pre: str):
+        return PyechartsDMS.VERSION2REPO.get(version_pre)
+
+
 # Use #REPO in custom d2u
 _OTHER_REPOS_ = {
     'cdnjs': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}',
@@ -23,6 +42,11 @@ _OTHER_REPOS_ = {
     'china-provinces': 'https://echarts-maps.github.io/echarts-china-provinces-js/',
     'china-cities': 'https://echarts-maps.github.io/echarts-china-cities-js/',
     'united-kingdom': 'https://echarts-maps.github.io/echarts-united-kingdom-js'
+}
+
+_PYECHARTS_VERSIONS_ = {
+    '1.9': {'dms_repo': 'pyecharts', 'echarts_version': '4.8.0'},
+    '2.0': {'dms_repo': 'pycharts-v5', 'echarts_version': '5.4.1'}
 }
 
 
@@ -45,7 +69,14 @@ class DependencyManager(LocalFilesMixin):
         self._repo_dic[repo_name] = repo_url
 
     def load_from_dep2url_dict(self, d2u_dic: dict):
-        self._custom_dep2url.update(d2u_dic)
+        """Parse user custom dep_url dict
+        Update 0.6.0: support #repo key-value."""
+        for k, v in d2u_dic.items():
+            if k.startswith('#') and isinstance(v, (list, tuple)):
+                for _v in v:
+                    self._custom_dep2url[_v] = k
+            else:
+                self._custom_dep2url[k] = v
 
     def _resolve_dep(self, dep_name: str, repo_name: str = None) -> Tuple:
         if dep_name in self._custom_dep2url:
