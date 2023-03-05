@@ -30,6 +30,7 @@ class DJEOpts:
     dms_repo: str = 'pyecharts'
     dep2url: Dict[str, str] = field(default_factory=dict)
     local_dir: str = ''
+    local_repo_dir: str = '{STATIC_URL}asserts/'
 
     renderer: Literal['svg', 'canvas'] = 'canvas'
     echarts_theme: Optional[str] = None

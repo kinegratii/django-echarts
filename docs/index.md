@@ -23,17 +23,26 @@ django-echarts 是一个基于[pyecharts](https://github.com/pyecharts/pyecharts
 
 ## 安装
 
-django-echarts包运行环境要求如下：
+django-echarts的运行环境要求如下：
 
-| django-echarts版本系列 | pyecharts | django | python |
-| ------ | ------ | ------ | ----- |
-| 0.5.x - 0.6.x | 1.9+ | 2.0 - 4.1 | 3.7+ |
+| django-echarts版本系列 | pyecharts | echarts | django | python |
+| ------ | ------ | ------ | ----- | ----- |
+| 0.6.x | 1.9 - 2.0 | 5.4.1 | 2.0 - 4.1 | 3.7+ |
+| 0.5.x | 1.9 | 4.8.0 | 2.0 - 4.1 | 3.7+ |
 
 可以使用 pip 命令安装。
 
 ```shell
 pip install django-echarts
 ```
+
+在 *requirements.txt* 引用 django-charts时，推荐使用 **固定次版本号** 的方式。
+
+```
+django-echarts~=0.6
+```
+
+
 
 ## 3分钟上手
 
@@ -57,16 +66,28 @@ MyDemo
   |-- manage.py
 ```
 
-**2.** 添加 django_echarts包和对应的主题包到项目配置模块的 `INSTALL_APPS`列表。
+**2.** 修改项目配置文件 *settings.py*。
 
 ```python
+# ...
+
 INSTALL_APPS = (
     # Your apps
     'django_echarts',
     'django_echarts.contrib.bootstrap5'
     # Your apps
 )
+
+# ...
+DJANGO_ECHARTS = {
+}
+
 ```
+
+主要包括：
+
+- 添加 django_echarts包和对应的主题包到项目配置模块的 `INSTALL_APPS`列表。
+- 配置字典 `DJANGO_ECHARTS` 可以留空。
 
 **3.** 创建新文件 *site_views.py* ，输入下列代码。
 

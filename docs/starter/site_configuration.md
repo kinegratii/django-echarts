@@ -150,6 +150,25 @@ nav = {
 }
 ```
 
+
+
+### 关联导航栏
+
+下面是演示如何添加到导航菜单栏的。以 `chart.title = 'Chart1'` 为例子：
+
+| chart.catalog | nav_parent_name | 说明                              |
+| ------------- | --------------- | --------------------------------- |
+| None(未设置)  | None(未设置)    | 不显示在菜单栏上                  |
+| 'BarCharts'   | None(未设置)    | 显示，“BarCharts- Chart1”         |
+| None(未设置)  | 'Menu'          | 显示，“Menu - Chart1”             |
+| 'BarCharts'   | 'Menu'          | 显示 "Menu - Chart1" <sup>1</sup> |
+| 任意          | 'self'          | 显示一级菜单<sup>2</sup>          |
+| 任意          | 'none'          | 不显示<sup>3</sup>                |
+
+1. 只要 catalog 和 nav_parent_name 至少一个有设置，均显示为二级菜单
+2. 使用特殊标识 'self' 表示显示为一级菜单
+3. 使用特殊标识 'none' 表示不显示
+
 ## Nav API
 
 落

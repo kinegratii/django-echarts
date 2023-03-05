@@ -15,6 +15,7 @@ class DMSFromSettingsTestCase(unittest.TestCase):
             echarts_settings=DJEOpts(dms_repo='pyecharts', theme_app='django_echarts.contrib.bootstrap5', dep2url={
                 'foo': 'https://foo.icc/foo.js',
                 'zzz': '#local',
+                'china': '#local',
                 'err': '#err',
                 '#local': ['c1', 'c2']
             }),
@@ -26,3 +27,4 @@ class DMSFromSettingsTestCase(unittest.TestCase):
         self.assertEqual('/static/assets/zzz.js', target_store.resolve_url('zzz'))
         self.assertEqual('/static/assets/c1.js', target_store.resolve_url('c1'))
         self.assertEqual('/static/assets/c2.js', target_store.resolve_url('c2'))
+        self.assertEqual('/static/assets/maps/china.js', target_store.resolve_url('china'))

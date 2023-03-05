@@ -19,6 +19,7 @@ copyright: Copyright &copy; 2017 - 2023 Samuel.Yan
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
+  - mdx_truly_sane_lists
 nav:
   - 快速开始: index.md
   - 可视化构建:
@@ -43,6 +44,7 @@ nav:
     - geojson地图: posts/use_custom_geojson.md
     - 图表合辑: posts/widget_collection.md
     - 第三方HTML渲染库: posts/third_html_library.md
+    - 与pyecharts: posts/pyecharts_project.md
   - 项目开发:
     - 更新日志: changelog.md
     - 破坏性变更: breaking-change.md
