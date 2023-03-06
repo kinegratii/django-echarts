@@ -6,10 +6,10 @@
 
 django-echarts 不会将 django 和 pyecharts 作为显式依赖库（虽然在代码中总是导入这两个库），对其版本没有强制性的依赖。下列是推荐性的版本。
 
-| django-echarts版本系列 | pyecharts | django    | python |
-| ---------------------- | --------- | --------- | ------ |
-| 0.5.x                  | 1.9.x     | 2.0 - 4.0 | 3.7+   |
-| 0.6.x                  | 2.0.x     | 2.0 - 4.1 | 3.7+   |
+| django-echarts版本系列 | pyecharts | echarts | django    | python |
+| ---------------------- | --------- | ------- | --------- | ------ |
+| 0.6.x                  | 1.9 - 2.0 | 5.4.1   | 2.0 - 4.1 | 3.7+   |
+| 0.5.x                  | 1.9       | 4.8.0   | 2.0 - 4.1 | 3.7+   |
 
 ### 1.2 项目配置
 
@@ -91,7 +91,7 @@ site_obj.add_widgets(
 
 1. 此项设置必须在 `DJESite` 初始化时传入，以便将这些菜单项先插入导航栏靠前的位置
 
-### 2.2 连接到路由模块
+### 2.2 连接到项目路由模块
 
 > DJESite.urls: list[Union[URLResolver, URLPattern]]
 
@@ -170,26 +170,9 @@ def mychart():
 
 1. `Slug`类型指的是Django内置Converter，为符合正则表达式 `[-a-zA-Z0-9_]+` 的字符串，作为url的一部分。
 1.  0.6新增。参见 [《参数化图表》](/guides/entity_params)
-1.  从0.6.0开始，此项默认不启用，如需开启，需搭配 `DJESite.config_nav` 使用。
+1.  在导航栏生成图表链接。从0.6.0开始，此项默认不启用，如需开启，需搭配 `DJESite.config_nav` 使用。
 
-### 3.3 关联导航栏
-
-下面是演示如何添加到导航菜单栏的。以 `chart.title = 'Chart1'` 为例子：
-
-| chart.catalog | nav_parent_name | 说明                              |
-| ------------- | --------------- | --------------------------------- |
-| None(未设置)  | None(未设置)    | 不显示在菜单栏上                  |
-| 'BarCharts'   | None(未设置)    | 显示，“BarCharts- Chart1”         |
-| None(未设置)  | 'Menu'          | 显示，“Menu - Chart1”             |
-| 'BarCharts'   | 'Menu'          | 显示 "Menu - Chart1" <sup>1</sup> |
-| 任意          | 'self'          | 显示一级菜单<sup>2</sup>          |
-| 任意          | 'none'          | 不显示<sup>3</sup>                |
-
-1. 只要 catalog 和 nav_parent_name 至少一个有设置，均显示为二级菜单
-2. 使用特殊标识 'self' 表示显示为一级菜单
-3. 使用特殊标识 'none' 表示不显示
-
-### 3.4 注册组件
+### 3.3 注册组件
 
 > DJESite.register_html_widget(function=None, *, name: str = None)
 

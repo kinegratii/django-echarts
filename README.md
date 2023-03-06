@@ -25,16 +25,23 @@ django-echarts 主要提供了以下的内容：
 
 ## 安装(Install)
 
-django-echarts包运行环境要求如下：
+django-echarts的运行环境要求如下：
 
-| django-echarts版本系列 | pyecharts | django | python | 备注 |
+| django-echarts版本系列 | pyecharts | echarts | django | python |
 | ------ | ------ | ------ | ----- | ----- |
-| 0.5.x | 1.9+ | 2.0+ | 3.7+ | 开发维护中 |
+| 0.6.x | 1.9 - 2.0 | 5.4.1 | 2.0 - 4.1 | 3.7+ |
+| 0.5.x | 1.9 | 4.8.0 | 2.0 - 4.0 | 3.7+ |
 
 可以使用 pip 命令安装。
 
 ```shell
 pip install django-echarts
+```
+
+在 *requirements.txt* 引用 django-charts时，推荐使用 **固定次版本号** 的方式。
+
+```
+django-echarts~=0.6
 ```
 
 ## 3分钟上手(Quickstart in 3 Minutes)
