@@ -63,4 +63,4 @@ class EntityFactoryTestCase(unittest.TestCase):
         widget = factory2.get_widget_by_uri(EntityURI.from_str('chart:chart3/year/2022'))
         self.assertTrue(isinstance(widget, MockChart))
         info = factory2.get_widget_by_uri(EntityURI.from_str('info:chart3/year/2022'))
-        self.assertTrue(isinstance(widget, MockChart))
+        self.assertTrue(isinstance(info, ChartInfo))

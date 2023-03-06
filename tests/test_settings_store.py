@@ -4,6 +4,7 @@ import unittest
 from collections import namedtuple
 from unittest.mock import patch
 
+from django_echarts.core.dms import PyechartsDMS
 from django_echarts.core.settings_store import SettingsStore
 
 MockAppConfig = namedtuple('MockAppConfig', 'name')
@@ -27,14 +28,25 @@ class SettingsWithStaticUrlTestCase(unittest.TestCase):
                 'STATIC_URL': '/static/'
             }
         )
-        self.assertEqual(
-            'https://assets.pyecharts.org/assets/echarts.min.js',
-            target_store.resolve_url('echarts.min')
-        )
-        self.assertEqual(
-            'https://assets.pyecharts.org/assets/maps/china.js',
-            target_store.resolve_url('china.js')
-        )
+        pye_version = PyechartsDMS.get_pyecharts__primary_version()
+        if pye_version[0] == '1':
+            self.assertEqual(
+                'https://assets.pyecharts.org/assets/echarts.min.js',
+                target_store.resolve_url('echarts.min')
+            )
+            self.assertEqual(
+                'https://assets.pyecharts.org/assets/maps/china.js',
+                target_store.resolve_url('china.js')
+            )
+        elif pye_version[0] == '2':
+            self.assertEqual(
+                'https://assets.pyecharts.org/assets/v5/echarts.min.js',
+                target_store.resolve_url('echarts.min')
+            )
+            self.assertEqual(
+                'https://assets.pyecharts.org/assets/v5/maps/china.js',
+                target_store.resolve_url('china.js')
+            )
         self.assertEqual('https://fuzzy.io', target_store.resolve_url('https://fuzzy.io'))
         self.assertEqual('https://foo.icc/foo.js', target_store.resolve_url('foo'))
         self.assertEqual('/static/assets/zzz.js', target_store.resolve_url('zzz'))

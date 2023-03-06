@@ -126,7 +126,7 @@ class EntityFactory(WidgetGetterMixin):
         if uri.catalog == 'chart':
             return self._chart_obj_dic.get(uri.name, uri.params)
         elif uri.catalog == 'info':
-            info_name = self._chart_obj_dic.actual_key(uri.name)
+            # info_name = self._chart_obj_dic.actual_key(uri.name)
             return self._chart_info_manager.get_or_none(uri=uri)
         else:
             return self._html_widgets.get(uri.name, uri.params)
@@ -136,7 +136,7 @@ class EntityFactory(WidgetGetterMixin):
             self.clean_uri_params(uri)
             func_exists = True
             chart_obj = self._chart_obj_dic.get(uri.name, uri.params)
-            info_name = self._chart_obj_dic.actual_key(uri.name)
+            # info_name = self._chart_obj_dic.actual_key(uri.name)
             info = self._chart_info_manager.get_or_none(uri=uri)
             return chart_obj, func_exists, info
         else:
