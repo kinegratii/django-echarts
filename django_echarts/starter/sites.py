@@ -18,7 +18,7 @@ from django_echarts.entities import (
     ChartInfo, WidgetCollection, Nav, Menu, LinkItem, Jumbotron, Copyright, Message, ValuesPanel, LinkGroup
 )
 from django_echarts.entities.uri import EntityURI, ParamsConfig
-from django_echarts.geojson import geo_urlpatterns
+from django_echarts.custom_maps import custom_map_urlpatterns
 from django_echarts.site_exts import reverse_chart_url
 from django_echarts.stores.entity_factory import factory
 from django_echarts.utils.compat import compat_get_elided_page_range
@@ -426,7 +426,7 @@ class DJESite:
             path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings'),
 
         ]
-        urls += geo_urlpatterns + self._custom_urlpatterns
+        urls += custom_map_urlpatterns + self._custom_urlpatterns
         return urls
 
     def extend_urlpatterns(self, urlpatterns):

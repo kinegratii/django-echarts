@@ -30,6 +30,7 @@ nav:
     - 依赖项(一)：基本配置: guides/dms.md
     - 依赖项(二)：本地化: starter/localize_staticfiles.md
     - 参数化图表: guides/entity_params.md
+    - 自定义地图: guides/custom_maps.md
     - 高级开发: guides/advance_development.md
     - Gallery: gallery.md
   - 参考:

@@ -1,7 +1,10 @@
-{% for geojson_url, geojson_map_name, chart_list in structured_data %}
-    {% if geojson_url %}
-$.getJSON("{{ geojson_url }}").done(function(mapdata){
-    echarts.registerMap("{{ geojson_map_name }}", mapdata);
+{% for custom_map_item, chart_list in structured_data %}
+    {% if custom_map_item.url %}
+$.get({
+   url: '{{ custom_map_item.url }}',
+   dataType: '{{ custom_map_item.ajax_data_type }}'
+}).done(function(mapData){
+    echarts.registerMap("{{ custom_map_item.map_name }}", {{ custom_map_item.param_str }});
     {% endif %}
     {% for c in chart_list %}
     var chart_{{ c.chart_id }} = echarts.init(
@@ -24,7 +27,7 @@ $.getJSON("{{ geojson_url }}").done(function(mapdata){
     });
     {% endfor %}
 
-    {% if geojson_url %}
+    {% if custom_map_item.url %}
 }).fail(function(jqXHR, textStatus, error){
     $("#{{ c.chart_id }}").html("Load geojson fail! Status: " + textStatus);
 });
