@@ -51,6 +51,8 @@ def build_echarts_initial_fragment(*args):
         map_item = getattr(chart, 'custom_map_item', None)
         if map_item:
             structured_dic[map_item].append(chart)
+        else:
+            structured_dic[None].append(chart)
     structured_data = list(structured_dic.items())
     context = {'structured_data': structured_data}
     return SafeString(render_to_string('snippets/echarts_init_options.tpl', context))
