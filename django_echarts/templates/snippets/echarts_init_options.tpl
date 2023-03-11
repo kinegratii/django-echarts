@@ -29,7 +29,7 @@ $.get({
 
     {% if custom_map_item.url %}
 }).fail(function(jqXHR, textStatus, error){
-    $("#{{ c.chart_id }}").html("Load geojson fail! Status: " + textStatus);
+    $("#{{ c.chart_id }}").html("Load custom map fail! Status: " + textStatus);
 });
     {% endif %}
 {% endfor %}

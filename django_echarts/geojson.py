@@ -1,9 +1,12 @@
 """A extension for geojson."""
+import warnings
 from collections import namedtuple
 
 from django_echarts.custom_maps import use_custom_map, custom_map_url
 
 __all__ = ['use_geojson', 'geojson_url']
+
+warnings.warn('The django_echarts.geojson is deprecated.Use django_echarts.custom_maps instead.', DeprecationWarning)
 
 GeojsonItem = namedtuple('GeojsonItem', 'map_name url')
 

@@ -168,7 +168,3 @@ nav = {
 1. 只要 catalog 和 nav_parent_name 至少一个有设置，均显示为二级菜单
 2. 使用特殊标识 'self' 表示显示为一级菜单
 3. 使用特殊标识 'none' 表示不显示
-
-## Nav API
-
-落

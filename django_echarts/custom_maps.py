@@ -11,15 +11,14 @@ from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
 
 __all__ = ['use_custom_map', 'custom_map_url', 'custom_map_urlpatterns']
 
-_VIEW_NAME = 'dje_custom_map'
-
 
 @dataclass
 class CustomMapItem:
+    """A map data structure for geojson & svg map."""
     map_name: str
     url: str
     catalog: str
-    param_str: str
+    param_str: str  # param string in echarts.registerMap
     ajax_data_type: str
 
     def __eq__(self, other):
@@ -56,21 +55,33 @@ def create_custom_map_item(map_name: str, url: str, echarts_version: str):
         raise ValueError('Unsupported custom map catalogs.')
 
 
-def use_custom_map(chart_obj, map_name: str, url: str = None):
+def use_custom_map(chart_obj, map_name: str, url_or_filename: str = None):
     """Register and use geojson & svg map for a chart."""
     echarts_version = DJANGO_ECHARTS_SETTINGS.opts.echarts_version
-    setattr(chart_obj, 'custom_map_item', create_custom_map_item(map_name, url, echarts_version))
+    url_or_filename = url_or_filename or map_name
+    if not any([
+        url_or_filename.startswith('https://'),
+        url_or_filename.startswith('http://'),
+        url_or_filename.startswith('/')
+    ]):
+        map_data_url = reverse_lazy(_VIEW_NAME, args=(url_or_filename,))
+    else:
+        map_data_url = url_or_filename
+    setattr(chart_obj, 'custom_map_item', create_custom_map_item(map_name, map_data_url, echarts_version))
+
+
+_VIEW_NAME = 'dje_map_data'
 
 
 def custom_map_url(map_name: str) -> str:
-    """Get default url for a geojson file."""
+    """Get default url for a custom file."""
     return reverse_lazy(_VIEW_NAME, args=(map_name,))
 
 
-def _get_custom_map_file_path(map_name: str):
+def _get_custom_map_file_path(map_name: str) -> str:
     # ctomstr
-    finder_param_path = [f'custom_maps/{map_name}']
-    if map_name.endswith('.geojson') or map_name.endswith('.json'):
+    finder_param_path = [f'assets/custom_maps/{map_name}']
+    if map_name.endswith('.geojson') or map_name.endswith('.json'):  # Compatible with old geojson(0.5.x)
         finder_param_path.append(f'geojson/{map_name}')
     for fpp in finder_param_path:
         result = finders.find(fpp, all=False)
@@ -82,8 +93,7 @@ class CustomMapDataView(View):
     def get(self, request, *args, **kwargs):
         map_name = self.kwargs.get('map_name')
         file_path = _get_custom_map_file_path(map_name)
-        print(file_path)
-        if not os.path.exists(file_path):
+        if not file_path or not os.path.exists(file_path):
             return HttpResponseNotFound('The map file does not exist.')
         if file_path.endswith('.geojson'):
             return self.return_geojson_map_rsp(file_path)
@@ -104,5 +114,5 @@ class CustomMapDataView(View):
 
 
 custom_map_urlpatterns = [
-    path('custom_maps/<str:map_name>', CustomMapDataView.as_view(), name=_VIEW_NAME)
+    path('map_data/<str:map_name>', CustomMapDataView.as_view(), name=_VIEW_NAME)
 ]

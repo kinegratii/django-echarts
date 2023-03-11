@@ -1,17 +1,6 @@
 # 使用教程
 
-## 一、 创建项目
-
-### 1.1 Django&pyecharts版本
-
-django-echarts 不会将 django 和 pyecharts 作为显式依赖库（虽然在代码中总是导入这两个库），对其版本没有强制性的依赖。下列是推荐性的版本。
-
-| django-echarts版本系列 | pyecharts | echarts | django    | python |
-| ---------------------- | --------- | ------- | --------- | ------ |
-| 0.6.x                  | 1.9 - 2.0 | 5.4.1   | 2.0 - 4.1 | 3.7+   |
-| 0.5.x                  | 1.9       | 4.8.0   | 2.0 - 4.1 | 3.7+   |
-
-### 1.2 项目配置
+## 一、 项目配置
 
 在 Django 项目中，配置模块位于 *project.settings* 。和 django-echarts 有关的配置如下：
 
