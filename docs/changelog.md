@@ -1,10 +1,12 @@
 # 更新日志
 
-## v0.6.0
+## v0.6.0 - (20230331)
 
-> 新增pycharts2.0.x适配。新增 Django 4.1 构建支持。
+[发布日志](/release-note/v060)
 
+- 新增pycharts2.0.x适配
 - 新增参数化图表支持
+- 重构自定义地图，支持 geojson&svg格式
 - 新增资源类 `EntityURI`
 - 新增 `WidgetNotRegisteredError` 异常
 - `WidgetGetterMixin` 接口类支持 `EntityURI`

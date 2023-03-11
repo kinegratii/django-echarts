@@ -43,15 +43,15 @@ def echarts_js_dependencies(context, *args):
 
 def build_echarts_initial_fragment(*args):
     chart_list = flat_chart(args)
-    structured_dic = defaultdict(list)
+    structured_dic = defaultdict(list)  # key = CustomMapItem
     for chart in chart_list:
         if hasattr(chart, '_is_geo_chart'):
             chart.is_geo_chart = chart._is_geo_chart
         chart.dje_echarts_theme = DJANGO_ECHARTS_SETTINGS.opts.get_echarts_theme(chart.theme)
-        geojson_url = chain_getattr(chart, 'geojson.url', '')
-        geojson_name = chain_getattr(chart, 'geojson.map_name', '')
-        structured_dic[(geojson_url, geojson_name)].append(chart)
-    structured_data = [(k[0], k[1], v) for k, v in structured_dic.items()]
+        map_item = getattr(chart, 'custom_map_item', None)
+        if map_item:
+            structured_dic[map_item].append(chart)
+    structured_data = list(structured_dic.items())
     context = {'structured_data': structured_data}
     return SafeString(render_to_string('snippets/echarts_init_options.tpl', context))
 
