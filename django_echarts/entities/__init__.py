@@ -2,7 +2,7 @@ from .articles import (
     ChartInfo, ChartInfoManagerMixin, LocalChartInfoManager
 )
 from .base import DwString
-from .chart_widgets import NamedCharts
+from .chart_widgets import NamedCharts, BlankChart
 from .containers import RowContainer, Container
 from .html_widgets import (
     HTMLBase, LinkItem, SeparatorItem, Menu, Jumbotron, Nav, Copyright, Message, ValuesPanel, ValueItem, Title,

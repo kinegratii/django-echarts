@@ -4,10 +4,6 @@
 
 > 本文以 pyecharts1.9和2.0为例。
 
-## 基本原则
-
-落
-
 ## 图表支持
 
 ### 图表类型支持
@@ -101,7 +97,7 @@ dep_name(依赖项名称)   --> filename(文件路径)  --> 引用URL/本地文�
 
 ## 自定义地图（geojson&svg）
 
-pyecharts按内嵌方式引入geojson/svg数据，而 django-echarts 只支持 外链方式，这是二者最大的区别。
+pyecharts按内嵌方式引入geojson/svg数据，而 django-echarts 只支持 外链方式，这是二者最大的区别。详情参见 [《自定义地图》](/guides/custom_maps) 。
 
 ## 相关API接口
 

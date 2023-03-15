@@ -67,6 +67,8 @@ def use_custom_map(chart_obj, map_name: str, url_or_filename: str = None):
         map_data_url = reverse_lazy(_VIEW_NAME, args=(url_or_filename,))
     else:
         map_data_url = url_or_filename
+    # TODO Check chart.maptype and map_name ?
+    # Map.options['series'][i]['mapType']  Geo.options['geo']['map']
     setattr(chart_obj, 'custom_map_item', create_custom_map_item(map_name, map_data_url, echarts_version))
 
 
@@ -95,10 +97,12 @@ class CustomMapDataView(View):
         file_path = _get_custom_map_file_path(map_name)
         if not file_path or not os.path.exists(file_path):
             return HttpResponseNotFound('The map file does not exist.')
-        if file_path.endswith('.geojson'):
+        if file_path.endswith('.geojson') or file_path.endswith('.json'):
             return self.return_geojson_map_rsp(file_path)
-        else:
+        elif file_path.endswith('.svg'):
             return self.return_svg_map_rsp(file_path)
+        else:
+            return HttpResponseNotFound('Unsupported map type. geojson or svg is required.')
 
     def return_geojson_map_rsp(self, file_path):
         with open(file_path, 'r', encoding='utf8') as fp:

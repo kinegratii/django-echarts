@@ -80,9 +80,11 @@ django_echarts.custom_maps.use_custom_map(chart_obj, map_name:str, url_or_filena
 
 需要注意的是：
 
-第一，在 pyecharts1.9/echarts4时，不支持 svg格式。
+第一，参数 `map_name` 必须和 关联图表的` maptype` 配置保持一致，否则无法正确加载底图。
 
-第二，在使用时必须由使用者确定地图类型是 geojson 还是 svg。规则是 `name` 和 `url` 至少有一个以 `.geojson` 、`.json`、 `.svg` 结尾。
+第二，在 pyecharts1.9/echarts4时，不支持 svg格式。
+
+第三，在使用时必须由使用者确定地图类型是 geojson 还是 svg。规则是 `name` 和 `url` 至少有一个以 `.geojson` 、`.json`、 `.svg` 结尾。
 
 ```python
 use_custom_map(chart_obj, '福建省地图', 'https://geo.datav.aliyun.com/areas_v3/bound/350000_full.json')

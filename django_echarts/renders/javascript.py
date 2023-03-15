@@ -1,6 +1,8 @@
 from functools import singledispatch
 
-from django_echarts.entities import (NamedCharts, ValuesPanel, RowContainer, Container, WidgetCollection, HTMLBase)
+from django_echarts.entities import (
+    NamedCharts, ValuesPanel, RowContainer, Container, WidgetCollection, HTMLBase, BlankChart
+)
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
@@ -17,6 +19,7 @@ def flat_chart(widget):
 
 
 @flat_chart.register(Base)
+@flat_chart.register(BlankChart)
 def flat_base(widget: Base):
     return [widget]
 
@@ -80,6 +83,9 @@ def get_js_dependencies(widget, global_theme: str = None):
         _dep_list = _deps(chart)
 
         for dep in _dep_list:
+            # exclude custom map.
+            if dep.endswith('.geojson') or dep.endswith('.json') or dep.endswith('.svg'):
+                continue
             if dep not in dep_list and dep not in front_items:
                 if dep in _ECHARTS_LIB_NAMES:
                     front_items.append(dep)

@@ -12,9 +12,8 @@ from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
 
 from django_echarts.entities import (
-    ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase
+    ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase, BlankChart
 )
-from django_echarts.core.exceptions import WidgetNotRegisteredError
 
 
 def _to_css_length(val):
@@ -44,6 +43,7 @@ def render_html(widget, **kwargs) -> SafeString:
 
 
 @render_widget.register(Base)
+@render_widget.register(BlankChart)
 def render_chart(widget, **kwargs) -> SafeString:
     width = kwargs.get('width') or widget.width
     height = kwargs.get('height') or widget.height
