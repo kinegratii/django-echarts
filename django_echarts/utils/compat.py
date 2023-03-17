@@ -1,7 +1,15 @@
+from django import VERSION as django_version
 from django.core.paginator import Paginator
 
 
-def get_elided_page_range(paginator: Paginator, number=1, *, on_each_side=3, on_ends=2):
+def compat_get_elided_page_range(paginator: Paginator, number=1, *, on_each_side=3, on_ends=2):
+    if django_version > (3, 2):
+        return paginator.get_elided_page_range(number, on_each_side=on_each_side, on_ends=on_ends)
+    else:
+        return _get_elided_page_range(paginator, number, on_each_side=on_each_side, on_ends=on_ends)
+
+
+def _get_elided_page_range(paginator: Paginator, number=1, *, on_each_side=3, on_ends=2):
     """
     Return a 1-based range of pages with some values elided.
 

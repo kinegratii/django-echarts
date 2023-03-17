@@ -15,18 +15,22 @@ extra:
       link: https://github.com/kinegratii/django-echarts
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/django-echarts
-copyright: Copyright &copy; 2017 - 2022 Samuel.Yan
+copyright: Copyright &copy; 2017 - 2023 Samuel.Yan
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
+  - mdx_truly_sane_lists
 nav:
   - 快速开始: index.md
   - 可视化构建:
     - 使用教程: starter/base.md
+    - 网站配置: starter/site_configuration.md
     - 组件和布局: starter/widget_and_layout.md
     - UI框架和主题: starter/themes.md
-    - 依赖项和静态文件: guides/dms.md
-    - 本地化静态资源: starter/localize_staticfiles.md
+    - 依赖项(一)：基本配置: guides/dms.md
+    - 依赖项(二)：本地化: starter/localize_staticfiles.md
+    - 参数化图表: guides/entity_params.md
+    - 自定义地图: guides/custom_maps.md
     - 高级开发: guides/advance_development.md
     - Gallery: gallery.md
   - 参考:
@@ -41,10 +45,12 @@ nav:
     - geojson地图: posts/use_custom_geojson.md
     - 图表合辑: posts/widget_collection.md
     - 第三方HTML渲染库: posts/third_html_library.md
+    - 与pyecharts: posts/pyecharts_project.md
   - 项目开发:
     - 更新日志: changelog.md
     - 破坏性变更: breaking-change.md
     - 关于项目: about.md
     - 发布日志:
-      - v0.5.0: release-note/v050.md
+      - v0.6.0: release-note/v060.md
       - v0.5.1: release-note/v051.md
+      - v0.5.0: release-note/v050.md

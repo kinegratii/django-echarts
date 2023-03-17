@@ -38,7 +38,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    {% for menu2 in nav.menus %}
+                    {% for menu2 in nav.left_menus %}
                         {% if menu2.children %}
                             <li class="nav-item dropdown">
                                 <a id="{{ menu2.slug }}" href="#" class="nav-link dropdown-toggle"
@@ -62,8 +62,27 @@
                     {% endfor %}
                 </ul>
                 <ul class="navbar-nav ms-auto">
-                    {% for item in nav.links %}
-                        <li class="nav-item">{% dw_widget item class_="nav-link" %}</li>
+                    {% for menu2 in nav.right_menus %}
+                        {% if menu2.children %}
+                            <li class="nav-item dropdown">
+                                <a id="{{ menu2.slug }}" href="#" class="nav-link dropdown-toggle"
+                                   role="button" data-bs-toggle="dropdown">{{ menu2.text }} </a>
+                                <ul class="dropdown-menu" aria-labelledby="{{ menu2.slug }}">
+                                    {% for item in menu2.children %}
+                                        {% if item.after_separator %}
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                        {% endif %}
+                                        <li>{% dw_widget item class_="dropdown-item" %}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                            {% dw_widget menu2 class_="nav-link" %}
+                            </li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             </div><!-- /.navbar-collapse -->

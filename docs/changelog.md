@@ -1,5 +1,20 @@
 # 更新日志
 
+## v0.6.0 - (20230317)
+
+[发布日志](/release-note/v060)
+
+- 新增pycharts2.0.x适配
+- 新增参数化图表支持
+- 重构自定义地图，支持 geojson&svg格式
+- 新增资源类 `EntityURI`
+- 新增 `WidgetNotRegisteredError` 异常
+- `WidgetGetterMixin` 接口类支持 `EntityURI`
+- 修改导航栏(Nav)配置方式
+- 右侧导航栏支持二级菜单
+- Borax 更新至 4.0
+- typing_extensions 更新至 4.5
+
 ## v0.5.2 - （20220508）
 
 - 新增 `ElementEntity` HTML组件

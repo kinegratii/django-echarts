@@ -1,5 +1,7 @@
 # Geojson地图
 
+> 该教程适用于 0.5 版本，0.6+版本使用 `CustomMap`自定义地图功能（[链接](/guides/custom_maps)），本模块将在 1.0 移除 。
+
 ## 1 使用方法
 
 django-echarts 支持直接引用 geojson 地图，地图来源可以线上资源提供或者自己制作。相关方法均定义在 `django_echarts.geojson` 模块。
@@ -27,7 +29,6 @@ use_geojson(map1, '福建省', 'https://geo.datav.aliyun.com/areas_v3/bound/3500
 ```python
 use_geojson(map1, '福建市县', '/geojson/fujian.geojson')  # 不推荐，使用下面两种的url反向解析
 use_geojson(map1, '福建市县', geojson_url('fujian.geojson'))
-use_geojson(map1, '福建市县', reverse_lazy('dje_geojson', args=('fujian.geojson',)))
 ```
 
 
@@ -40,13 +41,13 @@ use_geojson(map1, '福建市县', reverse_lazy('dje_geojson', args=('fujian.geoj
 
 第一步，打开阿里云数据可视化平台提供的工具 [http://datav.aliyun.com/portal/school/atlas/area_selector](http://datav.aliyun.com/portal/school/atlas/area_selector) ，依次下载福建省9个地市的geojson文件（须勾选 “包括子区域”）。
 
-第二步， 打开 [geojson.io](http://geojson.io/) 网站，导入各地市geojson文件，直接再导出合并后的geojson，文件名为 *map.geojson*。
+第二步， 打开 [geojson.io](http://geojson.io/) 网站，导入各地市geojson文件，直接再导出合并后的geojson，文件名为 *fujian.geojson*。
 
 ![Export](../images/geojson-io-export.png)
 
 ### 编写图表代码
 
-第一步，将 *map.geojson* 改名，名称只能包含 数字、字母、下划线、横杠等字符。
+第一步，将 *fujian.geojson* 改名，名称只能包含 数字、字母、下划线、横杠等字符。
 
 并放置在 static 目录下，具体路径为：
 
@@ -107,23 +108,3 @@ $.getJSON("/geojson/fujian.geojson").done(function(mapdata){
 
 ![fujian-geojson](../images/fujian-custom-geojson.png)
 
-## 3 关于geojson_url
-
-**1)** 在上述例子中，fujian.geojson 放在静态文件目录，但是不能在 `use_geojson` 的url参数使用 `/static/geojson/fujian.geojson`，这是因为该url由 `django.contrib.staticfiles` 处理，返回的是 `FileResponse`。
-
-**2)** `geojson_url` 用于反向解析url。返回一个url地址，由 `GeojsonDataView` 视图处理，解析该文件并返回 `JSONResponse`。
-
-**3)**  我们也不建议在 `use_geojson`的`url` 参数直接使用 `/geojson/fujian.geojson`，虽然在上述例子中实际url就是如此。这是因为 `GeojsonDataView` 视图是挂载到 `DJESite.urls` 之中，实际地址可能随其变化而变化 。
-
-比如如果项目主路由配置如下：
-
-```python
-from django.urls import path, include
-from ccs.site_views import site_obj
-
-urlpatterns = [
-    path('site/', include(site_obj.urls)),
-]
-```
-
-则文件 fujian.geojson的引用url是 `/site/geojson/fujian.geojson`。

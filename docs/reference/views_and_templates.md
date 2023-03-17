@@ -65,7 +65,13 @@ class DJESite(site_title: str, opts: Optional[SiteOpts] = None)
 
 使用自己视图类替换现有内置视图。
 
+### config_nav
+
+配置导航栏。
+
 ### add_left_link
+
+> Removed in 0.6.0
 
 添加到左侧导航栏。
 
@@ -78,6 +84,8 @@ site_obj.add_left_link(item=LinkItem(...), menu_title='Menu1')
 ```
 
 ### add_footer_link
+
+> Remove in 0.6.0
 
 添加底部链接。
 

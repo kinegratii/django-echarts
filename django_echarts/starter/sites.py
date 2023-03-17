@@ -1,8 +1,11 @@
 import re
+import sys
+from collections import defaultdict
 from functools import wraps
 from typing import Optional, List, Dict, Type, Any, Union
 
 from borax.serialize import cjson
+from borax.system import load_object
 from django.core.paginator import Paginator
 from django.http.response import JsonResponse
 from django.urls import reverse_lazy, path
@@ -10,13 +13,15 @@ from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 from django.views.generic.edit import FormMixin
 from django_echarts.ajax_echarts import ChartOptionsView
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.core.exceptions import DJEAbortException
+from django_echarts.core.exceptions import DJEAbortException, ChartDoesNotExist
 from django_echarts.entities import (
-    ChartInfo, WidgetCollection, Nav, LinkItem, Jumbotron, Copyright, Message, ValuesPanel
+    ChartInfo, WidgetCollection, Nav, Menu, LinkItem, Jumbotron, Copyright, Message, ValuesPanel, LinkGroup
 )
-from django_echarts.geojson import geo_urlpatterns
+from django_echarts.entities.uri import EntityURI, ParamsConfig
+from django_echarts.custom_maps import custom_map_urlpatterns
+from django_echarts.site_exts import reverse_chart_url
 from django_echarts.stores.entity_factory import factory
-from django_echarts.utils.compat import get_elided_page_range
+from django_echarts.utils.compat import compat_get_elided_page_range
 from typing_extensions import Literal
 
 from .optstools import SiteOptsForm, SiteOpts
@@ -76,7 +81,7 @@ class DJESiteBackendView(TemplateResponseMixin, ContextMixin, SiteInjectMixin, V
         context['nav'] = site.nav
         context['site_title'] = site.site_title
         context['page_title'] = site.site_title
-        context['copyright'] = factory.html_widgets.get('copyright')
+        context['copyright'] = factory.get_widget_by_uri(site.ref2uri['copyright'])
         context['opts'] = site.opts
 
         # The data store in a view processing lifecycle.
@@ -148,13 +153,15 @@ class DJESiteHomeView(DJESiteBackendView):
     template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
+        site = SiteInjectMixin.get_site_object()
         context = super(DJESiteHomeView, self).get_context_data(**kwargs)
-        context['jumbotron'] = factory.get_html_widget(WidgetRefs.home_jumbotron)
-        chart_obj, _, info = factory.get_chart_and_info(WidgetRefs.home_jumbotron_chart)
+        context['jumbotron'] = factory.get_widget_by_uri(site.ref2uri[WidgetRefs.home_jumbotron])
+        chart_obj, _, info = factory.get_chart_and_info_by_uri(site.ref2uri[WidgetRefs.home_jumbotron_chart])
         if chart_obj:
             context[_VAR_CHART_] = chart_obj
             context[_VAR_CHART_INFO_] = info
-        context[WidgetRefs.home_values_panel] = factory.get_html_widget(WidgetRefs.home_values_panel)
+        context[WidgetRefs.home_values_panel] = factory.get_widget_by_uri(
+            site.ref2uri[WidgetRefs.home_values_panel])
         context['top_chart_info_list'] = factory.chart_info_manager.query_chart_info_list(with_top=True)
         context['layout_tpl'] = 'items_grid.html'
         return context
@@ -184,11 +191,7 @@ class DJESiteListView(DJESiteBackendView):
             page_number = self.request.GET.get(self.page_kwarg, 1)
             page_obj = paginator.get_page(page_number)
             context['page_obj'] = page_obj
-            try:
-                # Django3.2+
-                elided_page_nums = paginator.get_elided_page_range(page_number)
-            except (AttributeError, TypeError, ValueError):
-                elided_page_nums = get_elided_page_range(paginator, page_number)
+            elided_page_nums = compat_get_elided_page_range(paginator, page_number)
             context['elided_page_nums'] = list(elided_page_nums)
             return 'list_with_paginator.html'
         else:
@@ -205,16 +208,38 @@ class DJESiteChartSingleView(DJESiteBackendView):
     def dje_init_page_context(self, context, site: 'DJESite') -> Optional[str]:
         context['view_name'] = 'dje_chart_single'
         chart_name = self.kwargs.get('name')
-        chart_obj, func_exists, chart_info = factory.get_chart_and_info(chart_name)
-        if not func_exists:
-            self.abort_request('The chart does not exist.')
-        if not chart_obj:
-            self.abort_request(f'The chart function {chart_name} returns nothing..')
-        chart_obj.width = '100%'
+        chart_uri = EntityURI.from_params_path('chart', chart_name, self.kwargs.get('chart_params', ''))
+        is_parametric = factory.clean_uri_params(chart_uri)
+        if len(chart_uri.params) == 0 and is_parametric:
+            return self.update_context_for_parametric_chart_without_params(context, chart_uri)
+        # TODO exception ChartDoesNotExist ChartParamsInvalid
+        try:
+            chart_obj, func_exists, chart_info = factory.get_chart_and_info_by_uri(chart_uri)
+            if not func_exists:
+                self.abort_request('The chart does not exist.')
+            if not chart_obj:
+                self.abort_request(f'The chart function {chart_name} returns nothing..')
+            chart_obj.width = '100%'
+            context['chart_info'] = chart_info
+            context['chart_obj'] = chart_obj
+            context['title'] = self.get_dje_page_title(name=chart_info.name, title=chart_info.title)
+            return self.template_name
+        except ChartDoesNotExist as e:
+            self.abort_request(str(e))
+
+    def update_context_for_parametric_chart_without_params(self, context, uri: EntityURI):
+        chart_info = factory.chart_info_manager.get_or_none(uri=uri)
         context['chart_info'] = chart_info
-        context['chart_obj'] = chart_obj
         context['title'] = self.get_dje_page_title(name=chart_info.name, title=chart_info.title)
-        return self.template_name
+        link_group = LinkGroup()
+        for params_dic in chart_info.params_config:
+            link = LinkItem(
+                text=chart_info.title.format(**params_dic),
+                url=reverse_chart_url(EntityURI('chart', chart_info.name, params_dic))
+            )
+            link_group.add_widget(link)
+        context['link_group'] = link_group
+        return 'chart_parametric.html'
 
     def get_dje_page_title(self, name, title, **kwargs):
         return self.page_title.format(name=name, title=title)
@@ -268,29 +293,88 @@ class NavMenuPosition:
 _SLUG_RE = re.compile(r'[-a-zA-Z0-9_]+')
 
 
+class NavBuilder:
+    @staticmethod
+    def build_nav(left_menu_config: list = None, right_menu_config: list = None,
+                  footer_links_config: list = None):
+        left_menu_config = left_menu_config or []
+        right_menu_config = right_menu_config or []
+        footer_links_config = footer_links_config or []
+        nav = Nav()
+        NavBuilder._build_nav(left_menu_config, nav.left_menus)
+        NavBuilder._build_nav(right_menu_config, nav.right_menus)
+        for data in footer_links_config:
+            link = LinkItem(**NavBuilder._parse_params(data))
+            nav.footer_links.append(link)
+        return nav
+
+    @staticmethod
+    def build_default_nav(nav_shown_pages: list):
+        return NavBuilder.build_nav(left_menu_config=nav_shown_pages)
+
+    @staticmethod
+    def _build_nav(menu_config: list, menu_container: list):
+        for data in menu_config:
+            menu = None
+            if isinstance(data, str):
+                menu = Menu(**NavBuilder._parse_params(data))
+            elif isinstance(data, dict):
+                if 'view_name' in data or 'url' in data:
+                    menu = Menu(**NavBuilder._parse_params(data))
+                elif 'children' in data:
+                    menu = Menu(**NavBuilder._parse_params(data))
+                    for data_item in data['children']:
+                        link_item = LinkItem(**NavBuilder._parse_params(data_item))
+                        menu.children.append(link_item)
+            menu_container.append(menu)
+
+    @staticmethod
+    def _parse_params(val: Union[str, dict]):
+        # todo handle uri
+        if isinstance(val, str):
+            if val == Nav.CHART_PLACEHOLDER:
+                return dict(text=val)
+            elif val == 'home':
+                return dict(text='首页', slug='home', url=reverse_lazy('dje_home'))
+            elif val == 'list':
+                return dict(text='所有', slug='list', url=reverse_lazy('dje_list'))
+            elif val == 'collection':
+                return dict(text='合辑', slug='collection-all', url=reverse_lazy('dje_chart_collection_all'))
+            elif val == 'settings':
+                return dict(text='设置', slug='settings', url=reverse_lazy('dje_settings'))
+            else:
+                return dict(text=val)
+        elif isinstance(val, dict):
+            if 'view_name' in val:
+                return dict(text=val.get('text'), slug=val.get('slug'),
+                            url=reverse_lazy(val['view_name'], kwargs=val.get('kwargs', {})))
+            elif 'url' in val:
+                if val['url'].startswith('chart:'):
+                    uri = EntityURI.from_str(val['url'])
+                    url = reverse_lazy('dje_chart_single', args=[uri.name, uri.params_path])
+                else:
+                    url = val['url']
+                return dict(text=val.get('text'), slug=val.get('slug'), url=url)
+            elif 'children' in val:
+                return dict(text=val.get('text'), slug=val.get('slug'))
+
+
 class DJESite:
     """A generator endpoint for visual chart site.
     Example:
         site_obj = DJESite(site_title='MySite', opts=SiteOpts(paginate_by=10))
     """
 
-    def __init__(self, site_title: str, opts: Optional[SiteOpts] = None):
+    def __init__(self, site_title: str, opts: Optional[SiteOpts] = None, ignore_register_nav: bool = False):
         self.site_title = site_title
+        self.ignore_register_nav = ignore_register_nav
         self._custom_urlpatterns = []  # url entry
         if opts is None:
             self._opts = SiteOpts()
         else:
             self._opts = opts
-        self.nav = Nav()
-        if 'home' in self.opts.nav_shown_pages:
-            self.nav.add_menu(text='首页', slug='home', url=reverse_lazy('dje_home'))
-        if 'list' in self.opts.nav_shown_pages:
-            self.nav.add_menu(text='所有', slug='list', url=reverse_lazy('dje_list'))
-        if 'collection' in self.opts.nav_shown_pages:
-            self.nav.add_menu(text='合辑', slug='collection-all', url=reverse_lazy('dje_chart_collection_all'))
-        if 'settings' in self.opts.nav_shown_pages:
-            self.nav.add_right_link(LinkItem(text='设置', slug='settings', url=reverse_lazy('dje_settings')))
-
+        self.nav = NavBuilder.build_default_nav(self._opts.nav_shown_pages)
+        self._chart_nav = Nav()
         self._view_dict = {
             'dje_home': DJESiteHomeView,
             'dje_list': DJESiteListView,
@@ -305,6 +389,8 @@ class DJESite:
 
         self._collection_dic = {}  # type: Dict[str,WidgetCollection]
 
+        self._ref2uri = defaultdict(EntityURI.empty)
+
     def _inject(self, func):
         @wraps(func)
         def decorated(*args, **kwargs):
@@ -313,6 +399,10 @@ class DJESite:
             return func(*args, **new_kwargs)
 
         return decorated
+
+    @property
+    def ref2uri(self):
+        return self._ref2uri
 
     @property
     def opts(self) -> SiteOpts:
@@ -327,6 +417,8 @@ class DJESite:
             path('chart/<slug:name>/', self._view_dict['dje_chart_single'].as_view(), name='dje_chart_single'),
             path('chart/<slug:name>/options/', self._view_dict['dje_chart_options'].as_view(),
                  name='dje_chart_options'),
+            path('chart/<slug:name>/<path:chart_params>/', self._view_dict['dje_chart_single'].as_view(),
+                 name='dje_chart_single'),
             path('collection/', self._view_dict['dje_chart_collection'].as_view(), name='dje_chart_collection_all'),
             path('collection/<slug:name>/', self._view_dict['dje_chart_collection'].as_view(),
                  name='dje_chart_collection'),
@@ -334,7 +426,7 @@ class DJESite:
             path('settings/', self._view_dict['dje_settings'].as_view(), name='dje_settings'),
 
         ]
-        urls += geo_urlpatterns + self._custom_urlpatterns
+        urls += custom_map_urlpatterns + self._custom_urlpatterns
         return urls
 
     def extend_urlpatterns(self, urlpatterns):
@@ -348,72 +440,86 @@ class DJESite:
     ):
         self._view_dict[view_name] = view_class
 
+    def config_nav(self, nav_config: dict = None):
+        """fill nav from a config dict."""
+        if nav_config:
+            self.nav = NavBuilder.build_nav(
+                left_menu_config=nav_config.get('nav_left'),
+                right_menu_config=nav_config.get('nav_right'),
+                footer_links_config=nav_config.get('nav_footer'),
+            )
+        holder_index = -1
+        for i, menu in enumerate(self.nav.left_menus):
+            if menu.text == Nav.CHART_PLACEHOLDER:
+                holder_index = i
+                break
+        if holder_index == -1:
+            return self
+        self.nav.left_menus = self.nav.left_menus[:holder_index] + self._chart_nav.left_menus + self.nav.left_menus[
+                                                                                                holder_index + 1:]
+        return self
+
+    def load_config_from_module(self, module_path: str):
+        """Load config from a python module."""
+        __import__(module_path)
+        mod = sys.modules[module_path]
+        nav_config = getattr(mod, 'nav_config')
+        self.config_nav(nav_config)
+
     # Init Widgets
-
-    def add_left_link(self, item: LinkItem, menu_title: str = None):
-        if menu_title:
-            self.nav.add_item(menu_text=menu_title, item=item)
-        else:
-            self.nav.add_menu(text=item.text, slug=item.slug, url=item.url)
-        return
-
-    def add_right_link(self, item: LinkItem):
-        """Add link on nav."""
-        self.nav.add_right_link(item)
-        return self
-
-    def add_menu_item(self, item: LinkItem, menu_title: str = None):
-        self.add_left_link(item, menu_title)
-        return self
-
-    def add_footer_link(self, item: LinkItem):
-        self.nav.footer_links.append(item)
-        return self
 
     def add_widgets(self, *, copyright_: Copyright = None, jumbotron: Jumbotron = None,
                     jumbotron_chart: Union[str, Any] = None, values_panel: Union[str, ValuesPanel] = None):
         """Place widgets to pages."""
-        if copyright_:
-            factory.register_html_widget(copyright_, 'copyright')
-        if jumbotron:
-            factory.register_html_widget(jumbotron, WidgetRefs.home_jumbotron)
-        if isinstance(jumbotron_chart, str):
-            factory.set_chart_ref(WidgetRefs.home_jumbotron_chart, jumbotron_chart)
-        elif jumbotron_chart:
-            factory.register_chart_widget(jumbotron_chart, WidgetRefs.home_jumbotron_chart)
-        if isinstance(values_panel, str):
-            factory.set_html_ref(WidgetRefs.home_values_panel, values_panel)
-        elif isinstance(values_panel, ValuesPanel):
-            factory.register_html_widget(values_panel, WidgetRefs.home_values_panel)
+
+        self._add_widget('copyright', copyright_, 'widget')
+        self._add_widget(WidgetRefs.home_jumbotron, jumbotron, 'widget')
+        self._add_widget(WidgetRefs.home_jumbotron_chart, jumbotron_chart, 'chart')
+        self._add_widget(WidgetRefs.home_values_panel, values_panel, 'widget')
         return self
+
+    def _add_widget(self, ref_name: str, entity_obj_or_name=None, entity_catalog: str = None):
+        if entity_obj_or_name is None:
+            return
+        if isinstance(entity_obj_or_name, str):
+            uri = EntityURI.from_str(entity_obj_or_name, catalog=entity_catalog)
+        else:
+            uri = EntityURI.from_str(ref_name, catalog=entity_catalog)
+            if entity_catalog == 'chart':
+                factory.register_chart_widget(entity_obj_or_name, uri.name)
+            else:
+                factory.register_html_widget(entity_obj_or_name, uri.name)
+        self._ref2uri[ref_name] = uri
 
     # Register function and views class
     def register_chart(self, function=None, *, info: ChartInfo = None, name: str = None, title: str = None,
                        description: str = None, body: str = None, layout: str = None, top: int = 0, catalog: str = None,
-                       tags: List = None, nav_parent_name: str = None, nav_after_separator: bool = False):
+                       tags: List = None, nav_parent_name: str = None, nav_after_separator: bool = False,
+                       params_config: ParamsConfig = None):
         """Register chart function."""
 
         def decorator(func):
             cname = name or func.__name__
             if not _SLUG_RE.match(cname):
                 raise ValueError(f'Invalid chart slug:{cname}')
-            url = reverse_lazy('dje_chart_single', args=(cname,))
+            url = reverse_lazy('dje_chart_single', args=(cname,))  # TODO
             if info:
                 c_info = info
             else:
-                c_info = ChartInfo(name=cname, title=title or cname, description=description, body=body,
-                                   url=url, top=top, catalog=catalog, tags=tags, layout=layout)
+                c_info = ChartInfo(name=cname, title=title or cname, description=description, body=body, url=url,
+                                   top=top, catalog=catalog, tags=tags, layout=layout, params_config=params_config)
             factory.register_chart_widget(func, c_info.name, info=c_info)
-
+            # TODO Delete menu register for single chart
+            #
             if nav_parent_name == 'self':
-                self.nav.add_menu(text=title or cname, slug=cname, url=url)
+                self._chart_nav.add_left_menu(text=title or cname, slug=cname, url=url)
             elif nav_parent_name == 'none':
                 pass
             else:
                 c_nav_parent_name = nav_parent_name or catalog
                 if c_nav_parent_name:
-                    self.nav.add_menu(text=c_nav_parent_name)
-                    self.nav.add_item(
+                    self._chart_nav.add_left_menu(text=c_nav_parent_name)
+                    self._chart_nav.add_item_in_left_menu(
                         menu_text=c_nav_parent_name,
                         item=LinkItem(text=title or cname, url=url, slug=cname),
                         after_separator=nav_after_separator
@@ -454,13 +560,13 @@ class DJESite:
             url = reverse_lazy('dje_chart_collection', args=(cname,))
             c_title = title or name
             if nav_parent_name == 'self':
-                self.nav.add_menu(text=c_title, url=url)
+                self._chart_nav.add_left_menu(text=c_title, url=url)
             elif nav_parent_name == 'none':
                 pass
             else:
                 c_nav_parent_name = nav_parent_name or catalog
-                self.nav.add_menu(text=c_nav_parent_name)
-                self.nav.add_item(
+                self._chart_nav.add_left_menu(text=c_nav_parent_name)
+                self._chart_nav.add_item_in_left_menu(
                     menu_text=c_nav_parent_name,
                     item=LinkItem(text=c_title, url=url, slug=name),
                     after_separator=nav_after_separator
@@ -485,3 +591,7 @@ class DJESite:
             chart_obj = factory.get_chart_widget(info.name)
             w_collection.pack_chart_widget(chart_obj, info)
         return w_collection
+
+    @classmethod
+    def load_from_yaml(cls, yaml_file: str):
+        return cls(ignore_register_nav=True)

@@ -10,9 +10,10 @@ from django import template
 from django.template.loader import render_to_string, get_template
 from django.utils.safestring import SafeString
 from django_echarts.conf import DJANGO_ECHARTS_SETTINGS
-from django_echarts.entities import LinkItem, Menu
+from django_echarts.entities import LinkItem, Menu, EntityURI
 from django_echarts.renders import render_widget, flat_chart, get_js_dependencies
 from django_echarts.utils.burl import burl_kwargs
+from django_echarts.site_exts import reverse_chart_url
 
 register = template.Library()
 
@@ -42,15 +43,17 @@ def echarts_js_dependencies(context, *args):
 
 def build_echarts_initial_fragment(*args):
     chart_list = flat_chart(args)
-    structured_dic = defaultdict(list)
+    structured_dic = defaultdict(list)  # key = CustomMapItem
     for chart in chart_list:
         if hasattr(chart, '_is_geo_chart'):
             chart.is_geo_chart = chart._is_geo_chart
         chart.dje_echarts_theme = DJANGO_ECHARTS_SETTINGS.opts.get_echarts_theme(chart.theme)
-        geojson_url = chain_getattr(chart, 'geojson.url', '')
-        geojson_name = chain_getattr(chart, 'geojson.map_name', '')
-        structured_dic[(geojson_url, geojson_name)].append(chart)
-    structured_data = [(k[0], k[1], v) for k, v in structured_dic.items()]
+        map_item = getattr(chart, 'custom_map_item', None)
+        if map_item:
+            structured_dic[map_item].append(chart)
+        else:
+            structured_dic[None].append(chart)
+    structured_data = list(structured_dic.items())
     context = {'structured_data': structured_data}
     return SafeString(render_to_string('snippets/echarts_init_options.tpl', context))
 
@@ -118,3 +121,10 @@ def page_link(context, page_number: int):
 @register.simple_tag(takes_context=True)
 def dw_link(context, item: Union[LinkItem, Menu], class_: str = None):
     return render_widget(item, context=context, class_=class_)
+
+
+# Site urls
+@register.simple_tag(takes_context=True)
+def url_single_chart(context, uri_or_name: Union[EntityURI, str], params_dic: dict = None):
+    # TODO use {% dw uri %} <a>?
+    return reverse_chart_url(uri_or_name, params_dic)

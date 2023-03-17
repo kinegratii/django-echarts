@@ -26,6 +26,7 @@
 - PrettyTable: [https://github.com/jazzband/prettytable](https://github.com/jazzband/prettytable)
 - pyecharts: [https://pyecharts.org/](https://pyecharts.org/)
 - pyecharts-asserts: [https://github.com/pyecharts/pyecharts-assets](https://github.com/pyecharts/pyecharts-assets)
+- typing_extensions [https://github.com/python/typing_extensions](https://github.com/python/typing_extensions)
 - yattag: [https://www.yattag.org/](https://www.yattag.org/)
 
 

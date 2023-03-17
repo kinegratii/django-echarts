@@ -1,18 +1,19 @@
 from functools import singledispatch
 from typing import Union
 
+import htmlgenerator as hg
 from borax.htmls import HTMLString, html_tag
 from borax.strings import camel2snake
 from django.template import engines
 from django.template.loader import get_template
 from django.utils.safestring import SafeString
-from django_echarts.entities import (
-    ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase, ElementEntity
-)
 from prettytable import PrettyTable
 from pyecharts.charts.base import Base
 from pyecharts.components.table import Table
-import htmlgenerator as hg
+
+from django_echarts.entities import (
+    ValuesPanel, LinkItem, Menu, NamedCharts, DwString, RowContainer, Container, HTMLBase, BlankChart
+)
 
 
 def _to_css_length(val):
@@ -26,9 +27,8 @@ def _to_css_length(val):
 def render_widget(widget, **kwargs) -> SafeString:
     if hasattr(widget, '__html__') and callable(widget.__html__):
         return widget.__html__()
-    message = f'<div>Unknown widget type:{widget.__class__.__name__}</div>'
-    raise TypeError(message)
-    # return SafeString(f'<div>Unknown widget type:{widget.__class__.__name__}</div>')
+    # raise WidgetNotRegisteredError(widget)
+    return SafeString(f'<div>Unknown widget type:{widget.__class__.__name__}</div>')
 
 
 @render_widget.register(type(None))
@@ -43,6 +43,7 @@ def render_html(widget, **kwargs) -> SafeString:
 
 
 @render_widget.register(Base)
+@render_widget.register(BlankChart)
 def render_chart(widget, **kwargs) -> SafeString:
     width = kwargs.get('width') or widget.width
     height = kwargs.get('height') or widget.height

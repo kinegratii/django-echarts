@@ -23,7 +23,7 @@ DJEOpts.dms_repo: str = 'pyecharts'
 DJEOpts.dep2url: Dict[str, str]
 ```
 
-关于依赖项的配置参见 “依赖项和静态文件” 一章。
+关于依赖项的配置参见 [依赖项和静态文件](/guides/dms) 一章。
 
 ### 百度地图密钥
 

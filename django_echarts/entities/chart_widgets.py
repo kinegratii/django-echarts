@@ -1,5 +1,26 @@
 import warnings
+from dataclasses import dataclass, field
 from .containers import RowContainer
+
+
+@dataclass
+class BlankChart:
+    """A interface class for tests only."""
+    width: str = '900px'
+    height: str = '500px'
+    renderer: str = 'canvas'
+    page_title: str = 'Blank Chart'
+    theme: str = 'white'
+    chart_id: str = 'dje_blank'
+    options: dict = field(default_factory=dict)
+    js_dependencies: list = field(default_factory=lambda: ['echarts'])  # Use Simplified format.
+    geojson: dict = None  # added by django-echarts
+
+    def __post_init__(self):
+        self._is_geo_chart = False
+
+    def dump_options(self) -> str:
+        return "{}"
 
 
 class NamedCharts(RowContainer):
