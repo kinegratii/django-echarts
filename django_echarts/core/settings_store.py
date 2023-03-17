@@ -10,8 +10,8 @@ from .dms import DependencyManager, PyechartsDMS
 from .tms import Theme, parse_theme_label, ThemeManager
 
 _CUSTOM_D2U_MAP = {
-    'echarts': 'https://cdnjs.cloudflare.com/ajax/libs/echarts/{echarts_version}/echarts.min.js',
-    'echarts-gl': 'https://cdnjs.cloudflare.com/ajax/libs/echarts-gl/{echarts_gl_version}/echarts-gl.min.js',
+    'echarts': 'https://unpkg.com/echarts@{echarts_version}/dist/echarts.min.js',
+    'echarts-gl': 'https://unpkg.com/echarts-gl@{echarts_gl_version}/echarts-gl.min.js',
     'echarts-wordcloud': 'https://unpkg.com/echarts-wordcloud@{echarts_wordcloud_version}/dist/echarts-wordcloud.min.js',
     'echarts-liquidfill': 'https://unpkg.com/echarts-liquidfill@{echarts_liquidfill_version}/dist/echarts-liquidfill.min.js',
 }

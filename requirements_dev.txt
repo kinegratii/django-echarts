@@ -1,5 +1,5 @@
 typing_extensions~=4.5
-pyecharts~=1.9
+pyecharts~=2.0
 borax~=4.0
 django~=3.2
 htmlgenerator~=1.2
