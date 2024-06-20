@@ -1,13 +1,6 @@
 name: unittest
-on:
-  push:
-    branches:
-      - master
-      - dev
-      - 'release/**'
-  pull_request:
-    branches:
-      - master
+on: [push, pull_request]
+
 jobs:
   unittest:
     runs-on: ubuntu-latest

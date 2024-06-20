@@ -34,7 +34,7 @@ class MChartsPY36TestCase(unittest.TestCase):
         nc = NamedCharts()
         nc.add_widget(BlankChart(page_title='Bar-Chart'), name='bar')
         nc.add_widget(BlankChart(page_title='Line-Chart'), name='line')
-        nc.add_chart(BlankChart(page_title='Map-Chart'), name='map')
+        nc.add_widget(BlankChart(page_title='Map-Chart'), name='map')
         self.assertEqual('Bar-Chart', nc['bar'].page_title)
         self.assertListEqual(
             ['Bar-Chart', 'Line-Chart', 'Map-Chart'],
